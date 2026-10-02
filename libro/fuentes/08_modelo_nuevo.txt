@@ -1,0 +1,386 @@
+#%% md
+# El modelo nuevo frente a la Entrega 2
+
+El profesor pidió para esta entrega un **modelo nuevo**, distinto de los de la Entrega 2 y no
+explicado en clase, que **supere sus métricas**. Para que la comparación sea válida se hace sobre
+la misma partición 80/20 con semilla 42, con la misma etiqueta (riesgo alto si `churn_probability`
+supera su mediana, estimada solo con entrenamiento) y en la misma prueba de 9.745 clientes, y la
+superación se confirma con pruebas estadísticas y no solo con la cifra puntual.
+
+**El modelo elegido es la Explainable Boosting Machine (EBM)** de Lou, Caruana, Gehrke y Hooker
+(2013), en la implementación `interpret` de Nori y otros (2019). No aparece en las notas del curso.
+Es un modelo aditivo generalizado con interacciones por pares (GA²M):
+
+$$g\big(E[y]\big) = \beta_0 + \sum_j f_j(x_j) + \sum_{(i,j)} f_{ij}(x_i, x_j),$$
+
+donde cada función de forma $f_j$ se aprende por *boosting* cíclico de árboles de pocas hojas sobre
+una sola variable a la vez, con una tasa de aprendizaje baja para que el orden de las variables no
+importe, y se promedia sobre varias submuestras (bolsas externas). Reúne dos cosas que no suelen ir
+juntas: la flexibilidad del *boosting* para captar efectos no lineales y la legibilidad de un modelo
+aditivo, en el que la contribución de cada variable es una curva que se puede graficar. Esa
+combinación responde a la causa del bajo desempeño de la Entrega 2, que fue la no linealidad.
+
+**Protocolo.** Los modelos de la Entrega 2 se reentrenan con los hiperparámetros que eligió su
+`GridSearchCV` (regresión logística L1 con C = 0,1; Lasso con alpha = 1e-4). La EBM y, como
+referencia, XGBoost —el mejor modelo visto en clase en las 140 corridas— se afinan con el mismo
+protocolo: optimización bayesiana (Optuna, TPE) con el presupuesto de las 140 corridas y validación
+cruzada de 5 pliegues sobre el entrenamiento (los mismos 5 pliegues de la Entrega 2), y reajuste
+final sobre todo el entrenamiento. Cada modelo toca la prueba una sola vez. El cálculo lo hace
+`comparar_entrega2.py`, y aquí se cargan sus modelos y predicciones para repetir los contrastes.
+
+#%% code
+import json
+import sys
+import warnings
+from pathlib import Path
+
+RAIZ = Path.cwd().parent
+sys.path.insert(0, str(RAIZ))
+warnings.filterwarnings('ignore')
+
+import joblib
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from IPython.display import Markdown, display
+
+from src import analisis, comparacion, datos, graficos
+from src import estadistica as est
+from src.formato import dec, ent, enumerar, intervalo, p_valor, pct
+from src.preprocesamiento import nombres_variables
+
+graficos.estilo()
+pd.set_option('display.float_format', lambda v: f'{v:,.4f}')
+
+CARPETA = RAIZ / 'resultados' / 'comparacion_entrega2'
+busquedas = json.loads((CARPETA / 'busquedas.json').read_text(encoding='utf-8'))
+pred = pd.read_parquet(CARPETA / 'predicciones.parquet')
+modelos_cmp = {k: joblib.load(CARPETA / 'modelos' / f'{k.replace("/", "__")}.joblib') for k in busquedas['modelos']}
+NOMBRE = {'logistica_e2': 'Logística L1 (Entrega 2)', 'lasso_e2': 'Lasso (Entrega 2)',
+          'xgboost': 'XGBoost (clase)', 'ebm': 'EBM (modelo nuevo)'}
+p_med = datos.preparar_todo(metodo_etiqueta='mediana')      # misma partición y etiqueta de la Entrega 2
+c = p_med['conjuntos']
+assert c.X_test.index.sort_values().equals(pred.index), 'las predicciones no corresponden a esta prueba'
+print(f'entrenamiento: {ent(busquedas["n_train"])} clientes · prueba: {ent(busquedas["n_test"])} · '
+      f'umbral de la mediana (solo entrenamiento): {busquedas["etiqueta"]["umbral"]:.6f} · '
+      f'riesgo alto en prueba: {pred["y_bin"].mean():.2%}')
+
+#%% md
+## 1. La Entrega 2 se reproduce exactamente
+
+Antes de comparar hay que asegurarse de que el punto de partida es el mismo: los modelos de la
+Entrega 2, reentrenados con este código, deben dar las cifras de prueba que se publicaron.
+
+#%% code
+filas = []
+for tarea, nombre in (('clasificacion', 'logistica_e2'), ('regresion', 'lasso_e2')):
+    for metrica, v in busquedas['modelos'][f'{tarea}/{nombre}']['reproduccion'].items():
+        filas.append({'modelo': NOMBRE[nombre], 'métrica': metrica, 'publicado en la Entrega 2': v['publicado'],
+                      'obtenido ahora': v['obtenido'], 'coincide': v['coincide']})
+reproduccion = pd.DataFrame(filas)
+reproduccion
+
+#%% md
+## 2. Métricas de prueba
+
+#%% code
+def tabla_metricas(tarea):
+    filas = []
+    for k, info in busquedas['modelos'].items():
+        t, nombre = k.split('/')
+        if t != tarea:
+            continue
+        filas.append({'modelo': NOMBRE[nombre], 'papel': info['papel'], 'CV media (entrenamiento)': info['cv_media'],
+                      'CV desv.': info['cv_desv'], **info['prueba']})
+    return pd.DataFrame(filas).set_index('modelo')
+
+metricas_clf = tabla_metricas('clasificacion')
+metricas_reg = tabla_metricas('regresion')
+display(metricas_clf)
+display(metricas_reg)
+
+#%% code
+fig, ax = plt.subplots(1, 2, figsize=(13, 5.2))
+graficos.curvas_roc(pred['y_bin'], {NOMBRE[m]: pred[f'clf_{m}'] for m in ('logistica_e2', 'xgboost', 'ebm')},
+                    ax=ax[0], titulo='Curvas ROC en prueba (etiqueta de la mediana)')
+for m, color in (('lasso_e2', '#8c8c8c'), ('xgboost', '#3d78bf'), ('ebm', '#d9822b')):
+    orden = np.argsort(pred[f'reg_{m}'].to_numpy())
+    grupos = np.array_split(orden, 20)
+    ax[1].plot([pred[f'reg_{m}'].to_numpy()[g].mean() for g in grupos],
+               [pred['y_cont'].to_numpy()[g].mean() for g in grupos], marker='o', ms=4, color=color, label=NOMBRE[m])
+lim = [pred['y_cont'].quantile(0.01), pred['y_cont'].quantile(0.99)]
+ax[1].plot(lim, lim, ls='--', color='grey', lw=0.8)
+ax[1].set_xlabel('Pronóstico medio (20 grupos de igual tamaño)')
+ax[1].set_ylabel('churn_probability real media')
+ax[1].set_title('Regresión: pronóstico frente a valor real en prueba')
+ax[1].legend(frameon=False, fontsize=8)
+plt.tight_layout()
+plt.show()
+
+#%% md
+## 3. Clasificación: DeLong, bootstrap y delta de Cliff
+
+Para cada pareja (referencia, candidato) se reporta la diferencia de AUC del candidato con su
+intervalo de DeLong y su intervalo bootstrap BCa (2.000 réplicas estratificadas por clase), el
+p-valor de DeLong, ajustado por Holm sobre las tres comparaciones, y el delta de Cliff entre los AUC
+de los 5 pliegues de validación cruzada del entrenamiento (+1: el candidato gana en todos).
+
+#%% code
+puntajes = {m: pred[f'clf_{m}'].to_numpy() for m in ('logistica_e2', 'xgboost', 'ebm')}
+pliegues_auc = {m: busquedas['modelos'][f'clasificacion/{m}']['pliegues'] for m in puntajes}
+pares = [('logistica_e2', 'ebm'), ('logistica_e2', 'xgboost'), ('xgboost', 'ebm')]
+contraste_clf = comparacion.contrastar_clasificacion(pred['y_bin'], puntajes, pares, pliegues_auc)
+contraste_clf.assign(referencia=contraste_clf['referencia'].map(NOMBRE),
+                     candidato=contraste_clf['candidato'].map(NOMBRE))[
+    ['referencia', 'candidato', 'auc_referencia', 'auc_candidato', 'diferencia', 'ic_delong_inf', 'ic_delong_sup',
+     'ic_bca_inf', 'ic_bca_sup', 'z', 'p_delong', 'p_delong_ajustado', 'correlacion_auc', 'delta_cliff']]
+
+#%% code
+boot = est.bootstrap_auc(pred['y_bin'], puntajes['logistica_e2'], puntajes['ebm'])
+boot_x = est.bootstrap_auc(pred['y_bin'], puntajes['xgboost'], puntajes['ebm'])
+fig, ax = plt.subplots(1, 2, figsize=(13, 3.6))
+for a, b, titulo in ((ax[0], boot, 'EBM − logística de la Entrega 2'), (ax[1], boot_x, 'EBM − XGBoost')):
+    a.hist(b['replicas'], bins=50, color='#7fb0e0', edgecolor='white')
+    for v in b['ic_bca']:
+        a.axvline(v, color=graficos.AZUL, ls='--', lw=1)
+    a.axvline(0, color='#d9822b', lw=1.5)
+    a.set_title(f'{titulo}: {dec(b["estimacion"], 4, True)} {intervalo(*b["ic_bca"], d=4, signo=True)}')
+    a.set_xlabel('Diferencia de AUC en la réplica bootstrap')
+plt.tight_layout()
+plt.show()
+
+#%% code
+fe = contraste_clf.iloc[0]
+fx = contraste_clf.iloc[2]
+mc = metricas_clf
+display(Markdown(f"""
+**La EBM supera a la Entrega 2 en clasificación.** Su AUC de prueba es {dec(fe['auc_candidato'])}, frente a
+{dec(fe['auc_referencia'])} de la logística L1: una mejora de {dec(fe['diferencia'], 4, True)} con intervalo BCa al
+95 % {intervalo(fe['ic_bca_inf'], fe['ic_bca_sup'], signo=True)}, que no se acerca a cero. DeLong la confirma
+(z = {dec(fe['z'], 2)}, {p_valor(fe['p_delong'])}; ajustado por Holm, {p_valor(fe['p_delong_ajustado'])}), y la EBM supera a
+la logística en {'los 5' if fe['delta_cliff'] == 1 else 'la mayoría de los'} pliegues de validación (delta de Cliff
+{dec(fe['delta_cliff'], 2, True)}). También mejora el recall con el umbral de 0,5, la otra métrica que reportó la
+Entrega 2: {dec(mc.loc[NOMBRE['ebm'], 'recall'])} frente a {dec(mc.loc[NOMBRE['logistica_e2'], 'recall'])}.
+
+Frente a XGBoost, el mejor modelo de clase, la EBM queda en {dec(fx['diferencia'], 4, True)} de AUC
+{intervalo(fx['ic_bca_inf'], fx['ic_bca_sup'], signo=True)}, sin diferencia significativa (DeLong
+{p_valor(fx['p_delong'])}): **empata con el mejor modelo de caja negra siendo un modelo legible.** La
+correlación de {dec(fx['correlacion_auc'], 2)} entre sus AUC indica que ordenan a los clientes casi igual.
+"""))
+
+#%% md
+## 4. Regresión: Diebold-Mariano, bootstrap estacionario y d de Cohen
+
+Para la regresión se compara la pérdida cuadrática de cada cliente de prueba. Diebold-Mariano con
+la corrección de Harvey, Leybourne y Newbold (HLN) contrasta si la diferencia media de pérdidas es
+cero; el bootstrap estacionario repite el contraste sin suponer normalidad y respetando la
+dependencia entre filas vecinas (las filas se toman en el orden original del archivo de clientes,
+que está organizado por bloques). La d de Cohen pareada mide el tamaño del efecto por cliente y la
+d entre pliegues, su estabilidad.
+
+#%% code
+pron = {m: pred[f'reg_{m}'].to_numpy() for m in ('lasso_e2', 'xgboost', 'ebm')}
+pliegues_rmse = {m: busquedas['modelos'][f'regresion/{m}']['pliegues'] for m in pron}
+pares_r = [('lasso_e2', 'ebm'), ('lasso_e2', 'xgboost'), ('xgboost', 'ebm')]
+contraste_reg = comparacion.contrastar_regresion(pred['y_cont'], pron, pares_r, pliegues_rmse)
+contraste_reg.assign(referencia=contraste_reg['referencia'].map(NOMBRE),
+                     candidato=contraste_reg['candidato'].map(NOMBRE))[
+    ['referencia', 'candidato', 'mejora_r2', 'mejora_r2_ic_inf', 'mejora_r2_ic_sup', 'mejora_rmse',
+     'mejora_rmse_ic_inf', 'mejora_rmse_ic_sup', 'dm_hln', 'p_dm', 'p_dm_ajustado', 'p_dm_absoluta', 'bloque',
+     'p_bootstrap_estacionario', 'd_cohen_z', 'd_cohen_pliegues']]
+
+#%% code
+ge, gx = contraste_reg.iloc[0], contraste_reg.iloc[2]
+mr = metricas_reg
+display(Markdown(f"""
+**La EBM también supera a la Entrega 2 en regresión.** Su R² de prueba es {dec(mr.loc[NOMBRE['ebm'], 'r2'])}, frente
+a {dec(mr.loc[NOMBRE['lasso_e2'], 'r2'])} del Lasso: {dec(ge['mejora_r2'], 4, True)} {intervalo(ge['mejora_r2_ic_inf'], ge['mejora_r2_ic_sup'], signo=True)}, y su
+RMSE baja de {dec(mr.loc[NOMBRE['lasso_e2'], 'rmse'], 5)} a {dec(mr.loc[NOMBRE['ebm'], 'rmse'], 5)}. Diebold-Mariano con HLN
+da {dec(ge['dm_hln'], 2)} ({p_valor(ge['p_dm'])}; con Holm, {p_valor(ge['p_dm_ajustado'])}); con pérdida absoluta,
+{p_valor(ge['p_dm_absoluta'])}; y el bootstrap estacionario, con bloques de longitud media {dec(ge['bloque'], 1)},
+{p_valor(ge['p_bootstrap_estacionario'])}. La d de Cohen por cliente es {dec(ge['d_cohen_z'], 3)}: la mejora de
+un cliente concreto es pequeña frente al ruido de su pérdida, pero se repite en todos los pliegues
+(d entre pliegues {dec(ge['d_cohen_pliegues'], 1)}).
+
+Frente a XGBoost, la EBM queda en {dec(gx['mejora_r2'], 4, True)} de R², sin diferencia significativa
+(Diebold-Mariano {p_valor(gx['p_dm'])}; bootstrap estacionario {p_valor(gx['p_bootstrap_estacionario'])}).
+"""))
+
+#%% md
+## 5. Por qué falló la Entrega 2 y qué aprende la EBM
+
+La EBM permite ver la contribución de cada variable. Las gráficas comparan la función de forma de la
+EBM con el efecto que la logística L1 de la Entrega 2 asigna a la misma variable, en la misma escala
+(contribución al logit, centrada). Se muestran las cuatro variables que concentran la señal según
+el análisis de variables del Entregable 3.
+
+#%% code
+ebm_clf = modelos_cmp['clasificacion/ebm']
+log_clf = modelos_cmp['clasificacion/logistica_e2']
+variables = ['app_logins_frequency', 'age', 'satisfaction_score', 'base_satisfaction']
+fig, ax = plt.subplots(1, 4, figsize=(17, 3.8))
+for a, v in zip(ax, variables):
+    f = analisis.forma_ebm(ebm_clf, v)
+    x = np.r_[f['desde'].iloc[0], f['hasta']]
+    a.step(x, np.r_[f['efecto'], f['efecto'].iloc[-1]], where='post', color='#d9822b', lw=1.8, label='EBM')
+    a.fill_between(x, np.r_[f['inf'], f['inf'].iloc[-1]], np.r_[f['sup'], f['sup'].iloc[-1]], step='post',
+                   color='#d9822b', alpha=0.15)
+    xs = np.linspace(x[0], x[-1], 100)
+    a.plot(xs, analisis.efecto_lineal(log_clf, v, xs), color=graficos.AZUL, lw=1.5, ls='--', label='Logística (Entrega 2)')
+    a.axhline(0, color='grey', lw=0.6)
+    a.set_title(v)
+    a.set_xlabel('valor de la variable')
+ax[0].set_ylabel('Contribución al logit del riesgo alto')
+ax[0].legend(frameon=False, fontsize=8)
+plt.tight_layout()
+plt.show()
+
+#%% code
+ebm_modelo = ebm_clf.named_steps['modelo'].ebm_
+importancia = pd.Series(ebm_modelo.term_importances(), index=[
+    ' × '.join(nombres_variables(ebm_clf.named_steps['preprocesado'])[j] for j in t)
+    for t in ebm_modelo.term_features_]).sort_values(ascending=False)
+cuota = importancia / importancia.sum()
+display(cuota.head(10).to_frame('cuota de la importancia total'))
+pares_ebm = [t for t in importancia.index if ' × ' in t]
+
+# Ablación: la misma EBM sin interacciones (GAM puro), reentrenada sobre el entrenamiento.
+from sklearn.base import clone
+gam = clone(ebm_clf).set_params(modelo__interactions=0).fit(c.X_train, p_med['y_train'])
+puntaje_gam = gam.predict_proba(c.X_test.loc[pred.index])[:, 1]
+ablacion = est.delong(pred['y_bin'], puntaje_gam, puntajes['ebm'])
+sin_ablacion = est.delong(pred['y_bin'], puntajes['logistica_e2'], puntaje_gam)
+nombres_pre = nombres_variables(log_clf.named_steps['preprocesado'])
+coef_log = pd.Series(np.ravel(log_clf.named_steps['modelo'].coef_), index=nombres_pre)
+anuladas = [v for v in variables if coef_log[v] == 0]
+f_age = analisis.forma_ebm(ebm_clf, 'age')
+display(Markdown(f"""
+Las cuatro variables acumulan el {pct(cuota.reindex(variables).sum(), 0)} de la importancia de la EBM
+(media del valor absoluto de cada término sobre el entrenamiento), y sus efectos no son lineales:
+la EBM aprende tramos y mesetas que una recta no puede representar. El efecto de la edad, por
+ejemplo, no es monótono: va de {dec(f_age['efecto'].min(), 2)} a {dec(f_age['efecto'].max(), 2)} en la escala del
+logit, mientras que la logística solo puede asignarle una pendiente. La frecuencia de uso de la
+aplicación deja de reducir el riesgo a partir de cierto nivel, pero la recta sigue bajando y
+exagera el efecto en los usuarios más activos.{' La penalización L1 de la Entrega 2 anuló ' + enumerar(f'`{v}`' for v in anuladas) + (', que en la EBM tiene' if len(anuladas) == 1 else ', que en la EBM tienen') + ' un efecto claro y no lineal.' if anuladas else ''}
+
+Las {len(pares_ebm)} interacciones por pares que eligió la EBM reúnen el {pct(cuota.reindex(pares_ebm).sum(), 1)} de la
+importancia, pero aportan poco a la discriminación: una EBM idéntica sin interacciones (un modelo
+aditivo puro) obtiene {dec(ablacion['auc_a'])} de AUC en prueba, frente a {dec(ablacion['auc_b'])} de la EBM completa
+(DeLong {p_valor(ablacion['p_bilateral'])}), y por sí sola ya supera a la Entrega 2 en
+{dec(sin_ablacion['diferencia'], 4, True)} (DeLong {p_valor(sin_ablacion['p_bilateral'])}). Lo que faltaba en la Entrega 2 era,
+sobre todo, flexibilidad en cada variable.
+"""))
+
+#%% md
+## 6. El techo de información
+
+¿Cuánto más se puede mejorar? `active_products` determina casi por completo el objetivo (se excluyó
+como predictor porque la etiqueta se construyó a partir de ella), y no se relaciona con las demás
+variables. Un modelo *oráculo* que la conoce explica casi toda la varianza; si se promedia su
+pronóstico sobre la distribución de `active_products` del entrenamiento, se obtiene el mejor
+pronóstico posible **sin** conocerla. Esa cifra es el techo de cualquier modelo que use solo las
+variables permitidas. Se calcula aquí sobre la misma prueba, con un *gradient boosting* de
+histogramas como oráculo (la variable solo se usa para entrenarlo).
+
+#%% code
+from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.metrics import r2_score, roc_auc_score
+
+pre = comparacion.pipeline_entrega2('regresion', c.X_train).named_steps['preprocesado'].fit(c.X_train)
+ap = p_med['df']['active_products']
+Xtr_o = np.column_stack([pre.transform(c.X_train), ap.loc[c.X_train.index]])
+oraculo = HistGradientBoostingRegressor(learning_rate=0.05, max_iter=600, random_state=42).fit(Xtr_o, c.y_train_cont)
+X_te_o = pre.transform(c.X_test.loc[pred.index])
+r2_oraculo = r2_score(pred['y_cont'], oraculo.predict(np.column_stack([X_te_o, ap.loc[pred.index]])))
+niveles, cuentas = np.unique(ap.loc[c.X_train.index], return_counts=True)
+techo = sum(w * oraculo.predict(np.column_stack([X_te_o, np.full(len(X_te_o), k)]))
+            for k, w in zip(niveles, cuentas / cuentas.sum()))
+techo_auc, techo_r2 = roc_auc_score(pred['y_bin'], techo), r2_score(pred['y_cont'], techo)
+(CARPETA / 'techo.json').write_text(json.dumps({'auc_mediana': techo_auc, 'r2': techo_r2, 'r2_oraculo': r2_oraculo}),
+                                    encoding='utf-8')
+resumen_techo = pd.DataFrame({
+    'AUC (mediana)': [metricas_clf.loc[NOMBRE['logistica_e2'], 'auc'], metricas_clf.loc[NOMBRE['xgboost'], 'auc'],
+                      metricas_clf.loc[NOMBRE['ebm'], 'auc'], techo_auc],
+    'R²': [metricas_reg.loc[NOMBRE['lasso_e2'], 'r2'], metricas_reg.loc[NOMBRE['xgboost'], 'r2'],
+           metricas_reg.loc[NOMBRE['ebm'], 'r2'], techo_r2]},
+    index=['Entrega 2', 'XGBoost (clase)', 'EBM (modelo nuevo)', 'Techo: oráculo marginalizado'])
+resumen_techo['fracción del techo (AUC − 0,5)'] = (resumen_techo['AUC (mediana)'] - 0.5) / (techo_auc - 0.5)
+resumen_techo['fracción del techo (R²)'] = resumen_techo['R²'] / techo_r2
+resumen_techo
+
+#%% code
+display(Markdown(f"""
+Con `active_products` el oráculo alcanza un R² de {dec(r2_oraculo, 4)} en prueba. Sin ella, el techo es de
+**{dec(techo_auc, 4)} de AUC y {dec(techo_r2, 4)} de R²**. La Entrega 2 cubría el
+{pct(resumen_techo.loc['Entrega 2', 'fracción del techo (AUC − 0,5)'], 0)} de la discriminación alcanzable
+(medida como AUC − 0,5) y el {pct(resumen_techo.loc['Entrega 2', 'fracción del techo (R²)'], 0)} del R² alcanzable; la EBM
+llega al {pct(resumen_techo.loc['EBM (modelo nuevo)', 'fracción del techo (AUC − 0,5)'], 0)} y al
+{pct(resumen_techo.loc['EBM (modelo nuevo)', 'fracción del techo (R²)'], 0)}. Queda, por tanto, muy poco margen: ningún modelo,
+por complejo que sea, puede superar esas cifras con las variables disponibles, y por eso la EBM y
+XGBoost terminan empatados a pocas milésimas del techo.
+"""))
+
+#%% md
+## 7. La EBM dentro del pipeline combinatorio
+
+Además de la comparación anterior, la EBM se integró en el pipeline de la guía como octavo modelo,
+con la etiqueta del percentil 75 y la misma validación anidada: 4 balanceos × 4 optimizadores en
+clasificación y 4 optimizadores en regresión. `class_weight` se implementa con pesos por fila,
+porque la librería no lo ofrece, y se aplica multi-fidelidad (2 bolsas externas durante la búsqueda
+y 8 en el modelo final).
+
+#%% code
+tabla = analisis.cargar_tabla()
+ebm_filas = tabla[(tabla['modelo'] == 'ebm') & (tabla['estado'] == 'ok')]
+if ebm_filas.empty:
+    display(Markdown('*Las corridas de la EBM en el pipeline todavía no han terminado.*'))
+else:
+    resumen = []
+    for tarea in ('clasificacion', 'regresion'):
+        mej = analisis.mejores_por_modelo(tabla, tarea)
+        resumen.append(mej.assign(tarea=tarea)[['tarea', 'modelo', 'balanceo', 'optimizador', 'metrica', 'desv_ext']])
+    display(pd.concat(resumen).set_index(['tarea', 'modelo']))
+    display(ebm_filas.pivot_table(index=['tarea', 'balanceo'], columns='optimizador', values='metrica'))
+
+#%% code
+if not ebm_filas.empty:
+    mc = analisis.mejores_por_modelo(tabla, 'clasificacion').reset_index(drop=True)
+    mr = analisis.mejores_por_modelo(tabla, 'regresion').reset_index(drop=True)
+    pos_c = int(mc.index[mc['modelo'] == 'ebm'][0]) + 1
+    pos_r = int(mr.index[mr['modelo'] == 'ebm'][0]) + 1
+    e_c = ebm_filas[ebm_filas['tarea'] == 'clasificacion']
+    e_r = ebm_filas[ebm_filas['tarea'] == 'regresion']
+    minutos = ebm_filas.groupby(['tarea', 'balanceo'])['tiempo_total_s'].mean() / 60
+    sobremuestreo = minutos.loc[('clasificacion', ['smote', 'adasyn'])].mean() / minutos.loc[('clasificacion', 'ninguno')]
+    display(Markdown(f"""
+Con la etiqueta del percentil 75 y la misma validación anidada que los demás, la mejor EBM queda en el puesto
+{pos_c} de {len(mc)} en clasificación (AUC externa {dec(mc.loc[pos_c - 1, 'metrica'])}, a {dec(mc.loc[0, 'metrica'] - mc.loc[pos_c - 1, 'metrica'], 4)} de
+{analisis.NOMBRES_MODELO[mc.loc[0, 'modelo']]}) y en el puesto {pos_r} de {len(mr)} en regresión (RMSE {dec(mr.loc[pos_r - 1, 'metrica'])}). Es decir, en
+el pipeline completo se comporta como en la comparación con la Entrega 2: en el grupo de los modelos de
+árboles, a milésimas del mejor.
+
+Sus {len(e_c)} corridas de clasificación dan un AUC entre {dec(e_c['metrica'].min())} y {dec(e_c['metrica'].max())}, y las {len(e_r)} de
+regresión un RMSE entre {dec(e_r['metrica'].min())} y {dec(e_r['metrica'].max())}: ni la técnica de balanceo ni el optimizador
+mueven el resultado más allá de la variabilidad entre pliegues. Lo que sí cambia es el coste: con SMOTE o
+ADASYN cada corrida tardó {dec(sobremuestreo, 1)} veces más que sin balanceo, bastante más de lo que explica el 50 % de filas
+que añade el sobremuestreo, y sin ninguna ganancia de AUC. En
+total, las {len(ebm_filas)} corridas de la EBM sumaron {dec(ebm_filas['tiempo_total_s'].sum() / 3600, 1)} horas de cómputo.
+"""))
+
+#%% md
+## 8. Conclusión
+
+#%% code
+display(Markdown(f"""
+- **La EBM, un modelo que no forma parte del curso, supera a los dos modelos de la Entrega 2 en la misma
+  prueba y con la misma etiqueta**: {dec(fe['diferencia'], 4, True)} de AUC (DeLong {p_valor(fe['p_delong'])}) y
+  {dec(ge['mejora_r2'], 4, True)} de R² (Diebold-Mariano {p_valor(ge['p_dm'])}), con intervalos bootstrap que no
+  incluyen el cero y mejoras que se repiten en todos los pliegues.
+- **Empata con XGBoost**, el mejor modelo visto en clase, en las dos tareas: las diferencias no son
+  significativas. Lo que la EBM añade es la legibilidad: cada variable aporta una curva que se puede
+  revisar, mientras que XGBoost necesita SHAP o LIME para explicarse.
+- **Los dos están a pocas milésimas del techo de información** ({dec(techo_auc, 4)} de AUC y {dec(techo_r2, 4)} de
+  R²). No hay un modelo que pueda hacerlo mucho mejor con estas variables.
+- La Entrega 2 no falló por falta de datos ni de optimización, sino porque sus modelos eran lineales
+  y la relación no lo es: las funciones de forma de la EBM lo muestran directamente.
+"""))

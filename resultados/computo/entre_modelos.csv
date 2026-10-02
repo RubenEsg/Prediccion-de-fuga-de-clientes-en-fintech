@@ -1,0 +1,5 @@
+esquema,tiempo_s
+todo en serie (1 núcleo),64.69903299998259
+"dentro de cada modelo (n_jobs=6), modelos en serie",24.722329650001484
+"entre modelos (4 a la vez, n_jobs=1 dentro)",44.20863800001098
+mixto (2 modelos a la vez × n_jobs=3 dentro),27.502934699994512

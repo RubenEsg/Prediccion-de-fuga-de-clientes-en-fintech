@@ -1,0 +1,290 @@
+#%% md
+# Comparación estadística de los modelos
+
+Una diferencia de una milésima de AUC entre dos modelos no significa nada si la variabilidad de
+la estimación es de cinco milésimas. Esta página aplica el protocolo de la guía (§6) para decidir
+qué diferencias son reales:
+
+| Tarea | Paso 1: ¿difieren? | Paso 2: ¿cuáles? | Paso 3: finalistas sobre la prueba | Tamaño del efecto |
+|---|---|---|---|---|
+| Clasificación | Friedman (con Iman-Davenport) | Nemenyi y diagrama de diferencia crítica | DeLong por pares con Holm y Benjamini-Hochberg | delta de Cliff |
+| Regresión | *Model Confidence Set* | Giacomini-White condicional | Diebold-Mariano con HLN y bootstrap estacionario | d de Cohen |
+
+En las dos tareas cada modelo entra con **su mejor combinación de balanceo y optimizador según el
+bucle externo**, elegida sin mirar la prueba. Los pasos 1 y 2 usan los puntajes de los 5 pliegues
+externos, que son los mismos para todos los modelos; el paso 3 usa la prueba (9.745 clientes), que
+cada modelo ve una sola vez. Las métricas principales llevan intervalos bootstrap BCa.
+
+#%% code
+import sys
+import warnings
+from pathlib import Path
+
+RAIZ = Path.cwd().parent
+sys.path.insert(0, str(RAIZ))
+warnings.filterwarnings('ignore')
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from IPython.display import Markdown, display
+
+from src import analisis, comparacion, datos, graficos
+from src import estadistica as est
+from src.analisis import NOMBRES_MODELO
+from src.formato import dec, ent, enumerar, intervalo, p_valor, pct
+
+graficos.estilo()
+pd.set_option('display.float_format', lambda v: f'{v:,.4f}')
+
+tabla = analisis.cargar_tabla()
+p = datos.preparar_todo()                      # etiqueta del percentil 75, la de las corridas
+X_te = p['conjuntos'].X_test.sort_index()      # orden original del archivo de clientes
+y_te = p['y_test'].loc[X_te.index]
+y_te_c = p['conjuntos'].y_test_cont.loc[X_te.index]
+pred = analisis.predecir_prueba(tabla, X_te, RAIZ / 'resultados' / 'predicciones_prueba.parquet',
+                                informar=lambda s: None)
+mejores = {t: analisis.mejores_por_modelo(tabla, t) for t in ('clasificacion', 'regresion')}
+for t, m in mejores.items():
+    print(t)
+    print(m[['modelo', 'balanceo', 'optimizador', 'metrica', 'desv_ext']].to_string(index=False))
+
+#%% md
+## Clasificación
+
+### Paso 1 y 2: Friedman y Nemenyi sobre los pliegues externos
+
+Cada pliegue externo es un bloque en el que los modelos se ordenan por su AUC. Con 5 bloques la
+prueba tiene poca potencia (la diferencia crítica de Nemenyi es grande), así que se repite con un
+diseño más amplio como comprobación de robustez: cada combinación de pliegue, balanceo y
+optimizador es un bloque, de modo que un modelo se compara con los demás en las mismas condiciones.
+Esos bloques no son independientes (comparten datos), y por eso el diseño principal es el de 5.
+
+#%% code
+def puntajes_por_pliegue(mej):
+    return pd.DataFrame({f['modelo']: f['puntajes_ext'] for _, f in mej.iterrows()})
+
+auc_pliegues = puntajes_por_pliegue(mejores['clasificacion'])
+fr_c = est.friedman(auc_pliegues)
+
+ok = tabla[(tabla['tarea'] == 'clasificacion') & (tabla['estado'] == 'ok')]
+largo = []
+for _, f in ok.iterrows():
+    for i, v in enumerate(f['puntajes_ext']):
+        largo.append({'bloque': (f['balanceo'], f['optimizador'], i), 'modelo': f['modelo'], 'auc': v})
+amplio = pd.DataFrame(largo).pivot_table(index='bloque', columns='modelo', values='auc')
+fr_amplio = est.friedman(amplio)
+
+fig, ax = plt.subplots(2, 1, figsize=(11, 5.6))
+graficos.diagrama_cd(fr_c, ax=ax[0], etiquetas=NOMBRES_MODELO,
+                     titulo=f'5 pliegues externos (mejor combinación de cada modelo): Friedman {p_valor(fr_c["p"], grafico=True)}')
+graficos.diagrama_cd(fr_amplio, ax=ax[1], etiquetas=NOMBRES_MODELO,
+                     titulo=f'{fr_amplio["n_bloques"]} bloques pliegue × balanceo × optimizador: Friedman {p_valor(fr_amplio["p"], grafico=True)}')
+plt.tight_layout()
+plt.show()
+pd.DataFrame({'5 pliegues': {k: fr_c[k] for k in ('n_bloques', 'k', 'chi2', 'p', 'F', 'p_iman_davenport', 'dc')},
+              'bloques amplios': {k: fr_amplio[k] for k in ('n_bloques', 'k', 'chi2', 'p', 'F', 'p_iman_davenport', 'dc')}})
+
+#%% code
+rangos = fr_c['rangos_medios']
+mejor_modelo = rangos.index[0]
+indistinguibles = [m for m in rangos.index if fr_c['p_nemenyi'].loc[mejor_modelo, m] >= 0.05]
+display(Markdown(f"""
+Con los 5 pliegues externos los modelos difieren (Friedman {p_valor(fr_c['p'])}; Iman-Davenport
+{p_valor(fr_c['p_iman_davenport'])}), pero la diferencia crítica de Nemenyi es de {dec(fr_c['dc'], 2)} rangos
+sobre {fr_c['k']} modelos, y solo los extremos se separan: {NOMBRES_MODELO[mejor_modelo]}, el de mejor
+rango medio, no se distingue de {enumerar(NOMBRES_MODELO[m] for m in indistinguibles if m != mejor_modelo)}.
+Con {fr_amplio['n_bloques']} bloques la diferencia crítica baja a {dec(fr_amplio['dc'], 2)} rangos y el orden es
+el mismo: {', '.join(f"{NOMBRES_MODELO[m]} ({dec(v, 2)})" for m, v in fr_amplio['rangos_medios'].items())}.
+"""))
+
+#%% md
+### Paso 3: DeLong entre los finalistas, sobre la prueba
+
+Los finalistas son los modelos que Nemenyi no separa del mejor en el diseño amplio, más el modelo
+nuevo. Sobre la prueba, DeLong compara cada pareja teniendo en cuenta que las dos AUC se calculan
+sobre los mismos clientes (y por eso están correlacionadas). Con varias parejas a la vez, los
+p-valores se ajustan con Holm-Bonferroni (controla la probabilidad de algún falso positivo) y con
+Benjamini-Hochberg (controla la proporción de falsos descubrimientos).
+
+#%% code
+rangos_amplio = fr_amplio['rangos_medios']
+lider = rangos_amplio.index[0]
+finalistas = [m for m in rangos_amplio.index if fr_amplio['p_nemenyi'].loc[lider, m] >= 0.05]
+if 'ebm' in auc_pliegues.columns and 'ebm' not in finalistas:
+    finalistas.append('ebm')
+claves = mejores['clasificacion'].set_index('modelo')['clave']
+puntajes = {m: pred[claves[m]].to_numpy() for m in finalistas}
+pares = [(a, b) for i, a in enumerate(finalistas) for b in finalistas[i + 1:]]
+delong = comparacion.contrastar_clasificacion(y_te, puntajes, pares, auc_pliegues={m: auc_pliegues[m] for m in finalistas})
+delong['p_bh'] = est.ajustar_pvalores(delong['p_delong'], 'fdr_bh')
+delong[['referencia', 'candidato', 'auc_referencia', 'auc_candidato', 'diferencia', 'ic_bca_inf', 'ic_bca_sup',
+        'p_delong', 'p_delong_ajustado', 'p_bh', 'correlacion_auc', 'delta_cliff', 'magnitud_cliff']]
+
+#%% code
+intervalos_clf = comparacion.intervalos_clasificacion(y_te, {m: pred[claves[m]].to_numpy() for m in claves.index})
+intervalos_clf.index = [NOMBRES_MODELO[m] for m in intervalos_clf.index]
+intervalos_clf.sort_values('auc', ascending=False)
+
+#%% code
+sig = delong[delong['p_delong_ajustado'] < 0.05]
+if len(sig) == 0:
+    frase_holm = '**ninguna diferencia sobrevive** a la corrección de Holm'
+else:
+    detalle = '; '.join(f"{NOMBRES_MODELO[r.candidato]} frente a {NOMBRES_MODELO[r.referencia]}: "
+                        f"{dec(r.diferencia, 4, True)}, Holm {p_valor(r.p_delong_ajustado)}" for r in sig.itertuples())
+    frase_holm = (f"**{len(sig)} {'diferencia sobrevive' if len(sig) == 1 else 'diferencias sobreviven'}** "
+                  f"a la corrección de Holm ({detalle})")
+display(Markdown(f"""
+Finalistas: {enumerar(NOMBRES_MODELO[m] for m in finalistas)}. De sus {len(delong)} parejas,
+{frase_holm}. Las diferencias de AUC entre finalistas son de {dec(delong['diferencia'].abs().min(), 4)} a
+{dec(delong['diferencia'].abs().max(), 4)}, del mismo orden que la anchura de los intervalos BCa de cada
+modelo (unas {dec((intervalos_clf['ic_bca_sup'] - intervalos_clf['ic_bca_inf']).median() / 2, 3)} a cada lado).
+La correlación entre las AUC de dos finalistas es de {dec(delong['correlacion_auc'].min(), 2)} a
+{dec(delong['correlacion_auc'].max(), 2)}: ordenan a los clientes de forma muy parecida, que es la razón de que
+DeLong sea mucho más sensible que comparar sus intervalos por separado.
+
+El delta de Cliff sobre los pliegues externos mide otra cosa: con qué frecuencia un modelo supera al
+otro pliegue a pliegue. Valores de ±1 indican que uno gana en todos los pliegues, aunque la ventaja
+sea de milésimas; por eso se lee junto a la diferencia de AUC y no en lugar de ella.
+"""))
+
+#%% md
+## Regresión
+
+### Paso 1: *Model Confidence Set*
+
+El MCS de Hansen, Lunde y Nason (2011) responde a «¿qué modelos podrían ser el mejor?». Parte de
+todos y elimina, de uno en uno, el peor mientras la prueba de igualdad de precisión se rechace,
+usando las pérdidas cuadráticas de la prueba y un bootstrap estacionario (las filas se toman en el
+orden original del archivo, que no es aleatorio: está organizado por bloques de clientes). Los que
+sobreviven forman un conjunto que contiene al mejor modelo con un 90 % de confianza.
+
+#%% code
+claves_r = mejores['regresion'].set_index('modelo')['clave']
+pron = {m: pred[claves_r[m]].to_numpy() for m in claves_r.index}
+perdidas = pd.DataFrame({m: (y_te_c.to_numpy() - v) ** 2 for m, v in pron.items()})
+mcs = est.conjunto_confianza_modelos(perdidas, alfa=0.10, n_boot=2000)
+pd.DataFrame({'p MCS': mcs['p_mcs'], 'en el conjunto (90 %)': mcs['p_mcs'] > mcs['alfa'],
+              'RMSE de prueba': np.sqrt(perdidas.mean())}).rename(index=NOMBRES_MODELO).sort_values('p MCS', ascending=False)
+
+#%% code
+eliminados = [m for m in mcs['p_mcs'].sort_values().index if m not in mcs['incluidos']]
+display(Markdown(f"""
+El conjunto de confianza al 90 % contiene {len(mcs['incluidos'])} {'modelo' if len(mcs['incluidos']) == 1 else 'modelos'}:
+**{enumerar(NOMBRES_MODELO[m] for m in mcs['incluidos'])}**. Quedan fuera {enumerar(f"{NOMBRES_MODELO[m]} ({p_valor(mcs['p_mcs'][m])})" for m in reversed(eliminados))};
+el último en salir es el de mayor p-valor MCS.
+Que salgan incluso modelos con un RMSE casi idéntico se explica porque las pérdidas de dos modelos
+sobre el mismo cliente están muy correlacionadas: con 9.745 clientes, una diferencia sistemática de
+décimas de milésima es detectable. El bootstrap usó bloques de longitud media {mcs['bloque']}, elegida con
+el método de Politis y White a partir de la dependencia de las pérdidas en el orden del archivo.
+"""))
+
+#%% md
+### Comprobación complementaria: *Superior Predictive Ability* (SPA)
+
+El MCS pregunta qué modelos podrían ser el mejor. La prueba SPA de Hansen (2005), versión refinada
+del *Reality Check* de White (2000), responde a otra pregunta: ¿algún modelo de un conjunto supera de
+forma genuina a uno de referencia, teniendo en cuenta que se probaron muchos? Se aplica dos veces: con el
+Lasso (el modelo de la Entrega 2) como referencia, y con el mejor modelo como referencia.
+
+#%% code
+from arch.bootstrap import SPA
+
+orden_rmse = list(np.sqrt(perdidas.mean()).sort_values().index)
+spa_filas = []
+for referencia in ('lasso', orden_rmse[0]):
+    otros = [m for m in perdidas.columns if m != referencia]
+    spa = SPA(perdidas[referencia], perdidas[otros], block_size=mcs['bloque'], reps=2000,
+              bootstrap='stationary', seed=42)
+    spa.compute()
+    spa_filas.append({'referencia': NOMBRES_MODELO[referencia], 'modelos comparados': len(otros),
+                      'p SPA (consistente)': float(spa.pvalues['consistent']),
+                      'p SPA (inferior)': float(spa.pvalues['lower']), 'p SPA (superior)': float(spa.pvalues['upper'])})
+spa_tabla = pd.DataFrame(spa_filas).set_index('referencia')
+display(spa_tabla)
+display(Markdown(f"""
+Frente al Lasso, la hipótesis de que ningún modelo lo supera se rechaza
+({p_valor(spa_tabla.iloc[0]['p SPA (consistente)'])}): al menos un modelo es genuinamente más preciso, lo que coincide con la
+comparación con la Entrega 2. Frente a {spa_tabla.index[1]}, {'no se rechaza' if spa_tabla.iloc[1]['p SPA (consistente)'] >= 0.05 else 'se rechaza'}
+({p_valor(spa_tabla.iloc[1]['p SPA (consistente)'])}): {'ningún otro modelo lo supera de forma genuina' if spa_tabla.iloc[1]['p SPA (consistente)'] >= 0.05 else 'algún modelo lo supera'}.
+"""))
+
+#%% md
+### Paso 2: Giacomini-White condicional
+
+Diebold-Mariano pregunta si dos modelos son igual de precisos en promedio. Giacomini y White (2006)
+preguntan además si la ventaja de uno depende de algo observable. Aquí el instrumento es el nivel de
+riesgo que pronostica el modelo de referencia: si la prueba rechaza, el candidato gana en unos
+tramos de riesgo y no en otros, y el coeficiente de la regresión del diferencial de pérdidas sobre
+ese nivel dice en cuáles. Se eligió Giacomini-White en lugar de Clark-West porque los modelos
+comparados no están anidados.
+
+#%% code
+orden = list(pd.Series(np.sqrt(perdidas.mean())).sort_values().index)
+mejor_r = orden[0]
+filas = []
+for m in orden[1:]:
+    gw = est.giacomini_white(perdidas[m], perdidas[mejor_r], instrumentos=pron[m])
+    filas.append({'referencia': NOMBRES_MODELO[m], 'candidato': NOMBRES_MODELO[mejor_r], 'GW': gw['estadistico'],
+                  'gl': gw['gl'], 'p': gw['p'], 'd medio': gw['d_media'],
+                  'pendiente frente al riesgo pronosticado': gw['coeficientes'][1]})
+gw_tabla = pd.DataFrame(filas)
+gw_tabla
+
+#%% md
+### Paso 3: Diebold-Mariano con HLN y bootstrap estacionario entre los finalistas
+
+#%% code
+finalistas_r = [m for m in orden if m in mcs['incluidos']] + [m for m in orden if m not in mcs['incluidos']][:2]
+pares_r = [(a, b) for i, b in enumerate(finalistas_r) for a in finalistas_r[i + 1:]]
+rmse_pliegues = {m: [-v for v in f] for m, f in mejores['regresion'].set_index('modelo')['puntajes_ext'].items()}
+dm = comparacion.contrastar_regresion(y_te_c, pron, pares_r, rmse_pliegues=rmse_pliegues)
+dm[['referencia', 'candidato', 'mejora_rmse', 'mejora_rmse_ic_inf', 'mejora_rmse_ic_sup', 'mejora_r2', 'dm_hln',
+    'p_dm', 'p_dm_ajustado', 'bloque', 'p_bootstrap_estacionario', 'p_ljung_box', 'd_cohen_z', 'd_cohen_pliegues']]
+
+#%% code
+intervalos_reg = comparacion.intervalos_regresion(y_te_c, pron)
+intervalos_reg.index = [NOMBRES_MODELO[m] for m in intervalos_reg.index]
+intervalos_reg.sort_values('rmse')
+
+#%% code
+sig_r = dm[dm['p_dm_ajustado'] < 0.05]
+gw_sig = gw_tabla[gw_tabla['p'] < 0.05]
+pendientes_positivas = int((gw_sig['pendiente frente al riesgo pronosticado'] > 0).sum())
+d_pliegues = dm['d_cohen_pliegues'].abs()
+display(Markdown(f"""
+De las {len(dm)} parejas de finalistas, {len(sig_r)} {'tiene' if len(sig_r) == 1 else 'tienen'} una diferencia de precisión significativa
+tras Holm; el bootstrap estacionario, que no supone normalidad y respeta la dependencia por bloques
+del archivo, coincide con Diebold-Mariano en {int(((dm['p_bootstrap_estacionario'] < 0.05) == (dm['p_dm'] < 0.05)).sum())}
+de {len(dm)} parejas. Las mejoras de RMSE son pequeñas en términos absolutos (de
+{dec(dm['mejora_rmse'].abs().min(), 5)} a {dec(dm['mejora_rmse'].abs().max(), 5)}) y la d de Cohen por fila lo
+confirma ({dec(dm['d_cohen_z'].abs().min(), 3)} a {dec(dm['d_cohen_z'].abs().max(), 3)}, despreciable): el error de un
+cliente concreto apenas cambia de un modelo a otro. La d de Cohen entre pliegues, en cambio, va de
+{dec(d_pliegues.min(), 2)} a {dec(d_pliegues.max(), 2)}, porque la variabilidad entre pliegues es mínima: la ventaja
+es pequeña pero estable.
+
+Giacomini-White rechaza la igualdad condicional en {len(gw_sig)} de {len(gw_tabla)} comparaciones con
+{NOMBRES_MODELO[mejor_r]}{': la ventaja depende del nivel de riesgo pronosticado' if len(gw_sig) else ''}.
+{f"En {pendientes_positivas} de esas {len(gw_sig)} la pendiente es positiva: la ventaja de {NOMBRES_MODELO[mejor_r]} crece con el riesgo que pronostica el otro modelo, es decir, donde más gana es en los clientes de mayor riesgo." if len(gw_sig) and pendientes_positivas == len(gw_sig) else ''}
+"""))
+
+#%% md
+## Conclusión
+
+#%% code
+resto = [m for m in rangos_amplio.index if m not in finalistas]
+n_inc = len(mcs['incluidos'])
+display(Markdown(f"""
+- **Clasificación.** {enumerar(NOMBRES_MODELO[m] for m in finalistas)} forman un grupo que las pruebas no
+  logran separar entre sí y que sí se separa con claridad de {enumerar(NOMBRES_MODELO[m] for m in resto)}.
+  Elegir entre los finalistas por una milésima de AUC no tiene respaldo estadístico; la elección se
+  apoya en otros criterios (calibración, coste, interpretabilidad).
+- **Regresión.** El conjunto de confianza deja {'a ' + NOMBRES_MODELO[mcs['incluidos'][0]] + ' como único candidato'
+  if n_inc == 1 else 'a ' + enumerar(NOMBRES_MODELO[m] for m in mcs['incluidos']) + ' como candidatos'} al mejor
+  modelo, aunque con ventajas de RMSE de décimas de milésima sobre los siguientes.
+- Las dos conclusiones coinciden con el techo de información documentado en la sección del modelo
+  nuevo: los mejores modelos están todos a pocas milésimas del máximo alcanzable sin
+  `active_products`, de modo que es esperable que no se distingan entre sí en clasificación y que
+  en regresión las diferencias, aunque detectables, sean pequeñas.
+"""))

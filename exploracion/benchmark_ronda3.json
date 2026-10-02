@@ -1,0 +1,688 @@
+{
+ "hgb directo, todas las variables [referencia]": {
+  "auc_med": [
+   0.7226811741139154,
+   0.7261948363486213,
+   0.7189700707556591,
+   0.7251002040353363,
+   0.7196366598979652
+  ],
+  "auc_p75": [
+   0.8273271690784503,
+   0.8342761289188817,
+   0.8354617532404734,
+   0.8309734853048922,
+   0.8361106043841295
+  ],
+  "r2": [
+   0.22454051499327377,
+   0.2283617438353691,
+   0.21969863367390896,
+   0.2205016326080671,
+   0.22412328492585276
+  ],
+  "lupi": false
+ },
+ "hgb directo, 4 variables": {
+  "auc_med": [
+   0.7226793971438036,
+   0.7293508339880153,
+   0.7174599752290366,
+   0.7243029297378243,
+   0.7197194747824727
+  ],
+  "auc_p75": [
+   0.8342000980650475,
+   0.8335543287284801,
+   0.8386511164949128,
+   0.8329528824824876,
+   0.8390844583577195
+  ],
+  "r2": [
+   0.22844305355474925,
+   0.23156968586238158,
+   0.22026631944742314,
+   0.22136139926091425,
+   0.22588424374586036
+  ],
+  "variables_por_pliegue": [
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction"
+   ]
+  ],
+  "lupi": false
+ },
+ "hgb directo, 5 variables": {
+  "auc_med": [
+   0.7240690864919141,
+   0.728378304827113,
+   0.7185865413731622,
+   0.7257041667999736,
+   0.7201099489378432
+  ],
+  "auc_p75": [
+   0.833028028805299,
+   0.8339446801138157,
+   0.8393943027542246,
+   0.834580801638827,
+   0.8381368789020239
+  ],
+  "r2": [
+   0.22838008852114655,
+   0.2309560387651185,
+   0.2201286164770816,
+   0.22102013252916064,
+   0.22567791777363544
+  ],
+  "variables_por_pliegue": [
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low"
+   ]
+  ],
+  "lupi": false
+ },
+ "hgb directo, 6 variables": {
+  "auc_med": [
+   0.72350071931092,
+   0.7277027271160308,
+   0.7167897284282904,
+   0.7249212106561822,
+   0.7194855128591503
+  ],
+  "auc_p75": [
+   0.8323167954715586,
+   0.8329451963307146,
+   0.8405984582685049,
+   0.8344549578217528,
+   0.839916802668569
+  ],
+  "r2": [
+   0.22813377224157827,
+   0.23116370102625883,
+   0.2198188000097835,
+   0.22189923576111192,
+   0.22592084861434913
+  ],
+  "variables_por_pliegue": [
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "income_bracket_Very High"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction"
+   ]
+  ],
+  "lupi": false
+ },
+ "hgb directo, 8 variables": {
+  "auc_med": [
+   0.7244555445844104,
+   0.7276025586526829,
+   0.7176023302791166,
+   0.7235108231417703,
+   0.7200181481775525
+  ],
+  "auc_p75": [
+   0.8305469569299009,
+   0.8328415189319093,
+   0.8409081414316963,
+   0.8359060763676016,
+   0.8382797125699781
+  ],
+  "r2": [
+   0.2285043762224137,
+   0.23153633655543238,
+   0.22037057836371543,
+   0.22138625929742395,
+   0.22687497820346858
+  ],
+  "variables_por_pliegue": [
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction",
+    "savings_account",
+    "income_bracket_Very High"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "income_bracket_Very High",
+    "product_satisfaction",
+    "savings_account"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction",
+    "savings_account",
+    "income_bracket_Very High"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction",
+    "savings_account",
+    "income_bracket_Very High"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction",
+    "savings_account",
+    "income_bracket_Very High"
+   ]
+  ],
+  "lupi": false
+ },
+ "hgb directo, 12 variables": {
+  "auc_med": [
+   0.7254620665254173,
+   0.7269309955777795,
+   0.7169500177137593,
+   0.7270417127645386,
+   0.720047640282687
+  ],
+  "auc_p75": [
+   0.8309743338294748,
+   0.831544200673385,
+   0.8416591942122315,
+   0.8340552212400654,
+   0.8384629486660232
+  ],
+  "r2": [
+   0.22693971494397436,
+   0.23000731284294085,
+   0.2192649604546919,
+   0.2216356827444187,
+   0.22563748855332677
+  ],
+  "variables_por_pliegue": [
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction",
+    "savings_account",
+    "income_bracket_Very High",
+    "credit_card",
+    "credit_utilization_ratio",
+    "feature_usage_diversity",
+    "investment_account"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "income_bracket_Very High",
+    "product_satisfaction",
+    "savings_account",
+    "feature_usage_diversity",
+    "n_tx",
+    "tx_count",
+    "tx_satisfaction"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction",
+    "savings_account",
+    "income_bracket_Very High",
+    "credit_card",
+    "feature_usage_diversity",
+    "investment_account",
+    "location_Bogotá, Cundinamarca"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction",
+    "savings_account",
+    "income_bracket_Very High",
+    "feature_usage_diversity",
+    "credit_card",
+    "credit_utilization_ratio",
+    "investment_account"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction",
+    "savings_account",
+    "income_bracket_Very High",
+    "feature_usage_diversity",
+    "credit_card",
+    "credit_utilization_ratio",
+    "investment_account"
+   ]
+  ],
+  "lupi": false
+ },
+ "xgboost directo, 6 variables": {
+  "auc_med": [
+   0.7234212492586909,
+   0.7268642275711655,
+   0.718134532827647,
+   0.7233314347790653,
+   0.720440879322914
+  ],
+  "auc_p75": [
+   0.8314017979755325,
+   0.831399291468391,
+   0.835990676794598,
+   0.8290884820484349,
+   0.8327905472977155
+  ],
+  "r2": [
+   0.2253741365641726,
+   0.23232361260094503,
+   0.21970453968798653,
+   0.22137981702977405,
+   0.22624148809549216
+  ],
+  "variables_por_pliegue": [
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "income_bracket_Very High"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction"
+   ]
+  ],
+  "lupi": false
+ },
+ "ebm directo, 6 variables": {
+  "auc_med": [
+   0.721001081779916,
+   0.7264333452258704,
+   0.7165345357761013,
+   0.7218826021990314,
+   0.7209646933420125
+  ],
+  "auc_p75": [
+   0.8267856737784183,
+   0.8269486036456889,
+   0.8337824953991961,
+   0.8271653496635702,
+   0.8304175267452311
+  ],
+  "r2": [
+   0.22892456220408408,
+   0.2356486599094091,
+   0.22300797167151354,
+   0.2252398239170197,
+   0.2271025924402933
+  ],
+  "variables_por_pliegue": [
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "income_bracket_Very High"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction"
+   ],
+   [
+    "app_logins_frequency",
+    "age",
+    "satisfaction_score",
+    "base_satisfaction",
+    "income_bracket_Low",
+    "product_satisfaction"
+   ]
+  ],
+  "lupi": false
+ },
+ "mezcla del oraculo, discreta": {
+  "auc_med": [
+   0.7236917765048091,
+   0.7239963623447396,
+   0.7115588220215036,
+   0.7208847091729532,
+   0.7165532208077862
+  ],
+  "auc_p75": [
+   0.8207259692648089,
+   0.8272255343482647,
+   0.8313690733540215,
+   0.8255342899409697,
+   0.8299829631149811
+  ],
+  "r2": [
+   0.2308748330142263,
+   0.23808413317491872,
+   0.2239166695227579,
+   0.2283715326623612,
+   0.23016540654116702
+  ],
+  "lupi": true
+ },
+ "mezcla del oraculo, suavizada": {
+  "auc_med": [
+   0.7277295462019797,
+   0.7283635296497006,
+   0.7169031254469161,
+   0.7246648992469376,
+   0.7218463295429396
+  ],
+  "auc_p75": [
+   0.8271557297383129,
+   0.8309084513953623,
+   0.8332540162812989,
+   0.8297767083928492,
+   0.8309390031015311
+  ],
+  "r2": [
+   0.2308748330142263,
+   0.23808413317491872,
+   0.2239166695227579,
+   0.2283715326623612,
+   0.23016540654116702
+  ],
+  "sigma": [
+   0.0015860575473815178,
+   0.0016763754049756007,
+   0.0018003751096208572,
+   0.0016941424459840251,
+   0.001384031022443312
+  ],
+  "lupi": true
+ },
+ "objetivo depurado + hgb, todas las variables": {
+  "auc_med": [
+   0.7262196152096269,
+   0.7273712892832973,
+   0.7173743186882697,
+   0.7238376061995564,
+   0.721060937667251
+  ],
+  "auc_p75": [
+   0.8270868922628074,
+   0.8304094181062811,
+   0.8332768603033829,
+   0.8296400716438361,
+   0.8309021749084
+  ],
+  "r2": [
+   0.23071934652410353,
+   0.23816030203119587,
+   0.22411889316744882,
+   0.22829194511695683,
+   0.2303121732481488
+  ],
+  "lupi": true
+ },
+ "objetivo depurado + hgb, 4 variables": {
+  "auc_med": [
+   0.7261519916248108,
+   0.7268558034165606,
+   0.7170913526513678,
+   0.7232631355400537,
+   0.7203686302483933
+  ],
+  "auc_p75": [
+   0.8270834024034661,
+   0.8296792475492099,
+   0.8328846897764024,
+   0.8291753563038773,
+   0.8304246299716704
+  ],
+  "r2": [
+   0.23040993071656557,
+   0.23722930379862128,
+   0.2233093293166244,
+   0.22738213215433467,
+   0.22842999119321195
+  ],
+  "lupi": true
+ },
+ "objetivo depurado + hgb, 6 variables": {
+  "auc_med": [
+   0.7261780867599733,
+   0.7268971344250905,
+   0.7171178426687774,
+   0.7232691919545011,
+   0.7203727775756779
+  ],
+  "auc_p75": [
+   0.8271021603974252,
+   0.8296684413615513,
+   0.8328749566230241,
+   0.8291796469366562,
+   0.8304380220418999
+  ],
+  "r2": [
+   0.23042319244343545,
+   0.23723215850241752,
+   0.2233201723889785,
+   0.22739680061688217,
+   0.2284190214482883
+  ],
+  "lupi": true
+ },
+ "objetivo depurado + hgb, 8 variables": {
+  "auc_med": [
+   0.7262097760603032,
+   0.7269086847308183,
+   0.7171178426687774,
+   0.7232825555646403,
+   0.7203838041998075
+  ],
+  "auc_p75": [
+   0.827109619971767,
+   0.8296583437763622,
+   0.8328749566230241,
+   0.829210389099351,
+   0.8304391983723929
+  ],
+  "r2": [
+   0.23039709095236538,
+   0.23723676534381533,
+   0.2233201723889785,
+   0.22737514786974355,
+   0.2284067834222756
+  ],
+  "lupi": true
+ },
+ "objetivo depurado + ebm, 6 variables": {
+  "auc_med": [
+   0.7260020350914742,
+   0.7267084136178303,
+   0.717265594442901,
+   0.7234568420564792,
+   0.720386832407031
+  ],
+  "auc_p75": [
+   0.8268649372087057,
+   0.8295434173133549,
+   0.8329792213619517,
+   0.8295274535917196,
+   0.8303320618105572
+  ],
+  "r2": [
+   0.2303525300650785,
+   0.23722844877210414,
+   0.22369473984394694,
+   0.2274530321044218,
+   0.22842671027255312
+  ],
+  "lupi": true
+ }
+}

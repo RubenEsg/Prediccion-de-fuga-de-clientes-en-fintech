@@ -1,0 +1,132 @@
+#%% md
+# Fuga de clientes en una *fintech* colombiana: modelos, optimización y evaluación
+
+**Universidad del Norte · Pregrado en Ciencia de Datos · Machine Learning · Entregable 3**
+
+Martínez Pulido, Valerie · Basto Martínez, Abrahan · Esguerra Fernández, Rubén
+
+Octubre de 2026
+
+Continúa el [análisis exploratorio](https://rubenesg.github.io/Machine_learning/) de la Entrega 1 y los
+[modelos base](https://rubenesg.github.io/-MACHINE-LEARNING-Entregable-2/) de la Entrega 2. Código, cuadernos y
+resultados: <https://github.com/RubenEsg/predicci-n-de-fuga-de-clientes-en-fintech>.
+
+#%% code [remove-input]
+import json
+import sys
+import warnings
+from pathlib import Path
+
+RAIZ = Path.cwd().parent
+sys.path.insert(0, str(RAIZ))
+warnings.filterwarnings('ignore')
+
+import hashlib
+import pandas as pd
+from IPython.display import Markdown, display
+
+from src import analisis
+from src.analisis import NOMBRES_MODELO
+from src.formato import dec, ent, enumerar, p_valor, pct
+
+tabla = analisis.cargar_tabla()
+ok = tabla[tabla['estado'] == 'ok']
+guia = tabla[tabla['modelo'] != 'ebm']
+mejores = {t: analisis.mejores_por_modelo(tabla[tabla['modelo'] != 'ebm'], t) for t in ('clasificacion', 'regresion')}
+cmp_dir = RAIZ / 'resultados' / 'comparacion_entrega2'
+busq = json.loads((cmp_dir / 'busquedas.json').read_text(encoding='utf-8'))
+c_clf = pd.read_csv(cmp_dir / 'contrastes_clasificacion.csv').set_index(['referencia', 'candidato'])
+c_reg = pd.read_csv(cmp_dir / 'contrastes_regresion.csv').set_index(['referencia', 'candidato'])
+e_clf, e_reg = c_clf.loc[('logistica_e2', 'ebm')], c_reg.loc[('lasso_e2', 'ebm')]
+x_clf, x_reg = c_clf.loc[('xgboost', 'ebm')], c_reg.loc[('xgboost', 'ebm')]
+r2 = {m: busq['modelos'][f'regresion/{m}']['prueba']['r2'] for m in ('lasso_e2', 'ebm', 'xgboost')}
+huella = hashlib.sha256()
+for f in sorted((RAIZ / 'src').glob('*.py')):
+    huella.update(f.name.encode())
+    huella.update(f.read_bytes())
+mc, mr = mejores['clasificacion'].iloc[0], mejores['regresion'].iloc[0]
+
+display(Markdown(f"""
+## Resumen
+
+Se predice la fuga de clientes de una *fintech* colombiana con el conjunto público COFINFAD (48.723
+clientes, 54 variables y 3,16 millones de transacciones de 2023), en dos tareas: la **clasificación** del
+cuarto de clientes de mayor riesgo y la **regresión** de la probabilidad de fuga. Siguiendo la guía del
+proyecto, se recorrió el pipeline combinatorio completo: 7 modelos de clasificación × 4 técnicas de
+balanceo × 4 métodos de optimización de hiperparámetros, más 7 modelos de regresión × 4 métodos, es
+decir, **{len(guia)} corridas** ({int((guia['estado'] == 'ok').sum())} entrenadas y {int((guia['estado'] == 'no_aplica').sum())} que no aplican), cada una con validación cruzada anidada
+de 5 × 3 pliegues, registradas en una tabla maestra y analizadas con contrastes estadísticos.
+
+**Resultados principales.** Los mejores modelos son **{NOMBRES_MODELO[mc['modelo']]}** en clasificación (AUC
+externa {dec(mc['metrica'])}) y **{NOMBRES_MODELO[mr['modelo']]}** en regresión (RMSE externo {dec(mr['metrica'])}). Los modelos de
+árboles no se distinguen estadísticamente entre sí y superan con claridad a k-NN, a los lineales y a
+Naive Bayes. La optimización bayesiana es el método que mejor aprovecha el presupuesto de
+evaluaciones, aunque los cuatro métodos terminan en el mismo nivel de métrica.
+
+**El modelo nuevo.** La *Explainable Boosting Machine* (EBM), un modelo que no forma parte del curso,
+**supera a la Entrega 2** en la misma prueba y con la misma etiqueta: {dec(e_clf['auc_referencia'])} → {dec(e_clf['auc_candidato'])} de
+AUC (DeLong {p_valor(e_clf['p_delong'])}) y {dec(r2['lasso_e2'])} → {dec(r2['ebm'])} de R² (Diebold-Mariano {p_valor(e_reg['p_dm'])}). Empata con
+XGBoost, el mejor modelo visto en clase ({p_valor(x_clf['p_delong'])} en AUC y {p_valor(x_reg['p_dm'])} en pérdida cuadrática), con la
+ventaja de ser interpretable por construcción, y los dos quedan a pocas milésimas del techo de
+información que dejan los datos al excluir la variable con la que se construyó la etiqueta.
+"""))
+
+#%% md
+## Cómo está organizado este libro
+
+| Sección | Contenido | Guía |
+|---|---|---|
+| **Data** | Carga y auditoría de las tablas, partición antes de mirar el objetivo, construcción de la etiqueta, variables eliminadas, dónde está la señal, estructura del archivo y corrección de las observaciones de la Entrega 1 | §7.1 |
+| **Metodología** | Pipeline, modelos y espacios de búsqueda, balanceo, validación anidada, los cuatro optimizadores, multi-fidelidad y reproducibilidad | §2, §3 |
+| **Modelos y Resultados** | Las 140 corridas; comparación de los optimizadores; optimización computacional; evaluación en prueba, calibración, residuos y robustez; interpretabilidad con SHAP, LIME y la EBM | §2–§5, §7.2 |
+| **El modelo nuevo** | La EBM frente a la Entrega 2 con DeLong, Diebold-Mariano y bootstrap; el techo de información | Exigencia de la entrega |
+| **Comparación estadística y conclusiones** | Friedman, Nemenyi y diagramas de diferencia crítica, DeLong con corrección múltiple, MCS, SPA, Giacomini-White, Diebold-Mariano; conclusiones | §6, §9 |
+
+Todas las cifras del texto se generan a partir de los resultados (ninguna está escrita a mano), y
+cada página se ejecuta de principio a fin antes de publicarse.
+
+## Reproducibilidad
+
+#%% code [remove-input]
+import re
+
+
+def minutos_de_log(ruta):
+    """Minutos totales de las ejecuciones registradas en un progreso.log ('fin en X min'), si existe."""
+    if not ruta.exists():
+        return None
+    hallados = re.findall(r'fin en ([\d.]+) min', ruta.read_text(encoding='utf-8', errors='replace'))
+    return float(sum(map(float, hallados))) if hallados else None
+
+
+def duracion(minutos):
+    if minutos is None:
+        return 'pendiente'
+    return f'{dec(minutos / 60, 1)} h' if minutos >= 90 else f'{dec(minutos, 0)} min'
+
+
+h_guia = ok[ok['modelo'] != 'ebm']['tiempo_total_s'].sum() / 60
+h_ebm = ok[ok['modelo'] == 'ebm']['tiempo_total_s'].sum() / 60
+m_cmp = minutos_de_log(RAIZ / 'resultados' / 'comparacion_entrega2' / 'progreso.log')
+m_comp = minutos_de_log(RAIZ / 'resultados' / 'computo' / 'progreso.log')
+m_compl = minutos_de_log(RAIZ / 'resultados' / 'complementos' / 'progreso.log')
+display(Markdown(f"""
+El código está en el paquete `src/` (carga y preprocesamiento, modelos, balanceo, optimización,
+evaluación, estadística) y en cinco guiones que producen los resultados que este libro lee. La huella
+SHA-256 del código con que se generó esta versión es `{huella.hexdigest()[:12]}`.
+
+| Paso | Guion | Duración en el equipo de referencia (6 núcleos) |
+|---|---|---|
+| Las 140 corridas | `correr_140.py` | {duracion(h_guia)} |
+| La comparación con la Entrega 2 | `comparar_entrega2.py` | {duracion(m_cmp)} |
+| Las 20 corridas del modelo nuevo | `correr_140.py --plan modelo_nuevo` | {duracion(h_ebm) if h_ebm else 'pendiente'} |
+| Experimentos de cómputo (§4) | `computo.py` | {duracion(m_comp)} |
+| Calibración, semillas, predicciones fuera de pliegue | `complementos.py` | {duracion(m_compl)} |
+| Este libro | `libro/construir.py` y `jupyter-book build .` | unos minutos |
+
+Los datos se descargan de Mendeley Data (DOI 10.17632/mhb4zn3258.1) en `datos/`; el entorno se
+reconstruye con `pip install -r requirements.txt` (versiones exactas); la semilla del proyecto es 42; y
+las {ent(len(tabla))} corridas quedan en `resultados/experimentos.parquet`, una fila por corrida con sus
+métricas por pliegue, hiperparámetros, tiempos y trazas. Las pruebas automáticas se ejecutan con
+`python -m pytest tests`.
+"""))

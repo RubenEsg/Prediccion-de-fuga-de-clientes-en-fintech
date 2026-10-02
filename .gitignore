@@ -1,0 +1,9 @@
+.venv/
+datos/
+_build/
+_codigo_*/
+resultados/modelos/
+resultados_prueba/
+__pycache__/
+.ipynb_checkpoints/
+.pytest_cache/

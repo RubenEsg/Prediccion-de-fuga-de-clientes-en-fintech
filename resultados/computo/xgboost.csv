@@ -1,0 +1,8 @@
+experimento,variante,arboles,entrenamiento_s,inferencia_s,auc
+método y dispositivo,exact · cpu · todos los hilos,145,5.757351300009759,0.011631300003500655,0.8294607449991359
+método y dispositivo,approx · cpu · todos los hilos,145,5.64394270000048,0.007930299994768575,0.8282999927254379
+método y dispositivo,hist · cpu · todos los hilos,145,0.8245343999878969,0.006430800014641136,0.8280214371470462
+método y dispositivo,hist · cpu · 1 hilo,145,2.2828379000129644,0.027550099999643862,0.82795045058592
+método y dispositivo,hist · cuda · todos los hilos,145,0.8629970000183675,0.006427499989513308,0.8280214371470462
+early stopping,"500 árboles fijos, tasa 0,05",500,2.721914250010741,,0.8263347260923106
+early stopping,hasta 5.000 árboles con early stopping (50 rondas),153,1.4115077500027837,,0.8288821562936821

@@ -1,0 +1,19 @@
+2026-10-01 01:36:47  ==============================================================================
+2026-10-01 01:36:47  inicio · código congelado en _codigo_comparacion (huella 685ee09a860c) · 5 pliegues · presupuesto el de las 140 corridas · 2000 réplicas bootstrap
+2026-10-01 01:36:55  datos: entrenamiento 38,978 × 48 · prueba 9,745 · etiqueta mediana con umbral 0.353972 estimado en entrenamiento · riesgo alto en prueba 49.91 %
+2026-10-01 01:37:03  clasificacion: la Entrega 2 SE REPRODUCE: {'auc': {'publicado': 0.6832, 'obtenido': 0.6832, 'coincide': True}, 'recall': {'publicado': 0.6515, 'obtenido': 0.6515, 'coincide': True}}
+2026-10-01 01:37:03  clasificacion · logistica_e2: CV 0.6824 ± 0.0043 · prueba auc 0.6832 · recall 0.6515 · 0.0 min
+2026-10-01 01:40:04  clasificacion · xgboost: CV 0.7232 ± 0.0035 · prueba auc 0.7206 · recall 0.6375 · 2.9 min
+2026-10-01 01:58:26  clasificacion · ebm: CV 0.7221 ± 0.0030 · prueba auc 0.7187 · recall 0.6565 · 16.4 min
+2026-10-01 01:58:31  regresion: la Entrega 2 SE REPRODUCE: {'r2': {'publicado': 0.1511, 'obtenido': 0.1511, 'coincide': True}, 'rmse': {'publicado': 0.0617, 'obtenido': 0.0617, 'coincide': True}}
+2026-10-01 01:58:31  regresion · lasso_e2: CV 0.0618 ± 0.0005 · prueba rmse 0.0617 · R² 0.1511 · 0.0 min
+2026-10-01 02:01:38  regresion · xgboost: CV 0.0590 ± 0.0004 · prueba rmse 0.0592 · R² 0.2177 · 3.0 min
+2026-10-01 02:17:46  regresion · ebm: CV 0.0590 ± 0.0004 · prueba rmse 0.0593 · R² 0.2159 · 15.0 min
+2026-10-01 02:17:46  contrastes sobre la prueba…
+2026-10-01 02:18:08    ebm frente a logistica_e2: ΔAUC +0.0355 [BCa +0.0281, +0.0434] · DeLong p = 1.91e-19 (Holm 3.82e-19) · Cliff +1.00
+2026-10-01 02:18:08    xgboost frente a logistica_e2: ΔAUC +0.0374 [BCa +0.0303, +0.0449] · DeLong p = 8.22e-24 (Holm 2.47e-23) · Cliff +1.00
+2026-10-01 02:18:08    ebm frente a xgboost: ΔAUC -0.0019 [BCa -0.0051, +0.0009] · DeLong p = 1.96e-01 (Holm 1.96e-01) · Cliff -0.12
+2026-10-01 02:18:12    ebm frente a lasso_e2: ΔR² +0.0648 · ΔRMSE +0.00240 [BCa +0.00205, +0.00274] · DM-HLN 13.33, p = 3.57e-40 (Holm 7.15e-40) · bootstrap estacionario p = 0.000
+2026-10-01 02:18:12    xgboost frente a lasso_e2: ΔR² +0.0666 · ΔRMSE +0.00247 [BCa +0.00210, +0.00279] · DM-HLN 14.05, p = 1.97e-44 (Holm 5.91e-44) · bootstrap estacionario p = 0.000
+2026-10-01 02:18:12    ebm frente a xgboost: ΔR² -0.0017 · ΔRMSE -0.00007 [BCa -0.00014, +0.00001] · DM-HLN -1.79, p = 7.39e-02 (Holm 7.39e-02) · bootstrap estacionario p = 0.076
+2026-10-01 02:18:12  fin en 41.4 min · resultados en D:\Ruben\universidad\machine_learning\entrega 3\resultados\comparacion_entrega2

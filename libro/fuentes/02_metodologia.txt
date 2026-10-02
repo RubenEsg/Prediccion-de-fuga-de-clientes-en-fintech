@@ -1,0 +1,190 @@
+#%% md
+# Metodología
+
+Esta página describe el diseño experimental completo: el pipeline que recibe cada modelo, el
+catálogo de modelos con sus espacios de búsqueda, las técnicas de balanceo, la validación cruzada
+anidada, los cuatro métodos de optimización y las reglas de reproducibilidad. Todo lo que se
+describe está en el paquete `src/` (código con *docstrings* en formato NumPy y pruebas
+automáticas en `tests/`), y las tablas de esta página se generan leyendo ese código, de modo que
+no pueden desviarse de lo que realmente se ejecutó.
+
+#%% code
+import sys
+import warnings
+from pathlib import Path
+
+RAIZ = Path.cwd().parent
+sys.path.insert(0, str(RAIZ))
+warnings.filterwarnings('ignore')
+
+import pandas as pd
+from IPython.display import Markdown, display
+
+from src import balanceo, config, modelos, optimizacion
+from src.analisis import NOMBRES_MODELO
+from src.formato import dec, ent, enumerar
+
+pd.set_option('display.max_colwidth', 400)
+
+#%% md
+## 1. El pipeline
+
+Cada combinación se ensambla como un `Pipeline` de `imbalanced-learn` con tres etapas:
+
+1. **Preprocesado** (`src/preprocesamiento.py`): un `ColumnTransformer` que estandariza las
+   variables numéricas y booleanas y codifica las categóricas con indicadoras (`OneHotEncoder`
+   con `drop='first'` para evitar colinealidad perfecta y `handle_unknown='ignore'` por si un
+   nivel aparece solo en validación o prueba). Resultan 78 columnas.
+2. **Muestreo** (solo con SMOTE o ADASYN): genera clientes sintéticos de la clase minoritaria.
+3. **Modelo**.
+
+Como las tres etapas viven dentro del mismo objeto, en cada pliegue de cada validación cruzada
+(externa o interna) el escalado, la codificación y el sobremuestreo se ajustan **solo con las filas
+de entrenamiento de ese pliegue**, y las filas de validación nunca se remuestrean. Es la garantía
+contra la fuga de información que pide la guía (§3.1) y que faltó en las entregas anteriores.
+
+## 2. Los modelos y sus espacios de búsqueda
+
+Los siete modelos de cada tarea son los de la guía (§7.2), más la EBM como modelo nuevo. Cada uno
+se describe una sola vez (`src/modelos.py`) con una rejilla explícita para Grid Search y un espacio
+tipado para los otros tres optimizadores (escala logarítmica para C, alpha y tasas de aprendizaje;
+enteros en escala logarítmica para vecinos y tamaños de hoja), junto con su complejidad y la
+justificación de los rangos.
+
+#%% code
+def describir(espacio):
+    partes = []
+    for k, (tipo, *args) in espacio.items():
+        nombre = k.split('__', 1)[1]
+        if tipo == 'cat':
+            partes.append(f'{nombre} ∈ {{{", ".join(map(str, args[0]))}}}')
+        else:
+            escala = {'log': 'log', 'int_log': 'entero, log', 'int': 'entero', 'float': 'uniforme'}[tipo]
+            partes.append(f'{nombre} ∈ [{args[0]:g}, {args[1]:g}] ({escala})')
+    return '; '.join(partes)
+
+filas = []
+for tarea in ('clasificacion', 'regresion'):
+    for nombre, spec in modelos.catalogo(tarea, incluir_nuevo=True).items():
+        filas.append({'tarea': tarea, 'modelo': NOMBRES_MODELO[nombre],
+                      'puntos de la rejilla': spec.n_configuraciones_grid(),
+                      'presupuesto por búsqueda': optimizacion.presupuesto_por_defecto(spec.espacio_grid),
+                      'espacio de búsqueda': describir(spec.espacio),
+                      'ponderación de clases': (f'{spec.peso_clases[0]}={spec.peso_clases[1]}' if spec.peso_clases
+                                                else ('—' if tarea == 'regresion' else 'no aplica')),
+                      'multi-fidelidad': ('; '.join(f'{fase}: ' + ', '.join(f'{k.split("__", 1)[1]}={v}' for k, v in d.items())
+                                                    for fase, d in spec.fidelidad.items()) if spec.fidelidad else '—'),
+                      'entrenamiento': spec.complejidad.get('entrenamiento', ''),
+                      'inferencia': spec.complejidad.get('inferencia', '')})
+catalogo = pd.DataFrame(filas).set_index(['tarea', 'modelo'])
+catalogo[['puntos de la rejilla', 'presupuesto por búsqueda', 'espacio de búsqueda', 'ponderación de clases',
+          'multi-fidelidad']]
+
+#%% code
+catalogo[['entrenamiento', 'inferencia']]
+
+#%% md
+La justificación de cada espacio, tal como está escrita en el código:
+
+#%% code
+for tarea in ('clasificacion', 'regresion'):
+    for nombre, spec in modelos.catalogo(tarea, incluir_nuevo=True).items():
+        display(Markdown(f'**{NOMBRES_MODELO[nombre]} ({"clasificación" if tarea == "clasificacion" else "regresión"})**: {spec.justificacion}'))
+
+#%% md
+## 3. Balanceo
+
+| Técnica | Implementación | Cuándo no aplica |
+|---|---|---|
+| Sin balanceo | — | — |
+| SMOTE | `imblearn.over_sampling.SMOTE`: interpola nuevos clientes de riesgo alto entre vecinos de la misma clase | Clases ya equilibradas (minoritaria > 40 %), donde no tiene nada que generar |
+| ADASYN | Como SMOTE, pero genera más clientes donde la clase minoritaria es más difícil de separar | Igual que SMOTE |
+| `class_weight` | Pondera los errores de cada clase en proporción inversa a su frecuencia: `class_weight='balanced'` en logística, árbol, Random Forest y SVM; `priors=[0,5; 0,5]` en Naive Bayes; `scale_pos_weight = negativos/positivos` en XGBoost (calculado con el pliegue); pesos por fila en la EBM | k-NN, cuya predicción es un voto sin función de pérdida que ponderar |
+
+En regresión no hay balanceo de clases (guía §2). Las combinaciones que no aplican se registran en
+la tabla maestra con su motivo.
+
+## 4. Validación cruzada anidada
+
+#%% code
+display(Markdown(f"""
+- **Bucle externo**: {config.K_EXT} pliegues (estratificados en clasificación), siempre los mismos para
+  todos los modelos. Es el único que produce la métrica que se reporta.
+- **Bucle interno**: {config.K_INT} pliegues dentro de cada pliegue externo, donde cada optimizador elige los
+  hiperparámetros. El mejor puntaje interno se guarda para medir el optimismo de selección, pero
+  nunca se reporta como desempeño.
+- **Modelo final**: al terminar, la misma búsqueda se repite sobre todo el entrenamiento y el ganador
+  se reajusta con todo él. Es el que se guarda, se evalúa una sola vez en la prueba
+  ({dec(config.TEST_SIZE * 100, 0)} % de los clientes, reservada desde el principio) y se usa en la interpretabilidad.
+- **Métrica principal**: AUC en clasificación, porque no depende del umbral ni de la prevalencia y
+  mide lo que necesita una campaña de retención (ordenar a los clientes por riesgo); el umbral y la
+  calibración se tratan aparte. RMSE en regresión, porque penaliza más los errores grandes y está en
+  las unidades del objetivo.
+- **Presupuesto**: cada método evalúa tantas configuraciones como tiene la rejilla de Grid del mismo
+  modelo, con un mínimo de {config.PRESUPUESTO_MINIMO}; así los cuatro métodos gastan lo mismo dentro de cada modelo.
+"""))
+
+#%% md
+**Por qué 5 pliegues externos y 3 internos.** Con 38.978 clientes de entrenamiento, cada pliegue
+externo valida sobre unos 7.800 clientes, lo bastante para que el AUC de un pliegue tenga un error
+estándar de unas 5 milésimas, y entrena con el 80 % de los datos, de modo que la estimación apenas
+subestima al modelo final entrenado con todos. Diez pliegues duplicarían el coste de las 140 corridas
+sin una ganancia apreciable. El bucle interno se repite para cada configuración candidata (30 a 48
+por búsqueda) y para cada pliegue externo, así que su número de pliegues multiplica el coste total:
+con 3, cada búsqueda entrena con unos 20.800 clientes y valida con unos 10.400, validaciones grandes
+que bastan para ordenar las configuraciones, y una corrida completa supone entre 540 y 864 ajustes.
+Con 5 pliegues internos el coste crecería un 67 %. La sección de optimizadores mide el precio de esta
+elección: el puntaje interno subestima al externo en una milésima de AUC, porque los modelos internos
+se entrenan con menos filas, pero ordena las configuraciones igual.
+
+**Entrenamiento, validación y prueba.** La prueba (20 %) se separa al principio y no interviene en
+ninguna decisión. Dentro del entrenamiento, la validación es siempre la de la validación cruzada: los
+pliegues internos validan para elegir hiperparámetros y los externos, para estimar la
+generalización. Las predicciones *fuera de pliegue* (cada cliente de entrenamiento predicho por un
+modelo que no lo vio) son el conjunto de validación de la gráfica de entrenamiento, validación y
+prueba de la sección de evaluación. Donde un método necesita un conjunto de validación propio (el
+*early stopping* de XGBoost en la sección de cómputo), se aparta un 10 % del entrenamiento,
+estratificado y con la semilla del proyecto.
+
+#%% md
+## 5. Los cuatro métodos de optimización
+
+| Método | Cómo propone configuraciones | Justificación de sus componentes |
+|---|---|---|
+| **Grid Search** | Recorre la rejilla explícita completa | Referencia exhaustiva; paraleliza configuraciones × pliegues |
+| **Random Search** | Muestrea el espacio tipado con distribuciones continuas (log-uniforme, uniforme, enteros) | Bergstra y Bengio (2012): con pocos hiperparámetros importantes, el muestreo aleatorio cubre mejor cada dimensión que una rejilla del mismo tamaño |
+| **Bayesiana (Optuna)** | *Tree-structured Parzen Estimator* (TPE) | **Sustituto**: en lugar de modelar f(x) con un proceso gaussiano, TPE estima dos densidades, ℓ(x) para las configuraciones del cuantil superior (γ = 0,10) y g(x) para el resto, y escala linealmente con el número de ensayos y admite espacios mixtos sin adaptación. **Adquisición**: propone el x que maximiza ℓ(x)/g(x), que equivale a maximizar la mejora esperada (EI). **Arranque**: los primeros 10 ensayos son aleatorios, para que las densidades tengan datos |
+| **Genética (DEAP)** | Evoluciona una población de vectores de genes en [0, 1], uno por hiperparámetro | **Selección**: torneo de 3, invariante a la escala del *fitness* (las diferencias de AUC son de milésimas, y la ruleta las aplanaría). **Cruce**: uniforme por gen con probabilidad de intercambio 0,5, aplicado con probabilidad 0,6. **Mutación**: gaussiana con σ = 0,15 en la escala [0, 1], probabilidad 1/n por gen, aplicada con probabilidad 0,3; un hijo idéntico a un genoma ya evaluado se vuelve a mutar. **Elitismo**: el mejor individuo histórico se reinserta en cada generación. **Población**: max(4, min(presupuesto/4, 12)), para tener al menos 3 a 5 generaciones con 30 a 48 evaluaciones. **Diversidad**: se registra por generación (desviación típica media de los genes) para detectar convergencia prematura. Una caché de genomas evita gastar presupuesto en repeticiones |
+
+**Multi-fidelidad (guía §3.3).** Random Forest se busca con 100 árboles y el modelo final se
+reajusta con 300; la EBM, con 2 y 8 bolsas externas. Más árboles o más bolsas reducen la varianza del
+modelo sin cambiar qué configuración es mejor, así que la búsqueda puede hacerse con la versión
+barata. El supuesto se comprueba en la sección de cómputo.
+
+## 6. Reproducibilidad
+
+#%% code
+import importlib.metadata as md
+versiones = {p: md.version(p) for p in ('scikit-learn', 'imbalanced-learn', 'xgboost', 'optuna', 'deap',
+                                         'interpret-core', 'shap', 'lime', 'statsmodels', 'arch', 'scipy', 'numpy', 'pandas')}
+import re
+import subprocess
+recogidas = subprocess.run([sys.executable, '-m', 'pytest', '--collect-only', '-q'], cwd=RAIZ,
+                           capture_output=True, text=True).stdout
+n_pruebas = int(re.search(r'(\d+) tests? collected', recogidas).group(1))
+display(pd.Series(versiones).to_frame('versión'))
+display(Markdown(f"""
+- **Semilla única**: `config.SEED = {config.SEED}`, propagada a la partición, a cada estimador
+  (`random_state`), a SMOTE y ADASYN, al muestreador TPE de Optuna, al genético y a los bootstrap.
+- **Versiones exactas** en `requirements.txt` (arriba, las de las librerías principales).
+- **Código congelado**: cada ejecución larga (las 140 corridas, las del modelo nuevo, la comparación con
+  la Entrega 2, los experimentos de cómputo) copia `src/` y registra su huella SHA-256, de modo que
+  editar el código mientras corre no mezcla versiones. Las corridas de la tabla maestra usaron dos
+  versiones documentadas: las 12 primeras se hicieron antes de corregir las especificaciones de SVR y
+  SVM, que no convergían, y el resto, con la corrección (la sección de cómputo da los detalles).
+- **Tabla maestra** (`resultados/experimentos.parquet`): una fila por corrida con métricas por pliegue,
+  hiperparámetros, tiempos, trazas y detalles de cada optimizador; se escribe de forma atómica y con
+  un cerrojo, y las corridas se pueden reanudar.
+- **{n_pruebas} pruebas automáticas** (`tests/`): ausencia de fugas en la partición y en el pipeline, uniformidad de
+  los optimizadores y del registro, y cada contraste estadístico comparado con su definición directa.
+"""))

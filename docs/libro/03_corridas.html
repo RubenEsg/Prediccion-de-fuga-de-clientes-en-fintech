@@ -1,0 +1,1974 @@
+
+<!DOCTYPE html>
+
+
+<html lang="es" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Las 140 corridas del pipeline combinatorio &#8212; Fuga de clientes en una fintech colombiana · Entregable 3</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=22de6bcf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../_static/documentation_options.js?v=78d55cf8"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Haz clic para mostrar';</script>
+    <script>let toggleHintHide = 'Haz clic para ocultar';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../_static/translations.js?v=d190bf04"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'libro/03_corridas';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Índice" href="../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../search.html" />
+    <link rel="next" title="Comparación de los métodos de optimización" href="04_optimizadores.html" />
+    <link rel="prev" title="Metodología" href="02_metodologia.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="es"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Saltar al contenido principal</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Volver arriba</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Advertencia de versión"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Navegación del sitio">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="En esta página">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="00_introduccion.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Fuga de clientes en una fintech colombiana · Entregable 3</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_datos.html">Datos, análisis exploratorio y construcción de la etiqueta</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Metodología</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="02_metodologia.html">Metodología</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Modelos y Resultados</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Las 140 corridas del pipeline combinatorio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_optimizadores.html">Comparación de los métodos de optimización</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_computo.html">Optimización computacional</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_evaluacion.html">Evaluación en prueba, calibración, residuos y robustez</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_interpretabilidad.html">Interpretabilidad: SHAP, LIME y las funciones de forma de la EBM</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">El modelo nuevo</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="08_modelo_nuevo.html">El modelo nuevo frente a la Entrega 2</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Comparación estadística y conclusiones</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="09_estadistica.html">Comparación estadística de los modelos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_conclusiones.html">Conclusiones</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Descarga esta pagina">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/libro/03_corridas.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Descargar archivo fuente"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Imprimir en PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Modo de pantalla completa"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Tema" data-bs-title="Tema"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Claro"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Oscuro"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="Sistema"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Las 140 corridas del pipeline combinatorio</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contenido </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#la-tabla-maestra">La tabla maestra</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metrica-externa-de-todas-las-combinaciones">Métrica externa de todas las combinaciones</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#la-mejor-combinacion-de-cada-modelo">La mejor combinación de cada modelo</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#todas-las-metricas-como-media-desviacion-de-los-pliegues-externos">Todas las métricas como media ± desviación de los pliegues externos</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#el-efecto-del-balanceo">El efecto del balanceo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#coste-de-las-corridas">Coste de las corridas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estabilidad-de-los-hiperparametros-entre-pliegues">Estabilidad de los hiperparámetros entre pliegues</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="las-140-corridas-del-pipeline-combinatorio">
+<h1>Las 140 corridas del pipeline combinatorio<a class="headerlink" href="#las-140-corridas-del-pipeline-combinatorio" title="Link to this heading">#</a></h1>
+<p>La guía (§2) pide recorrer el producto completo de modelos, técnicas de balanceo y métodos de
+optimización: 7 clasificadores × 4 balanceos × 4 optimizadores = 112 corridas y 7 regresores × 4
+optimizadores = 28, <strong>140 en total</strong>, automatizadas y registradas en una tabla maestra. Cada corrida
+es una validación cruzada anidada completa (5 pliegues externos × 3 internos): la búsqueda de
+hiperparámetros ocurre dentro de cada pliegue externo y la métrica reportada sale solo del bucle
+externo. Al terminar, la búsqueda se repite sobre todo el entrenamiento para obtener el modelo final
+y sus hiperparámetros, que se guardan en disco para la evaluación en prueba.</p>
+<p>La clasificación usa la etiqueta del percentil 75 (25 % de clientes de riesgo alto, umbral estimado
+solo con entrenamiento), para que las técnicas de balanceo tengan sentido; la regresión, el objetivo
+continuo <code class="docutils literal notranslate"><span class="pre">churn_probability</span></code>. Las corridas se ejecutaron con <code class="docutils literal notranslate"><span class="pre">correr_140.py</span></code> entre el 29 de
+septiembre y el 1 de octubre de 2026, y el modelo nuevo (la EBM) se añadió después con el mismo
+lanzador y las mismas reglas.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">RAIZ</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">RAIZ</span><span class="p">))</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">Markdown</span><span class="p">,</span> <span class="n">display</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">src</span><span class="w"> </span><span class="kn">import</span> <span class="n">analisis</span><span class="p">,</span> <span class="n">graficos</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src</span><span class="w"> </span><span class="kn">import</span> <span class="n">estadistica</span> <span class="k">as</span> <span class="n">est</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.analisis</span><span class="w"> </span><span class="kn">import</span> <span class="n">NOMBRES_MODELO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.formato</span><span class="w"> </span><span class="kn">import</span> <span class="n">dec</span><span class="p">,</span> <span class="n">ent</span><span class="p">,</span> <span class="n">enumerar</span><span class="p">,</span> <span class="n">p_valor</span><span class="p">,</span> <span class="n">pct</span>
+
+<span class="n">graficos</span><span class="o">.</span><span class="n">estilo</span><span class="p">()</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">'display.float_format'</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s1">,.4f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">'display.max_colwidth'</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span>
+
+<span class="n">tabla</span> <span class="o">=</span> <span class="n">analisis</span><span class="o">.</span><span class="n">cargar_tabla</span><span class="p">()</span>
+<span class="n">ok</span> <span class="o">=</span> <span class="n">tabla</span><span class="p">[</span><span class="n">tabla</span><span class="p">[</span><span class="s1">'estado'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'ok'</span><span class="p">]</span>
+<span class="n">guia</span> <span class="o">=</span> <span class="n">tabla</span><span class="p">[</span><span class="n">tabla</span><span class="p">[</span><span class="s1">'modelo'</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">'ebm'</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'estado de la tabla maestra:'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tabla</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'tarea'</span><span class="p">,</span> <span class="s1">'estado'</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">unstack</span><span class="p">(</span><span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estado de la tabla maestra:
+estado         no_aplica   ok
+tarea                        
+clasificacion          4  124
+regresion              0   32
+</pre></div>
+</div>
+</div>
+</div>
+<section id="la-tabla-maestra">
+<h2>La tabla maestra<a class="headerlink" href="#la-tabla-maestra" title="Link to this heading">#</a></h2>
+<p>Cada fila es una corrida y guarda todo lo que la guía (§7.3) exige registrar y lo necesario para
+los análisis de las páginas siguientes: la métrica por pliegue externo (y todas las métricas
+secundarias), los hiperparámetros finales y los de cada pliegue, el mejor puntaje interno (para
+medir el optimismo de selección), el número de evaluaciones, los tiempos, las trazas <em>anytime</em> y
+los detalles de cada optimizador (historial de Optuna, diversidad por generación del genético).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">columnas</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'columna'</span><span class="p">:</span> <span class="n">tabla</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+                         <span class="s1">'ejemplo'</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">tabla</span><span class="p">[</span><span class="n">tabla</span><span class="p">[</span><span class="s1">'estado'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'ok'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">c</span><span class="p">])[:</span><span class="mi">70</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">tabla</span><span class="o">.</span><span class="n">columns</span><span class="p">]})</span>
+<span class="n">columnas</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>columna</th>
+      <th>ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>tarea</td>
+      <td>regresion</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>modelo</td>
+      <td>ridge</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>balanceo</td>
+      <td>ninguno</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>optimizador</td>
+      <td>grid</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>semilla</td>
+      <td>42</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>k_ext</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>k_int</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>metrica_principal</td>
+      <td>rmse</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>etiqueta_metodo</td>
+      <td>percentil</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>etiqueta_umbral</td>
+      <td>0.3927235928772468</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>n_train</td>
+      <td>38978</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>n_columnas</td>
+      <td>48</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>presupuesto</td>
+      <td>30</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>aplica</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>estado</td>
+      <td>ok</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>motivo</td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>media_ext</td>
+      <td>-0.061817513777425434</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>desv_ext</td>
+      <td>0.0004813259277021179</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>puntajes_ext</td>
+      <td>[-0.06253348553178796, -0.06185781187830162, -0.061667829348891146, -0</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>metricas_ext</td>
+      <td>{'rmse': [0.06253348553178796, 0.06185781187830162, 0.0616678293488911</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>mejor_interno_medio</td>
+      <td>-0.0618782513982184</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>optimismo_seleccion</td>
+      <td>-6.0737620792963853e-05</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>hiperparametros</td>
+      <td>{'modelo__alpha': 621.0169418915616}</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>params_por_pliegue</td>
+      <td>[{'modelo__alpha': 621.0169418915616}, {'modelo__alpha': 621.016941891</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>mejor_interno_final</td>
+      <td>-0.061816303930017434</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>n_evaluaciones</td>
+      <td>150</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>n_evaluaciones_final</td>
+      <td>30.0</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>tiempo_total_s</td>
+      <td>48.362148699998215</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>tiempo_busqueda_s</td>
+      <td>39.494090800006234</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>tiempo_por_evaluacion_s</td>
+      <td>0.26329393866670825</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>tiempo_ajuste_final_s</td>
+      <td>8.604233600002772</td>
+    </tr>
+    <tr>
+      <th>31</th>
+      <td>trazas</td>
+      <td>[[-0.06173044300568836, -0.06173044300568836, -0.06173044300568836, -0</td>
+    </tr>
+    <tr>
+      <th>32</th>
+      <td>detalles</td>
+      <td>[{'presupuesto': 30, 'n_fallidas': 0}, {'presupuesto': 30, 'n_fallidas</td>
+    </tr>
+    <tr>
+      <th>33</th>
+      <td>detalle</td>
+      <td>{'presupuesto': 30, 'n_fallidas': 0}</td>
+    </tr>
+    <tr>
+      <th>34</th>
+      <td>fidelidad</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>35</th>
+      <td>ruta_modelo</td>
+      <td>D:\Ruben\universidad\machine_learning\entrega 3\resultados\modelos\reg</td>
+    </tr>
+    <tr>
+      <th>36</th>
+      <td>registrado_en</td>
+      <td>2026-09-29T20:55:00</td>
+    </tr>
+    <tr>
+      <th>37</th>
+      <td>clave</td>
+      <td>regresion__ridge__ninguno__grid</td>
+    </tr>
+    <tr>
+      <th>38</th>
+      <td>metrica</td>
+      <td>0.061817513777425434</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">no_aplica</span> <span class="o">=</span> <span class="n">tabla</span><span class="p">[</span><span class="n">tabla</span><span class="p">[</span><span class="s1">'estado'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'no_aplica'</span><span class="p">][[</span><span class="s1">'tarea'</span><span class="p">,</span> <span class="s1">'modelo'</span><span class="p">,</span> <span class="s1">'balanceo'</span><span class="p">,</span> <span class="s1">'optimizador'</span><span class="p">,</span> <span class="s1">'motivo'</span><span class="p">]]</span>
+<span class="n">display</span><span class="p">(</span><span class="n">no_aplica</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="sa">f</span><span class="s2">"""</span>
+<span class="s2">De las </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">guia</span><span class="p">)</span><span class="si">}</span><span class="s2"> combinaciones de la guía, </span><span class="si">{</span><span class="nb">int</span><span class="p">((</span><span class="n">guia</span><span class="p">[</span><span class="s1">'estado'</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">'ok'</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="si">}</span><span class="s2"> se entrenaron y</span>
+<span class="si">{</span><span class="nb">int</span><span class="p">((</span><span class="n">guia</span><span class="p">[</span><span class="s1">'estado'</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">'no_aplica'</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="si">}</span><span class="s2"> se registraron como *no aplica*: k-NN no admite ponderación de clases</span>
+<span class="s2">(su predicción es un voto entre vecinos, sin función de pérdida que ponderar), y el registro lo deja</span>
+<span class="s2">explícito en lugar de omitir la fila.</span>
+<span class="s2">"""</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>tarea</th>
+      <th>modelo</th>
+      <th>balanceo</th>
+      <th>optimizador</th>
+      <th>motivo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>120</th>
+      <td>clasificacion</td>
+      <td>knn</td>
+      <td>class_weight</td>
+      <td>grid</td>
+      <td>knn no admite ponderación de clases</td>
+    </tr>
+    <tr>
+      <th>121</th>
+      <td>clasificacion</td>
+      <td>knn</td>
+      <td>class_weight</td>
+      <td>random</td>
+      <td>knn no admite ponderación de clases</td>
+    </tr>
+    <tr>
+      <th>122</th>
+      <td>clasificacion</td>
+      <td>knn</td>
+      <td>class_weight</td>
+      <td>bayesiana</td>
+      <td>knn no admite ponderación de clases</td>
+    </tr>
+    <tr>
+      <th>123</th>
+      <td>clasificacion</td>
+      <td>knn</td>
+      <td>class_weight</td>
+      <td>genetica</td>
+      <td>knn no admite ponderación de clases</td>
+    </tr>
+  </tbody>
+</table>
+</div></div><p>De las 140 combinaciones de la guía, 136 se entrenaron y
+4 se registraron como <em>no aplica</em>: k-NN no admite ponderación de clases
+(su predicción es un voto entre vecinos, sin función de pérdida que ponderar), y el registro lo deja
+explícito en lugar de omitir la fila.</p>
+</div>
+</div>
+</section>
+<section id="metrica-externa-de-todas-las-combinaciones">
+<h2>Métrica externa de todas las combinaciones<a class="headerlink" href="#metrica-externa-de-todas-las-combinaciones" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">))</span>
+<span class="n">graficos</span><span class="o">.</span><span class="n">mapa_corridas</span><span class="p">(</span><span class="n">tabla</span><span class="p">,</span> <span class="s1">'clasificacion'</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">7.5</span><span class="p">,</span> <span class="mf">4.6</span><span class="p">))</span>
+<span class="n">graficos</span><span class="o">.</span><span class="n">mapa_corridas</span><span class="p">(</span><span class="n">tabla</span><span class="p">,</span> <span class="s1">'regresion'</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/95227429ccf49bc878a7b05abc337ee4f29b1a3e3bd7da739ad67b9d1b511301.png" src="../_images/95227429ccf49bc878a7b05abc337ee4f29b1a3e3bd7da739ad67b9d1b511301.png" />
+<img alt="../_images/a9ffe2d2fc20c460f1298b2a267dd8cf8b83bdba11c63b697b31d8687453326e.png" src="../_images/a9ffe2d2fc20c460f1298b2a267dd8cf8b83bdba11c63b697b31d8687453326e.png" />
+</div>
+</div>
+</section>
+<section id="la-mejor-combinacion-de-cada-modelo">
+<h2>La mejor combinación de cada modelo<a class="headerlink" href="#la-mejor-combinacion-de-cada-modelo" title="Link to this heading">#</a></h2>
+<p>Es la que se lleva a la evaluación en prueba y a la comparación estadística. Se elige por la
+métrica media del bucle externo, sin mirar la prueba.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">tabla_mejores</span><span class="p">(</span><span class="n">tarea</span><span class="p">):</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">analisis</span><span class="o">.</span><span class="n">mejores_por_modelo</span><span class="p">(</span><span class="n">tabla</span><span class="p">,</span> <span class="n">tarea</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+        <span class="s1">'modelo'</span><span class="p">:</span> <span class="n">m</span><span class="p">[</span><span class="s1">'modelo'</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">NOMBRES_MODELO</span><span class="p">),</span> <span class="s1">'balanceo'</span><span class="p">:</span> <span class="n">m</span><span class="p">[</span><span class="s1">'balanceo'</span><span class="p">],</span> <span class="s1">'optimizador'</span><span class="p">:</span> <span class="n">m</span><span class="p">[</span><span class="s1">'optimizador'</span><span class="p">],</span>
+        <span class="p">(</span><span class="s1">'AUC'</span> <span class="k">if</span> <span class="n">tarea</span> <span class="o">==</span> <span class="s1">'clasificacion'</span> <span class="k">else</span> <span class="s1">'RMSE'</span><span class="p">)</span> <span class="o">+</span> <span class="s1">' externa'</span><span class="p">:</span> <span class="n">m</span><span class="p">[</span><span class="s1">'metrica'</span><span class="p">],</span> <span class="s1">'desv. entre pliegues'</span><span class="p">:</span> <span class="n">m</span><span class="p">[</span><span class="s1">'desv_ext'</span><span class="p">],</span>
+        <span class="s1">'minutos'</span><span class="p">:</span> <span class="n">m</span><span class="p">[</span><span class="s1">'tiempo_total_s'</span><span class="p">]</span> <span class="o">/</span> <span class="mi">60</span><span class="p">,</span>
+        <span class="s1">'hiperparámetros finales'</span><span class="p">:</span> <span class="n">m</span><span class="p">[</span><span class="s1">'hiperparametros'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">h</span><span class="p">:</span> <span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"__"</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s1">.4g</span><span class="si">}</span><span class="s1">'</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">else</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"__"</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">'</span>
+                                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">h</span><span class="o">.</span><span class="n">items</span><span class="p">()))})</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'modelo'</span><span class="p">)</span>
+
+<span class="n">mejores_clf</span><span class="p">,</span> <span class="n">mejores_reg</span> <span class="o">=</span> <span class="n">tabla_mejores</span><span class="p">(</span><span class="s1">'clasificacion'</span><span class="p">),</span> <span class="n">tabla_mejores</span><span class="p">(</span><span class="s1">'regresion'</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">mejores_clf</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">mejores_reg</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>balanceo</th>
+      <th>optimizador</th>
+      <th>AUC externa</th>
+      <th>desv. entre pliegues</th>
+      <th>minutos</th>
+      <th>hiperparámetros finales</th>
+    </tr>
+    <tr>
+      <th>modelo</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>XGBoost</th>
+      <td>class_weight</td>
+      <td>genetica</td>
+      <td>0.8332</td>
+      <td>0.0049</td>
+      <td>8.8883</td>
+      <td>n_estimators=145, max_depth=6, learning_rate=0.003304, subsample=0.8081, colsample_bytree=0.9683, reg_lambda=0.8792,...</td>
+    </tr>
+    <tr>
+      <th>Árbol de decisión</th>
+      <td>class_weight</td>
+      <td>random</td>
+      <td>0.8332</td>
+      <td>0.0021</td>
+      <td>1.8027</td>
+      <td>ccp_alpha=0.0003897, criterion=gini, max_depth=22, min_samples_leaf=7</td>
+    </tr>
+    <tr>
+      <th>Random Forest</th>
+      <td>ninguno</td>
+      <td>genetica</td>
+      <td>0.8326</td>
+      <td>0.0029</td>
+      <td>20.8890</td>
+      <td>max_depth=32, max_features=0.5, min_samples_leaf=11, n_estimators=300</td>
+    </tr>
+    <tr>
+      <th>EBM</th>
+      <td>class_weight</td>
+      <td>grid</td>
+      <td>0.8292</td>
+      <td>0.0037</td>
+      <td>18.6728</td>
+      <td>interactions=0, learning_rate=0.008, max_leaves=2, min_samples_leaf=100, outer_bags=8</td>
+    </tr>
+    <tr>
+      <th>k-NN</th>
+      <td>ninguno</td>
+      <td>genetica</td>
+      <td>0.7836</td>
+      <td>0.0072</td>
+      <td>34.7139</td>
+      <td>n_neighbors=600, weights=distance, p=1</td>
+    </tr>
+    <tr>
+      <th>Regresión logística</th>
+      <td>class_weight</td>
+      <td>genetica</td>
+      <td>0.7644</td>
+      <td>0.0047</td>
+      <td>3.0827</td>
+      <td>C=0.05631, l1_ratio=1</td>
+    </tr>
+    <tr>
+      <th>SVM lineal</th>
+      <td>class_weight</td>
+      <td>grid</td>
+      <td>0.7641</td>
+      <td>0.0044</td>
+      <td>2.0670</td>
+      <td>C=0.001083</td>
+    </tr>
+    <tr>
+      <th>Naive Bayes</th>
+      <td>ninguno</td>
+      <td>grid</td>
+      <td>0.6722</td>
+      <td>0.0119</td>
+      <td>0.6732</td>
+      <td>var_smoothing=0.001</td>
+    </tr>
+  </tbody>
+</table>
+</div></div><div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>balanceo</th>
+      <th>optimizador</th>
+      <th>RMSE externa</th>
+      <th>desv. entre pliegues</th>
+      <th>minutos</th>
+      <th>hiperparámetros finales</th>
+    </tr>
+    <tr>
+      <th>modelo</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>XGBoost</th>
+      <td>ninguno</td>
+      <td>bayesiana</td>
+      <td>0.0590</td>
+      <td>0.0004</td>
+      <td>10.3978</td>
+      <td>n_estimators=512, max_depth=2, learning_rate=0.02361, subsample=0.8025, colsample_bytree=0.7268, reg_lambda=0.2158, ...</td>
+    </tr>
+    <tr>
+      <th>EBM</th>
+      <td>ninguno</td>
+      <td>grid</td>
+      <td>0.0590</td>
+      <td>0.0004</td>
+      <td>26.5974</td>
+      <td>interactions=0, learning_rate=0.008, max_leaves=3, min_samples_leaf=20, outer_bags=8</td>
+    </tr>
+    <tr>
+      <th>Random Forest</th>
+      <td>ninguno</td>
+      <td>grid</td>
+      <td>0.0592</td>
+      <td>0.0004</td>
+      <td>16.0544</td>
+      <td>max_depth=8, max_features=0.5, min_samples_leaf=50, n_estimators=300</td>
+    </tr>
+    <tr>
+      <th>Árbol de decisión</th>
+      <td>ninguno</td>
+      <td>genetica</td>
+      <td>0.0593</td>
+      <td>0.0004</td>
+      <td>3.7207</td>
+      <td>max_depth=13, min_samples_leaf=101, ccp_alpha=1.811e-06</td>
+    </tr>
+    <tr>
+      <th>Lasso</th>
+      <td>ninguno</td>
+      <td>genetica</td>
+      <td>0.0618</td>
+      <td>0.0005</td>
+      <td>6.6994</td>
+      <td>alpha=0.0001087</td>
+    </tr>
+    <tr>
+      <th>Ridge</th>
+      <td>ninguno</td>
+      <td>genetica</td>
+      <td>0.0618</td>
+      <td>0.0005</td>
+      <td>1.4725</td>
+      <td>alpha=613.9</td>
+    </tr>
+    <tr>
+      <th>SVR lineal</th>
+      <td>ninguno</td>
+      <td>bayesiana</td>
+      <td>0.0618</td>
+      <td>0.0005</td>
+      <td>2.6889</td>
+      <td>C=46.43, epsilon=0.0003846</td>
+    </tr>
+    <tr>
+      <th>k-NN</th>
+      <td>ninguno</td>
+      <td>grid</td>
+      <td>0.0634</td>
+      <td>0.0004</td>
+      <td>24.9263</td>
+      <td>n_neighbors=80, p=1, weights=distance</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mc</span> <span class="o">=</span> <span class="n">analisis</span><span class="o">.</span><span class="n">mejores_por_modelo</span><span class="p">(</span><span class="n">tabla</span><span class="p">,</span> <span class="s1">'clasificacion'</span><span class="p">)</span>
+<span class="n">mr</span> <span class="o">=</span> <span class="n">analisis</span><span class="o">.</span><span class="n">mejores_por_modelo</span><span class="p">(</span><span class="n">tabla</span><span class="p">,</span> <span class="s1">'regresion'</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="sa">f</span><span class="s2">"""</span>
+<span class="s2">En **clasificación** el orden es </span><span class="si">{</span><span class="n">enumerar</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">NOMBRES_MODELO</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">modelo</span><span class="p">]</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">metrica</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">mc</span><span class="o">.</span><span class="n">itertuples</span><span class="p">())</span><span class="si">}</span><span class="s2">.</span>
+<span class="s2">Los modelos basados en árboles encabezan la tabla con diferencias de milésimas entre sí; k-NN queda</span>
+<span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'metrica'</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">mc</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'modelo'</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'knn'</span><span class="p">,</span><span class="w"> </span><span class="s1">'metrica'</span><span class="p">],</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2"> por debajo del mejor y los dos lineales, unas</span>
+<span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'metrica'</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">mc</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'modelo'</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'logistica'</span><span class="p">,</span><span class="w"> </span><span class="s1">'metrica'</span><span class="p">],</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">. En **regresión**, </span><span class="si">{</span><span class="n">enumerar</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">NOMBRES_MODELO</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">modelo</span><span class="p">]</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">metrica</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">mr</span><span class="o">.</span><span class="n">itertuples</span><span class="p">())</span><span class="si">}</span><span class="s2">.</span>
+<span class="s2">La desviación entre pliegues externos es de </span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="s1">'desv_ext'</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2"> a </span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">mc</span><span class="p">[</span><span class="s1">'desv_ext'</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2"> de AUC: del mismo</span>
+<span class="s2">orden que las diferencias entre los mejores modelos, que por eso se contrastan formalmente en la</span>
+<span class="s2">sección de comparación estadística.</span>
+<span class="s2">"""</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<p>En <strong>clasificación</strong> el orden es XGBoost (0,8332), Árbol de decisión (0,8332), Random Forest (0,8326), EBM (0,8292), k-NN (0,7836), Regresión logística (0,7644), SVM lineal (0,7641) y Naive Bayes (0,6722).
+Los modelos basados en árboles encabezan la tabla con diferencias de milésimas entre sí; k-NN queda
+0,050 por debajo del mejor y los dos lineales, unas
+0,07. En <strong>regresión</strong>, XGBoost (0,0590), EBM (0,0590), Random Forest (0,0592), Árbol de decisión (0,0593), Lasso (0,0618), Ridge (0,0618), SVR lineal (0,0618) y k-NN (0,0634).
+La desviación entre pliegues externos es de 0,0021 a 0,0119 de AUC: del mismo
+orden que las diferencias entre los mejores modelos, que por eso se contrastan formalmente en la
+sección de comparación estadística.</p>
+</div>
+</div>
+<section id="todas-las-metricas-como-media-desviacion-de-los-pliegues-externos">
+<h3>Todas las métricas como media ± desviación de los pliegues externos<a class="headerlink" href="#todas-las-metricas-como-media-desviacion-de-los-pliegues-externos" title="Link to this heading">#</a></h3>
+<p>La guía (§5.4) pide reportar cada métrica como media ± desviación estándar sobre los pliegues del
+bucle externo. La tabla lo hace para la mejor combinación de cada modelo, con todas las métricas que
+registra la tabla maestra (las de clasificación con umbral usan 0,5).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">media_desv</span><span class="p">(</span><span class="n">fila</span><span class="p">,</span> <span class="n">metricas</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">m</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">fila</span><span class="p">[</span><span class="s1">'metricas_ext'</span><span class="p">][</span><span class="n">m</span><span class="p">])</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> ± </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">fila</span><span class="p">[</span><span class="s1">'metricas_ext'</span><span class="p">][</span><span class="n">m</span><span class="p">],</span><span class="w"> </span><span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">metricas</span> <span class="k">if</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">fila</span><span class="p">[</span><span class="s1">'metricas_ext'</span><span class="p">]}</span>
+
+<span class="n">pliegues_clf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">NOMBRES_MODELO</span><span class="p">[</span><span class="n">f</span><span class="p">[</span><span class="s1">'modelo'</span><span class="p">]]:</span> <span class="n">media_desv</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="s1">'auc'</span><span class="p">,</span> <span class="s1">'accuracy'</span><span class="p">,</span> <span class="s1">'precision'</span><span class="p">,</span> <span class="s1">'recall'</span><span class="p">,</span> <span class="s1">'f1'</span><span class="p">,</span> <span class="s1">'brier'</span><span class="p">])</span>
+                             <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">analisis</span><span class="o">.</span><span class="n">mejores_por_modelo</span><span class="p">(</span><span class="n">tabla</span><span class="p">,</span> <span class="s1">'clasificacion'</span><span class="p">)</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()})</span><span class="o">.</span><span class="n">T</span>
+<span class="n">pliegues_reg</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">NOMBRES_MODELO</span><span class="p">[</span><span class="n">f</span><span class="p">[</span><span class="s1">'modelo'</span><span class="p">]]:</span> <span class="n">media_desv</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="s1">'rmse'</span><span class="p">,</span> <span class="s1">'mae'</span><span class="p">,</span> <span class="s1">'r2'</span><span class="p">])</span>
+                             <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">analisis</span><span class="o">.</span><span class="n">mejores_por_modelo</span><span class="p">(</span><span class="n">tabla</span><span class="p">,</span> <span class="s1">'regresion'</span><span class="p">)</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()})</span><span class="o">.</span><span class="n">T</span>
+<span class="n">display</span><span class="p">(</span><span class="n">pliegues_clf</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">pliegues_reg</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>auc</th>
+      <th>accuracy</th>
+      <th>precision</th>
+      <th>recall</th>
+      <th>f1</th>
+      <th>brier</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>XGBoost</th>
+      <td>0.8332 ± 0.0049</td>
+      <td>0.7007 ± 0.0051</td>
+      <td>0.4506 ± 0.0039</td>
+      <td>0.9866 ± 0.0151</td>
+      <td>0.6186 ± 0.0038</td>
+      <td>0.2098 ± 0.0211</td>
+    </tr>
+    <tr>
+      <th>Árbol de decisión</th>
+      <td>0.8332 ± 0.0021</td>
+      <td>0.7009 ± 0.0051</td>
+      <td>0.4512 ± 0.0042</td>
+      <td>0.9976 ± 0.0021</td>
+      <td>0.6214 ± 0.0040</td>
+      <td>0.1664 ± 0.0030</td>
+    </tr>
+    <tr>
+      <th>Random Forest</th>
+      <td>0.8326 ± 0.0029</td>
+      <td>0.7838 ± 0.0037</td>
+      <td>0.6603 ± 0.0301</td>
+      <td>0.2521 ± 0.0212</td>
+      <td>0.3641 ± 0.0193</td>
+      <td>0.1307 ± 0.0012</td>
+    </tr>
+    <tr>
+      <th>EBM</th>
+      <td>0.8292 ± 0.0037</td>
+      <td>0.7311 ± 0.0047</td>
+      <td>0.4690 ± 0.0056</td>
+      <td>0.7008 ± 0.0134</td>
+      <td>0.5618 ± 0.0037</td>
+      <td>0.1724 ± 0.0032</td>
+    </tr>
+    <tr>
+      <th>k-NN</th>
+      <td>0.7836 ± 0.0072</td>
+      <td>0.7540 ± 0.0000</td>
+      <td>0.0000 ± 0.0000</td>
+      <td>0.0000 ± 0.0000</td>
+      <td>0.0000 ± 0.0000</td>
+      <td>0.1667 ± 0.0004</td>
+    </tr>
+    <tr>
+      <th>Regresión logística</th>
+      <td>0.7644 ± 0.0047</td>
+      <td>0.6733 ± 0.0035</td>
+      <td>0.4026 ± 0.0030</td>
+      <td>0.6770 ± 0.0126</td>
+      <td>0.5049 ± 0.0039</td>
+      <td>0.1992 ± 0.0009</td>
+    </tr>
+    <tr>
+      <th>SVM lineal</th>
+      <td>0.7641 ± 0.0044</td>
+      <td>0.6723 ± 0.0022</td>
+      <td>0.4015 ± 0.0026</td>
+      <td>0.6770 ± 0.0151</td>
+      <td>0.5041 ± 0.0056</td>
+      <td>nan ± nan</td>
+    </tr>
+    <tr>
+      <th>Naive Bayes</th>
+      <td>0.6722 ± 0.0119</td>
+      <td>0.2882 ± 0.0068</td>
+      <td>0.2527 ± 0.0026</td>
+      <td>0.9670 ± 0.0074</td>
+      <td>0.4007 ± 0.0038</td>
+      <td>0.6550 ± 0.0244</td>
+    </tr>
+  </tbody>
+</table>
+</div></div><div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>rmse</th>
+      <th>mae</th>
+      <th>r2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>XGBoost</th>
+      <td>0.0590 ± 0.0004</td>
+      <td>0.0469 ± 0.0004</td>
+      <td>0.2274 ± 0.0086</td>
+    </tr>
+    <tr>
+      <th>EBM</th>
+      <td>0.0590 ± 0.0004</td>
+      <td>0.0471 ± 0.0004</td>
+      <td>0.2260 ± 0.0094</td>
+    </tr>
+    <tr>
+      <th>Random Forest</th>
+      <td>0.0592 ± 0.0004</td>
+      <td>0.0471 ± 0.0003</td>
+      <td>0.2230 ± 0.0077</td>
+    </tr>
+    <tr>
+      <th>Árbol de decisión</th>
+      <td>0.0593 ± 0.0004</td>
+      <td>0.0474 ± 0.0003</td>
+      <td>0.2200 ± 0.0074</td>
+    </tr>
+    <tr>
+      <th>Lasso</th>
+      <td>0.0618 ± 0.0005</td>
+      <td>0.0508 ± 0.0003</td>
+      <td>0.1518 ± 0.0099</td>
+    </tr>
+    <tr>
+      <th>Ridge</th>
+      <td>0.0618 ± 0.0005</td>
+      <td>0.0508 ± 0.0004</td>
+      <td>0.1514 ± 0.0098</td>
+    </tr>
+    <tr>
+      <th>SVR lineal</th>
+      <td>0.0618 ± 0.0005</td>
+      <td>0.0509 ± 0.0003</td>
+      <td>0.1509 ± 0.0103</td>
+    </tr>
+    <tr>
+      <th>k-NN</th>
+      <td>0.0634 ± 0.0004</td>
+      <td>0.0513 ± 0.0002</td>
+      <td>0.1087 ± 0.0043</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+</section>
+<section id="el-efecto-del-balanceo">
+<h2>El efecto del balanceo<a class="headerlink" href="#el-efecto-del-balanceo" title="Link to this heading">#</a></h2>
+<p>La guía (§5.1) pide comparar sin balanceo, SMOTE, ADASYN y <code class="docutils literal notranslate"><span class="pre">class_weight</span></code>. El balanceo actúa sobre
+el entrenamiento de cada pliegue (SMOTE y ADASYN generan clientes sintéticos de riesgo alto;
+<code class="docutils literal notranslate"><span class="pre">class_weight</span></code> pondera los errores de la clase minoritaria) y nunca sobre los datos de validación o
+prueba. Para cada modelo se toma el mejor optimizador dentro de cada técnica.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">clf</span> <span class="o">=</span> <span class="n">ok</span><span class="p">[</span><span class="n">ok</span><span class="p">[</span><span class="s1">'tarea'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'clasificacion'</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">mejor_por_bal</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">clf</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'modelo'</span><span class="p">,</span> <span class="s1">'balanceo'</span><span class="p">])[</span><span class="s1">'metrica'</span><span class="p">]</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()]</span>
+<span class="n">efecto_auc</span> <span class="o">=</span> <span class="n">mejor_por_bal</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">'modelo'</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">'balanceo'</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">'metrica'</span><span class="p">)</span>
+<span class="n">efecto_auc</span> <span class="o">=</span> <span class="n">efecto_auc</span><span class="p">[[</span><span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">graficos</span><span class="o">.</span><span class="n">NOMBRE_BALANCEO</span> <span class="k">if</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">efecto_auc</span><span class="o">.</span><span class="n">columns</span><span class="p">]]</span>
+<span class="n">delta</span> <span class="o">=</span> <span class="n">efecto_auc</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">efecto_auc</span><span class="p">[</span><span class="s1">'ninguno'</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">'ninguno'</span><span class="p">)</span>
+<span class="n">delta</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="n">NOMBRES_MODELO</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">delta</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+<span class="n">display</span><span class="p">(</span><span class="n">delta</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">'</span><span class="si">{:+.4f}</span><span class="s1">'</span><span class="p">,</span> <span class="n">na_rep</span><span class="o">=</span><span class="s1">'no aplica'</span><span class="p">)</span><span class="o">.</span><span class="n">background_gradient</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s1">'RdBu'</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.05</span><span class="p">))</span>
+
+<span class="n">matriz_bal</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">'modelo'</span><span class="p">,</span> <span class="s1">'optimizador'</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="s1">'balanceo'</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">'metrica'</span><span class="p">)[</span>
+    <span class="p">[</span><span class="s1">'ninguno'</span><span class="p">,</span> <span class="s1">'smote'</span><span class="p">,</span> <span class="s1">'adasyn'</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">fr_bal</span> <span class="o">=</span> <span class="n">est</span><span class="o">.</span><span class="n">friedman</span><span class="p">(</span><span class="n">matriz_bal</span><span class="p">)</span>
+<span class="n">fr_bal</span><span class="p">[</span><span class="s1">'rangos_medios'</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style type="text/css">
+#T_b80e0_row0_col0 {
+  background-color: #fae8de;
+  color: #000000;
+}
+#T_b80e0_row0_col1 {
+  background-color: #fbe4d6;
+  color: #000000;
+}
+#T_b80e0_row0_col2 {
+  background-color: #f5f6f7;
+  color: #000000;
+}
+#T_b80e0_row1_col0, #T_b80e0_row7_col0 {
+  background-color: #f7f5f4;
+  color: #000000;
+}
+#T_b80e0_row1_col1, #T_b80e0_row4_col2 {
+  background-color: #f7f6f6;
+  color: #000000;
+}
+#T_b80e0_row1_col2, #T_b80e0_row3_col2, #T_b80e0_row6_col2 {
+  background-color: #f6f7f7;
+  color: #000000;
+}
+#T_b80e0_row2_col0 {
+  background-color: #f8bda1;
+  color: #000000;
+}
+#T_b80e0_row2_col1 {
+  background-color: #fcdecd;
+  color: #000000;
+}
+#T_b80e0_row2_col2 {
+  background-color: #000000;
+  color: #f1f1f1;
+}
+#T_b80e0_row3_col0, #T_b80e0_row3_col1 {
+  background-color: #f8f4f2;
+  color: #000000;
+}
+#T_b80e0_row4_col0, #T_b80e0_row4_col1 {
+  background-color: #67001f;
+  color: #f1f1f1;
+}
+#T_b80e0_row5_col0 {
+  background-color: #f9ede5;
+  color: #000000;
+}
+#T_b80e0_row5_col1 {
+  background-color: #f9eee7;
+  color: #000000;
+}
+#T_b80e0_row5_col2, #T_b80e0_row6_col0, #T_b80e0_row6_col1, #T_b80e0_row7_col1 {
+  background-color: #f8f3f0;
+  color: #000000;
+}
+#T_b80e0_row7_col2 {
+  background-color: #f3f5f6;
+  color: #000000;
+}
+</style>
+<table id="T_b80e0">
+  <thead>
+    <tr>
+      <th class="index_name level0" >balanceo</th>
+      <th id="T_b80e0_level0_col0" class="col_heading level0 col0" >smote</th>
+      <th id="T_b80e0_level0_col1" class="col_heading level0 col1" >adasyn</th>
+      <th id="T_b80e0_level0_col2" class="col_heading level0 col2" >class_weight</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_b80e0_level0_row0" class="row_heading level0 row0" >Árbol de decisión</th>
+      <td id="T_b80e0_row0_col0" class="data row0 col0" >-0.0054</td>
+      <td id="T_b80e0_row0_col1" class="data row0 col1" >-0.0068</td>
+      <td id="T_b80e0_row0_col2" class="data row0 col2" >+0.0005</td>
+    </tr>
+    <tr>
+      <th id="T_b80e0_level0_row1" class="row_heading level0 row1" >EBM</th>
+      <td id="T_b80e0_row1_col0" class="data row1 col0" >-0.0007</td>
+      <td id="T_b80e0_row1_col1" class="data row1 col1" >-0.0002</td>
+      <td id="T_b80e0_row1_col2" class="data row1 col2" >+0.0001</td>
+    </tr>
+    <tr>
+      <th id="T_b80e0_level0_row2" class="row_heading level0 row2" >k-NN</th>
+      <td id="T_b80e0_row2_col0" class="data row2 col0" >-0.0154</td>
+      <td id="T_b80e0_row2_col1" class="data row2 col1" >-0.0087</td>
+      <td id="T_b80e0_row2_col2" class="data row2 col2" >no aplica</td>
+    </tr>
+    <tr>
+      <th id="T_b80e0_level0_row3" class="row_heading level0 row3" >Regresión logística</th>
+      <td id="T_b80e0_row3_col0" class="data row3 col0" >-0.0010</td>
+      <td id="T_b80e0_row3_col1" class="data row3 col1" >-0.0011</td>
+      <td id="T_b80e0_row3_col2" class="data row3 col2" >+0.0001</td>
+    </tr>
+    <tr>
+      <th id="T_b80e0_level0_row4" class="row_heading level0 row4" >Naive Bayes</th>
+      <td id="T_b80e0_row4_col0" class="data row4 col0" >-0.0659</td>
+      <td id="T_b80e0_row4_col1" class="data row4 col1" >-0.0683</td>
+      <td id="T_b80e0_row4_col2" class="data row4 col2" >-0.0000</td>
+    </tr>
+    <tr>
+      <th id="T_b80e0_level0_row5" class="row_heading level0 row5" >Random Forest</th>
+      <td id="T_b80e0_row5_col0" class="data row5 col0" >-0.0037</td>
+      <td id="T_b80e0_row5_col1" class="data row5 col1" >-0.0032</td>
+      <td id="T_b80e0_row5_col2" class="data row5 col2" >-0.0012</td>
+    </tr>
+    <tr>
+      <th id="T_b80e0_level0_row6" class="row_heading level0 row6" >SVM lineal</th>
+      <td id="T_b80e0_row6_col0" class="data row6 col0" >-0.0012</td>
+      <td id="T_b80e0_row6_col1" class="data row6 col1" >-0.0014</td>
+      <td id="T_b80e0_row6_col2" class="data row6 col2" >+0.0002</td>
+    </tr>
+    <tr>
+      <th id="T_b80e0_level0_row7" class="row_heading level0 row7" >XGBoost</th>
+      <td id="T_b80e0_row7_col0" class="data row7 col0" >-0.0006</td>
+      <td id="T_b80e0_row7_col1" class="data row7 col1" >-0.0015</td>
+      <td id="T_b80e0_row7_col2" class="data row7 col2" >+0.0009</td>
+    </tr>
+  </tbody>
+</table>
+</div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>balanceo
+ninguno   1.0312
+smote     2.3438
+adasyn    2.6250
+dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">media_pliegues</span><span class="p">(</span><span class="n">fila</span><span class="p">,</span> <span class="n">metrica</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">fila</span><span class="p">[</span><span class="s1">'metricas_ext'</span><span class="p">][</span><span class="n">metrica</span><span class="p">]))</span>
+
+<span class="k">for</span> <span class="n">metrica</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'recall'</span><span class="p">,</span> <span class="s1">'precision'</span><span class="p">,</span> <span class="s1">'f1'</span><span class="p">,</span> <span class="s1">'brier'</span><span class="p">):</span>
+    <span class="n">mejor_por_bal</span><span class="p">[</span><span class="n">metrica</span><span class="p">]</span> <span class="o">=</span> <span class="n">mejor_por_bal</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">media_pliegues</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">metrica</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">umbral</span> <span class="o">=</span> <span class="n">mejor_por_bal</span><span class="p">[</span><span class="n">mejor_por_bal</span><span class="p">[</span><span class="s1">'modelo'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">'xgboost'</span><span class="p">,</span> <span class="s1">'random_forest'</span><span class="p">,</span> <span class="s1">'logistica'</span><span class="p">,</span> <span class="s1">'arbol'</span><span class="p">])]</span>
+<span class="n">compromiso</span> <span class="o">=</span> <span class="n">umbral</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">'modelo'</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">'balanceo'</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">'recall'</span><span class="p">,</span> <span class="s1">'precision'</span><span class="p">])</span>
+<span class="n">compromiso</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="n">NOMBRES_MODELO</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">compromiso</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+<span class="n">compromiso</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead tr th {
+        text-align: left;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th colspan="4" halign="left">precision</th>
+      <th colspan="4" halign="left">recall</th>
+    </tr>
+    <tr>
+      <th>balanceo</th>
+      <th>adasyn</th>
+      <th>class_weight</th>
+      <th>ninguno</th>
+      <th>smote</th>
+      <th>adasyn</th>
+      <th>class_weight</th>
+      <th>ninguno</th>
+      <th>smote</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Árbol de decisión</th>
+      <td>0.4874</td>
+      <td>0.4512</td>
+      <td>0.6935</td>
+      <td>0.4879</td>
+      <td>0.5604</td>
+      <td>0.9976</td>
+      <td>0.2224</td>
+      <td>0.6023</td>
+    </tr>
+    <tr>
+      <th>Regresión logística</th>
+      <td>0.4028</td>
+      <td>0.4026</td>
+      <td>0.6215</td>
+      <td>0.4016</td>
+      <td>0.6711</td>
+      <td>0.6770</td>
+      <td>0.2799</td>
+      <td>0.6726</td>
+    </tr>
+    <tr>
+      <th>Random Forest</th>
+      <td>0.5142</td>
+      <td>0.4517</td>
+      <td>0.6603</td>
+      <td>0.5266</td>
+      <td>0.4606</td>
+      <td>0.9870</td>
+      <td>0.2521</td>
+      <td>0.4391</td>
+    </tr>
+    <tr>
+      <th>XGBoost</th>
+      <td>0.5787</td>
+      <td>0.4506</td>
+      <td>0.0000</td>
+      <td>0.5783</td>
+      <td>0.3318</td>
+      <td>0.9866</td>
+      <td>0.0000</td>
+      <td>0.3290</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dif_smote</span> <span class="o">=</span> <span class="n">delta</span><span class="p">[</span><span class="s1">'smote'</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">dif_adasyn</span> <span class="o">=</span> <span class="n">delta</span><span class="p">[</span><span class="s1">'adasyn'</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">dif_cw</span> <span class="o">=</span> <span class="n">delta</span><span class="p">[</span><span class="s1">'class_weight'</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">rec</span> <span class="o">=</span> <span class="n">umbral</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">'modelo'</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">'balanceo'</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">'recall'</span><span class="p">)</span>
+<span class="n">prob_max_sin</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">siempre_mejor</span> <span class="o">=</span> <span class="n">fr_bal</span><span class="p">[</span><span class="s1">'rangos_medios'</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'ninguno'</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span> <span class="o">==</span> <span class="mf">1.0</span>
+<span class="n">peor_smote</span> <span class="o">=</span> <span class="n">dif_smote</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
+<span class="n">frase_umbral</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"Con el umbral de 0,5, el recall de XGBoost pasa de </span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'xgboost'</span><span class="p">,</span><span class="w"> </span><span class="s1">'ninguno'</span><span class="p">],</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2"> sin balanceo a "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'xgboost'</span><span class="p">,</span><span class="w"> </span><span class="s1">'class_weight'</span><span class="p">],</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2"> con `class_weight`, a costa de la precisión"</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">rec</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'xgboost'</span><span class="p">,</span> <span class="s1">'ninguno'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">frase_umbral</span> <span class="o">+=</span> <span class="p">(</span><span class="s1">': su mejor configuración sin balanceo (una tasa de aprendizaje muy baja con pocos árboles) '</span>
+                     <span class="s1">'no asigna a ningún cliente una probabilidad mayor que 0,5, aunque los ordena tan bien como las demás'</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="sa">f</span><span class="s2">"""</span>
+<span class="s2">**`class_weight` no cambia el AUC** (de </span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">dif_cw</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="kc">True</span><span class="p">)</span><span class="si">}</span><span class="s2"> a </span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">dif_cw</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="kc">True</span><span class="p">)</span><span class="si">}</span><span class="s2"> frente a no balancear),</span>
+<span class="s2">y **el sobremuestreo lo empeora**: SMOTE entre </span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">dif_smote</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="kc">True</span><span class="p">)</span><span class="si">}</span><span class="s2"> y </span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">dif_smote</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="kc">True</span><span class="p">)</span><span class="si">}</span><span class="s2">, y ADASYN entre</span>
+<span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">dif_adasyn</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="kc">True</span><span class="p">)</span><span class="si">}</span><span class="s2"> y </span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">dif_adasyn</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="kc">True</span><span class="p">)</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="s1">'En todos los bloques modelo × optimizador, no balancear es la mejor de las tres opciones (rango medio 1,00'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">siempre_mejor</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'Friedman sobre los bloques modelo × optimizador da rangos medios '</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">enumerar</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">graficos</span><span class="o">.</span><span class="n">NOMBRE_BALANCEO</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">fr_bal</span><span class="p">[</span><span class="s1">'rangos_medios'</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">())</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">' ('</span><span class="si">}</span><span class="s2">; Friedman </span><span class="si">{</span><span class="n">p_valor</span><span class="p">(</span><span class="n">fr_bal</span><span class="p">[</span><span class="s1">'p'</span><span class="p">])</span><span class="si">}</span><span class="s2">). El AUC mide el orden de los clientes: reponderar</span>
+<span class="s2">la clase minoritaria desplaza las probabilidades sin cambiar ese orden, y los clientes sintéticos de</span>
+<span class="s2">SMOTE y ADASYN, interpolados entre vecinos de riesgo alto, añaden ruido en la frontera entre clases. El</span>
+<span class="s2">caso extremo es </span><span class="si">{</span><span class="n">NOMBRES_MODELO</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">peor_smote</span><span class="p">,</span><span class="w"> </span><span class="n">peor_smote</span><span class="p">)</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">dif_smote</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="kc">True</span><span class="p">)</span><span class="si">}</span><span class="s2"> con SMOTE): los clientes sintéticos alteran</span>
+<span class="s2">las medias y varianzas por clase que el modelo estima.</span>
+
+<span class="s2">**Donde sí actúa el balanceo es en las métricas que dependen del umbral.** </span><span class="si">{</span><span class="n">frase_umbral</span><span class="si">}</span><span class="s2">. Es el mismo</span>
+<span class="s2">efecto que se lograría moviendo el umbral de un modelo sin balancear: la elección no es de modelo</span>
+<span class="s2">sino de punto de operación, y se trata con la calibración y el umbral en la sección de evaluación.</span>
+<span class="s2">"""</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<p><strong><code class="docutils literal notranslate"><span class="pre">class_weight</span></code> no cambia el AUC</strong> (de −0,0012 a +0,0009 frente a no balancear),
+y <strong>el sobremuestreo lo empeora</strong>: SMOTE entre −0,0006 y −0,0659, y ADASYN entre
+−0,0002 y −0,0683. Friedman sobre los bloques modelo × optimizador da rangos medios Sin balanceo 1,03, SMOTE 2,34 y ADASYN 2,62 (; Friedman p &lt; 10⁻¹⁰). El AUC mide el orden de los clientes: reponderar
+la clase minoritaria desplaza las probabilidades sin cambiar ese orden, y los clientes sintéticos de
+SMOTE y ADASYN, interpolados entre vecinos de riesgo alto, añaden ruido en la frontera entre clases. El
+caso extremo es Naive Bayes (−0,0659 con SMOTE): los clientes sintéticos alteran
+las medias y varianzas por clase que el modelo estima.</p>
+<p><strong>Donde sí actúa el balanceo es en las métricas que dependen del umbral.</strong> Con el umbral de 0,5, el recall de XGBoost pasa de 0,000 sin balanceo a 0,987 con <code class="docutils literal notranslate"><span class="pre">class_weight</span></code>, a costa de la precisión: su mejor configuración sin balanceo (una tasa de aprendizaje muy baja con pocos árboles) no asigna a ningún cliente una probabilidad mayor que 0,5, aunque los ordena tan bien como las demás. Es el mismo
+efecto que se lograría moviendo el umbral de un modelo sin balancear: la elección no es de modelo
+sino de punto de operación, y se trata con la calibración y el umbral en la sección de evaluación.</p>
+</div>
+</div>
+</section>
+<section id="coste-de-las-corridas">
+<h2>Coste de las corridas<a class="headerlink" href="#coste-de-las-corridas" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">horas</span> <span class="o">=</span> <span class="n">ok</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">'modelo'</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">'optimizador'</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">'tiempo_total_s'</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="s1">'sum'</span><span class="p">)</span> <span class="o">/</span> <span class="mi">3600</span>
+<span class="n">horas</span> <span class="o">=</span> <span class="n">horas</span><span class="p">[</span><span class="n">analisis</span><span class="o">.</span><span class="n">OPTIMIZADORES</span><span class="p">]</span>
+<span class="n">horas</span><span class="p">[</span><span class="s1">'total'</span><span class="p">]</span> <span class="o">=</span> <span class="n">horas</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">horas</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="n">NOMBRES_MODELO</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">horas</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+<span class="n">display</span><span class="p">(</span><span class="n">horas</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">'total'</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="n">total_guia</span> <span class="o">=</span> <span class="n">guia</span><span class="p">[</span><span class="n">guia</span><span class="p">[</span><span class="s1">'estado'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'ok'</span><span class="p">][</span><span class="s1">'tiempo_total_s'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="mi">3600</span>
+<span class="n">caros</span> <span class="o">=</span> <span class="n">horas</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">NOMBRES_MODELO</span><span class="p">[</span><span class="s1">'ebm'</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">'total'</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">horas_ebm</span> <span class="o">=</span> <span class="n">horas</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">NOMBRES_MODELO</span><span class="p">[</span><span class="s1">'ebm'</span><span class="p">],</span> <span class="s1">'total'</span><span class="p">]</span> <span class="k">if</span> <span class="n">NOMBRES_MODELO</span><span class="p">[</span><span class="s1">'ebm'</span><span class="p">]</span> <span class="ow">in</span> <span class="n">horas</span><span class="o">.</span><span class="n">index</span> <span class="k">else</span> <span class="kc">None</span>
+<span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="sa">f</span><span class="s2">"""</span>
+<span class="s2">Las 140 corridas de la guía sumaron </span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">total_guia</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2"> horas de reloj en el equipo de 6 núcleos lógicos. Los</span>
+<span class="s2">modelos más caros fueron </span><span class="si">{</span><span class="n">enumerar</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2"> h)"</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">caros</span><span class="p">[</span><span class="s1">'total'</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">())</span><span class="si">}</span><span class="s2">; los más</span>
+<span class="s2">baratos, </span><span class="si">{</span><span class="n">enumerar</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">h</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="si">}</span><span class="s2"> min)"</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">caros</span><span class="p">[</span><span class="s1">'total'</span><span class="p">]</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">())</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="p">(</span><span class="s1">' Las 20 corridas de la EBM sumaron por sí solas '</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dec</span><span class="p">(</span><span class="n">horas_ebm</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">' horas, sobre todo por el sobremuestreo (sección del modelo nuevo).'</span><span class="p">)</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">horas_ebm</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">''</span><span class="si">}</span><span class="s2"> En k-NN cada evaluación calcula</span>
+<span class="s2">distancias entre todos los pares de clientes del pliegue; en Random Forest pesan los 300 árboles del</span>
+<span class="s2">modelo final (la búsqueda ya usaba solo 100 gracias a la multi-fidelidad). La sección de cómputo mide</span>
+<span class="s2">estos costes uno a uno y prueba alternativas más rápidas.</span>
+<span class="s2">"""</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>optimizador</th>
+      <th>grid</th>
+      <th>random</th>
+      <th>bayesiana</th>
+      <th>genetica</th>
+      <th>total</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>EBM</th>
+      <td>4.1947</td>
+      <td>4.3745</td>
+      <td>5.9366</td>
+      <td>4.9597</td>
+      <td>19.4655</td>
+    </tr>
+    <tr>
+      <th>Random Forest</th>
+      <td>2.5857</td>
+      <td>2.2791</td>
+      <td>3.0343</td>
+      <td>2.3189</td>
+      <td>10.2180</td>
+    </tr>
+    <tr>
+      <th>k-NN</th>
+      <td>1.3450</td>
+      <td>1.0057</td>
+      <td>2.7911</td>
+      <td>2.9965</td>
+      <td>8.1383</td>
+    </tr>
+    <tr>
+      <th>XGBoost</th>
+      <td>0.5280</td>
+      <td>0.7733</td>
+      <td>1.3344</td>
+      <td>1.6079</td>
+      <td>4.2435</td>
+    </tr>
+    <tr>
+      <th>Árbol de decisión</th>
+      <td>0.2086</td>
+      <td>0.2350</td>
+      <td>0.4377</td>
+      <td>0.4500</td>
+      <td>1.3312</td>
+    </tr>
+    <tr>
+      <th>Regresión logística</th>
+      <td>0.2260</td>
+      <td>0.2101</td>
+      <td>0.3068</td>
+      <td>0.2933</td>
+      <td>1.0362</td>
+    </tr>
+    <tr>
+      <th>SVM lineal</th>
+      <td>0.1736</td>
+      <td>0.1686</td>
+      <td>0.2490</td>
+      <td>0.2558</td>
+      <td>0.8469</td>
+    </tr>
+    <tr>
+      <th>Naive Bayes</th>
+      <td>0.0768</td>
+      <td>0.0769</td>
+      <td>0.1492</td>
+      <td>0.1489</td>
+      <td>0.4518</td>
+    </tr>
+    <tr>
+      <th>Lasso</th>
+      <td>0.1183</td>
+      <td>0.1203</td>
+      <td>0.0849</td>
+      <td>0.1117</td>
+      <td>0.4351</td>
+    </tr>
+    <tr>
+      <th>SVR lineal</th>
+      <td>0.0308</td>
+      <td>0.0281</td>
+      <td>0.0448</td>
+      <td>0.0436</td>
+      <td>0.1474</td>
+    </tr>
+    <tr>
+      <th>Ridge</th>
+      <td>0.0134</td>
+      <td>0.0161</td>
+      <td>0.0237</td>
+      <td>0.0245</td>
+      <td>0.0778</td>
+    </tr>
+  </tbody>
+</table>
+</div></div><p>Las 140 corridas de la guía sumaron 26,9 horas de reloj en el equipo de 6 núcleos lógicos. Los
+modelos más caros fueron Random Forest (10,2 h), k-NN (8,1 h) y XGBoost (4,2 h); los más
+baratos, SVR lineal (9 min) y Ridge (5 min). Las 20 corridas de la EBM sumaron por sí solas 19,5 horas, sobre todo por el sobremuestreo (sección del modelo nuevo). En k-NN cada evaluación calcula
+distancias entre todos los pares de clientes del pliegue; en Random Forest pesan los 300 árboles del
+modelo final (la búsqueda ya usaba solo 100 gracias a la multi-fidelidad). La sección de cómputo mide
+estos costes uno a uno y prueba alternativas más rápidas.</p>
+</div>
+</div>
+</section>
+<section id="estabilidad-de-los-hiperparametros-entre-pliegues">
+<h2>Estabilidad de los hiperparámetros entre pliegues<a class="headerlink" href="#estabilidad-de-los-hiperparametros-entre-pliegues" title="Link to this heading">#</a></h2>
+<p>Si los hiperparámetros ganadores cambian mucho de un pliegue externo a otro, la búsqueda es
+inestable o el óptimo es una meseta plana donde muchas configuraciones rinden igual. La tabla cuenta,
+para cada optimizador, cuántas configuraciones distintas eligieron los 5 pliegues de cada corrida.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">distintas</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">({</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="k">else</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">p</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="p">})</span>
+
+<span class="n">ok_est</span> <span class="o">=</span> <span class="n">ok</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">configuraciones_distintas</span><span class="o">=</span><span class="n">ok</span><span class="p">[</span><span class="s1">'params_por_pliegue'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">distintas</span><span class="p">))</span>
+<span class="n">estabilidad</span> <span class="o">=</span> <span class="n">ok_est</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'tarea'</span><span class="p">,</span> <span class="s1">'optimizador'</span><span class="p">])[</span><span class="s1">'configuraciones_distintas'</span><span class="p">]</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s1">'mean'</span><span class="p">,</span> <span class="s1">'min'</span><span class="p">,</span> <span class="s1">'max'</span><span class="p">])</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span>
+    <span class="n">analisis</span><span class="o">.</span><span class="n">OPTIMIZADORES</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s1">'optimizador'</span><span class="p">)</span>
+<span class="n">estabilidad</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>mean</th>
+      <th>min</th>
+      <th>max</th>
+    </tr>
+    <tr>
+      <th>tarea</th>
+      <th>optimizador</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="4" valign="top">clasificacion</th>
+      <th>grid</th>
+      <td>2.7742</td>
+      <td>1</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>random</th>
+      <td>2.9677</td>
+      <td>1</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>bayesiana</th>
+      <td>4.2258</td>
+      <td>1</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>genetica</th>
+      <td>3.4194</td>
+      <td>1</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th rowspan="4" valign="top">regresion</th>
+      <th>grid</th>
+      <td>2.3750</td>
+      <td>1</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>random</th>
+      <td>2.2500</td>
+      <td>1</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>bayesiana</th>
+      <td>3.8750</td>
+      <td>2</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>genetica</th>
+      <td>4.0000</td>
+      <td>1</td>
+      <td>5</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">e</span> <span class="o">=</span> <span class="n">estabilidad</span><span class="o">.</span><span class="n">xs</span><span class="p">(</span><span class="s1">'clasificacion'</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="sa">f</span><span class="s2">"""</span>
+<span class="s2">En clasificación, Grid y Random son los más estables (</span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'grid'</span><span class="p">,</span><span class="w"> </span><span class="s1">'mean'</span><span class="p">],</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2"> y </span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'random'</span><span class="p">,</span><span class="w"> </span><span class="s1">'mean'</span><span class="p">],</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span>
+<span class="s2">configuraciones distintas de media en 5 pliegues): los dos evalúan el **mismo conjunto de candidatos**</span>
+<span class="s2">en todos los pliegues (la rejilla, o la misma muestra aleatoria porque la semilla es fija), así que</span>
+<span class="s2">solo cambia cuál gana. La bayesiana (</span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'bayesiana'</span><span class="p">,</span><span class="w"> </span><span class="s1">'mean'</span><span class="p">],</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">) y la genética (</span><span class="si">{</span><span class="n">dec</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'genetica'</span><span class="p">,</span><span class="w"> </span><span class="s1">'mean'</span><span class="p">],</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">)</span>
+<span class="s2">adaptan sus propuestas a los puntajes de cada pliegue y rara vez visitan los mismos puntos. Que</span>
+<span class="s2">configuraciones distintas den la misma métrica externa (la desviación entre pliegues es de</span>
+<span class="s2">milésimas) indica que el óptimo es una meseta: lo que importa es llegar a ella, no el punto exacto,</span>
+<span class="s2">y eso es coherente con que los cuatro métodos terminen en el mismo nivel.</span>
+<span class="s2">"""</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<p>En clasificación, Grid y Random son los más estables (2,8 y 3,0
+configuraciones distintas de media en 5 pliegues): los dos evalúan el <strong>mismo conjunto de candidatos</strong>
+en todos los pliegues (la rejilla, o la misma muestra aleatoria porque la semilla es fija), así que
+solo cambia cuál gana. La bayesiana (4,2) y la genética (3,4)
+adaptan sus propuestas a los puntajes de cada pliegue y rara vez visitan los mismos puntos. Que
+configuraciones distintas den la misma métrica externa (la desviación entre pliegues es de
+milésimas) indica que el óptimo es una meseta: lo que importa es llegar a ella, no el punto exacto,
+y eso es coherente con que los cuatro métodos terminen en el mismo nivel.</p>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./libro"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="02_metodologia.html"
+       title="página anterior">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">anterior</p>
+        <p class="prev-next-title">Metodología</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="04_optimizadores.html"
+       title="siguiente página">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">siguiente</p>
+        <p class="prev-next-title">Comparación de los métodos de optimización</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contenido
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#la-tabla-maestra">La tabla maestra</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metrica-externa-de-todas-las-combinaciones">Métrica externa de todas las combinaciones</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#la-mejor-combinacion-de-cada-modelo">La mejor combinación de cada modelo</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#todas-las-metricas-como-media-desviacion-de-los-pliegues-externos">Todas las métricas como media ± desviación de los pliegues externos</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#el-efecto-del-balanceo">El efecto del balanceo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#coste-de-las-corridas">Coste de las corridas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estabilidad-de-los-hiperparametros-entre-pliegues">Estabilidad de los hiperparámetros entre pliegues</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+Por Martínez Pulido · Basto Martínez · Esguerra Fernández
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

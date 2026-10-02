@@ -1,0 +1,380 @@
+#%% md
+# Evaluación en prueba, calibración, residuos y robustez
+
+Cada modelo entra con su mejor combinación de balanceo y optimizador según el bucle externo, y su
+modelo final (reajustado con todo el entrenamiento) toca la prueba una sola vez. Esta página cubre la
+evaluación de clasificación (§5.1), la de regresión (§5.2) y la robustez (§5.4). La etiqueta es la
+del percentil 75.
+
+#%% code
+import sys
+import warnings
+from pathlib import Path
+
+RAIZ = Path.cwd().parent
+sys.path.insert(0, str(RAIZ))
+warnings.filterwarnings('ignore')
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from IPython.display import Markdown, display
+
+from src import analisis, comparacion, datos, evaluacion, graficos
+from src.analisis import NOMBRES_MODELO
+from src.formato import dec, ent, enumerar, intervalo, p_valor, pct
+
+graficos.estilo()
+pd.set_option('display.float_format', lambda v: f'{v:,.4f}')
+
+COMPLEMENTOS = RAIZ / 'resultados' / 'complementos'
+tabla = analisis.cargar_tabla()
+p = datos.preparar_todo()
+X_te = p['conjuntos'].X_test.sort_index()                  # orden original del archivo
+y_te, y_te_c = p['y_test'].loc[X_te.index], p['conjuntos'].y_test_cont.loc[X_te.index]
+pred = analisis.predecir_prueba(tabla, X_te, RAIZ / 'resultados' / 'predicciones_prueba.parquet',
+                                informar=lambda s: None)
+metricas = analisis.metricas_prueba(tabla, pred, y_te, y_te_c)
+mejores = {t: analisis.mejores_por_modelo(tabla, t) for t in ('clasificacion', 'regresion')}
+claves = {t: m.set_index('modelo')['clave'] for t, m in mejores.items()}
+
+
+def pendiente(nombre):
+    display(Markdown(f'*Resultado pendiente: `{nombre}` todavía no se ha calculado (lo produce `complementos.py`).*'))
+
+
+display(Markdown(f'Prueba: {ent(len(y_te))} clientes, {pct(y_te.mean(), 1)} de riesgo alto.'))
+
+#%% md
+## 1. Clasificación
+
+### Métricas de prueba
+
+La métrica principal es el **AUC**: no depende del umbral ni de la prevalencia, y mide lo que
+necesita una campaña de retención con presupuesto limitado, que es ordenar a los clientes por riesgo
+para contactar primero a los de mayor riesgo. Accuracy, precisión, recall y F1 se calculan con el
+umbral por defecto de 0,5, y el Brier mide la calidad de las probabilidades.
+
+#%% code
+m_clf = metricas[metricas['tarea'] == 'clasificacion'].merge(mejores['clasificacion'][analisis.CLAVE], on=analisis.CLAVE)
+m_clf = m_clf.assign(modelo=m_clf['modelo'].map(NOMBRES_MODELO)).set_index('modelo')
+m_clf = m_clf[['balanceo', 'optimizador', 'metrica_cv', 'auc', 'accuracy', 'precision', 'recall', 'f1', 'brier']]
+m_clf.sort_values('auc', ascending=False)
+
+#%% code
+fig, ax = plt.subplots(figsize=(6.5, 5.8))
+graficos.curvas_roc(y_te, {NOMBRES_MODELO[m]: pred[k] for m, k in claves['clasificacion'].items()}, ax=ax)
+plt.show()
+modelos_clf = list(claves['clasificacion'].index)
+fig, axes = plt.subplots(2, (len(modelos_clf) + 1) // 2, figsize=(3.4 * ((len(modelos_clf) + 1) // 2), 6.4))
+for a, m in zip(axes.ravel(), modelos_clf):
+    graficos.matriz_confusion(y_te, pred[claves['clasificacion'][m] + '__clase'], ax=a, titulo=NOMBRES_MODELO[m])
+for a in axes.ravel()[len(modelos_clf):]:
+    a.axis('off')
+plt.tight_layout()
+plt.show()
+
+#%% code
+mejor = m_clf['auc'].idxmax()
+recall_extremos = m_clf['recall'].agg(['idxmin', 'idxmax'])
+display(Markdown(f"""
+El AUC de prueba coincide con el de la validación anidada: {enumerar(f"{m} ({dec(r.auc)} frente a {dec(r.metrica_cv)})" for m, r in m_clf.sort_values('auc', ascending=False).head(3).iterrows())}.
+Las métricas con umbral, en cambio, varían de un extremo a otro aunque el AUC sea parecido: el
+recall va de {dec(m_clf['recall'].min(), 3)} ({recall_extremos['idxmin']}) a {dec(m_clf['recall'].max(), 3)}
+({recall_extremos['idxmax']}). El umbral de 0,5 no significa lo mismo para todos los modelos: los
+entrenados con `class_weight` desplazan sus probabilidades hacia arriba y casi todo cliente lo
+supera, y los entrenados sin balanceo rara vez lo alcanzan con un 25 % de positivos. Por eso el
+umbral se fija aparte (abajo) y las probabilidades se calibran.
+"""))
+
+#%% md
+### El umbral de operación
+
+En la práctica, una campaña de retención contacta a una fracción fija de clientes. Si se contacta al
+25 % de mayor riesgo (la prevalencia de la etiqueta), el umbral de cada modelo es su percentil 75 de
+puntaje, y la comparación entre modelos se vuelve justa.
+
+#%% code
+filas = []
+n_contactar = int(round(0.25 * len(y_te)))
+desempate = np.random.default_rng(42).random(len(y_te))   # los empates de puntaje se rompen al azar
+for m, k in claves['clasificacion'].items():
+    s = pred[k].to_numpy()
+    contactados = np.zeros(len(s), dtype=bool)
+    contactados[np.lexsort((desempate, -s))[:n_contactar]] = True
+    vp = int((contactados & (y_te.to_numpy() == 1)).sum())
+    filas.append({'modelo': NOMBRES_MODELO[m], 'precisión en el 25 % contactado': vp / contactados.sum(),
+                  'recall (fracción de la fuga que se captura)': vp / int(y_te.sum()),
+                  'lift frente a contactar al azar': (vp / contactados.sum()) / y_te.mean()})
+operacion = pd.DataFrame(filas).set_index('modelo').sort_values('recall (fracción de la fuga que se captura)', ascending=False)
+operacion
+
+#%% code
+top = operacion.iloc[0]
+display(Markdown(f"""
+Se contacta exactamente a {ent(n_contactar)} clientes con cada modelo (los empates de puntaje, frecuentes en
+el árbol, se rompen al azar). Contactando al 25 % de mayor riesgo según {operacion.index[0]}, la campaña llegaría al
+{pct(top['recall (fracción de la fuga que se captura)'], 0)} de los clientes de riesgo alto, con una precisión del
+{pct(top['precisión en el 25 % contactado'], 0)}: {dec(top['lift frente a contactar al azar'], 2)} veces lo que se obtendría eligiendo al azar.
+Con la misma capacidad, {operacion.index[-1]} capturaría el {pct(operacion.iloc[-1]['recall (fracción de la fuga que se captura)'], 0)}.
+"""))
+
+#%% md
+### Calibración
+
+Una probabilidad está calibrada si, entre los clientes a los que el modelo asigna 0,3, el 30 % es de
+riesgo alto. Importa si las probabilidades se van a usar como tales (por ejemplo, para estimar la
+pérdida esperada de clientes). Se mide con el diagrama de confiabilidad, el **Brier** (error
+cuadrático de la probabilidad) y el **ECE** (distancia media ponderada entre probabilidad anunciada y
+frecuencia observada, con 10 intervalos). Cuando hace falta se recalibra con **Platt** (una logística
+sobre el puntaje) o con regresión **isotónica** (una función monótona por tramos), ajustadas **solo con
+predicciones fuera de pliegue del entrenamiento** y aplicadas después a la prueba.
+
+#%% code
+if (COMPLEMENTOS / 'calibracion.csv').exists():
+    cal = pd.read_csv(COMPLEMENTOS / 'calibracion.csv')
+    cal['modelo'] = cal['modelo'].map(NOMBRES_MODELO)
+    display(cal.pivot_table(index='modelo', columns='version', values=['brier', 'ece']).round(4))
+    probas = pd.read_parquet(COMPLEMENTOS / 'calibracion_prueba.parquet')
+    fig, ax = plt.subplots(1, 2, figsize=(13, 5.5))
+    sin = {NOMBRES_MODELO[m]: probas[f'{k}__sin recalibrar'] for m, k in claves['clasificacion'].items()
+           if f'{k}__sin recalibrar' in probas}
+    iso = {NOMBRES_MODELO[m]: probas[f'{k}__isotónica'] for m, k in claves['clasificacion'].items()}
+    graficos.diagrama_confiabilidad(probas['y_bin'], sin, ax=ax[0], titulo='Probabilidades del modelo')
+    graficos.diagrama_confiabilidad(probas['y_bin'], iso, ax=ax[1], titulo='Tras recalibración isotónica')
+    plt.tight_layout()
+    plt.show()
+    piv = cal.pivot_table(index='modelo', columns='version', values='ece')
+    sin = piv['sin recalibrar'].dropna()
+    mejora = (sin - piv['isotónica'].reindex(sin.index))
+    sin_prob = [m for m in piv.index if m not in sin.index]
+    bal = cal.drop_duplicates('modelo').set_index('modelo')['balanceo']
+    peores = sin.sort_values(ascending=False).head(4)
+    auc_cambio = cal.pivot_table(index='modelo', columns='version', values='auc')
+    display(Markdown(f"""
+Sin recalibrar, el ECE va de {dec(sin.min(), 3)} ({sin.idxmin()}) a {dec(sin.max(), 3)} ({sin.idxmax()}). Los peor calibrados
+son {enumerar(f"{m} ({dec(v, 3)}; " + ('sin balanceo' if bal[m] == 'ninguno' else f'con {bal[m]}') + ")" for m, v in peores.items())}: los modelos entrenados con `class_weight`
+desplazan sus probabilidades hacia arriba a propósito, y Naive Bayes, que supone independencia entre 78
+variables, produce probabilidades extremas. La recalibración isotónica, ajustada solo con predicciones
+fuera de pliegue del entrenamiento, {'reduce el ECE de todos' if (mejora > 0).all() else 'reduce el ECE de todos salvo ' + enumerar(mejora[mejora <= 0].index)}
+(queda entre {dec(piv['isotónica'].min(), 3)} y {dec(piv['isotónica'].max(), 3)}) y apenas mueve el AUC (como mucho
+{dec((auc_cambio['isotónica'] - auc_cambio['Platt']).abs().max(), 4)} frente a Platt), porque es monótona: corrige las probabilidades sin cambiar el orden de
+los clientes.{(' El ' + enumerar(sin_prob) + (' no da' if len(sin_prob) == 1 else ' no dan') + ' probabilidades (solo una función de decisión): Platt e isotónica son las que convierten su puntaje en probabilidad.') if sin_prob else ''}
+"""))
+else:
+    pendiente('calibracion.csv')
+
+#%% md
+### El balanceo, medido en prueba
+
+#%% code
+clf_todas = metricas[metricas['tarea'] == 'clasificacion']
+mejor_por_bal = clf_todas.loc[clf_todas.groupby(['modelo', 'balanceo'])['metrica_cv'].idxmax()]
+bal_auc = mejor_por_bal.pivot(index='modelo', columns='balanceo', values='auc')
+bal_rec = mejor_por_bal.pivot(index='modelo', columns='balanceo', values='recall')
+bal_auc.index = bal_rec.index = [NOMBRES_MODELO[m] for m in bal_auc.index]
+display(bal_auc.round(4))
+display(bal_rec.round(3))
+d_smote = (bal_auc['smote'] - bal_auc['ninguno']).dropna()
+d_cw = (bal_auc['class_weight'] - bal_auc['ninguno']).dropna()
+display(Markdown(f"""
+En prueba, `class_weight` cambia el AUC entre {dec(d_cw.min(), 4, True)} y {dec(d_cw.max(), 4, True)} frente a no balancear, y
+SMOTE entre {dec(d_smote.min(), 4, True)} ({d_smote.idxmin()}) y {dec(d_smote.max(), 4, True)} ({d_smote.idxmax()}): lo baja en
+{int((d_smote < 0).sum())} de {len(d_smote)} modelos{('; las excepciones (' if (d_smote > 0).sum() > 1 else '; la excepción (') + enumerar(d_smote[d_smote > 0].index) + (') son de milésimas' if (d_smote > 0).sum() > 1 else ') es de milésimas') + ', dentro de la variabilidad de la prueba' if (d_smote > 0).any() else ''}.
+Lo que cambia de verdad es el recall con el umbral de 0,5. El balanceo, en este problema, es una forma
+de elegir el punto de operación, no de mejorar el modelo.
+"""))
+
+#%% md
+## 2. Regresión
+
+### Métricas de prueba con intervalos bootstrap BCa
+
+#%% code
+pron = {m: pred[k].to_numpy() for m, k in claves['regresion'].items()}
+int_reg = comparacion.intervalos_regresion(y_te_c, pron)
+int_reg.index = [NOMBRES_MODELO[m] for m in int_reg.index]
+cv_reg = mejores['regresion'].set_index('modelo')['metrica']
+int_reg.insert(0, 'RMSE validación anidada', [cv_reg[m] for m in pron])
+int_reg.sort_values('rmse')
+
+#%% md
+### Entrenamiento, validación y prueba
+
+La guía pide graficar las predicciones sobre los tres conjuntos. Para entrenamiento se usan las
+predicciones del modelo final sobre los clientes con los que se ajustó; para validación, las
+predicciones fuera de pliegue (cada cliente de entrenamiento predicho por un modelo que no lo vio); y
+la prueba. Los clientes se agrupan en 20 grupos de igual tamaño según el pronóstico.
+
+#%% code
+mejor_r = mejores['regresion'].iloc[0]
+if (COMPLEMENTOS / 'fuera_de_pliegue.parquet').exists():
+    fdp = pd.read_parquet(COMPLEMENTOS / 'fuera_de_pliegue.parquet')
+    k = mejor_r['clave']
+    conjuntos = {'entrenamiento (dentro de la muestra)': (fdp['y_cont'], fdp[f'{k}__entrenamiento']),
+                 'validación (fuera de pliegue)': (fdp['y_cont'], fdp[f'{k}__fuera_de_pliegue']),
+                 'prueba': (y_te_c, pred[k])}
+    fig, ax = plt.subplots(1, 2, figsize=(14, 5))
+    filas = []
+    for (nombre, (y, yh)), color in zip(conjuntos.items(), ('#8c8c8c', '#3d78bf', '#d9822b')):
+        y, yh = np.asarray(y), np.asarray(yh)
+        orden = np.argsort(yh)
+        grupos = np.array_split(orden, 20)
+        ax[0].plot([yh[g].mean() for g in grupos], [y[g].mean() for g in grupos], marker='o', ms=4, color=color, label=nombre)
+        filas.append({'conjunto': nombre, **evaluacion.metricas_regresion(y, yh)})
+    lim = [float(y_te_c.quantile(0.02)), float(y_te_c.quantile(0.98))]
+    ax[0].plot(lim, lim, ls='--', color='grey', lw=0.8)
+    ax[0].set_xlabel('Pronóstico medio del grupo')
+    ax[0].set_ylabel('churn_probability real media')
+    ax[0].set_title(f'{NOMBRES_MODELO[mejor_r["modelo"]]}: pronóstico frente a valor real')
+    ax[0].legend(frameon=False, fontsize=8)
+    muestra = np.random.default_rng(42).choice(len(y_te_c), 300, replace=False)
+    orden = muestra[np.argsort(y_te_c.to_numpy()[muestra])]
+    ax[1].plot(y_te_c.to_numpy()[orden], color='grey', lw=1, label='real')
+    ax[1].plot(pred[k].to_numpy()[orden], color='#d9822b', lw=1.2, label='pronóstico')
+    ax[1].set_title('300 clientes de prueba ordenados por su valor real')
+    ax[1].set_xlabel('cliente')
+    ax[1].legend(frameon=False)
+    plt.tight_layout()
+    plt.show()
+    tres = pd.DataFrame(filas).set_index('conjunto')
+    display(tres)
+    display(Markdown(f"""
+El R² cae de {dec(tres.iloc[0]['r2'], 3)} dentro de la muestra a {dec(tres.iloc[1]['r2'], 3)} fuera de pliegue y {dec(tres.iloc[2]['r2'], 3)}
+en prueba: el modelo se ajusta algo más a los clientes que vio, pero validación y prueba coinciden, de
+modo que la estimación de la validación es fiable. El panel derecho muestra el límite de la tarea: el
+pronóstico sigue la tendencia pero se comprime hacia la media, porque la mayor parte de la variación de
+`churn_probability` la explica `active_products`, que el modelo no ve.
+"""))
+else:
+    pendiente('fuera_de_pliegue.parquet')
+
+#%% md
+### Diagnóstico de los residuos
+
+La guía (§5.2.2 y Cuadro 3) pide verificar los supuestos sobre los residuos de cada modelo de
+regresión: White (¿varianza constante?), BDS (¿residuos independientes e idénticamente
+distribuidos?), la ACF con Ljung-Box (¿autocorrelación?) y la normalidad. Los residuos se toman en el
+orden original del archivo de clientes. Primero, la tabla resumen de todos los modelos; después, el
+detalle gráfico del mejor modelo y del Lasso de la Entrega 2.
+
+#%% code
+cuadro = []
+for m, k in claves['regresion'].items():
+    d_m = evaluacion.diagnostico_residuos(y_te_c, pron[m])
+    met = evaluacion.metricas_regresion(y_te_c.to_numpy(), pron[m])
+    cuadro.append({'modelo': NOMBRES_MODELO[m], 'RMSE': met['rmse'], 'MAE': met['mae'], 'R²': met['r2'],
+                   'p White': d_m.loc['White', 'p'], 'p BDS (dim. 2)': d_m.loc['BDS, dimensión 2 (3000 residuos)', 'p'],
+                   'p Ljung-Box (10)': d_m.loc['Ljung-Box, 10 retardos', 'p'], 'p Jarque-Bera': d_m.loc['Jarque-Bera', 'p'],
+                   'asimetría': d_m.loc['asimetría', 'estadistico']})
+cuadro3 = pd.DataFrame(cuadro).set_index('modelo').sort_values('RMSE')
+cuadro3
+
+#%% code
+diagnosticos = {}
+for m in [mejor_r['modelo'], 'lasso']:
+    diagnosticos[NOMBRES_MODELO[m]] = evaluacion.diagnostico_residuos(y_te_c, pron[m])
+    graficos.panel_residuos(y_te_c, pron[m], titulo=f'Residuos de {NOMBRES_MODELO[m]} en prueba')
+    plt.show()
+pd.concat(diagnosticos, axis=1)
+
+#%% code
+d = diagnosticos[NOMBRES_MODELO[mejor_r['modelo']]]
+rechaza = lambda prueba: d.loc[prueba, 'p'] < 0.05
+het = cuadro3[cuadro3['p White'] < 0.05].index.tolist()
+dep = cuadro3[(cuadro3['p BDS (dim. 2)'] < 0.05) | (cuadro3['p Ljung-Box (10)'] < 0.05)].index.tolist()
+display(Markdown(f"""
+En el conjunto de modelos, White rechaza la varianza constante en {len(het)} de {len(cuadro3)}
+({enumerar(het) if het else 'ninguno'}) y BDS o Ljung-Box detectan dependencia en {len(dep)}
+({enumerar(dep) if dep else 'ninguno'}){': son los modelos que no captan bien el efecto no lineal de la edad, y su residuo conserva parte de la estructura por cohortes con que está ordenado el archivo' if dep else ''}. La normalidad se rechaza en todos: el residuo de cualquier
+modelo hereda la mezcla por niveles de `active_products`. Para {NOMBRES_MODELO[mejor_r['modelo']]}:
+
+- **Heterocedasticidad.** White {'rechaza' if rechaza('White') else 'no rechaza'} la varianza constante ({p_valor(d.loc['White', 'p'])}). {'La dispersión del residuo cambia con el nivel pronosticado: los intervalos de predicción deberían depender del riesgo, y el RMSE promedia errores de magnitud distinta en cada tramo.' if rechaza('White') else ''}
+- **Dependencia.** Ljung-Box con 10 retardos {'rechaza' if rechaza('Ljung-Box, 10 retardos') else 'no rechaza'} la ausencia de autocorrelación
+  ({p_valor(d.loc['Ljung-Box, 10 retardos', 'p'])}) y BDS {'rechaza' if rechaza('BDS, dimensión 2 (3000 residuos)') else 'no rechaza'} la independencia
+  ({p_valor(d.loc['BDS, dimensión 2 (3000 residuos)', 'p'])}). Los clientes no forman una serie temporal, pero el archivo está
+  ordenado por cohortes de edad (sección de datos), así que una dependencia en este orden indicaría
+  que el modelo deja sin explicar algo propio de cada cohorte. {'No es el caso: el modelo capta el efecto de la cohorte y lo que queda no se agrupa por bloques.' if not (rechaza('Ljung-Box, 10 retardos') or rechaza('BDS, dimensión 2 (3000 residuos)')) else 'Es lo que ocurre: los residuos de clientes vecinos se parecen más de lo que lo harían al azar.'}
+- **Normalidad.** Jarque-Bera {'rechaza' if rechaza('Jarque-Bera') else 'no rechaza'} ({p_valor(d.loc['Jarque-Bera', 'p'])}); asimetría
+  {dec(d.loc['asimetría', 'estadistico'], 2)} y curtosis en exceso {dec(d.loc['curtosis en exceso', 'estadistico'], 2)}. Con casi 10.000 residuos,
+  cualquier desviación pequeña es significativa; lo relevante es su forma: el residuo hereda la
+  distribución por escalones de `active_products`, una mezcla de cinco componentes que ninguna
+  variable observable separa.
+
+Ninguna de estas propiedades invalida el RMSE como medida de error, pero sí los intervalos de
+predicción basados en normalidad: si se necesitaran, habría que construirlos con métodos que no la
+supongan (por ejemplo, regresión cuantílica o *conformal prediction*).
+"""))
+
+#%% md
+## 3. Robustez
+
+### Variabilidad entre pliegues y concordancia con la prueba
+
+#%% code
+todas = metricas.copy()
+fig, ax = plt.subplots(1, 2, figsize=(13, 4.6))
+for a, (t, col, nombre) in zip(ax, (('clasificacion', 'auc', 'AUC'), ('regresion', 'rmse', 'RMSE'))):
+    sub = todas[todas['tarea'] == t]
+    a.errorbar(sub['metrica_cv'], sub[col], xerr=sub['desv_cv'], fmt='o', ms=4, alpha=0.6, color=graficos.AZUL,
+               ecolor='#a8cbec')
+    lim = [min(sub['metrica_cv'].min(), sub[col].min()), max(sub['metrica_cv'].max(), sub[col].max())]
+    a.plot(lim, lim, ls='--', color='grey', lw=0.8)
+    a.set_xlabel(f'{nombre} de la validación anidada (media ± desv. de 5 pliegues)')
+    a.set_ylabel(f'{nombre} en prueba')
+    a.set_title(f'{graficos.NOMBRE_TAREA[t]}: {len(sub)} corridas')
+plt.tight_layout()
+plt.show()
+sub_c = todas[todas['tarea'] == 'clasificacion']
+sub_r = todas[todas['tarea'] == 'regresion']
+display(Markdown(f"""
+La validación anidada predice muy bien el desempeño en prueba: la correlación entre el AUC externo y el
+de prueba es {dec(sub_c[['metrica_cv', 'auc']].corr().iloc[0, 1], 4)} sobre {len(sub_c)} corridas de clasificación, con una
+diferencia media de {dec((sub_c['auc'] - sub_c['metrica_cv']).mean(), 4, True)}; en regresión, la diferencia media de RMSE es
+{dec((sub_r['rmse'] - sub_r['metrica_cv']).mean(), 5, True)}. No hay optimismo que corregir: la separación estricta entre la
+búsqueda de hiperparámetros (bucle interno) y la estimación (bucle externo) cumplió su función.
+"""))
+
+#%% md
+### Sensibilidad a las semillas
+
+Se reentrenan los modelos finales de Random Forest, XGBoost, SVM y la EBM con distintas semillas (la
+del modelo y, si lo hay, la del muestreador; los datos no cambian), y se repite la búsqueda del árbol de
+decisión con cinco semillas de cada optimizador estocástico.
+
+#%% code
+if (COMPLEMENTOS / 'semillas.csv').exists():
+    sem = pd.read_csv(COMPLEMENTOS / 'semillas.csv')
+    sem['modelo'] = sem['modelo'].map(NOMBRES_MODELO)
+    resumen_sem = sem.groupby(['tarea', 'modelo']).agg(
+        semillas=('semilla', 'size'), auc_media=('auc', 'mean'), auc_desv=('auc', 'std'),
+        rmse_media=('rmse', 'mean'), rmse_desv=('rmse', 'std'))
+    display(resumen_sem)
+    sc = resumen_sem.xs('clasificacion')
+    brecha = m_clf['auc'].sort_values(ascending=False)
+    display(Markdown(f"""
+La desviación del AUC de prueba entre semillas es de {dec(sc['auc_desv'].min(), 4)} a {dec(sc['auc_desv'].max(), 4)}.
+{('El SVM lineal no cambia con la semilla: su solucionador primal es determinista. ' if (sc.loc['SVM lineal', 'auc_desv'] if 'SVM lineal' in sc.index else 1) < 1e-9 else '')}La diferencia entre
+los dos mejores modelos en prueba ({brecha.index[0]} y {brecha.index[1]}) es de {dec(brecha.iloc[0] - brecha.iloc[1], 4)}:
+{'del mismo orden que la variabilidad por semilla, así que no es una diferencia que deba guiar la elección' if brecha.iloc[0] - brecha.iloc[1] < 3 * sc['auc_desv'].max() else 'mayor que la variabilidad por semilla'}.
+"""))
+else:
+    pendiente('semillas.csv')
+
+#%% code
+if (COMPLEMENTOS / 'semillas_optimizadores.csv').exists():
+    so = pd.read_csv(COMPLEMENTOS / 'semillas_optimizadores.csv')
+    r_so = so.groupby('optimizador').agg(interno_media=('mejor_interno', 'mean'), interno_desv=('mejor_interno', 'std'),
+                                          prueba_media=('auc_prueba', 'mean'), prueba_desv=('auc_prueba', 'std'),
+                                          segundos=('tiempo_s', 'mean')).reindex(['random', 'bayesiana', 'genetica'])
+    display(r_so)
+    display(Markdown(f"""
+Con el mismo árbol de decisión y los mismos pliegues internos, la semilla del optimizador mueve el AUC
+de prueba con una desviación de {dec(r_so.loc['random', 'prueba_desv'], 4)} en Random,
+{dec(r_so.loc['bayesiana', 'prueba_desv'], 4)} en la bayesiana y {dec(r_so.loc['genetica', 'prueba_desv'], 4)} en la genética: la
+elección de hiperparámetros tiene una componente aleatoria del mismo orden que las diferencias entre
+métodos de la sección de optimizadores, lo que refuerza la conclusión de que los métodos terminan
+empatados en la métrica final.
+"""))
+else:
+    pendiente('semillas_optimizadores.csv')

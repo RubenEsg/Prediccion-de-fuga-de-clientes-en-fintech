@@ -1,0 +1,51 @@
+# Jupyter Book del Entregable 3. Las páginas son cuadernos ya ejecutados por libro/construir.py:
+# el libro se construye con sus salidas guardadas, sin volver a ejecutarlos.
+title: "Fuga de clientes en una fintech colombiana · Entregable 3"
+author: "Martínez Pulido · Basto Martínez · Esguerra Fernández"
+copyright: "2026"
+logo: ""
+
+execute:
+  execute_notebooks: "off"
+
+only_build_toc_files: true
+
+exclude_patterns:
+  - _build
+  - docs
+  - .venv
+  - "_codigo_*"
+  - resultados
+  - resultados_prueba
+  - referencias
+  - exploracion
+  - datos
+  - tests
+  - libro/fuentes
+  - .pytest_cache
+  - presentacion
+  - repo_entregable3
+  - entrega_final
+
+repository:
+  url: https://github.com/RubenEsg/predicci-n-de-fuga-de-clientes-en-fintech
+  branch: main
+
+html:
+  use_issues_button: false
+  use_repository_button: true
+  use_edit_page_button: false
+
+sphinx:
+  config:
+    language: es
+    html_css_files:
+      - custom.css
+    html_theme_options:
+      show_navbar_depth: 1
+      navigation_with_keys: false
+
+parse:
+  myst_enable_extensions:
+    - dollarmath
+    - amsmath

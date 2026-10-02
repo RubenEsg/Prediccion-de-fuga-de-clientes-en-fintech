@@ -1,0 +1,24 @@
+# Estructura del libro. La guía (§7.1 y §7.2) pide una sección Data y una de Modelos y Resultados.
+format: jb-book
+root: libro/00_introduccion
+parts:
+  - caption: Data
+    chapters:
+      - file: libro/01_datos
+  - caption: Metodología
+    chapters:
+      - file: libro/02_metodologia
+  - caption: Modelos y Resultados
+    chapters:
+      - file: libro/03_corridas
+      - file: libro/04_optimizadores
+      - file: libro/05_computo
+      - file: libro/06_evaluacion
+      - file: libro/07_interpretabilidad
+  - caption: El modelo nuevo
+    chapters:
+      - file: libro/08_modelo_nuevo
+  - caption: Comparación estadística y conclusiones
+    chapters:
+      - file: libro/09_estadistica
+      - file: libro/10_conclusiones

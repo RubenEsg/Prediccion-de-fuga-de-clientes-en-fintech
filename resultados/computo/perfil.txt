@@ -1,0 +1,33 @@
+         252863 function calls (247908 primitive calls) in 14.079 seconds
+
+   Ordered by: cumulative time
+   List reduced from 1287 to 25 due to restriction <25>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+     24/1    0.000    0.000   14.079   14.079 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\sklearn\utils\_param_validation.py:187(wrapper)
+        1    0.000    0.000   14.078   14.078 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\sklearn\model_selection\_validation.py:496(cross_val_score)
+        1    0.000    0.000   14.077   14.077 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\sklearn\model_selection\_validation.py:75(cross_validate)
+      7/1    0.000    0.000   14.071   14.071 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\sklearn\utils\parallel.py:54(__call__)
+      7/1    0.000    0.000   14.071   14.071 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\joblib\parallel.py:1995(__call__)
+     29/5    0.001    0.000   14.071    2.814 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\joblib\parallel.py:1914(_get_sequential_output)
+     15/3    0.004    0.000   14.053    4.684 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\sklearn\utils\parallel.py:140(__call__)
+        3    0.000    0.000   14.048    4.683 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\sklearn\model_selection\_validation.py:670(_fit_and_score)
+     18/3    0.019    0.001   13.404    4.468 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\sklearn\base.py:1381(wrapper)
+        3    0.000    0.000   13.397    4.466 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\imblearn\pipeline.py:451(fit)
+     45/9    0.001    0.000   11.191    1.243 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\xgboost\core.py:550(inner_f)
+        3    0.000    0.000   11.157    3.719 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\xgboost\sklearn.py:1770(fit)
+        3    0.004    0.001   10.527    3.509 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\xgboost\training.py:52(train)
+      435   10.362    0.024   10.443    0.024 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\xgboost\core.py:2195(update)
+        3    0.009    0.003    2.238    0.746 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\imblearn\pipeline.py:394(_fit)
+        6    0.000    0.000    2.228    0.371 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\joblib\memory.py:330(__call__)
+        3    0.000    0.000    1.339    0.446 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\imblearn\pipeline.py:1330(_fit_resample_one)
+        3    0.000    0.000    1.339    0.446 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\imblearn\base.py:183(fit_resample)
+        3    0.003    0.001    1.337    0.446 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\imblearn\base.py:74(fit_resample)
+        3    0.005    0.002    1.298    0.433 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\imblearn\over_sampling\_smote\base.py:348(_fit_resample)
+     24/6    0.005    0.000    1.136    0.189 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\sklearn\utils\_set_output.py:325(wrapped)
+        6    0.000    0.000    1.056    0.176 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\sklearn\compose\_column_transformer.py:815(_call_func_on_transformers)
+        3    0.000    0.000    0.889    0.296 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\imblearn\pipeline.py:1366(_fit_transform_one)
+        3    0.000    0.000    0.884    0.295 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\sklearn\compose\_column_transformer.py:927(fit_transform)
+        3    0.000    0.000    0.882    0.294 D:\Ruben\universidad\machine_learning\entrega 3\.venv\Lib\site-packages\sklearn\neighbors\_base.py:756(kneighbors)
+
+

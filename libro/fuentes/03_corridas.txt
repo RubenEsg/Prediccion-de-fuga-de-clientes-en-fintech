@@ -1,0 +1,245 @@
+#%% md
+# Las 140 corridas del pipeline combinatorio
+
+La guía (§2) pide recorrer el producto completo de modelos, técnicas de balanceo y métodos de
+optimización: 7 clasificadores × 4 balanceos × 4 optimizadores = 112 corridas y 7 regresores × 4
+optimizadores = 28, **140 en total**, automatizadas y registradas en una tabla maestra. Cada corrida
+es una validación cruzada anidada completa (5 pliegues externos × 3 internos): la búsqueda de
+hiperparámetros ocurre dentro de cada pliegue externo y la métrica reportada sale solo del bucle
+externo. Al terminar, la búsqueda se repite sobre todo el entrenamiento para obtener el modelo final
+y sus hiperparámetros, que se guardan en disco para la evaluación en prueba.
+
+La clasificación usa la etiqueta del percentil 75 (25 % de clientes de riesgo alto, umbral estimado
+solo con entrenamiento), para que las técnicas de balanceo tengan sentido; la regresión, el objetivo
+continuo `churn_probability`. Las corridas se ejecutaron con `correr_140.py` entre el 29 de
+septiembre y el 1 de octubre de 2026, y el modelo nuevo (la EBM) se añadió después con el mismo
+lanzador y las mismas reglas.
+
+#%% code
+import sys
+import warnings
+from pathlib import Path
+
+RAIZ = Path.cwd().parent
+sys.path.insert(0, str(RAIZ))
+warnings.filterwarnings('ignore')
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from IPython.display import Markdown, display
+
+from src import analisis, graficos
+from src import estadistica as est
+from src.analisis import NOMBRES_MODELO
+from src.formato import dec, ent, enumerar, p_valor, pct
+
+graficos.estilo()
+pd.set_option('display.float_format', lambda v: f'{v:,.4f}')
+pd.set_option('display.max_colwidth', 120)
+
+tabla = analisis.cargar_tabla()
+ok = tabla[tabla['estado'] == 'ok']
+guia = tabla[tabla['modelo'] != 'ebm']
+print('estado de la tabla maestra:')
+print(tabla.groupby(['tarea', 'estado']).size().unstack(fill_value=0))
+
+#%% md
+## La tabla maestra
+
+Cada fila es una corrida y guarda todo lo que la guía (§7.3) exige registrar y lo necesario para
+los análisis de las páginas siguientes: la métrica por pliegue externo (y todas las métricas
+secundarias), los hiperparámetros finales y los de cada pliegue, el mejor puntaje interno (para
+medir el optimismo de selección), el número de evaluaciones, los tiempos, las trazas *anytime* y
+los detalles de cada optimizador (historial de Optuna, diversidad por generación del genético).
+
+#%% code
+columnas = pd.DataFrame({'columna': tabla.columns,
+                         'ejemplo': [str(tabla[tabla['estado'] == 'ok'].iloc[0][c])[:70] for c in tabla.columns]})
+columnas
+
+#%% code
+no_aplica = tabla[tabla['estado'] == 'no_aplica'][['tarea', 'modelo', 'balanceo', 'optimizador', 'motivo']]
+display(no_aplica)
+display(Markdown(f"""
+De las {len(guia)} combinaciones de la guía, {int((guia['estado'] == 'ok').sum())} se entrenaron y
+{int((guia['estado'] == 'no_aplica').sum())} se registraron como *no aplica*: k-NN no admite ponderación de clases
+(su predicción es un voto entre vecinos, sin función de pérdida que ponderar), y el registro lo deja
+explícito en lugar de omitir la fila.
+"""))
+
+#%% md
+## Métrica externa de todas las combinaciones
+
+#%% code
+fig, ax = plt.subplots(figsize=(15, 5.2))
+graficos.mapa_corridas(tabla, 'clasificacion', ax=ax)
+plt.tight_layout()
+plt.show()
+fig, ax = plt.subplots(figsize=(7.5, 4.6))
+graficos.mapa_corridas(tabla, 'regresion', ax=ax)
+plt.tight_layout()
+plt.show()
+
+#%% md
+## La mejor combinación de cada modelo
+
+Es la que se lleva a la evaluación en prueba y a la comparación estadística. Se elige por la
+métrica media del bucle externo, sin mirar la prueba.
+
+#%% code
+def tabla_mejores(tarea):
+    m = analisis.mejores_por_modelo(tabla, tarea)
+    return pd.DataFrame({
+        'modelo': m['modelo'].map(NOMBRES_MODELO), 'balanceo': m['balanceo'], 'optimizador': m['optimizador'],
+        ('AUC' if tarea == 'clasificacion' else 'RMSE') + ' externa': m['metrica'], 'desv. entre pliegues': m['desv_ext'],
+        'minutos': m['tiempo_total_s'] / 60,
+        'hiperparámetros finales': m['hiperparametros'].apply(
+            lambda h: ', '.join(f'{k.split("__", 1)[1]}={v:.4g}' if isinstance(v, float) else f'{k.split("__", 1)[1]}={v}'
+                                for k, v in h.items()))}).set_index('modelo')
+
+mejores_clf, mejores_reg = tabla_mejores('clasificacion'), tabla_mejores('regresion')
+display(mejores_clf)
+display(mejores_reg)
+
+#%% code
+mc = analisis.mejores_por_modelo(tabla, 'clasificacion')
+mr = analisis.mejores_por_modelo(tabla, 'regresion')
+display(Markdown(f"""
+En **clasificación** el orden es {enumerar(f"{NOMBRES_MODELO[f.modelo]} ({dec(f.metrica)})" for f in mc.itertuples())}.
+Los modelos basados en árboles encabezan la tabla con diferencias de milésimas entre sí; k-NN queda
+{dec(mc.iloc[0]['metrica'] - mc.set_index('modelo').loc['knn', 'metrica'], 3)} por debajo del mejor y los dos lineales, unas
+{dec(mc.iloc[0]['metrica'] - mc.set_index('modelo').loc['logistica', 'metrica'], 2)}. En **regresión**, {enumerar(f"{NOMBRES_MODELO[f.modelo]} ({dec(f.metrica)})" for f in mr.itertuples())}.
+La desviación entre pliegues externos es de {dec(mc['desv_ext'].min(), 4)} a {dec(mc['desv_ext'].max(), 4)} de AUC: del mismo
+orden que las diferencias entre los mejores modelos, que por eso se contrastan formalmente en la
+sección de comparación estadística.
+"""))
+
+#%% md
+### Todas las métricas como media ± desviación de los pliegues externos
+
+La guía (§5.4) pide reportar cada métrica como media ± desviación estándar sobre los pliegues del
+bucle externo. La tabla lo hace para la mejor combinación de cada modelo, con todas las métricas que
+registra la tabla maestra (las de clasificación con umbral usan 0,5).
+
+#%% code
+def media_desv(fila, metricas):
+    return {m: f"{np.mean(fila['metricas_ext'][m]):.4f} ± {np.std(fila['metricas_ext'][m], ddof=1):.4f}"
+            for m in metricas if m in fila['metricas_ext']}
+
+pliegues_clf = pd.DataFrame({NOMBRES_MODELO[f['modelo']]: media_desv(f, ['auc', 'accuracy', 'precision', 'recall', 'f1', 'brier'])
+                             for _, f in analisis.mejores_por_modelo(tabla, 'clasificacion').iterrows()}).T
+pliegues_reg = pd.DataFrame({NOMBRES_MODELO[f['modelo']]: media_desv(f, ['rmse', 'mae', 'r2'])
+                             for _, f in analisis.mejores_por_modelo(tabla, 'regresion').iterrows()}).T
+display(pliegues_clf)
+display(pliegues_reg)
+
+#%% md
+## El efecto del balanceo
+
+La guía (§5.1) pide comparar sin balanceo, SMOTE, ADASYN y `class_weight`. El balanceo actúa sobre
+el entrenamiento de cada pliegue (SMOTE y ADASYN generan clientes sintéticos de riesgo alto;
+`class_weight` pondera los errores de la clase minoritaria) y nunca sobre los datos de validación o
+prueba. Para cada modelo se toma el mejor optimizador dentro de cada técnica.
+
+#%% code
+clf = ok[ok['tarea'] == 'clasificacion'].copy()
+mejor_por_bal = clf.loc[clf.groupby(['modelo', 'balanceo'])['metrica'].idxmax()]
+efecto_auc = mejor_por_bal.pivot(index='modelo', columns='balanceo', values='metrica')
+efecto_auc = efecto_auc[[b for b in graficos.NOMBRE_BALANCEO if b in efecto_auc.columns]]
+delta = efecto_auc.sub(efecto_auc['ninguno'], axis=0).drop(columns='ninguno')
+delta.index = [NOMBRES_MODELO[m] for m in delta.index]
+display(delta.style.format('{:+.4f}', na_rep='no aplica').background_gradient(cmap='RdBu', vmin=-0.05, vmax=0.05))
+
+matriz_bal = clf.pivot_table(index=['modelo', 'optimizador'], columns='balanceo', values='metrica')[
+    ['ninguno', 'smote', 'adasyn']].dropna()
+fr_bal = est.friedman(matriz_bal)
+fr_bal['rangos_medios']
+
+#%% code
+def media_pliegues(fila, metrica):
+    return float(np.mean(fila['metricas_ext'][metrica]))
+
+for metrica in ('recall', 'precision', 'f1', 'brier'):
+    mejor_por_bal[metrica] = mejor_por_bal.apply(lambda f: media_pliegues(f, metrica), axis=1)
+umbral = mejor_por_bal[mejor_por_bal['modelo'].isin(['xgboost', 'random_forest', 'logistica', 'arbol'])]
+compromiso = umbral.pivot_table(index='modelo', columns='balanceo', values=['recall', 'precision'])
+compromiso.index = [NOMBRES_MODELO[m] for m in compromiso.index]
+compromiso
+
+#%% code
+dif_smote = delta['smote'].dropna()
+dif_adasyn = delta['adasyn'].dropna()
+dif_cw = delta['class_weight'].dropna()
+rec = umbral.pivot_table(index='modelo', columns='balanceo', values='recall')
+prob_max_sin = None
+siempre_mejor = fr_bal['rangos_medios'].get('ninguno', 99) == 1.0
+peor_smote = dif_smote.idxmin()
+frase_umbral = (f"Con el umbral de 0,5, el recall de XGBoost pasa de {dec(rec.loc['xgboost', 'ninguno'], 3)} sin balanceo a "
+                f"{dec(rec.loc['xgboost', 'class_weight'], 3)} con `class_weight`, a costa de la precisión")
+if rec.loc['xgboost', 'ninguno'] == 0:
+    frase_umbral += (': su mejor configuración sin balanceo (una tasa de aprendizaje muy baja con pocos árboles) '
+                     'no asigna a ningún cliente una probabilidad mayor que 0,5, aunque los ordena tan bien como las demás')
+display(Markdown(f"""
+**`class_weight` no cambia el AUC** (de {dec(dif_cw.min(), 4, True)} a {dec(dif_cw.max(), 4, True)} frente a no balancear),
+y **el sobremuestreo lo empeora**: SMOTE entre {dec(dif_smote.max(), 4, True)} y {dec(dif_smote.min(), 4, True)}, y ADASYN entre
+{dec(dif_adasyn.max(), 4, True)} y {dec(dif_adasyn.min(), 4, True)}. {'En todos los bloques modelo × optimizador, no balancear es la mejor de las tres opciones (rango medio 1,00' if siempre_mejor else 'Friedman sobre los bloques modelo × optimizador da rangos medios ' + enumerar(f"{graficos.NOMBRE_BALANCEO[b]} {dec(v, 2)}" for b, v in fr_bal['rangos_medios'].items()) + ' ('}; Friedman {p_valor(fr_bal['p'])}). El AUC mide el orden de los clientes: reponderar
+la clase minoritaria desplaza las probabilidades sin cambiar ese orden, y los clientes sintéticos de
+SMOTE y ADASYN, interpolados entre vecinos de riesgo alto, añaden ruido en la frontera entre clases. El
+caso extremo es {NOMBRES_MODELO.get(peor_smote, peor_smote)} ({dec(dif_smote.min(), 4, True)} con SMOTE): los clientes sintéticos alteran
+las medias y varianzas por clase que el modelo estima.
+
+**Donde sí actúa el balanceo es en las métricas que dependen del umbral.** {frase_umbral}. Es el mismo
+efecto que se lograría moviendo el umbral de un modelo sin balancear: la elección no es de modelo
+sino de punto de operación, y se trata con la calibración y el umbral en la sección de evaluación.
+"""))
+
+#%% md
+## Coste de las corridas
+
+#%% code
+horas = ok.pivot_table(index='modelo', columns='optimizador', values='tiempo_total_s', aggfunc='sum') / 3600
+horas = horas[analisis.OPTIMIZADORES]
+horas['total'] = horas.sum(axis=1)
+horas.index = [NOMBRES_MODELO[m] for m in horas.index]
+display(horas.sort_values('total', ascending=False))
+total_guia = guia[guia['estado'] == 'ok']['tiempo_total_s'].sum() / 3600
+caros = horas.drop(index=NOMBRES_MODELO['ebm'], errors='ignore').sort_values('total', ascending=False)
+horas_ebm = horas.loc[NOMBRES_MODELO['ebm'], 'total'] if NOMBRES_MODELO['ebm'] in horas.index else None
+display(Markdown(f"""
+Las 140 corridas de la guía sumaron {dec(total_guia, 1)} horas de reloj en el equipo de 6 núcleos lógicos. Los
+modelos más caros fueron {enumerar(f"{m} ({dec(h, 1)} h)" for m, h in caros['total'].head(3).items())}; los más
+baratos, {enumerar(f"{m} ({dec(h * 60, 0)} min)" for m, h in caros['total'].tail(2).items())}.{(' Las 20 corridas de la EBM sumaron por sí solas ' + dec(horas_ebm, 1) + ' horas, sobre todo por el sobremuestreo (sección del modelo nuevo).') if horas_ebm else ''} En k-NN cada evaluación calcula
+distancias entre todos los pares de clientes del pliegue; en Random Forest pesan los 300 árboles del
+modelo final (la búsqueda ya usaba solo 100 gracias a la multi-fidelidad). La sección de cómputo mide
+estos costes uno a uno y prueba alternativas más rápidas.
+"""))
+
+#%% md
+## Estabilidad de los hiperparámetros entre pliegues
+
+Si los hiperparámetros ganadores cambian mucho de un pliegue externo a otro, la búsqueda es
+inestable o el óptimo es una meseta plana donde muchas configuraciones rinden igual. La tabla cuenta,
+para cada optimizador, cuántas configuraciones distintas eligieron los 5 pliegues de cada corrida.
+
+#%% code
+def distintas(params):
+    return len({tuple(sorted((k, round(v, 6) if isinstance(v, float) else v) for k, v in p.items())) for p in params})
+
+ok_est = ok.assign(configuraciones_distintas=ok['params_por_pliegue'].apply(distintas))
+estabilidad = ok_est.groupby(['tarea', 'optimizador'])['configuraciones_distintas'].agg(['mean', 'min', 'max']).reindex(
+    analisis.OPTIMIZADORES, level='optimizador')
+estabilidad
+
+#%% code
+e = estabilidad.xs('clasificacion')
+display(Markdown(f"""
+En clasificación, Grid y Random son los más estables ({dec(e.loc['grid', 'mean'], 1)} y {dec(e.loc['random', 'mean'], 1)}
+configuraciones distintas de media en 5 pliegues): los dos evalúan el **mismo conjunto de candidatos**
+en todos los pliegues (la rejilla, o la misma muestra aleatoria porque la semilla es fija), así que
+solo cambia cuál gana. La bayesiana ({dec(e.loc['bayesiana', 'mean'], 1)}) y la genética ({dec(e.loc['genetica', 'mean'], 1)})
+adaptan sus propuestas a los puntajes de cada pliegue y rara vez visitan los mismos puntos. Que
+configuraciones distintas den la misma métrica externa (la desviación entre pliegues es de
+milésimas) indica que el óptimo es una meseta: lo que importa es llegar a ella, no el punto exacto,
+y eso es coherente con que los cuatro métodos terminen en el mismo nivel.
+"""))

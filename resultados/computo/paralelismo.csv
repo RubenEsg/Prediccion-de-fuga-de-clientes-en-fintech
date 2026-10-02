@@ -1,0 +1,12 @@
+experimento,backend,n_jobs,tiempo_s
+Random Forest (300 árboles),hilos nativos,1,78.54770759999519
+Random Forest (300 árboles),hilos nativos,2,41.665400099998806
+Random Forest (300 árboles),hilos nativos,3,28.134414050000487
+Random Forest (300 árboles),hilos nativos,4,24.96604970000044
+Random Forest (300 árboles),hilos nativos,6,18.588572749999003
+GridSearchCV logística L1 (12 × 5 ajustes),loky,1,120.29960354999639
+GridSearchCV logística L1 (12 × 5 ajustes),loky,2,72.39469910001208
+GridSearchCV logística L1 (12 × 5 ajustes),loky,4,50.35772509999515
+GridSearchCV logística L1 (12 × 5 ajustes),loky,6,40.62934050000331
+GridSearchCV logística L1 (12 × 5 ajustes),threading,6,38.571658850007225
+GridSearchCV logística L1 (12 × 5 ajustes),multiprocessing,6,49.51626694999868

@@ -1,0 +1,9 @@
+/* Ancho de lectura algo mayor, para que las tablas anchas no queden comprimidas. */
+.bd-main .bd-content .bd-article-container { max-width: 64rem; }
+
+/* Las salidas largas de texto no deben desbordar la página. */
+div.cell_output pre { white-space: pre-wrap; word-break: break-word; }
+
+/* Tablas de pandas con desplazamiento horizontal en pantallas estrechas. */
+div.cell_output .output { overflow-x: auto; }
+div.cell_output table { font-size: 0.85em; }
