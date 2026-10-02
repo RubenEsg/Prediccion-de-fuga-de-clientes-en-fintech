@@ -28,6 +28,7 @@ Sin conexión, se abre igual desde [`docs/index.html`](docs/index.html).
 | `resultados/` | Predicciones de prueba, comparación con la Entrega 2, experimentos de cómputo y complementos (calibración, semillas, fuera de pliegue) |
 | `exploracion/` | Benchmark de los candidatos a modelo nuevo |
 | `correr_140.py`, `comparar_entrega2.py`, `computo.py`, `complementos.py` | Guiones que producen los resultados; `correr_*.bat` los lanzan en Windows con prioridad baja y se pueden reanudar |
+| `presentacion/` | Diapositivas de la sustentación de 10 minutos (PowerPoint y PDF) y su guion |
 | `_config.yml`, `_toc.yml`, `_static/` | Configuración del Jupyter Book |
 | `requirements.txt` | Versiones exactas del entorno (Python 3.13.3) |
 | `docs/` | Sitio compilado que sirve GitHub Pages |
