@@ -1,24 +1,64 @@
-# Estructura del libro. La guía (§7.1 y §7.2) pide una sección Data y una de Modelos y Resultados.
+# Libro de las tres entregas: la portada es index.md y cada entrega es una parte.
 format: jb-book
-root: libro/00_introduccion
+root: index
 parts:
-  - caption: Data
+  - caption: Entrega 1 · EDA
     chapters:
-      - file: libro/01_datos
-  - caption: Metodología
+      - file: Entrega1/eda_bancario
+  - caption: Entrega 2 · Modelos base
     chapters:
-      - file: libro/02_metodologia
-  - caption: Modelos y Resultados
+      - file: Entrega2/entrega2_modelo
+  - caption: Entrega 3 · Introducción
     chapters:
-      - file: libro/03_corridas
-      - file: libro/04_optimizadores
-      - file: libro/05_computo
-      - file: libro/06_evaluacion
-      - file: libro/07_interpretabilidad
-  - caption: El modelo nuevo
+      - file: Entrega3/libro/00_introduccion
+  - caption: Entrega 3 · Data
     chapters:
-      - file: libro/08_modelo_nuevo
-  - caption: Comparación estadística y conclusiones
+      - file: Entrega3/libro/01_datos
+  - caption: Entrega 3 · Metodología
     chapters:
-      - file: libro/09_estadistica
-      - file: libro/10_conclusiones
+      - file: Entrega3/libro/02_metodologia
+  - caption: Entrega 3 · Modelos y Resultados
+    chapters:
+      - file: Entrega3/libro/03_corridas
+      - file: Entrega3/libro/04_optimizadores
+      - file: Entrega3/libro/05_computo
+      - file: Entrega3/libro/06_evaluacion
+      - file: Entrega3/libro/07_interpretabilidad
+  - caption: Entrega 3 · El modelo nuevo
+    chapters:
+      - file: Entrega3/libro/08_modelo_nuevo
+  - caption: Entrega 3 · Comparación estadística y conclusiones
+    chapters:
+      - file: Entrega3/libro/09_estadistica
+      - file: Entrega3/libro/10_conclusiones
+  - caption: Código fuente
+    chapters:
+      - file: codigo/indice
+      - file: codigo/src___init__
+      - file: codigo/src_analisis
+      - file: codigo/src_balanceo
+      - file: codigo/src_comparacion
+      - file: codigo/src_config
+      - file: codigo/src_datos
+      - file: codigo/src_estadistica
+      - file: codigo/src_evaluacion
+      - file: codigo/src_experimento
+      - file: codigo/src_formato
+      - file: codigo/src_graficos
+      - file: codigo/src_modelos
+      - file: codigo/src_optimizacion
+      - file: codigo/src_preprocesamiento
+      - file: codigo/src_registro
+      - file: codigo/correr_140
+      - file: codigo/comparar_entrega2
+      - file: codigo/computo
+      - file: codigo/complementos
+      - file: codigo/medir_tiempos_finales
+      - file: codigo/libro_construir
+      - file: codigo/libro_exportar_pdf
+      - file: codigo/articulo_generar_material
+      - file: codigo/articulo_compilar
+      - file: codigo/tests_test_analisis
+      - file: codigo/tests_test_bloque0
+      - file: codigo/tests_test_estadistica
+      - file: codigo/tests_test_modelo_nuevo

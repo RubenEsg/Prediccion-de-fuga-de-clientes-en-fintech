@@ -1,0 +1,1050 @@
+
+<!DOCTYPE html>
+
+
+<html lang="es" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Entrega3/src/datos.py &#8212; Predicción de fuga de clientes en una fintech colombiana</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=22de6bcf" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../_static/documentation_options.js?v=78d55cf8"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Haz clic para mostrar';</script>
+    <script>let toggleHintHide = 'Haz clic para ocultar';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../_static/translations.js?v=d190bf04"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'codigo/src_datos';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Índice" href="../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../search.html" />
+    <link rel="next" title="Entrega3/src/estadistica.py" href="src_estadistica.html" />
+    <link rel="prev" title="Entrega3/src/config.py" href="src_config.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="es"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Saltar al contenido principal</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Volver arriba</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Advertencia de versión"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Navegación del sitio">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Predicción de fuga de clientes en una fintech colombiana</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 1 · EDA</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega1/eda_bancario.html">Caracterización y auditoría de calidad de datos para predecir la fuga (<em>churn</em>) y el valor del cliente (<em>CLV</em>) en una <em>fintech</em> colombiana</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 2 · Modelos base</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega2/entrega2_modelo.html">Entrega 2 — Procesamiento de datos y modelo base</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Introducción</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/libro/00_introduccion.html">Fuga de clientes en una <em>fintech</em> colombiana: modelos, optimización y evaluación</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/libro/01_datos.html">Datos, análisis exploratorio y construcción de la etiqueta</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Metodología</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/libro/02_metodologia.html">Metodología</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Modelos y Resultados</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/libro/03_corridas.html">Las 140 corridas del pipeline combinatorio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/libro/04_optimizadores.html">Comparación de los métodos de optimización</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/libro/05_computo.html">Optimización computacional</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/libro/06_evaluacion.html">Evaluación en prueba, calibración, residuos y robustez</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/libro/07_interpretabilidad.html">Interpretabilidad: SHAP, LIME y las funciones de forma de la EBM</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · El modelo nuevo</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/libro/08_modelo_nuevo.html">El modelo nuevo frente a la Entrega 2</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Comparación estadística y conclusiones</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/libro/09_estadistica.html">Comparación estadística de los modelos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/libro/10_conclusiones.html">Conclusiones</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Código fuente</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="indice.html">Código fuente</a></li>
+<li class="toctree-l1"><a class="reference internal" href="src___init__.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/__init__.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="src_analisis.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/analisis.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="src_balanceo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/balanceo.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="src_comparacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/comparacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="src_config.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/config.py</span></code></a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/datos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="src_estadistica.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/estadistica.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="src_evaluacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/evaluacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="src_experimento.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/experimento.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="src_formato.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/formato.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="src_graficos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/graficos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="src_modelos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/modelos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="src_optimizacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/optimizacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="src_preprocesamiento.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/preprocesamiento.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="src_registro.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/registro.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="correr_140.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/correr_140.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="comparar_entrega2.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/comparar_entrega2.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="computo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/computo.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="complementos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/complementos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="medir_tiempos_finales.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/medir_tiempos_finales.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="libro_construir.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/libro/construir.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="libro_exportar_pdf.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/libro/exportar_pdf.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="articulo_generar_material.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/articulo/generar_material.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="articulo_compilar.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/articulo/compilar.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests_test_analisis.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_analisis.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests_test_bloque0.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_bloque0.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests_test_estadistica.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_estadistica.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests_test_modelo_nuevo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_modelo_nuevo.py</span></code></a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Descarga esta pagina">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/codigo/src_datos.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Descargar archivo fuente"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Imprimir en PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Modo de pantalla completa"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Tema" data-bs-title="Tema"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Claro"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Oscuro"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="Sistema"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Entrega3/src/datos.py</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="entrega3-src-datos-py">
+<h1><code class="docutils literal notranslate"><span class="pre">Entrega3/src/datos.py</span></code><a class="headerlink" href="#entrega3-src-datos-py" title="Link to this heading">#</a></h1>
+<p>Carga, auditoría, variables derivadas, partición y etiqueta.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">"""Carga, auditoría, variables derivadas, partición y etiqueta.</span>
+
+<span class="sd">Orden obligatorio del flujo (corrección solicitada en la Entrega 1):</span>
+
+<span class="sd">1. ``cargar_tablas`` → ``limpiar_transacciones`` → ``derivar_variables_transaccionales`` → ``unir``</span>
+<span class="sd">2. ``partir``: se separan los índices de entrenamiento y prueba **antes** de mirar el objetivo.</span>
+<span class="sd">3. ``diagnosticos_objetivo(df, particion)``: toda estadística que involucre al objetivo se</span>
+<span class="sd">   calcula solo con el índice de entrenamiento (la función lo impone por sí misma).</span>
+<span class="sd">4. ``depurar`` → ``separar`` → ``construir_etiqueta`` (umbral estimado solo con entrenamiento).</span>
+<span class="sd">"""</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ETIQUETA_METODO</span><span class="p">,</span> <span class="n">ETIQUETA_Q</span><span class="p">,</span> <span class="n">OBJETIVO</span><span class="p">,</span> <span class="n">SEED</span><span class="p">,</span> <span class="n">TEST_SIZE</span><span class="p">,</span> <span class="n">localizar_datos</span>
+
+<span class="c1"># ------------------------------------------------------------------ constantes del dominio</span>
+<span class="n">COLUMNAS_A_ELIMINAR</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">'customer_id'</span><span class="p">,</span>
+    <span class="s1">'active_products'</span><span class="p">,</span>
+    <span class="s1">'customer_lifetime_value'</span><span class="p">,</span> <span class="s1">'clv_segment'</span><span class="p">,</span>
+    <span class="s1">'average_transaction_value'</span><span class="p">,</span> <span class="s1">'total_transaction_volume'</span><span class="p">,</span>
+    <span class="s1">'avg_daily_transactions'</span><span class="p">,</span> <span class="s1">'monthly_transaction_count'</span><span class="p">,</span>
+    <span class="s1">'first_transaction_date'</span><span class="p">,</span> <span class="s1">'last_transaction_date'</span><span class="p">,</span>
+    <span class="s1">'nps_score'</span><span class="p">,</span>
+    <span class="s1">'occupation'</span><span class="p">,</span>
+    <span class="s1">'complaint_topics'</span><span class="p">,</span> <span class="s1">'feature_requests'</span><span class="p">,</span>
+    <span class="s1">'last_survey_date'</span><span class="p">,</span> <span class="s1">'first_tx'</span><span class="p">,</span> <span class="s1">'last_tx'</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="sd">"""Columnas descartadas con la evidencia de ``diagnosticos_objetivo`` (ver Entrega 2, §3)."""</span>
+
+<span class="n">BOOLEANAS</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'savings_account'</span><span class="p">,</span> <span class="s1">'credit_card'</span><span class="p">,</span> <span class="s1">'personal_loan'</span><span class="p">,</span> <span class="s1">'investment_account'</span><span class="p">,</span>
+                        <span class="s1">'insurance_product'</span><span class="p">,</span> <span class="s1">'bill_payment_user'</span><span class="p">,</span> <span class="s1">'auto_savings_enabled'</span><span class="p">]</span>
+<span class="sd">"""Tenencia de productos. Se conservan: no reconstruyen ``active_products``."""</span>
+
+<span class="n">PARES_DUPLICADOS</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s1">'avg_tx_value'</span><span class="p">,</span> <span class="s1">'average_transaction_value'</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'total_tx_volume'</span><span class="p">,</span> <span class="s1">'total_transaction_volume'</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'transaction_frequency'</span><span class="p">,</span> <span class="s1">'avg_daily_transactions'</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'transaction_frequency'</span><span class="p">,</span> <span class="s1">'monthly_transaction_count'</span><span class="p">),</span>
+<span class="p">]</span>
+
+
+<span class="c1"># ------------------------------------------------------------------------------ carga</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cargar_tablas</span><span class="p">(</span><span class="n">carpeta</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Lee ``customer_data.csv`` y ``transactions_data.csv``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    carpeta : Path or str, optional</span>
+<span class="sd">        Carpeta con los CSV. Si se omite se localiza con ``config.localizar_datos``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    clientes : DataFrame</span>
+<span class="sd">        Un registro por cliente (48.723 × 54 en la versión pública).</span>
+<span class="sd">    tx : DataFrame</span>
+<span class="sd">        Detalle de transacciones con ``date`` ya interpretada como fecha.</span>
+<span class="sd">    """</span>
+    <span class="n">carpeta</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">carpeta</span><span class="p">)</span> <span class="k">if</span> <span class="n">carpeta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">localizar_datos</span><span class="p">()</span>
+    <span class="n">clientes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">carpeta</span> <span class="o">/</span> <span class="s1">'customer_data.csv'</span><span class="p">)</span>
+    <span class="n">tx</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">carpeta</span> <span class="o">/</span> <span class="s1">'transactions_data.csv'</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s1">'date'</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">clientes</span><span class="p">,</span> <span class="n">tx</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">auditar_transacciones</span><span class="p">(</span><span class="n">clientes</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">tx</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Comprueba integridad entre las dos tablas.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    clientes, tx : DataFrame</span>
+<span class="sd">        Tablas tal como las devuelve :func:`cargar_tablas`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        ``duplicadas``, ``montos_no_positivos``, ``fechas_nulas``, ``huerfanas``</span>
+<span class="sd">        (transacciones sin cliente) y ``clientes_sin_tx``.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">'duplicadas'</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">tx</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span>
+        <span class="s1">'montos_no_positivos'</span><span class="p">:</span> <span class="nb">int</span><span class="p">((</span><span class="n">tx</span><span class="p">[</span><span class="s1">'amount'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span>
+        <span class="s1">'fechas_nulas'</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">tx</span><span class="p">[</span><span class="s1">'date'</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span>
+        <span class="s1">'huerfanas'</span><span class="p">:</span> <span class="nb">int</span><span class="p">((</span><span class="o">~</span><span class="n">tx</span><span class="p">[</span><span class="s1">'customer_id'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">clientes</span><span class="p">[</span><span class="s1">'customer_id'</span><span class="p">]))</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span>
+        <span class="s1">'clientes_sin_tx'</span><span class="p">:</span> <span class="nb">int</span><span class="p">((</span><span class="o">~</span><span class="n">clientes</span><span class="p">[</span><span class="s1">'customer_id'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">tx</span><span class="p">[</span><span class="s1">'customer_id'</span><span class="p">]))</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">limpiar_transacciones</span><span class="p">(</span><span class="n">tx</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Elimina las filas exactamente duplicadas del detalle transaccional.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tx : DataFrame</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    DataFrame</span>
+<span class="sd">        Sin duplicados y con el índice reiniciado.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">tx</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">derivar_variables_transaccionales</span><span class="p">(</span><span class="n">tx</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Agrega el detalle por cliente en doce variables de comportamiento.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tx : DataFrame</span>
+<span class="sd">        Transacciones limpias con ``customer_id``, ``date``, ``amount`` y ``type``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    DataFrame</span>
+<span class="sd">        Indexado por ``customer_id`` con ``n_tx``, ``monto_total``, ``monto_medio``,</span>
+<span class="sd">        ``monto_mediano``, ``recencia_dias``, ``dias_activo``, ``volatilidad_monto``,</span>
+<span class="sd">        ``meses_activos`` y ``prop_&lt;tipo&gt;`` por tipo de operación.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Ninguna de estas variables usa el objetivo, de modo que pueden calcularse sobre el</span>
+<span class="sd">    total de clientes sin riesgo de fuga. La recencia se mide contra la última fecha del</span>
+<span class="sd">    detalle completo.</span>
+<span class="sd">    """</span>
+    <span class="n">tx</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">fecha_corte</span> <span class="o">=</span> <span class="n">tx</span><span class="p">[</span><span class="s1">'date'</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'customer_id'</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+        <span class="n">n_tx</span><span class="o">=</span><span class="p">(</span><span class="s1">'amount'</span><span class="p">,</span> <span class="s1">'size'</span><span class="p">),</span> <span class="n">monto_total</span><span class="o">=</span><span class="p">(</span><span class="s1">'amount'</span><span class="p">,</span> <span class="s1">'sum'</span><span class="p">),</span>
+        <span class="n">monto_medio</span><span class="o">=</span><span class="p">(</span><span class="s1">'amount'</span><span class="p">,</span> <span class="s1">'mean'</span><span class="p">),</span> <span class="n">monto_mediano</span><span class="o">=</span><span class="p">(</span><span class="s1">'amount'</span><span class="p">,</span> <span class="s1">'median'</span><span class="p">),</span>
+        <span class="n">monto_desv</span><span class="o">=</span><span class="p">(</span><span class="s1">'amount'</span><span class="p">,</span> <span class="s1">'std'</span><span class="p">),</span> <span class="n">ultima_tx</span><span class="o">=</span><span class="p">(</span><span class="s1">'date'</span><span class="p">,</span> <span class="s1">'max'</span><span class="p">),</span> <span class="n">primera_tx</span><span class="o">=</span><span class="p">(</span><span class="s1">'date'</span><span class="p">,</span> <span class="s1">'min'</span><span class="p">))</span>
+    <span class="n">base</span><span class="p">[</span><span class="s1">'recencia_dias'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">fecha_corte</span> <span class="o">-</span> <span class="n">base</span><span class="p">[</span><span class="s1">'ultima_tx'</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">days</span>
+    <span class="n">base</span><span class="p">[</span><span class="s1">'dias_activo'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">base</span><span class="p">[</span><span class="s1">'ultima_tx'</span><span class="p">]</span> <span class="o">-</span> <span class="n">base</span><span class="p">[</span><span class="s1">'primera_tx'</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">days</span>
+    <span class="n">base</span><span class="p">[</span><span class="s1">'volatilidad_monto'</span><span class="p">]</span> <span class="o">=</span> <span class="n">base</span><span class="p">[</span><span class="s1">'monto_desv'</span><span class="p">]</span> <span class="o">/</span> <span class="n">base</span><span class="p">[</span><span class="s1">'monto_medio'</span><span class="p">]</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'ultima_tx'</span><span class="p">,</span> <span class="s1">'primera_tx'</span><span class="p">,</span> <span class="s1">'monto_desv'</span><span class="p">])</span>
+    <span class="n">tx</span><span class="p">[</span><span class="s1">'mes'</span><span class="p">]</span> <span class="o">=</span> <span class="n">tx</span><span class="p">[</span><span class="s1">'date'</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">to_period</span><span class="p">(</span><span class="s1">'M'</span><span class="p">)</span>
+    <span class="n">meses</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'customer_id'</span><span class="p">)[</span><span class="s1">'mes'</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">'meses_activos'</span><span class="p">)</span>
+    <span class="n">mix</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">tx</span><span class="p">[</span><span class="s1">'customer_id'</span><span class="p">],</span> <span class="n">tx</span><span class="p">[</span><span class="s1">'type'</span><span class="p">],</span> <span class="n">normalize</span><span class="o">=</span><span class="s1">'index'</span><span class="p">)</span><span class="o">.</span><span class="n">add_prefix</span><span class="p">(</span><span class="s1">'prop_'</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">base</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">meses</span><span class="p">,</span> <span class="n">mix</span><span class="p">])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">unir</span><span class="p">(</span><span class="n">clientes</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">variables_tx</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Une la tabla de clientes con las variables derivadas.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    clientes : DataFrame</span>
+<span class="sd">    variables_tx : DataFrame</span>
+<span class="sd">        Indexado por ``customer_id`` (salida de :func:`derivar_variables_transaccionales`).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    DataFrame</span>
+<span class="sd">        ``left join`` sobre ``customer_id``; conserva el índice de ``clientes``.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">clientes</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">variables_tx</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="s1">'customer_id'</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">columnas_transaccionales</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Nombres de las variables derivadas del detalle presentes en ``df``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : DataFrame</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of str</span>
+<span class="sd">    """</span>
+    <span class="n">fijas</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'n_tx'</span><span class="p">,</span> <span class="s1">'monto_total'</span><span class="p">,</span> <span class="s1">'monto_medio'</span><span class="p">,</span> <span class="s1">'monto_mediano'</span><span class="p">,</span> <span class="s1">'recencia_dias'</span><span class="p">,</span>
+             <span class="s1">'dias_activo'</span><span class="p">,</span> <span class="s1">'volatilidad_monto'</span><span class="p">,</span> <span class="s1">'meses_activos'</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">fijas</span> <span class="ow">or</span> <span class="n">c</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'prop_'</span><span class="p">)]</span>
+
+
+<span class="c1"># --------------------------------------------------------------------------- partición</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Particion</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Índices de las particiones. Se crean **antes** de cualquier uso del objetivo.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    idx_train, idx_test : pandas.Index</span>
+<span class="sd">        Índices de entrenamiento y prueba.</span>
+<span class="sd">    idx_val : pandas.Index or None</span>
+<span class="sd">        Índice de validación explícita, si se pidió ``val_size &gt; 0``.</span>
+<span class="sd">    seed : int</span>
+<span class="sd">        Semilla usada para el reparto.</span>
+<span class="sd">    """</span>
+    <span class="n">idx_train</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span>
+    <span class="n">idx_test</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span>
+    <span class="n">idx_val</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">SEED</span>
+    <span class="n">test_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">TEST_SIZE</span>
+    <span class="n">val_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">conjuntos</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">idx_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx_test</span><span class="p">]</span> <span class="o">+</span> <span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">idx_val</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[])</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">conjuntos</span><span class="p">)</span>
+        <span class="n">union</span> <span class="o">=</span> <span class="n">conjuntos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">conjuntos</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">union</span> <span class="o">=</span> <span class="n">union</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">union</span><span class="p">)</span> <span class="o">!=</span> <span class="n">total</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'las particiones se solapan'</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">partir</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">test_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">TEST_SIZE</span><span class="p">,</span> <span class="n">val_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+           <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">SEED</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Particion</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Reparte los índices de ``df`` en entrenamiento, (validación) y prueba.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : DataFrame</span>
+<span class="sd">        Tabla completa; solo se usa su índice.</span>
+<span class="sd">    test_size : float</span>
+<span class="sd">        Fracción de prueba sobre el total.</span>
+<span class="sd">    val_size : float</span>
+<span class="sd">        Fracción de validación sobre el total (0 para no crearla). Útil para el</span>
+<span class="sd">        early stopping de XGBoost y para la gráfica entrenamiento/validación/prueba.</span>
+<span class="sd">    seed : int</span>
+<span class="sd">        Semilla del reparto.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Particion</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    El reparto se hace sobre el objetivo **continuo**, sin estratificar: la etiqueta</span>
+<span class="sd">    binaria todavía no existe, porque su umbral se estimará solo con entrenamiento.</span>
+<span class="sd">    """</span>
+    <span class="n">idx_tr</span><span class="p">,</span> <span class="n">idx_te</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">test_size</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">idx_va</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">val_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">frac</span> <span class="o">=</span> <span class="n">val_size</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">test_size</span><span class="p">)</span>
+        <span class="n">idx_tr</span><span class="p">,</span> <span class="n">idx_va</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">idx_tr</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">frac</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Particion</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">idx_tr</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">idx_te</span><span class="p">),</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">idx_va</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">idx_va</span><span class="p">),</span>
+                     <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">test_size</span><span class="p">,</span> <span class="n">val_size</span><span class="o">=</span><span class="n">val_size</span><span class="p">)</span>
+
+
+<span class="c1"># ----------------------------------------------------------- diagnósticos (solo train)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_eta2</span><span class="p">(</span><span class="n">categorica</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">continua</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Tamaño de efecto η² (varianza entre grupos / varianza total) de una categórica."""</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'c'</span><span class="p">:</span> <span class="n">categorica</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span> <span class="s1">'y'</span><span class="p">:</span> <span class="n">continua</span><span class="p">})</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="n">media</span> <span class="o">=</span> <span class="n">g</span><span class="p">[</span><span class="s1">'y'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">entre</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'c'</span><span class="p">)[</span><span class="s1">'y'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">-</span> <span class="n">media</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="p">((</span><span class="n">g</span><span class="p">[</span><span class="s1">'y'</span><span class="p">]</span> <span class="o">-</span> <span class="n">media</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">entre</span> <span class="o">/</span> <span class="n">total</span><span class="p">)</span> <span class="k">if</span> <span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s1">'nan'</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">diagnosticos_objetivo</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">particion</span><span class="p">:</span> <span class="n">Particion</span><span class="p">,</span> <span class="n">objetivo</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">OBJETIVO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Recalcula la evidencia que justifica cada eliminación de columna.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : DataFrame</span>
+<span class="sd">        Tabla unida completa (con ``active_products``, ``customer_lifetime_value``, etc.</span>
+<span class="sd">        todavía presentes).</span>
+<span class="sd">    particion : Particion</span>
+<span class="sd">        La función restringe por sí misma al índice de entrenamiento todo estadístico que</span>
+<span class="sd">        involucre al objetivo: no es posible pasarle filas de prueba por descuido.</span>
+<span class="sd">    objetivo : str</span>
+<span class="sd">        Nombre del objetivo continuo.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        ``r_active_products``, ``r2_active_products``, ``escalera`` (DataFrame por nivel de</span>
+<span class="sd">        ``active_products`` con media, desviación, conteo y salto), ``desv_saltos``,</span>
+<span class="sd">        ``rho_clv_volumen``, ``pares_duplicados`` (DataFrame), ``r_satisfaccion_nps``,</span>
+<span class="sd">        ``eta2`` (DataFrame), ``faltantes`` (DataFrame), ``contingencia_credito`` (DataFrame),</span>
+<span class="sd">        ``ausencia_vs_objetivo`` (dict), ``booleanas_vs_active`` (dict) y ``corr_tx`` (Series).</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Las estadísticas que miran el objetivo (correlaciones, escalera, η², ausencia frente al</span>
+<span class="sd">    objetivo, derivadas transaccionales) se calculan **solo con entrenamiento**: si usaran</span>
+<span class="sd">    las filas de prueba, la selección de variables incorporaría información de prueba. Las</span>
+<span class="sd">    comprobaciones estructurales que no involucran al objetivo —pares de columnas</span>
+<span class="sd">    duplicadas y recuento de faltantes— se hacen sobre la tabla completa, porque una</span>
+<span class="sd">    columna permutada entre filas solo se reconoce como copia cuando se comparan todos sus</span>
+<span class="sd">    valores; el diccionario indica en ``ambito`` qué se calculó con qué.</span>
+<span class="sd">    """</span>
+    <span class="n">df_train</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">particion</span><span class="o">.</span><span class="n">idx_train</span><span class="p">]</span>
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="n">objetivo</span><span class="p">]</span>
+    <span class="n">r_ap</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">df_train</span><span class="p">[</span><span class="s1">'active_products'</span><span class="p">]))</span>
+    <span class="n">escalera</span> <span class="o">=</span> <span class="n">df_train</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'active_products'</span><span class="p">)[</span><span class="n">objetivo</span><span class="p">]</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s1">'count'</span><span class="p">,</span> <span class="s1">'mean'</span><span class="p">,</span> <span class="s1">'std'</span><span class="p">])</span>
+    <span class="n">escalera</span><span class="p">[</span><span class="s1">'salto'</span><span class="p">]</span> <span class="o">=</span> <span class="n">escalera</span><span class="p">[</span><span class="s1">'mean'</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span>
+
+    <span class="n">filas</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">PARES_DUPLICADOS</span><span class="p">:</span>                       <span class="c1"># estructura de la tabla: sobre el total</span>
+        <span class="n">por_fila</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="n">mismos</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="n">filas</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s1"> / </span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="n">por_fila</span><span class="p">,</span> <span class="n">mismos</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">b</span><span class="p">]))])</span>
+    <span class="n">pares</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">filas</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'par'</span><span class="p">,</span> <span class="s1">'coincide_por_fila_pct'</span><span class="p">,</span> <span class="s1">'mismos_valores_pct'</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">])</span>
+
+    <span class="n">candidatas</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'occupation'</span><span class="p">,</span> <span class="s1">'last_survey_date'</span><span class="p">,</span> <span class="s1">'first_tx'</span><span class="p">,</span> <span class="s1">'last_tx'</span><span class="p">]</span>
+    <span class="n">eta</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'variable'</span><span class="p">:</span> <span class="n">candidatas</span><span class="p">,</span>
+                        <span class="s1">'niveles'</span><span class="p">:</span> <span class="p">[</span><span class="n">df_train</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidatas</span><span class="p">],</span>
+                        <span class="s1">'eta2'</span><span class="p">:</span> <span class="p">[</span><span class="n">_eta2</span><span class="p">(</span><span class="n">df_train</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="n">obj</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidatas</span><span class="p">]})</span>
+
+    <span class="n">falt</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>                              <span class="c1"># estructura de la tabla: sobre el total</span>
+    <span class="n">falt</span> <span class="o">=</span> <span class="n">falt</span><span class="p">[</span><span class="n">falt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_frame</span><span class="p">(</span><span class="s1">'faltantes'</span><span class="p">)</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">pct</span><span class="o">=</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="s1">'faltantes'</span><span class="p">]</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">contingencia</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'credit_utilization_ratio'</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">(),</span> <span class="n">df</span><span class="p">[</span><span class="s1">'credit_card'</span><span class="p">],</span> <span class="n">normalize</span><span class="o">=</span><span class="s1">'index'</span><span class="p">)</span>
+    <span class="n">ausencia</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'complaint_topics'</span><span class="p">,</span> <span class="s1">'feature_requests'</span><span class="p">]:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">ausencia</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'r_con_objetivo'</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">obj</span><span class="p">)),</span>
+                         <span class="s1">'objetivo_medio_presente'</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="n">a</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()),</span>
+                         <span class="s1">'objetivo_medio_ausente'</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="n">a</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())}</span>
+
+    <span class="n">suma_bool</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="n">BOOLEANAS</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">booleanas</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'coincidencia_pct'</span><span class="p">:</span> <span class="nb">float</span><span class="p">((</span><span class="n">suma_bool</span> <span class="o">==</span> <span class="n">df_train</span><span class="p">[</span><span class="s1">'active_products'</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span><span class="p">),</span>
+                 <span class="s1">'r'</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">suma_bool</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">df_train</span><span class="p">[</span><span class="s1">'active_products'</span><span class="p">]))}</span>
+    <span class="n">cols_tx</span> <span class="o">=</span> <span class="n">columnas_transaccionales</span><span class="p">(</span><span class="n">df_train</span><span class="p">)</span>
+    <span class="n">corr_tx</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="n">cols_tx</span><span class="p">]</span><span class="o">.</span><span class="n">corrwith</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="nb">abs</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">'n_train'</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_train</span><span class="p">)),</span>
+        <span class="s1">'n_total'</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)),</span>
+        <span class="s1">'ambito'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'entrenamiento'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'r_active_products'</span><span class="p">,</span> <span class="s1">'r2_active_products'</span><span class="p">,</span> <span class="s1">'escalera'</span><span class="p">,</span> <span class="s1">'desv_saltos'</span><span class="p">,</span>
+                                     <span class="s1">'rho_clv_volumen'</span><span class="p">,</span> <span class="s1">'r_satisfaccion_nps'</span><span class="p">,</span> <span class="s1">'eta2'</span><span class="p">,</span> <span class="s1">'ausencia_vs_objetivo'</span><span class="p">,</span>
+                                     <span class="s1">'booleanas_vs_active'</span><span class="p">,</span> <span class="s1">'corr_tx'</span><span class="p">],</span>
+                   <span class="s1">'total'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'pares_duplicados'</span><span class="p">,</span> <span class="s1">'faltantes'</span><span class="p">,</span> <span class="s1">'contingencia_credito'</span><span class="p">]},</span>
+        <span class="s1">'r_active_products'</span><span class="p">:</span> <span class="n">r_ap</span><span class="p">,</span>
+        <span class="s1">'r2_active_products'</span><span class="p">:</span> <span class="n">r_ap</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s1">'escalera'</span><span class="p">:</span> <span class="n">escalera</span><span class="p">,</span>
+        <span class="s1">'desv_saltos'</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">escalera</span><span class="p">[</span><span class="s1">'salto'</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">std</span><span class="p">()),</span>
+        <span class="s1">'rho_clv_volumen'</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">df_train</span><span class="p">[</span><span class="s1">'customer_lifetime_value'</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">df_train</span><span class="p">[</span><span class="s1">'total_tx_volume'</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s1">'spearman'</span><span class="p">)),</span>
+        <span class="s1">'pares_duplicados'</span><span class="p">:</span> <span class="n">pares</span><span class="p">,</span>
+        <span class="s1">'r_satisfaccion_nps'</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">df_train</span><span class="p">[</span><span class="s1">'satisfaction_score'</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">df_train</span><span class="p">[</span><span class="s1">'nps_score'</span><span class="p">])),</span>
+        <span class="s1">'eta2'</span><span class="p">:</span> <span class="n">eta</span><span class="p">,</span>
+        <span class="s1">'faltantes'</span><span class="p">:</span> <span class="n">falt</span><span class="p">,</span>
+        <span class="s1">'contingencia_credito'</span><span class="p">:</span> <span class="n">contingencia</span><span class="p">,</span>
+        <span class="s1">'ausencia_vs_objetivo'</span><span class="p">:</span> <span class="n">ausencia</span><span class="p">,</span>
+        <span class="s1">'booleanas_vs_active'</span><span class="p">:</span> <span class="n">booleanas</span><span class="p">,</span>
+        <span class="s1">'corr_tx'</span><span class="p">:</span> <span class="n">corr_tx</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<span class="c1"># ------------------------------------------------------------------------- depuración</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">depurar</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">columnas_a_eliminar</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Elimina las columnas descartadas e imputa el faltante estructural.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : DataFrame</span>
+<span class="sd">        Tabla unida.</span>
+<span class="sd">    columnas_a_eliminar : list of str, optional</span>
+<span class="sd">        Por defecto ``COLUMNAS_A_ELIMINAR``, decidida en la Entrega 2 y re-validada aquí</span>
+<span class="sd">        con :func:`diagnosticos_objetivo` sobre entrenamiento.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    DataFrame</span>
+<span class="sd">        Copia sin esas columnas y sin faltantes.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    ``credit_utilization_ratio`` falta exactamente cuando no hay tarjeta de crédito: se</span>
+<span class="sd">    imputa 0 por definición del dominio, no por un estadístico de los datos, y por eso</span>
+<span class="sd">    puede aplicarse a todas las filas sin fuga.</span>
+<span class="sd">    """</span>
+    <span class="n">datos</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">columnas_a_eliminar</span> <span class="ow">or</span> <span class="n">COLUMNAS_A_ELIMINAR</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">datos</span><span class="p">[</span><span class="s1">'credit_utilization_ratio'</span><span class="p">]</span> <span class="o">=</span> <span class="n">datos</span><span class="p">[</span><span class="s1">'credit_utilization_ratio'</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">datos</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Conjuntos</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Matrices de predictores y objetivo continuo por partición."""</span>
+    <span class="n">X_train</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+    <span class="n">X_test</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+    <span class="n">y_train_cont</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span>
+    <span class="n">y_test_cont</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span>
+    <span class="n">X_val</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">y_val_cont</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">separar</span><span class="p">(</span><span class="n">datos</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">particion</span><span class="p">:</span> <span class="n">Particion</span><span class="p">,</span> <span class="n">objetivo</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">OBJETIVO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Conjuntos</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Aplica la partición a la tabla depurada y separa predictores y objetivo continuo.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    datos : DataFrame</span>
+<span class="sd">        Salida de :func:`depurar`.</span>
+<span class="sd">    particion : Particion</span>
+<span class="sd">    objetivo : str</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Conjuntos</span>
+<span class="sd">    """</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">datos</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">objetivo</span><span class="p">])</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">datos</span><span class="p">[</span><span class="n">objetivo</span><span class="p">]</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">Conjuntos</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">particion</span><span class="o">.</span><span class="n">idx_train</span><span class="p">],</span> <span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">particion</span><span class="o">.</span><span class="n">idx_test</span><span class="p">],</span>
+                  <span class="n">y</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">particion</span><span class="o">.</span><span class="n">idx_train</span><span class="p">],</span> <span class="n">y</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">particion</span><span class="o">.</span><span class="n">idx_test</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">particion</span><span class="o">.</span><span class="n">idx_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">X_val</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">y_val_cont</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">particion</span><span class="o">.</span><span class="n">idx_val</span><span class="p">],</span> <span class="n">y</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">particion</span><span class="o">.</span><span class="n">idx_val</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">c</span>
+
+
+<span class="c1"># ------------------------------------------------------------------------------ etiqueta</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Etiqueta</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Umbral de binarización y su procedencia.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    umbral : float</span>
+<span class="sd">        Valor de corte; ``y = 1`` si el objetivo continuo lo supera.</span>
+<span class="sd">    metodo : str</span>
+<span class="sd">        ``'mediana'`` o ``'percentil'``.</span>
+<span class="sd">    q : float or None</span>
+<span class="sd">        Percentil usado cuando ``metodo == 'percentil'``.</span>
+<span class="sd">    n_train : int</span>
+<span class="sd">        Número de observaciones de entrenamiento con las que se estimó.</span>
+<span class="sd">    """</span>
+    <span class="n">umbral</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">metodo</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">q</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">n_train</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">binarizar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_cont</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Aplica el umbral, ya fijo, a cualquier conjunto.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        y_cont : Series</span>
+<span class="sd">            Objetivo continuo.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Series</span>
+<span class="sd">            ``riesgo_alto`` (1 si ``y_cont &gt; umbral``).</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">y_cont</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">umbral</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">'riesgo_alto'</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">construir_etiqueta</span><span class="p">(</span><span class="n">y_train_cont</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">metodo</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">ETIQUETA_METODO</span><span class="p">,</span>
+                       <span class="n">q</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">ETIQUETA_Q</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Etiqueta</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Estima el umbral de binarización **solo con entrenamiento**.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y_train_cont : Series</span>
+<span class="sd">        Objetivo continuo de las filas de entrenamiento.</span>
+<span class="sd">    metodo : {'percentil', 'mediana'}</span>
+<span class="sd">        Con ``'percentil'`` (por defecto, ``config.ETIQUETA_METODO``) se marca como riesgo</span>
+<span class="sd">        alto la fracción ``1 - q`` superior (``q = 0.75`` → 25 % de positivos), lo que</span>
+<span class="sd">        produce un desbalanceo real sobre el que tienen sentido las técnicas de balanceo</span>
+<span class="sd">        y la calibración. Con ``'mediana'`` las clases quedan ~50/50 por construcción y</span>
+<span class="sd">        el sobremuestreo no tiene nada que generar.</span>
+<span class="sd">    q : float, optional</span>
+<span class="sd">        Percentil en (0, 1) cuando ``metodo == 'percentil'`` (por defecto</span>
+<span class="sd">        ``config.ETIQUETA_Q``); se ignora con ``'mediana'``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Etiqueta</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">metodo</span> <span class="o">==</span> <span class="s1">'mediana'</span><span class="p">:</span>
+        <span class="n">umbral</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">y_train_cont</span><span class="o">.</span><span class="n">median</span><span class="p">())</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="n">metodo</span> <span class="o">==</span> <span class="s1">'percentil'</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">q</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">q</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"con metodo='percentil' hay que dar q en (0, 1)"</span><span class="p">)</span>
+        <span class="n">umbral</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">y_train_cont</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">q</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'metodo desconocido: </span><span class="si">{</span><span class="n">metodo</span><span class="si">!r}</span><span class="s1">'</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Etiqueta</span><span class="p">(</span><span class="n">umbral</span><span class="o">=</span><span class="n">umbral</span><span class="p">,</span> <span class="n">metodo</span><span class="o">=</span><span class="n">metodo</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">q</span><span class="p">,</span> <span class="n">n_train</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_train_cont</span><span class="p">)))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">preparar_todo</span><span class="p">(</span><span class="n">carpeta</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">test_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">TEST_SIZE</span><span class="p">,</span>
+                  <span class="n">val_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">metodo_etiqueta</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">ETIQUETA_METODO</span><span class="p">,</span>
+                  <span class="n">q</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">ETIQUETA_Q</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">SEED</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Ejecuta el flujo completo en el orden correcto y devuelve todas las piezas.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    carpeta : Path or str, optional</span>
+<span class="sd">        Carpeta de los CSV; por defecto se localiza automáticamente.</span>
+<span class="sd">    test_size, val_size : float</span>
+<span class="sd">        Fracciones de prueba y de validación explícita (0 para no crearla).</span>
+<span class="sd">    metodo_etiqueta : {'percentil', 'mediana'}</span>
+<span class="sd">    q : float, optional</span>
+<span class="sd">        Percentil del umbral (ver :func:`construir_etiqueta`).</span>
+<span class="sd">    seed : int</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        ``clientes``, ``tx``, ``auditoria``, ``df`` (tabla unida), ``particion``,</span>
+<span class="sd">        ``diagnosticos`` (calculados sobre entrenamiento), ``datos`` (depurada),</span>
+<span class="sd">        ``conjuntos``, ``etiqueta``, ``y_train``, ``y_test`` (y ``y_val`` si aplica).</span>
+<span class="sd">    """</span>
+    <span class="n">clientes</span><span class="p">,</span> <span class="n">tx</span> <span class="o">=</span> <span class="n">cargar_tablas</span><span class="p">(</span><span class="n">carpeta</span><span class="p">)</span>
+    <span class="n">auditoria</span> <span class="o">=</span> <span class="n">auditar_transacciones</span><span class="p">(</span><span class="n">clientes</span><span class="p">,</span> <span class="n">tx</span><span class="p">)</span>
+    <span class="n">tx</span> <span class="o">=</span> <span class="n">limpiar_transacciones</span><span class="p">(</span><span class="n">tx</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">unir</span><span class="p">(</span><span class="n">clientes</span><span class="p">,</span> <span class="n">derivar_variables_transaccionales</span><span class="p">(</span><span class="n">tx</span><span class="p">))</span>
+    <span class="n">particion</span> <span class="o">=</span> <span class="n">partir</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">test_size</span><span class="p">,</span> <span class="n">val_size</span><span class="o">=</span><span class="n">val_size</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">diagnosticos</span> <span class="o">=</span> <span class="n">diagnosticos_objetivo</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">particion</span><span class="p">)</span>
+    <span class="n">datos</span> <span class="o">=</span> <span class="n">depurar</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="n">conjuntos</span> <span class="o">=</span> <span class="n">separar</span><span class="p">(</span><span class="n">datos</span><span class="p">,</span> <span class="n">particion</span><span class="p">)</span>
+    <span class="n">etiqueta</span> <span class="o">=</span> <span class="n">construir_etiqueta</span><span class="p">(</span><span class="n">conjuntos</span><span class="o">.</span><span class="n">y_train_cont</span><span class="p">,</span> <span class="n">metodo</span><span class="o">=</span><span class="n">metodo_etiqueta</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">q</span><span class="p">)</span>
+    <span class="n">salida</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">'clientes'</span><span class="p">:</span> <span class="n">clientes</span><span class="p">,</span> <span class="s1">'tx'</span><span class="p">:</span> <span class="n">tx</span><span class="p">,</span> <span class="s1">'auditoria'</span><span class="p">:</span> <span class="n">auditoria</span><span class="p">,</span> <span class="s1">'df'</span><span class="p">:</span> <span class="n">df</span><span class="p">,</span>
+        <span class="s1">'particion'</span><span class="p">:</span> <span class="n">particion</span><span class="p">,</span> <span class="s1">'diagnosticos'</span><span class="p">:</span> <span class="n">diagnosticos</span><span class="p">,</span> <span class="s1">'datos'</span><span class="p">:</span> <span class="n">datos</span><span class="p">,</span>
+        <span class="s1">'conjuntos'</span><span class="p">:</span> <span class="n">conjuntos</span><span class="p">,</span> <span class="s1">'etiqueta'</span><span class="p">:</span> <span class="n">etiqueta</span><span class="p">,</span>
+        <span class="s1">'y_train'</span><span class="p">:</span> <span class="n">etiqueta</span><span class="o">.</span><span class="n">binarizar</span><span class="p">(</span><span class="n">conjuntos</span><span class="o">.</span><span class="n">y_train_cont</span><span class="p">),</span>
+        <span class="s1">'y_test'</span><span class="p">:</span> <span class="n">etiqueta</span><span class="o">.</span><span class="n">binarizar</span><span class="p">(</span><span class="n">conjuntos</span><span class="o">.</span><span class="n">y_test_cont</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">conjuntos</span><span class="o">.</span><span class="n">y_val_cont</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">salida</span><span class="p">[</span><span class="s1">'y_val'</span><span class="p">]</span> <span class="o">=</span> <span class="n">etiqueta</span><span class="o">.</span><span class="n">binarizar</span><span class="p">(</span><span class="n">conjuntos</span><span class="o">.</span><span class="n">y_val_cont</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">salida</span>
+</pre></div>
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./codigo"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="src_config.html"
+       title="página anterior">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">anterior</p>
+        <p class="prev-next-title"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/config.py</span></code></p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="src_estadistica.html"
+       title="siguiente página">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">siguiente</p>
+        <p class="prev-next-title"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/estadistica.py</span></code></p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+Por Martínez Pulido Valerie · Basto Martínez Abrahan · Esguerra Fernández Rubén
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
