@@ -12,7 +12,7 @@ Boosting Machine*, que supera a los modelos de la Entrega 2.
 
 ## Sitio
 
-El libro con las tres entregas y todo el código se publica como Jupyter Book:
+El Jupyter Book (el notebook en línea) con las tres entregas y todo el código:
 **https://rubenesg.github.io/Prediccion-de-fuga-de-clientes-en-fintech/**
 
 Sin conexión, se abre igual desde [`docs/index.html`](docs/index.html).
@@ -25,8 +25,8 @@ Sin conexión, se abre igual desde [`docs/index.html`](docs/index.html).
 | `Entrega2/` | `entrega2_modelo.ipynb`, el cuaderno ejecutado de los modelos base, y su artículo `Entrega2_articulo.pdf` |
 | `Entrega3/` | El entregable final (tabla siguiente) |
 | `datos/` | COFINFAD comprimido (`customer_data.zip` y `transactions_data.zip`) y cómo usarlo |
-| `codigo/` | Páginas del libro que muestran el código fuente completo |
-| `docs/` | El libro construido, que sirve GitHub Pages |
+| `codigo/` | Páginas del Jupyter Book que muestran el código fuente completo |
+| `docs/` | El Jupyter Book construido, que sirve GitHub Pages |
 | `index.md`, `_config.yml`, `_toc.yml`, `_static/` | Portada y configuración del Jupyter Book |
 
 ### Entrega 3
@@ -34,35 +34,35 @@ Sin conexión, se abre igual desde [`docs/index.html`](docs/index.html).
 | Archivo o carpeta | Contenido |
 |---|---|
 | `Entregable3_articulo.pdf` | El artículo en la plantilla Springer (sn-jnl); fuente LaTeX, tablas y figuras generadas en `articulo/` |
-| `Entregable3.ipynb` | **Un solo cuaderno, ejecutado**, con las once secciones del libro de esta entrega |
-| `Entregable3_libro.pdf` | El libro de esta entrega en PDF, con un marcador por sección |
-| `libro/` | Las once secciones como cuadernos ejecutados (tabla siguiente); `fuentes/` y `construir.py` los generan y ejecutan; `exportar_pdf.py` imprime el libro a PDF |
+| `Entregable3.ipynb` | **Un solo notebook, ejecutado**, con las once secciones de esta entrega |
+| `Entregable3_notebook.pdf` | El notebook de esta entrega impreso en PDF, con un marcador por sección |
+| `notebook/` | Las once secciones como cuadernos ejecutados (tabla siguiente); `fuentes/` y `construir.py` los generan y ejecutan; `exportar_pdf.py` las imprime a PDF |
 | `src/` | Paquete con la lógica, separada por módulos: datos, preprocesamiento, modelos, balanceo, optimización, experimento, registro, evaluación, estadística, comparación, análisis y gráficas |
 | `tests/` | Pruebas automáticas (`python -m pytest tests`) |
 | `resultados/` | Tabla maestra `experimentos.parquet` (una fila por corrida: hiperparámetros finales, métricas del bucle externo, tiempos y semilla), predicciones de prueba, comparación con la Entrega 2, experimentos de cómputo y complementos |
 | `correr_140.py`, `comparar_entrega2.py`, `computo.py`, `complementos.py`, `medir_tiempos_finales.py` | Guiones que producen los resultados |
 | `requirements.txt` | Versiones exactas del entorno (Python 3.13.3) |
 
-| Sección del libro | Contenido |
+| Sección del notebook | Contenido |
 |---|---|
-| [`Entrega3/libro/00_introduccion.ipynb`](Entrega3/libro/00_introduccion.ipynb) | Resumen, organización del libro y cómo reproducir |
-| [`Entrega3/libro/01_datos.ipynb`](Entrega3/libro/01_datos.ipynb) | Data: ETL, partición antes de mirar el objetivo, etiqueta, EDA y correcciones de la Entrega 1 |
-| [`Entrega3/libro/02_metodologia.ipynb`](Entrega3/libro/02_metodologia.ipynb) | Pipeline, modelos y espacios de búsqueda, balanceo, validación anidada y los cuatro optimizadores |
-| [`Entrega3/libro/03_corridas.ipynb`](Entrega3/libro/03_corridas.ipynb) | Las 140 corridas: tabla maestra, mejor combinación por modelo y efecto del balanceo |
-| [`Entrega3/libro/04_optimizadores.ipynb`](Entrega3/libro/04_optimizadores.ipynb) | Comparación de Grid, Random, Bayesiana y Genética: métrica externa, tiempo y curvas anytime |
-| [`Entrega3/libro/05_computo.ipynb`](Entrega3/libro/05_computo.ipynb) | Optimización computacional: complejidad, variantes eficientes, paralelismo y tabla estándar frente a optimizado |
-| [`Entrega3/libro/06_evaluacion.ipynb`](Entrega3/libro/06_evaluacion.ipynb) | Evaluación en prueba, calibración, residuos y robustez |
-| [`Entrega3/libro/07_interpretabilidad.ipynb`](Entrega3/libro/07_interpretabilidad.ipynb) | SHAP, LIME y las funciones de forma de la EBM |
-| [`Entrega3/libro/08_modelo_nuevo.ipynb`](Entrega3/libro/08_modelo_nuevo.ipynb) | El modelo nuevo (EBM) frente a la Entrega 2, con DeLong y Diebold-Mariano |
-| [`Entrega3/libro/09_estadistica.ipynb`](Entrega3/libro/09_estadistica.ipynb) | Friedman, Nemenyi, DeLong, MCS, SPA, Giacomini-White y Diebold-Mariano |
-| [`Entrega3/libro/10_conclusiones.ipynb`](Entrega3/libro/10_conclusiones.ipynb) | Conclusiones |
+| [`Entrega3/notebook/00_introduccion.ipynb`](Entrega3/notebook/00_introduccion.ipynb) | Resumen, organización del libro y cómo reproducir |
+| [`Entrega3/notebook/01_datos.ipynb`](Entrega3/notebook/01_datos.ipynb) | Data: ETL, partición antes de mirar el objetivo, etiqueta, EDA y correcciones de la Entrega 1 |
+| [`Entrega3/notebook/02_metodologia.ipynb`](Entrega3/notebook/02_metodologia.ipynb) | Pipeline, modelos y espacios de búsqueda, balanceo, validación anidada y los cuatro optimizadores |
+| [`Entrega3/notebook/03_corridas.ipynb`](Entrega3/notebook/03_corridas.ipynb) | Las 140 corridas: tabla maestra, mejor combinación por modelo y efecto del balanceo |
+| [`Entrega3/notebook/04_optimizadores.ipynb`](Entrega3/notebook/04_optimizadores.ipynb) | Comparación de Grid, Random, Bayesiana y Genética: métrica externa, tiempo y curvas anytime |
+| [`Entrega3/notebook/05_computo.ipynb`](Entrega3/notebook/05_computo.ipynb) | Optimización computacional: complejidad, variantes eficientes, paralelismo y tabla estándar frente a optimizado |
+| [`Entrega3/notebook/06_evaluacion.ipynb`](Entrega3/notebook/06_evaluacion.ipynb) | Evaluación en prueba, calibración, residuos y robustez |
+| [`Entrega3/notebook/07_interpretabilidad.ipynb`](Entrega3/notebook/07_interpretabilidad.ipynb) | SHAP, LIME y las funciones de forma de la EBM |
+| [`Entrega3/notebook/08_modelo_nuevo.ipynb`](Entrega3/notebook/08_modelo_nuevo.ipynb) | El modelo nuevo (EBM) frente a la Entrega 2, con DeLong y Diebold-Mariano |
+| [`Entrega3/notebook/09_estadistica.ipynb`](Entrega3/notebook/09_estadistica.ipynb) | Friedman, Nemenyi, DeLong, MCS, SPA, Giacomini-White y Diebold-Mariano |
+| [`Entrega3/notebook/10_conclusiones.ipynb`](Entrega3/notebook/10_conclusiones.ipynb) | Conclusiones |
 
 ## Resultados principales
 
 - **Pipeline de la guía**: 140 corridas (136 entrenadas y 4 que no aplican), con validación cruzada anidada 5 × 3. Mejor modelo de clasificación: XGBoost (AUC externa 0,8332); de regresión: XGBoost (RMSE externo 0,0590).
 - **Modelo nuevo (EBM) frente a la Entrega 2**, en la misma prueba y con la misma etiqueta: AUC 0,6832 → 0,7187 (DeLong p < 10⁻¹⁸) y R² 0,1511 → 0,2159 (Diebold-Mariano con HLN p < 10⁻³⁹). Empata con XGBoost (p = 0,196 en AUC) y queda cerca del techo de información (0,7223 de AUC y 0,2197 de R²).
 
-Todas las cifras del libro y de este README se generan a partir de los resultados; ninguna está escrita a mano.
+Todas las cifras del notebook y de este README se generan a partir de los resultados; ninguna está escrita a mano.
 
 ## Datos
 
@@ -70,9 +70,9 @@ COFINFAD — *Colombian Fintech Financial Analytics Dataset*, [Mendeley Data](ht
 (DOI: 10.17632/mhb4zn3258.1), licencia CC BY 4.0. Está en `datos/` comprimido, porque `transactions_data.csv` pesa 114 MB y
 GitHub no admite archivos de más de 100 MB; el código lo descomprime solo la primera vez que lo necesita.
 
-## Compilar el libro
+## Compilar el Jupyter Book
 
-El libro se construye con `execute_notebooks: "off"`: usa las salidas ya guardadas en los cuadernos, así que no vuelve a
+El Jupyter Book se construye con `execute_notebooks: "off"`: usa las salidas ya guardadas en los cuadernos, así que no vuelve a
 entrenar nada.
 
 ```bash
@@ -97,7 +97,7 @@ python -m venv .venv
 .venv/Scripts/python -u computo.py                            # experimentos de cómputo (equipo sin otra carga)
 .venv/Scripts/python -u complementos.py                       # calibración, semillas, fuera de pliegue
 .venv/Scripts/python medir_tiempos_finales.py                 # tiempos de ajuste e inferencia de los modelos finales
-.venv/Scripts/python libro/construir.py                       # ejecuta las páginas del libro
+.venv/Scripts/python notebook/construir.py                    # ejecuta las secciones del notebook
 .venv/Scripts/python articulo/generar_material.py             # tablas y figuras del artículo desde los resultados
 .venv/Scripts/python articulo/compilar.py                     # el artículo en PDF (Tectonic o TeX Live)
 ```

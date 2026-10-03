@@ -22,8 +22,8 @@ Todo el código con que se produjeron los resultados de la Entrega 3, archivo po
 - [`computo.py`](computo.md)
 - [`complementos.py`](complementos.md)
 - [`medir_tiempos_finales.py`](medir_tiempos_finales.md)
-- [`libro/construir.py`](libro_construir.md)
-- [`libro/exportar_pdf.py`](libro_exportar_pdf.md)
+- [`notebook/construir.py`](notebook_construir.md)
+- [`notebook/exportar_pdf.py`](notebook_exportar_pdf.md)
 - [`articulo/generar_material.py`](articulo_generar_material.md)
 - [`articulo/compilar.py`](articulo_compilar.md)
 - [`tests/test_analisis.py`](tests_test_analisis.md)
@@ -31,4 +31,4 @@ Todo el código con que se produjeron los resultados de la Entrega 3, archivo po
 - [`tests/test_estadistica.py`](tests_test_estadistica.md)
 - [`tests/test_modelo_nuevo.py`](tests_test_modelo_nuevo.md)
 
-Paquete `src`: la lógica del proyecto, separada por módulos. Pruebas automáticas (`python -m pytest tests`). Los guiones de la raíz producen la tabla maestra y los resultados; `libro/construir.py` ejecuta las páginas del libro; `articulo/` genera y compila el artículo.
+Paquete `src`: la lógica del proyecto, separada por módulos. Pruebas automáticas (`python -m pytest tests`). Los guiones de la raíz producen la tabla maestra y los resultados; `notebook/construir.py` ejecuta las secciones del notebook; `articulo/` genera y compila el artículo.

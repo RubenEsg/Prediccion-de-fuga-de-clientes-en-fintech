@@ -11,9 +11,17 @@ superación se confirma con pruebas estadísticas y no solo con la cifra puntual
 (2013), en la implementación `interpret` de Nori y otros (2019). No aparece en las notas del curso.
 Es un modelo aditivo generalizado con interacciones por pares (GA²M):
 
-$$g\big(E[y]\big) = \beta_0 + \sum_j f_j(x_j) + \sum_{(i,j)} f_{ij}(x_i, x_j),$$
+#%% code [remove-input]
+import matplotlib.pyplot as plt
+# La fórmula se dibuja con mathtext para que se vea igual en cualquier visor de cuadernos.
+fig, ax = plt.subplots(figsize=(7.5, 0.75))
+ax.axis('off')
+ax.text(0.5, 0.5, r'$g(\mathrm{E}[y \mid x]) = \beta_0 + \sum_j f_j(x_j) + \sum_{(i,j)} f_{ij}(x_i, x_j)$',
+        ha='center', va='center', fontsize=15)
+plt.show()
 
-donde cada función de forma $f_j$ se aprende por *boosting* cíclico de árboles de pocas hojas sobre
+#%% md
+donde cada función de forma fⱼ se aprende por *boosting* cíclico de árboles de pocas hojas sobre
 una sola variable a la vez, con una tasa de aprendizaje baja para que el orden de las variables no
 importe, y se promedia sobre varias submuestras (bolsas externas). Reúne dos cosas que no suelen ir
 juntas: la flexibilidad del *boosting* para captar efectos no lineales y la legibilidad de un modelo

@@ -62,9 +62,7 @@
     <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'Entrega3/libro/08_modelo_nuevo';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'Entrega3/notebook/08_modelo_nuevo';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Índice" href="../../genindex.html" />
     <link rel="search" title="Búsqueda" href="../../search.html" />
@@ -269,8 +267,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../codigo/computo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/computo.py</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../codigo/complementos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/complementos.py</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../codigo/medir_tiempos_finales.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/medir_tiempos_finales.py</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../codigo/libro_construir.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/libro/construir.py</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../codigo/libro_exportar_pdf.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/libro/exportar_pdf.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../codigo/notebook_construir.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/notebook/construir.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../codigo/notebook_exportar_pdf.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/notebook/exportar_pdf.py</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../codigo/articulo_generar_material.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/articulo/generar_material.py</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../codigo/articulo_compilar.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/articulo/compilar.py</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../codigo/tests_test_analisis.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_analisis.py</span></code></a></li>
@@ -336,7 +334,7 @@
       
       
       
-      <li><a href="../../_sources/Entrega3/libro/08_modelo_nuevo.ipynb" target="_blank"
+      <li><a href="../../_sources/Entrega3/notebook/08_modelo_nuevo.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Descargar archivo fuente"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -451,9 +449,12 @@ superación se confirma con pruebas estadísticas y no solo con la cifra puntual
 <p><strong>El modelo elegido es la Explainable Boosting Machine (EBM)</strong> de Lou, Caruana, Gehrke y Hooker
 (2013), en la implementación <code class="docutils literal notranslate"><span class="pre">interpret</span></code> de Nori y otros (2019). No aparece en las notas del curso.
 Es un modelo aditivo generalizado con interacciones por pares (GA²M):</p>
-<div class="math notranslate nohighlight">
-\[g\big(E[y]\big) = \beta_0 + \sum_j f_j(x_j) + \sum_{(i,j)} f_{ij}(x_i, x_j),\]</div>
-<p>donde cada función de forma <span class="math notranslate nohighlight">\(f_j\)</span> se aprende por <em>boosting</em> cíclico de árboles de pocas hojas sobre
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<img alt="../../_images/7e223986d9de41d2840a9a9c5c9aa447ba91eec47111eb018066fd3afafd3d5a.png" src="../../_images/7e223986d9de41d2840a9a9c5c9aa447ba91eec47111eb018066fd3afafd3d5a.png" />
+</div>
+</div>
+<p>donde cada función de forma fⱼ se aprende por <em>boosting</em> cíclico de árboles de pocas hojas sobre
 una sola variable a la vez, con una tasa de aprendizaje baja para que el orden de las variables no
 importe, y se promedia sobre varias submuestras (bolsas externas). Reúne dos cosas que no suelen ir
 juntas: la flexibilidad del <em>boosting</em> para captar efectos no lineales y la legibilidad de un modelo
@@ -1731,7 +1732,7 @@ y la relación no lo es: las funciones de forma de la EBM lo muestran directamen
         },
         kernelOptions: {
             name: "python3",
-            path: "./Entrega3\libro"
+            path: "./Entrega3\notebook"
         },
         predefinedOutput: true
     }

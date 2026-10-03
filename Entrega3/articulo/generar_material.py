@@ -33,7 +33,7 @@ FIG, TAB = AQUI / 'figuras', AQUI / 'tablas'
 RES = RAIZ / 'resultados'
 FIGURAS_LIBRO = {  # archivo exportado del libro -> nombre en el artículo
     '01_datos_1.png': 'objetivo_escalera.png', '01_datos_2.png': 'senal_bivariado.png', '01_datos_3.png': 'correlacion.png',
-    '06_evaluacion_1.png': 'roc.png', '08_modelo_nuevo_3.png': 'formas_ebm.png', '09_estadistica_1.png': 'cd_modelos.png',
+    '06_evaluacion_1.png': 'roc.png', '08_modelo_nuevo_4.png': 'formas_ebm.png', '09_estadistica_1.png': 'cd_modelos.png',
 }
 NOMBRE_BALANCEO = {'ninguno': '--', 'smote': 'SMOTE', 'adasyn': 'ADASYN', 'class_weight': 'pesos'}
 NOMBRE_OPT = {'grid': 'Grid', 'random': 'Random', 'bayesiana': 'Bayesiana', 'genetica': 'Genética'}

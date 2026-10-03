@@ -10,27 +10,27 @@ parts:
       - file: Entrega2/entrega2_modelo
   - caption: Entrega 3 · Introducción
     chapters:
-      - file: Entrega3/libro/00_introduccion
+      - file: Entrega3/notebook/00_introduccion
   - caption: Entrega 3 · Data
     chapters:
-      - file: Entrega3/libro/01_datos
+      - file: Entrega3/notebook/01_datos
   - caption: Entrega 3 · Metodología
     chapters:
-      - file: Entrega3/libro/02_metodologia
+      - file: Entrega3/notebook/02_metodologia
   - caption: Entrega 3 · Modelos y Resultados
     chapters:
-      - file: Entrega3/libro/03_corridas
-      - file: Entrega3/libro/04_optimizadores
-      - file: Entrega3/libro/05_computo
-      - file: Entrega3/libro/06_evaluacion
-      - file: Entrega3/libro/07_interpretabilidad
+      - file: Entrega3/notebook/03_corridas
+      - file: Entrega3/notebook/04_optimizadores
+      - file: Entrega3/notebook/05_computo
+      - file: Entrega3/notebook/06_evaluacion
+      - file: Entrega3/notebook/07_interpretabilidad
   - caption: Entrega 3 · El modelo nuevo
     chapters:
-      - file: Entrega3/libro/08_modelo_nuevo
+      - file: Entrega3/notebook/08_modelo_nuevo
   - caption: Entrega 3 · Comparación estadística y conclusiones
     chapters:
-      - file: Entrega3/libro/09_estadistica
-      - file: Entrega3/libro/10_conclusiones
+      - file: Entrega3/notebook/09_estadistica
+      - file: Entrega3/notebook/10_conclusiones
   - caption: Código fuente
     chapters:
       - file: codigo/indice
@@ -54,8 +54,8 @@ parts:
       - file: codigo/computo
       - file: codigo/complementos
       - file: codigo/medir_tiempos_finales
-      - file: codigo/libro_construir
-      - file: codigo/libro_exportar_pdf
+      - file: codigo/notebook_construir
+      - file: codigo/notebook_exportar_pdf
       - file: codigo/articulo_generar_material
       - file: codigo/articulo_compilar
       - file: codigo/tests_test_analisis
