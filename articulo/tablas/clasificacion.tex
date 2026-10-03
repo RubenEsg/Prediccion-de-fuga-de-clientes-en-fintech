@@ -1,0 +1,18 @@
+\begin{sidewaystable}
+\caption{Clasificación (etiqueta del percentil 75). Mejor combinación de balanceo y optimizador de cada modelo según el bucle externo; AUC externa como media $\pm$ desviación de los 5 pliegues; AUC en la prueba (9.745 clientes); tiempo de ajuste del modelo final sobre los 38.978 clientes de entrenamiento y de inferencia sobre la prueba (mediana de 3 y 5 repeticiones), y duración de la corrida anidada completa (búsqueda 5 $\times$ 3 más modelo final).}\label{tab:clasificacion}
+\scriptsize\setlength{\tabcolsep}{2.8pt}
+\begin{tabular}{lllrrrrr}
+\toprule
+\textbf{Modelo} & \textbf{Balanceo} & \textbf{Optimizador} & \textbf{AUC externa} & \textbf{AUC prueba} & \textbf{Ajuste (s)} & \textbf{Infer. (s)} & \textbf{Corrida (min)} \\
+\midrule
+XGBoost & class\_weight & Genética & 0,8332 $\pm$ 0,0049 & 0,8283 & 1,61 & 0,060 & 8,9 \\
+Árbol de decisión & class\_weight & Random & 0,8332 $\pm$ 0,0021 & 0,8243 & 1,38 & 0,054 & 1,8 \\
+Random Forest & sin balanceo & Genética & 0,8326 $\pm$ 0,0029 & 0,8260 & 23,65 & 0,187 & 20,9 \\
+\textbf{EBM (propuesto)} & class\_weight & Grid & 0,8292 $\pm$ 0,0037 & 0,8289 & 26,72 & 0,067 & 18,7 \\
+k-NN & sin balanceo & Genética & 0,7836 $\pm$ 0,0072 & 0,7874 & 0,28 & 7,164 & 34,7 \\
+Regresión logística & class\_weight & Genética & 0,7644 $\pm$ 0,0047 & 0,7709 & 1,83 & 0,056 & 3,1 \\
+SVM lineal & class\_weight & Grid & 0,7641 $\pm$ 0,0044 & 0,7706 & 0,92 & 0,052 & 2,1 \\
+Naive Bayes & sin balanceo & Grid & 0,6722 $\pm$ 0,0119 & 0,6662 & 0,30 & 0,068 & 0,7 \\
+\bottomrule
+\end{tabular}
+\end{sidewaystable}

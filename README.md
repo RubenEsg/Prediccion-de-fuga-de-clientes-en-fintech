@@ -16,7 +16,8 @@ El libro se publica como Jupyter Book, con todo el código, sus salidas y la int
 **https://rubenesg.github.io/predicci-n-de-fuga-de-clientes-en-fintech/**
 
 Sin conexión, se abre igual desde [`docs/index.html`](docs/index.html), y el documento completo está también en
-PDF: [`Entregable3_libro.pdf`](Entregable3_libro.pdf), con un marcador por sección.
+PDF: [`Entregable3_libro.pdf`](Entregable3_libro.pdf), con un marcador por sección. El **artículo** en el formato de la
+plantilla Springer que fija la guía es [`Entregable3_articulo.pdf`](Entregable3_articulo.pdf) (fuente LaTeX en `articulo/`).
 
 ## Contenido
 
@@ -29,6 +30,7 @@ PDF: [`Entregable3_libro.pdf`](Entregable3_libro.pdf), con un marcador por secci
 | `resultados/` | Predicciones de prueba, comparación con la Entrega 2, experimentos de cómputo y complementos (calibración, semillas, fuera de pliegue) |
 | `exploracion/` | Benchmark de los candidatos a modelo nuevo |
 | `correr_140.py`, `comparar_entrega2.py`, `computo.py`, `complementos.py` | Guiones que producen los resultados; `correr_*.bat` los lanzan en Windows con prioridad baja y se pueden reanudar |
+| `Entregable3_articulo.pdf` | El artículo en la plantilla Springer (sn-jnl): fuente LaTeX, tablas y figuras generadas en `articulo/` |
 | `Entregable3_libro.pdf` | El libro completo en PDF, generado desde el HTML con `libro/exportar_pdf.py` |
 | `presentacion/` | Diapositivas de la sustentación de 10 minutos (PowerPoint y PDF) y su guion |
 | `_config.yml`, `_toc.yml`, `_static/` | Configuración del Jupyter Book |
@@ -108,6 +110,8 @@ python -m venv .venv
 .venv/Scripts/python libro/construir.py                       # ejecuta los cuadernos del libro
 .venv/Scripts/jupyter-book build .                            # genera el HTML
 .venv/Scripts/python libro/exportar_pdf.py                    # el libro en PDF (imprime el HTML con Edge o Chrome)
+.venv/Scripts/python articulo/generar_material.py             # tablas y figuras del artículo desde los resultados
+.venv/Scripts/python articulo/compilar.py                     # el artículo en PDF (Tectonic o TeX Live)
 ```
 
 Los modelos serializados (unos 490 MB) no se incluyen: se regeneran con los hiperparámetros finales

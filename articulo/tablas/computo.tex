@@ -1,0 +1,22 @@
+\begin{sidewaystable}
+\caption{Versión estándar frente a versión optimizada, medidas con los hiperparámetros finales en el equipo de referencia (6 núcleos, RTX 3050): tiempo de entrenamiento (k-NN: de consulta sobre la prueba) y cambio en la métrica de prueba (AUC; RMSE en Ridge).}\label{tab:computo}
+\scriptsize\setlength{\tabcolsep}{2.8pt}
+\begin{tabular}{l>{\raggedright\arraybackslash}p{3.2cm}>{\raggedright\arraybackslash}p{3.6cm}rrrr}
+\toprule
+\textbf{Modelo} & \textbf{Versión estándar} & \textbf{Versión optimizada} & \textbf{Estándar (s)} & \textbf{Optimizada (s)} & \textbf{Aceleración} & \textbf{$\Delta$ métrica} \\
+\midrule
+XGBoost & exact (CPU) & hist (CPU, 6 hilos) & 5,76 & 0,82 & 7,0 & -0,0014 \\
+XGBoost & hist (CPU) & hist (GPU RTX 3050) & 0,82 & 0,86 & 0,96 & 0,0000 \\
+XGBoost & 500 árboles fijos & early stopping (153 árboles) & 2,72 & 1,41 & 1,9 & 0,0025 \\
+k-NN (consulta) & fuerza bruta, 78 variables & KD-Tree, 78 variables & 8,04 & 24,07 & 0,33 & 0,0000 \\
+k-NN (consulta) & fuerza bruta, 78 variables & FAISS IndexFlat, 78 variables & 8,04 & 11,95 & 0,67 & 0,0000 \\
+k-NN (consulta) & fuerza bruta, 78 variables & KD-Tree, 4 variables con señal & 8,04 & 1,85 & 4,3 & 0,0339 \\
+Ridge & SAGA & cholesky & 15,082 & 0,079 & 191 & -0,0000 \\
+Logística L1 & SAGA & liblinear & 19,40 & 1,27 & 15,3 & -0,0000 \\
+SVM & SVC núcleo RBF (extrapolado a $n$) & LinearSVC primal L2 & 43,1 & 0,61 & 70 & -- \\
+Random Forest & n\_jobs = 1 & n\_jobs = 6 & 78,5 & 18,6 & 4,2 & 0,0000 \\
+EBM & búsqueda con fidelidad alta & búsqueda con fidelidad baja & 306,6 & 105,7 & 2,9 & 0,0000 \\
+Random Forest & búsqueda con fidelidad alta & búsqueda con fidelidad baja & 280,1 & 97,6 & 2,9 & 0,0000 \\
+\bottomrule
+\end{tabular}
+\end{sidewaystable}

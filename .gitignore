@@ -7,3 +7,10 @@ resultados_prueba/
 __pycache__/
 .ipynb_checkpoints/
 .pytest_cache/
+articulo/herramientas/
+articulo/*.aux
+articulo/*.log
+articulo/*.bbl
+articulo/*.blg
+articulo/*.out
+articulo/articulo.pdf

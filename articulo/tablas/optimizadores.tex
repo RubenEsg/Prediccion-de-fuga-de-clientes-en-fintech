@@ -1,0 +1,18 @@
+\begin{sidewaystable}
+\caption{Comparación de los cuatro métodos de optimización con el mismo presupuesto por modelo (27 bloques modelo $\times$ balanceo en clasificación y 7 en regresión): rango medio por la métrica del bucle externo (1 = mejor), bloques ganados, segundos por evaluación, área media bajo la curva de arrepentimiento normalizado (menor es mejor) y evaluaciones medias hasta cerrar el 95\,\% de la brecha.}\label{tab:optimizadores}
+\scriptsize\setlength{\tabcolsep}{2.8pt}
+\begin{tabular}{llrrrrr}
+\toprule
+\textbf{Tarea} & \textbf{Método} & \textbf{Rango medio} & \textbf{Victorias} & \textbf{s / evaluación} & \textbf{Área arrepent.} & \textbf{Evals. al 95\,\%} \\
+\midrule
+Clasificación & Grid & 2,22 & 12 & 2,61 & 0,234 & 14,2 \\
+ & Random & 3,22 & 4 & 2,46 & 0,171 & 7,2 \\
+ & Bayesiana & 2,63 & 2 & 4,48 & 0,123 & 10,3 \\
+ & Genética & 1,93 & 15 & 4,27 & 0,137 & 13,1 \\
+Regresión & Grid & 2,71 & 2 & 2,43 & 0,181 & 9,9 \\
+ & Random & 2,71 & 0 & 2,05 & 0,041 & 7,4 \\
+ & Bayesiana & 2,14 & 2 & 2,94 & 0,038 & 5,5 \\
+ & Genética & 2,43 & 3 & 3,37 & 0,057 & 7,4 \\
+\bottomrule
+\end{tabular}
+\end{sidewaystable}
