@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+\caption{Contrastes sobre la prueba con la etiqueta de la mediana: diferencia de métrica del candidato con intervalo bootstrap BCa (2.000 réplicas), estadístico $z$ de DeLong para el AUC y DM de Diebold-Mariano con la corrección de Harvey-Leybourne-Newbold para la pérdida cuadrática, con $p$-valores ajustados por Holm.}\label{tab:contrastes}
+\scriptsize\setlength{\tabcolsep}{2pt}
+\begin{tabular}{llrlr}
+\toprule
+\textbf{Comparación} & \textbf{Métrica} & \textbf{$\Delta$ [IC BCa 95\,\%]} & \textbf{Estadístico} & \textbf{$p$ (Holm)} \\
+\midrule
+Logística (E2) $\rightarrow$ EBM & AUC & 0,0355 [0,0281; 0,0434] & $z$ = 9,02 & $<10^{-18}$ \\
+Logística (E2) $\rightarrow$ XGBoost & AUC & 0,0374 [0,0303; 0,0449] & $z$ = 10,06 & $<10^{-22}$ \\
+XGBoost $\rightarrow$ EBM & AUC & -0,0019 [-0,0051; 0,0009] & $z$ = -1,29 & 0,196 \\
+Lasso (E2) $\rightarrow$ EBM & $R^2$ & 0,0648 [0,0551; 0,0738] & DM = 13,33 & $<10^{-39}$ \\
+Lasso (E2) $\rightarrow$ XGBoost & $R^2$ & 0,0666 [0,0571; 0,0753] & DM = 14,05 & $<10^{-43}$ \\
+XGBoost $\rightarrow$ EBM & $R^2$ & -0,0017 [-0,0036; 0,0003] & DM = -1,79 & 0,074 \\
+\bottomrule
+\end{tabular}
+\end{table}

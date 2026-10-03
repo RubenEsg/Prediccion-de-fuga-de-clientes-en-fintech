@@ -13,7 +13,7 @@ comparado con la Entrega 2. Continúa el [análisis exploratorio](https://rubene
 ## Sitio
 
 El libro se publica como Jupyter Book, con todo el código, sus salidas y la interpretación:
-**https://rubenesg.github.io/predicci-n-de-fuga-de-clientes-en-fintech/**
+**https://rubenesg.github.io/Prediccion-de-fuga-de-clientes-en-fintech/**
 
 Sin conexión, se abre igual desde [`docs/index.html`](docs/index.html), y el documento completo está también en
 PDF: [`Entregable3_libro.pdf`](Entregable3_libro.pdf), con un marcador por sección. El **artículo** en el formato de la

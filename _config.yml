@@ -28,7 +28,7 @@ exclude_patterns:
   - entrega_final
 
 repository:
-  url: https://github.com/RubenEsg/predicci-n-de-fuga-de-clientes-en-fintech
+  url: https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech
   branch: main
 
 html:

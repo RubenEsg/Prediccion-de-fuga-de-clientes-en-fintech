@@ -1,0 +1,26 @@
+\begin{table}[htbp]
+\caption{Tiempo de cómputo de la mejor combinación de cada modelo: ajuste del modelo final sobre los 38.978 clientes de entrenamiento y puntuación de los 9.745 de prueba (mediana de 3 y 5 repeticiones con el pipeline completo), y duración de la corrida anidada completa (búsqueda $5\times3$ más modelo final).}\label{tab:tiempos}
+\scriptsize\setlength{\tabcolsep}{2pt}
+\begin{tabular}{llrrr}
+\toprule
+\textbf{Tarea} & \textbf{Modelo} & \textbf{Ajuste (s)} & \textbf{Inferencia (s)} & \textbf{Corrida (min)} \\
+\midrule
+Clasificación & XGBoost & 1,61 & 0,060 & 8,9 \\
+ & Árbol de decisión & 1,38 & 0,054 & 1,8 \\
+ & Random Forest & 23,65 & 0,187 & 20,9 \\
+ & \textbf{EBM (propuesto)} & 26,72 & 0,067 & 18,7 \\
+ & k-NN & 0,28 & 7,164 & 34,7 \\
+ & Regresión logística & 1,83 & 0,056 & 3,1 \\
+ & SVM lineal & 0,92 & 0,052 & 2,1 \\
+ & Naive Bayes & 0,30 & 0,068 & 0,7 \\
+Regresión & XGBoost & 2,09 & 0,065 & 10,4 \\
+ & \textbf{EBM (propuesto)} & 31,85 & 0,054 & 26,6 \\
+ & Random Forest & 12,31 & 0,145 & 16,1 \\
+ & Árbol de decisión & 0,84 & 0,047 & 3,7 \\
+ & Lasso & 0,46 & 0,046 & 6,7 \\
+ & Ridge & 0,28 & 0,046 & 1,5 \\
+ & SVR lineal & 0,66 & 0,046 & 2,7 \\
+ & k-NN & 0,25 & 4,725 & 24,9 \\
+\bottomrule
+\end{tabular}
+\end{table}

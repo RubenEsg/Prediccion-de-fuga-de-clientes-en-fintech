@@ -1,18 +1,18 @@
-\begin{sidewaystable}
-\caption{Regresión de \texttt{churn\_probability}. Mejor optimizador de cada modelo según el bucle externo; RMSE externo como media $\pm$ desviación de los 5 pliegues; RMSE y $R^2$ en la prueba; tiempos medidos como en la Tabla~\ref{tab:clasificacion}.}\label{tab:regresion}
-\scriptsize\setlength{\tabcolsep}{2.8pt}
-\begin{tabular}{llrrrrrr}
+\begin{table}[htbp]
+\caption{Regresión de \texttt{churn\_probability}: mejor optimizador de cada modelo según el bucle externo, RMSE externo (media $\pm$ desviación de los 5 pliegues) y RMSE y $R^2$ en la prueba.}\label{tab:regresion}
+\scriptsize\setlength{\tabcolsep}{2pt}
+\begin{tabular}{llrrr}
 \toprule
-\textbf{Modelo} & \textbf{Optimizador} & \textbf{RMSE externo} & \textbf{RMSE prueba} & \textbf{$R^2$ prueba} & \textbf{Ajuste (s)} & \textbf{Infer. (s)} & \textbf{Corrida (min)} \\
+\textbf{Modelo} & \textbf{Optimizador} & \textbf{RMSE externo} & \textbf{RMSE prueba} & \textbf{$R^2$ prueba} \\
 \midrule
-XGBoost & Bayesiana & 0,0590 $\pm$ 0,0004 & 0,0592 & 0,218 & 2,09 & 0,065 & 10,4 \\
-\textbf{EBM (propuesto)} & Grid & 0,0590 $\pm$ 0,0004 & 0,0593 & 0,216 & 31,85 & 0,054 & 26,6 \\
-Random Forest & Grid & 0,0592 $\pm$ 0,0004 & 0,0593 & 0,215 & 12,31 & 0,145 & 16,1 \\
-Árbol de decisión & Genética & 0,0593 $\pm$ 0,0004 & 0,0594 & 0,211 & 0,84 & 0,047 & 3,7 \\
-Lasso & Genética & 0,0618 $\pm$ 0,0005 & 0,0617 & 0,151 & 0,46 & 0,046 & 6,7 \\
-Ridge & Genética & 0,0618 $\pm$ 0,0005 & 0,0617 & 0,151 & 0,28 & 0,046 & 1,5 \\
-SVR lineal & Bayesiana & 0,0618 $\pm$ 0,0005 & 0,0617 & 0,150 & 0,66 & 0,046 & 2,7 \\
-k-NN & Grid & 0,0634 $\pm$ 0,0004 & 0,0632 & 0,108 & 0,25 & 4,725 & 24,9 \\
+XGBoost & Bayesiana & 0,0590 $\pm$ 0,0004 & 0,0592 & 0,218 \\
+\textbf{EBM (propuesto)} & Grid & 0,0590 $\pm$ 0,0004 & 0,0593 & 0,216 \\
+Random Forest & Grid & 0,0592 $\pm$ 0,0004 & 0,0593 & 0,215 \\
+Árbol de decisión & Genética & 0,0593 $\pm$ 0,0004 & 0,0594 & 0,211 \\
+Lasso & Genética & 0,0618 $\pm$ 0,0005 & 0,0617 & 0,151 \\
+Ridge & Genética & 0,0618 $\pm$ 0,0005 & 0,0617 & 0,151 \\
+SVR lineal & Bayesiana & 0,0618 $\pm$ 0,0005 & 0,0617 & 0,150 \\
+k-NN & Grid & 0,0634 $\pm$ 0,0004 & 0,0632 & 0,108 \\
 \bottomrule
 \end{tabular}
-\end{sidewaystable}
+\end{table}

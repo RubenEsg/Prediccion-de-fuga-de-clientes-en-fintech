@@ -1,0 +1,18 @@
+\begin{table}[htbp]
+\caption{Espacios de búsqueda en regresión: puntos de la rejilla de Grid Search (igual al presupuesto de los otros tres métodos), espacio tipado y hiperparámetros del modelo final de la mejor combinación.}\label{tab:espacios_regresion}
+\tiny\setlength{\tabcolsep}{2pt}
+\begin{tabular}{lr>{\raggedright\arraybackslash}p{4.7cm}>{\raggedright\arraybackslash}p{3.3cm}}
+\toprule
+\textbf{Modelo} & \textbf{Rejilla} & \textbf{Espacio de búsqueda} & \textbf{Hiperparámetros finales} \\
+\midrule
+k-NN & 32 & n\_neighbors $\in$ [5, 600] (entero log); weights $\in$ \{uniform, distance\}; p $\in$ \{1, 2\} & n\_neighbors=80, p=1, weights=distance \\
+Ridge & 30 & alpha $\in$ [0.001, 100000] (log) & alpha=613.9 \\
+Lasso & 30 & alpha $\in$ [1e-06, 0.1] (log) & alpha=0.0001087 \\
+Árbol de decisión & 48 & max\_depth $\in$ [3, 30] (entero); min\_samples\_leaf $\in$ [1, 300] (entero log); ccp\_alpha $\in$ [1e-08, 0.0001] (log) & max\_depth=13, min\_samples\_leaf=101, ccp\_alpha=1.811e-06 \\
+Random Forest & 36 & max\_depth $\in$ [4, 40] (entero); max\_features $\in$ \{sqrt, log2, 0.3, 0.5\}; min\_samples\_leaf $\in$ [1, 100] (entero log) & max\_depth=8, max\_features=0.5, min\_samples\_leaf=50, n\_estimators=300 \\
+XGBoost & 32 & n\_estimators $\in$ [100, 1000] (entero log); max\_depth $\in$ [2, 10] (entero); learning\_rate $\in$ [0.001, 0.3] (log); subsample $\in$ [0.5, 1] (lineal); colsample\_bytree $\in$ [0.5, 1] (lineal); reg\_lambda $\in$ [0.01, 10] (log); min\_child\_weight $\in$ [1, 50] (entero log) & n\_estimators=512, max\_depth=2, learning\_rate=0.02361, subsample=0.8025, colsample\_bytree=0.7268, reg\_lambda=0.2158, min\_child\_weight=31 \\
+SVR lineal & 30 & C $\in$ [0.001, 100] (log); epsilon $\in$ [0.0001, 0.05] (log) & C=46.43, epsilon=0.0003846 \\
+EBM & 36 & learning\_rate $\in$ [0.008, 0.1] (log); max\_leaves $\in$ [2, 4] (entero); min\_samples\_leaf $\in$ [2, 200] (entero log); interactions $\in$ [0, 20] (entero); max\_bins $\in$ [64, 1024] (entero log) & interactions=0, learning\_rate=0.008, max\_leaves=3, min\_samples\_leaf=20, outer\_bags=8 \\
+\bottomrule
+\end{tabular}
+\end{table}

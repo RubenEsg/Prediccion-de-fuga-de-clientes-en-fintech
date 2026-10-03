@@ -1,15 +1,15 @@
 \begin{table}[htbp]
-\caption{Comparación con los modelos de la Entrega 2 en su misma partición, etiqueta (mediana estimada con el entrenamiento) y prueba. Los cuatro modelos tocan la prueba una sola vez; el techo es el mejor pronóstico posible sin \texttt{active\_products}.}\label{tab:entrega2}
-\scriptsize\setlength{\tabcolsep}{2.8pt}
-\begin{tabular}{lrrrrr}
+\caption{Comparación con los modelos de la Entrega 2 en su misma partición, etiqueta (mediana estimada con el entrenamiento) y prueba. Cada modelo toca la prueba una sola vez; el techo es el mejor pronóstico posible sin \texttt{active\_products}.}\label{tab:entrega2}
+\scriptsize\setlength{\tabcolsep}{2pt}
+\begin{tabular}{lrrrr}
 \toprule
-\textbf{Modelo} & \textbf{AUC} & \textbf{Recall (0,5)} & \textbf{Brier} & \textbf{RMSE} & \textbf{$R^2$} \\
+\textbf{Modelo} & \textbf{AUC} & \textbf{Recall (0,5)} & \textbf{RMSE} & \textbf{$R^2$} \\
 \midrule
-Logística L1 (Entrega 2) & 0,6832 & 0,6515 & 0,224 & -- & -- \\
-Lasso (Entrega 2) & -- & -- & -- & 0,0617 & 0,1511 \\
-XGBoost & 0,7206 & 0,6375 & 0,207 & 0,0592 & 0,2177 \\
-\textbf{EBM (propuesto)} & 0,7187 & 0,6565 & 0,210 & 0,0593 & 0,2159 \\
-Techo (oráculo) & 0,7223 & -- & -- & -- & 0,2197 \\
+Logística L1 (Entrega 2) & 0,6832 & 0,6515 & -- & -- \\
+Lasso (Entrega 2) & -- & -- & 0,0617 & 0,1511 \\
+XGBoost & 0,7206 & 0,6375 & 0,0592 & 0,2177 \\
+\textbf{EBM (propuesto)} & 0,7187 & 0,6565 & 0,0593 & 0,2159 \\
+Techo (oráculo) & 0,7223 & -- & -- & 0,2197 \\
 \bottomrule
 \end{tabular}
 \end{table}

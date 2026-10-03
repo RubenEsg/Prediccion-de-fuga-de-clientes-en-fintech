@@ -9,7 +9,7 @@ Octubre de 2026
 
 Continúa el [análisis exploratorio](https://rubenesg.github.io/Machine_learning/) de la Entrega 1 y los
 [modelos base](https://rubenesg.github.io/-MACHINE-LEARNING-Entregable-2/) de la Entrega 2. Código, cuadernos y
-resultados: <https://github.com/RubenEsg/predicci-n-de-fuga-de-clientes-en-fintech>.
+resultados: <https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech>.
 
 #%% code [remove-input]
 import json
