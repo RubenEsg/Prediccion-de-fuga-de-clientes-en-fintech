@@ -11,7 +11,7 @@ el código con que se produjo cada resultado. Repositorio: <https://github.com/R
 |---|---|
 | **Entrega 1** | Análisis exploratorio de datos: el cuaderno ejecutado de la primera entrega (artículo en `Entrega1/`) |
 | **Entrega 2** | Preparación de datos y modelos base: el cuaderno ejecutado de la segunda entrega (artículo en `Entrega2/`) |
-| **Entrega 3** | El entregable final en cinco partes: Data, Metodología, Modelos y Resultados, El modelo nuevo, y Comparación estadística y conclusiones. El artículo en formato Springer, el libro en PDF, las diapositivas y un cuaderno único con todo están en `Entrega3/` |
+| **Entrega 3** | El entregable final en cinco partes: Data, Metodología, Modelos y Resultados, El modelo nuevo, y Comparación estadística y conclusiones. El artículo en formato Springer, el libro en PDF y un cuaderno único con todo están en `Entrega3/` |
 | **Código fuente** | Todo el código utilizado, archivo por archivo |
 
 - **Pipeline de la guía**: 140 corridas (136 entrenadas y 4 que no aplican), con validación cruzada anidada 5 × 3. Mejor modelo de clasificación: XGBoost (AUC externa 0,8332); de regresión: XGBoost (RMSE externo 0,0590).

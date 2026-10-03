@@ -36,7 +36,6 @@ Sin conexión, se abre igual desde [`docs/index.html`](docs/index.html).
 | `Entregable3_articulo.pdf` | El artículo en la plantilla Springer (sn-jnl); fuente LaTeX, tablas y figuras generadas en `articulo/` |
 | `Entregable3.ipynb` | **Un solo cuaderno, ejecutado**, con las once secciones del libro de esta entrega |
 | `Entregable3_libro.pdf` | El libro de esta entrega en PDF, con un marcador por sección |
-| `presentacion/` | Diapositivas de la sustentación de 10 minutos (PowerPoint y PDF) |
 | `libro/` | Las once secciones como cuadernos ejecutados (tabla siguiente); `fuentes/` y `construir.py` los generan y ejecutan; `exportar_pdf.py` imprime el libro a PDF |
 | `src/` | Paquete con la lógica, separada por módulos: datos, preprocesamiento, modelos, balanceo, optimización, experimento, registro, evaluación, estadística, comparación, análisis y gráficas |
 | `tests/` | Pruebas automáticas (`python -m pytest tests`) |
