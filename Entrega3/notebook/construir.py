@@ -2,7 +2,9 @@
 
 Cada página se escribe en ``libro/fuentes/NN_nombre.txt`` como una sucesión de celdas separadas
 por líneas ``#%% md`` (Markdown) o ``#%% code`` (Python); tras ``code`` pueden ir etiquetas de
-Jupyter Book entre corchetes, p. ej. ``#%% code [hide-input]``. El guion genera
+Jupyter Book entre corchetes, p. ej. ``#%% code [hide-input]``, y después un objeto JSON con metadatos
+de celda, p. ej. ``{"mystnb": {"image": {"align": "center"}}}``. Las celdas ``remove-input`` llevan
+además ``jupyter.source_hidden``, para que JupyterLab y VS Code las muestren plegadas. El guion genera
 ``libro/NN_nombre.ipynb``, lo ejecuta de principio a fin con el kernel de este entorno y guarda las
 salidas en el propio cuaderno: el libro se construye después sin volver a ejecutar
 (``execute_notebooks: off``) y GitHub muestra los cuadernos ya ejecutados.
@@ -16,6 +18,7 @@ Uso, desde la carpeta del proyecto::
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 import time
@@ -26,7 +29,7 @@ from nbclient import NotebookClient
 
 LIBRO = Path(__file__).resolve().parent
 FUENTES = LIBRO / 'fuentes'
-SEPARADOR = re.compile(r'^#%% (md|code)(?: \[(.*)\])?\s*$', re.M)
+SEPARADOR = re.compile(r'^#%% (md|code)(?: \[([^\]]*)\])?(?: (\{.*\}))?\s*$', re.M)
 
 
 def leer_fuente(ruta: Path) -> nbformat.NotebookNode:
@@ -34,7 +37,7 @@ def leer_fuente(ruta: Path) -> nbformat.NotebookNode:
     texto = ruta.read_text(encoding='utf-8')
     partes = SEPARADOR.split(texto)
     nb = nbformat.v4.new_notebook()
-    for tipo, etiquetas, cuerpo in zip(partes[1::3], partes[2::3], partes[3::3]):
+    for tipo, etiquetas, extra, cuerpo in zip(partes[1::4], partes[2::4], partes[3::4], partes[4::4]):
         cuerpo = cuerpo.strip('\n')
         if not cuerpo.strip():
             continue
@@ -44,6 +47,10 @@ def leer_fuente(ruta: Path) -> nbformat.NotebookNode:
             celda = nbformat.v4.new_code_cell(cuerpo)
             if etiquetas:
                 celda.metadata['tags'] = [e.strip() for e in etiquetas.split(',')]
+                if 'remove-input' in celda.metadata['tags']:
+                    celda.metadata['jupyter'] = {'source_hidden': True}
+            if extra:
+                celda.metadata.update(json.loads(extra))
         nb.cells.append(celda)
     nb.metadata['kernelspec'] = {'name': 'python3', 'display_name': 'Python 3', 'language': 'python'}
     nb.metadata['language_info'] = {'name': 'python'}

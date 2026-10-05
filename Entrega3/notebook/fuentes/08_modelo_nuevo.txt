@@ -11,22 +11,22 @@ superación se confirma con pruebas estadísticas y no solo con la cifra puntual
 (2013), en la implementación `interpret` de Nori y otros (2019). No aparece en las notas del curso.
 Es un modelo aditivo generalizado con interacciones por pares (GA²M):
 
-#%% code [remove-input]
+#%% code [remove-input] {"mystnb": {"image": {"align": "center", "alt": "g(E[y|x]) = β₀ + Σⱼ fⱼ(xⱼ) + Σᵢⱼ fᵢⱼ(xᵢ, xⱼ)"}}}
 import io, struct
 import matplotlib.pyplot as plt
 from IPython.display import Image, display
-# La fórmula se dibuja con mathtext (a 200 ppp, mostrada a 600 px de ancho) para que se vea nítida
-# en cualquier visor de cuadernos, incluidos los que no renderizan LaTeX.
+# La fórmula se dibuja con mathtext (a 200 ppp, recortada al texto y mostrada a 80 px por pulgada)
+# para que se vea nítida en cualquier visor de cuadernos, incluidos los que no renderizan LaTeX.
 fig, ax = plt.subplots(figsize=(7.5, 0.75))
 ax.axis('off')
 ax.text(0.5, 0.5, r'$g(\mathrm{E}[y \mid x]) = \beta_0 + \sum_j f_j(x_j) + \sum_{(i,j)} f_{ij}(x_i, x_j)$',
         ha='center', va='center', fontsize=15)
 buf = io.BytesIO()
-fig.savefig(buf, format='png', dpi=200)
+fig.savefig(buf, format='png', dpi=200, bbox_inches='tight', pad_inches=0.08)
 plt.close(fig)
 png = buf.getvalue()
 ancho, alto = struct.unpack('>II', png[16:24])
-display(Image(data=png, width=600, height=round(600 * alto / ancho)))
+display(Image(data=png, width=round(ancho / 2.5), height=round(alto / 2.5)))
 
 #%% md
 donde cada función de forma fⱼ se aprende por *boosting* cíclico de árboles de pocas hojas sobre
