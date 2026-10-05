@@ -11,25 +11,23 @@ superación se confirma con pruebas estadísticas y no solo con la cifra puntual
 (2013), en la implementación `interpret` de Nori y otros (2019). No aparece en las notas del curso.
 Es un modelo aditivo generalizado con interacciones por pares (GA²M):
 
-#%% code [remove-input] {"mystnb": {"image": {"align": "center", "alt": "g(E[y|x]) = β₀ + Σⱼ fⱼ(xⱼ) + Σᵢⱼ fᵢⱼ(xᵢ, xⱼ)"}}}
-import io, struct
+#%% code [remove-input] {"mystnb": {"image": {"align": "center", "alt": "g(E[y|x]) = β0 + Σ_j f_j(x_j) + Σ_(i,j) f_ij(x_i, x_j)"}}}
+# Fórmula del modelo dibujada con mathtext como imagen: ancha para que ocupe la columna y a 200 ppp para
+# que sea nítida; así se ve igual en cualquier visor de cuadernos, también en los que no renderizan LaTeX.
+import base64, io
 import matplotlib.pyplot as plt
-from IPython.display import Image, display
-# La fórmula se dibuja con mathtext (a 200 ppp, recortada al texto y mostrada a 80 px por pulgada)
-# para que se vea nítida en cualquier visor de cuadernos, incluidos los que no renderizan LaTeX.
-fig, ax = plt.subplots(figsize=(7.5, 0.75))
-ax.axis('off')
-ax.text(0.5, 0.5, r'$g(\mathrm{E}[y \mid x]) = \beta_0 + \sum_j f_j(x_j) + \sum_{(i,j)} f_{ij}(x_i, x_j)$',
-        ha='center', va='center', fontsize=15)
+from IPython.display import display
+FORMULA = r'$g(\mathrm{E}[y \mid x]) = \beta_0 + \sum_j f_j(x_j) + \sum_{(i,j)} f_{ij}(x_i, x_j)$'
+fig = plt.figure(figsize=(12, 0.9))
+fig.text(0.5, 0.5, FORMULA, ha='center', va='center', fontsize=20)
 buf = io.BytesIO()
-fig.savefig(buf, format='png', dpi=200, bbox_inches='tight', pad_inches=0.08)
+fig.savefig(buf, format='png', dpi=200, facecolor='white')
 plt.close(fig)
-png = buf.getvalue()
-ancho, alto = struct.unpack('>II', png[16:24])
-display(Image(data=png, width=round(ancho / 2.5), height=round(alto / 2.5)))
+display({'image/png': base64.b64encode(buf.getvalue()).decode(),
+         'text/plain': 'g(E[y|x]) = β0 + Σ_j f_j(x_j) + Σ_(i,j) f_ij(x_i, x_j)'}, raw=True)
 
 #%% md
-donde cada función de forma fⱼ se aprende por *boosting* cíclico de árboles de pocas hojas sobre
+donde cada función de forma <i>f</i><sub>j</sub> se aprende por *boosting* cíclico de árboles de pocas hojas sobre
 una sola variable a la vez, con una tasa de aprendizaje baja para que el orden de las variables no
 importe, y se promedia sobre varias submuestras (bolsas externas). Reúne dos cosas que no suelen ir
 juntas: la flexibilidad del *boosting* para captar efectos no lineales y la legibilidad de un modelo

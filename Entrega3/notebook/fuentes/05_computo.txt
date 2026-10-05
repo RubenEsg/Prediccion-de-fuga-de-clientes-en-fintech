@@ -49,7 +49,7 @@ if (CARPETA / 'equipo.json').exists():
 #%% md
 ## 1. Complejidad teórica frente a tiempos medidos
 
-Si el tiempo de entrenamiento crece como O(nᵃ), en escala log-log es una recta de pendiente *a*.
+Si el tiempo de entrenamiento crece como O(<i>n</i><sup><i>a</i></sup>), en escala log-log es una recta de pendiente *a*.
 Se entrena cada modelo con 2.500 a 38.978 clientes y se estima la pendiente con los tamaños
 mayores, donde los costes fijos ya no dominan. La inferencia se mide siempre sobre los 9.745 clientes
 de prueba.

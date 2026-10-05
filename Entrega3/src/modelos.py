@@ -373,7 +373,7 @@ _EBM_COMPLEJIDAD = {'entrenamiento': 'O(B·R·p·(n + bins)) efectos principales
 _EBM_JUST = (
     'Modelo nuevo, no explicado en clase: Explainable Boosting Machine (Lou, Caruana, Gehrke y Hooker, '
     '2013; paquete interpret de Nori y otros, 2019). Es un modelo aditivo generalizado con interacciones '
-    'por pares (GA²M): g(E[y]) = β₀ + Σⱼ fⱼ(xⱼ) + Σᵢⱼ fᵢⱼ(xᵢ, xⱼ). Cada función de forma fⱼ se aprende '
+    'por pares (GA²M): g(E[y]) = β<sub>0</sub> + Σ<sub>j</sub> <i>f</i><sub>j</sub>(<i>x</i><sub>j</sub>) + Σ<sub>ij</sub> <i>f</i><sub>ij</sub>(<i>x</i><sub>i</sub>, <i>x</i><sub>j</sub>). Cada función de forma <i>f</i><sub>j</sub> se aprende '
     'por boosting cíclico de árboles de pocas hojas sobre una sola variable a la vez, con una tasa de '
     'aprendizaje baja para que el orden de las variables no importe, y se promedia sobre outer_bags '
     'submuestras. Es tan legible como una regresión logística (cada variable aporta una curva que se '

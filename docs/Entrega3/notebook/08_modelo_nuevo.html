@@ -451,11 +451,10 @@ superación se confirma con pruebas estadísticas y no solo con la cifra puntual
 Es un modelo aditivo generalizado con interacciones por pares (GA²M):</p>
 <div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
-<a class="reference internal image-reference" href="../../_images/0aaf566b014c85a429ed9ac618d471ccefd2d4f219389f34061b82316df6e7a9.png"><img alt="g(E[y|x]) = β₀ + Σⱼ fⱼ(xⱼ) + Σᵢⱼ fᵢⱼ(xᵢ, xⱼ)" class="align-center" src="../../_images/0aaf566b014c85a429ed9ac618d471ccefd2d4f219389f34061b82316df6e7a9.png" style="width: 478px; height: 59px;" />
-</a>
+<img alt="g(E[y|x]) = β0 + Σ_j f_j(x_j) + Σ_(i,j) f_ij(x_i, x_j)" class="align-center" src="../../_images/6d1633c84220ea0e5ecba43877f411fa5c0a0c074ec4e0e2dc41db252996b883.png" />
 </div>
 </div>
-<p>donde cada función de forma fⱼ se aprende por <em>boosting</em> cíclico de árboles de pocas hojas sobre
+<p>donde cada función de forma <i>f</i><sub>j</sub> se aprende por <em>boosting</em> cíclico de árboles de pocas hojas sobre
 una sola variable a la vez, con una tasa de aprendizaje baja para que el orden de las variables no
 importe, y se promedia sobre varias submuestras (bolsas externas). Reúne dos cosas que no suelen ir
 juntas: la flexibilidad del <em>boosting</em> para captar efectos no lineales y la legibilidad de un modelo
