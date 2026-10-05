@@ -12,13 +12,21 @@ superación se confirma con pruebas estadísticas y no solo con la cifra puntual
 Es un modelo aditivo generalizado con interacciones por pares (GA²M):
 
 #%% code [remove-input]
+import io, struct
 import matplotlib.pyplot as plt
-# La fórmula se dibuja con mathtext para que se vea igual en cualquier visor de cuadernos.
+from IPython.display import Image, display
+# La fórmula se dibuja con mathtext (a 200 ppp, mostrada a 600 px de ancho) para que se vea nítida
+# en cualquier visor de cuadernos, incluidos los que no renderizan LaTeX.
 fig, ax = plt.subplots(figsize=(7.5, 0.75))
 ax.axis('off')
 ax.text(0.5, 0.5, r'$g(\mathrm{E}[y \mid x]) = \beta_0 + \sum_j f_j(x_j) + \sum_{(i,j)} f_{ij}(x_i, x_j)$',
         ha='center', va='center', fontsize=15)
-plt.show()
+buf = io.BytesIO()
+fig.savefig(buf, format='png', dpi=200)
+plt.close(fig)
+png = buf.getvalue()
+ancho, alto = struct.unpack('>II', png[16:24])
+display(Image(data=png, width=600, height=round(600 * alto / ancho)))
 
 #%% md
 donde cada función de forma fⱼ se aprende por *boosting* cíclico de árboles de pocas hojas sobre
