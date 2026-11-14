@@ -1,0 +1,56 @@
+% Conclusiones del informe final. Las cifras provienen de la sección de resultados.
+\section{Conclusiones}
+\label{sec:conclusiones}
+
+El proyecto partió de una pregunta: si un modelo aditivo legible alcanza en COFINFAD la precisión de los
+ensambles de árboles, y a qué costo. La respuesta de la sección~\ref{sec:resultados} es que la alcanza, no la
+supera. La EBM obtiene el mayor AUC de prueba de los ocho modelos de clasificación (0,8289) y el segundo RMSE de
+regresión (0,05925, a 0,00008 de XGBoost); supera con significación estadística, en todas las pruebas y tras la
+corrección de Holm, a los modelos lineales, a k-NN y a Naive Bayes (cuatro de las siete referencias de cada
+tarea); y frente a XGBoost, Random Forest y el árbol de decisión ninguna prueba al 5~\% encuentra diferencia:
+la probabilidad de equivalencia práctica va de 0,94 a 0,997 en clasificación y es 0,9998 con XGBoost en
+regresión, y solo el \emph{Model Confidence Set} al 90~\% detecta una ventaja sistemática de XGBoost de
+décimas de milésima de RMSE. Frente a la entrega anterior, en su misma partición y etiqueta, la EBM sube el AUC
+de 0,6832 a 0,7187 y baja el RMSE de 0,06166 a 0,05926 ($p < 0{,}001$), y cubre el 98~\% del techo de
+información que deja la exclusión de \ap: el empate entre los modelos flexibles es una propiedad de los datos,
+no una debilidad del modelo.
+
+El estudio de ablación cerró sus cinco hipótesis. Se confirmó que la aditividad basta (sin interacciones se
+pierden 0,0002 de AUC, $p = 0{,}91$), que el balanceo no cambia el AUC y solo desplaza el punto de operación (el
+\emph{recall} con umbral 0,5 pasa de 0,355 a 0,707 con ponderación, al mismo AUC), que la búsqueda de baja
+fidelidad conserva el orden de las configuraciones y ahorra el 66~\% del tiempo, y que la eficiencia por
+evaluación sí distingue a los optimizadores (la bayesiana tiene el menor arrepentimiento) aunque la métrica
+final solo separe a Random Search en clasificación. Se refutó, en cambio, la hipótesis de que la variabilidad
+por semilla fuera del orden de las diferencias entre modelos: la EBM es casi determinista (desviación de
+0,00004 de AUC), más estable que Random Forest y XGBoost. La sensibilidad a los hiperparámetros es baja (AUC
+entre 0,8267 y 0,8292 al variarlos uno a uno) y la validación anidada predijo la prueba casi sin sesgo
+(correlación 0,997 en 124 corridas), de modo que las conclusiones no dependen de una configuración afortunada.
+
+Dos lecciones son prácticas. La primera es que la significancia estadística no es relevancia práctica: con la
+capacidad de campaña del 25~\% todos los modelos salvo Naive Bayes identifican casi a los mismos clientes (la
+EBM 1.228 de los 2.399 de riesgo alto y la regresión logística 1.225), aunque el AUC los separe con
+$p < 0{,}001$; la ventaja de los modelos flexibles aparece en otras capacidades (con el 50~\% capturan el 91~\%
+de la fuga frente al 77~\% de la logística), así que el modelo debe elegirse con la capacidad de la campaña en
+mente y con las probabilidades recalibradas (el ECE baja de 0,170 a 0,003--0,010 con regresión isotónica). La
+segunda es el costo: la EBM es el modelo más lento de ajustar (26,7~s, de 15 a 17 veces XGBoost), pero su
+inferencia sobre los 9.745 clientes de prueba tarda 0,067~s, como XGBoost, y ocupa 1,5~MB; para una campaña
+que ajusta el modelo una vez y lo consulta sobre toda la cartera, el costo relevante es el de inferencia. Lo que
+el ajuste más caro compra es la legibilidad: cuatro variables reúnen el 82~\% de la importancia y sus funciones
+de forma muestran directamente la no linealidad que los modelos lineales no captan (la edad no monótona, la
+meseta de la frecuencia de uso, los escalones de la satisfacción), sin explicador auxiliar. El análisis de
+errores localizó los fallos: la cohorte de 59--60 años, con el 46~\% de riesgo alto, es la más difícil, y los
+errores grandes de la regresión siguen una escalera por número de productos activos, es decir, son la parte del
+objetivo que depende de la variable excluida y que ningún modelo puede recuperar sin ella.
+
+Las limitaciones acotan estas conclusiones. Hay un único conjunto de datos, con rasgos sintéticos (tres
+cohortes de edad, una escalera de productos activos, transacciones sin señal), y el objetivo es el puntaje de
+otro modelo, no la fuga observada, de modo que lo aprendido es a reproducir ese puntaje. Con cinco pliegues la
+$t$ corregida tiene cuatro grados de libertad y poca potencia, McNemar en el punto de operación es insensible a
+las diferencias que el AUC sí ve, el SVM es lineal, la regresión no incluye un modelo bayesiano, los tiempos son
+de un solo equipo, y la $t$ corregida, McNemar, el análisis bayesiano y los estudios de sensibilidad se
+añadieron después de ver la prueba y se declaran exploratorios. Como trabajo futuro se propone validar en el
+tiempo con datos reales de fuga observada (entrenar con un periodo y probar con el siguiente), incorporar el
+costo de cada acción de retención para fijar el umbral y la capacidad, acelerar el ajuste de la EBM con una
+parada temprana más exigente o restringiendo los predictores a los que tienen señal, aumentar la potencia de las
+pruebas pareadas con validación cruzada repetida, y explotar las secuencias de transacciones con modelos que las
+traten como series.

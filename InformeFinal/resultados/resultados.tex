@@ -1,0 +1,339 @@
+% Sección de resultados del proyecto (Entregables 1 a 3). Se incluye desde main.tex. Toda cifra del texto, de las
+% tablas y de las figuras la produce generar.py a partir de los resultados guardados del Entregable 3 (datos/*.csv).
+\section{Resultados}
+\label{sec:resultados}
+
+Cada cifra de esta sección la reproduce un único guion, \texttt{generar.py}, desde los resultados guardados
+del Entregable 3; guion, datos y figuras acompañan al código del proyecto en
+\url{https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech}.
+
+\subsection{Resumen del montaje experimental}
+\label{sec:montaje}
+
+Los datos son los 48.723 clientes de COFINFAD \citep{cofinfad2025} con 48 predictores ($p = 78$ columnas),
+partidos 80/20 con la semilla 42. En clasificación la etiqueta de riesgo alto es el cuarto
+superior de \cp\ ($\tau = 0{,}3927$; 24,6~\% de positivos en la prueba). Cada modelo entra con su mejor
+combinación según el bucle externo de la validación anidada $5 \times 3$ (mismos pliegues) y toca la prueba una
+sola vez. La métrica principal es el AUC en clasificación y el RMSE en regresión; las secundarias, el AUC-PR, el
+F1, el MCC y la exactitud balanceada con el 25~\% de capacidad de campaña, el ECE recalibrado, el MAE, el MAPE y
+el $R^2$. El protocolo fija $\alpha = 0{,}05$ y Holm \citep{holm1979} sobre las siete comparaciones de cada
+prueba. La métrica principal, $\alpha$, Holm, DeLong, Diebold-Mariano y el \emph{Model Confidence Set} se
+fijaron en el Entregable 3 antes de evaluar la prueba; la $t$ corregida, McNemar, la bayesiana (con regiones de
+equivalencia de $\pm 0{,}01$ de AUC y $\pm 0{,}0005$ de RMSE fijadas antes de ejecutarla) y los análisis de
+sensibilidad son posteriores y exploratorios.
+
+\subsection{Desempeño predictivo global}
+\label{sec:global}
+
+\paragraph{Clasificación.}
+La tabla~\ref{tab:clasificacion} resume la prueba y la figura~\ref{fig:folds} los pliegues. En la prueba la EBM
+obtiene el mayor AUC de los ocho modelos, 0,8289 con intervalo BCa [0,8206; 0,8366], seguida de XGBoost,
+Random Forest y el árbol de decisión (0,8283 a 0,8243); después vienen k-NN (0,787), los lineales (0,771) y
+Naive Bayes (0,666). En la validación anidada la EBM queda cuarta, a 0,0040 de XGBoost y del árbol, el orden
+de la desviación entre pliegues. La misma estructura de tres grupos aparece en el AUC-PR (0,551) y en las
+curvas ROC y precisión-\emph{recall} de la
+figura~\ref{fig:roc_pr}. En el
+punto de operación, en cambio, los siete modelos distintos de Naive Bayes son indistinguibles: contactando al
+25~\% de mayor riesgo, la EBM captura el 51,2~\% de la fuga con una precisión del 50,4~\% (MCC 0,346) y la
+regresión logística el 51,1~\% (MCC 0,344); la tabla~\ref{tab:confusion} da las matrices de confusión con esa
+regla y con el umbral 0,5. Las probabilidades sin
+recalibrar están sesgadas en los modelos con ponderación (ECE de 0,170 en la EBM); la recalibración isotónica
+ajustada con predicciones fuera de pliegue lo deja entre 0,003 y 0,010 y apenas mueve el AUC
+(figura~\ref{fig:calibration}). En resumen, por el valor puntual del AUC de prueba y del AUC-PR la EBM queda
+por delante de las siete referencias, aunque solo cuatro ventajas son significativas
+(sección~\ref{sec:pruebas}); la mayor es $+0{,}058$ de AUC frente a la logística ($+7{,}5$~\% relativo) y la
+menor, $+0{,}0006$ frente a XGBoost; por el AUC externo gana cuatro y pierde tres, y en el punto de operación
+empata con seis.
+
+\paragraph{Regresión.}
+Según la tabla~\ref{tab:regresion}, XGBoost tiene el menor RMSE de prueba (0,05917) y la EBM el segundo
+(0,05925), con Random Forest y el árbol dentro de los mismos intervalos; los lineales quedan un 4~\% por encima
+y k-NN un 7~\%. El $R^2$ pasa de 0,151 en Ridge y Lasso a 0,216 en la EBM y 0,218 en XGBoost, y el MAPE, de
+17,1 a 16,0~\%: la EBM pierde con XGBoost en las cuatro métricas por milésimas o menos y gana a los otros seis.
+El pronóstico sigue la tendencia pero
+se comprime hacia la media (figura~\ref{fig:regression}), y el residuo de la EBM es asimétrico (asimetría
+$-0{,}90$) y no normal, sin heterocedasticidad (White, $p = 0{,}67$) ni dependencia en el orden del archivo
+(Ljung-Box, $p = 0{,}81$), según el diagnóstico del Entregable 3; la causa se identifica en la
+sección~\ref{sec:errores}.
+
+\paragraph{Frente a la entrega anterior.}
+En su partición y etiqueta de la mediana (tabla~\ref{tab:entrega2}), la EBM sube el AUC de la logística L1 de
+0,6832 a 0,7187 y baja el RMSE del Lasso de 0,06166 a 0,05926 ($p$ ajustado $< 0{,}001$ en DeLong y en
+Diebold-Mariano); frente a XGBoost queda a $-0{,}0019$ de AUC ($p = 0{,}20$) y a $0{,}00007$ de RMSE
+($p = 0{,}07$).
+
+\input{tablas/clasificacion.tex}
+\input{tablas/confusion.tex}
+\input{tablas/regresion.tex}
+\input{tablas/entrega2.tex}
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig_folds.pdf}
+  \caption{Métrica principal en cada uno de los 5 pliegues externos (puntos) y su diagrama de caja (mediana y
+  cuartiles; bigotes hasta el mínimo y el máximo) para la mejor combinación de cada modelo: AUC en clasificación
+  (izquierda) y RMSE en regresión (derecha). El asterisco marca el modelo propuesto.}
+  \label{fig:folds}
+\end{figure}
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig_roc_pr.pdf}
+  \caption{Curvas ROC (izquierda) y precisión-\emph{recall} (derecha) en la prueba para la EBM, XGBoost, Random
+  Forest, la regresión logística y Naive Bayes; la línea punteada es el azar (en precisión-\emph{recall}, la
+  prevalencia de 0,246).}
+  \label{fig:roc_pr}
+\end{figure}
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig_calibration.pdf}
+  \caption{Diagramas de confiabilidad en la prueba (10 intervalos de probabilidad) de la EBM, XGBoost y Random
+  Forest antes (izquierda) y después (derecha) de la recalibración isotónica ajustada con predicciones fuera de
+  pliegue del entrenamiento; la diagonal punteada es la calibración perfecta.}
+  \label{fig:calibration}
+\end{figure}
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig_regression.pdf}
+  \caption{Regresión en la prueba. Izquierda: puntaje observado frente al pronóstico de la EBM (puntos,
+  un cliente cada uno) y valor observado medio frente al pronóstico medio en 20 grupos de igual tamaño ordenados
+  por el pronóstico para la EBM, XGBoost y Lasso (líneas); la diagonal punteada es la calibración perfecta.
+  Derecha: distribución del residuo de la EBM (observado $-$ pronóstico).}
+  \label{fig:regression}
+\end{figure}
+
+\subsection{Resultados de las pruebas de significancia}
+\label{sec:pruebas}
+
+Las tablas~\ref{tab:pruebas_clasificacion} a~\ref{tab:efectos_regresion} recogen, para cada modelo de
+referencia, las pruebas, la diferencia con la EBM con su intervalo BCa de 2.000 réplicas y los tamaños de
+efecto (figura~\ref{fig:intervals}). En
+clasificación se aplican la $t$ pareada con varianza corregida de \citet{nadeau2003} sobre los AUC de los
+cinco pliegues externos, DeLong \citep{delong1988} sobre la prueba, McNemar exacta \citep{mcnemar1947} sobre
+las clases del punto de operación y la $t$ correlacionada bayesiana con región de equivalencia práctica
+\citep{corani2015,benavoli2017}; en regresión, la $t$ corregida sobre el RMSE de los pliegues, Diebold-Mariano
+con la corrección de \citet{harvey1997} sobre las pérdidas cuadráticas de la prueba, la bayesiana y, como
+complemento, el \emph{Model Confidence Set} al 90~\% \citep{hansen2011mcs} con \emph{bootstrap} estacionario
+\citep{politis1994}. Con cinco pliegues Wilcoxon no puede rechazar ($p$ mínimo 0,0625); se reporta la delta
+de Cliff.
+
+\paragraph{Clasificación.}
+Frente a los cuatro modelos sin árboles la evidencia de diferencia es unánime: la $t$ corregida da
+estadísticos de 14,3 a 23,2 y DeLong de 12,5 a 27,8, todos con $p$ ajustado menor que 0,001; los intervalos
+de $\Delta$AUC quedan lejos de cero (de $+0{,}042$ a $+0{,}163$); la probabilidad posterior de que la EBM sea
+mejor es mayor que 0,999, y el delta de Cliff es $+1$: la EBM gana en los cinco pliegues. Frente a XGBoost,
+Random Forest y el árbol ninguna prueba rechaza: la $t$ corregida ($p$ ajustado de 0,16 a 0,25), DeLong ($p$
+ajustado de 0,62 a 0,85) y los intervalos de $\Delta$AUC ($-0{,}006$ a $+0{,}012$) incluyen al cero; los signos
+opuestos de las dos pruebas (unas milésimas por debajo en los pliegues, por encima en la prueba) son
+variabilidad entre pliegues. El modelo
+propuesto supera significativamente a 4 de 7 referencias; frente a las otras 3 ninguna prueba encuentra
+evidencia de diferencia y la probabilidad de equivalencia práctica es 0,94 con XGBoost, 0,98 con el árbol y
+0,997 con Random Forest, de modo que solo las dos últimas superan el umbral habitual del 95~\%.
+
+McNemar discrepa, y la razón es informativa: sobre las clases del punto de operación solo separa a Naive
+Bayes ($p < 0{,}001$); frente a k-NN y a los lineales el $p$ ajustado es 1,0, porque con la capacidad fija del
+25~\% las tasas de error son 0,245--0,246 y 0,244 (la EBM identifica 1.228 clientes de riesgo alto de 2.399 y
+la logística 1.225). La diferencia de AUC está en el resto de la curva ROC (figura~\ref{fig:roc_pr}),
+es decir, en otras capacidades: con el 10~\% la EBM y la logística capturan el 25,6 y el 25,3~\% de la fuga,
+pero con el 50~\% capturan el 91,2 y el 76,7~\%. La ventaja sobre un modelo lineal es real y crece con la
+capacidad, pero en el punto de operación elegido vale tres clientes de cada 2.399: significancia estadística no
+es relevancia práctica.
+
+\paragraph{Regresión.}
+Frente a los tres modelos lineales (Lasso, Ridge y SVR) y a k-NN la EBM reduce el RMSE en $0{,}0024$ a
+$0{,}0040$ (intervalos que no incluyen el cero), con $t$ corregida de 27,9 a 63,3 y Diebold-Mariano de 13,3
+a 17,5 ($p$ ajustado menor que 0,001), probabilidad bayesiana de ser mejor igual a 1, delta de Cliff $+1$ y
+$d_z$ entre pliegues de 18,7 a 42,5; la $d_z$ por cliente (0,135 a 0,177) es pequeña: la mejora por cliente es
+menor que el ruido de su pérdida, pero se repite en todos. Frente a XGBoost ($\Delta$RMSE $-0{,}00008$
+[$-0{,}00016$; $+0{,}00001$]) ni la $t$ corregida ($p$ ajustado 0,43) ni Diebold-Mariano ($p$ ajustado 0,13)
+rechazan, y la probabilidad de equivalencia dentro de $\pm 0{,}0005$ es 0,9998; tampoco rechazan frente a
+Random Forest ($p$ ajustado 0,41). Frente al árbol las
+pruebas discrepan: el intervalo de $\Delta$RMSE excluye al cero y Diebold-Mariano rechaza sin corregir
+($p = 0{,}029$), pero no tras Holm ($p = 0{,}086$) ni en los pliegues ($p = 0{,}22$). El \emph{Model
+Confidence Set} es más exigente: con 9.745 pérdidas correlacionadas y bloques de longitud 3 deja a XGBoost
+como único miembro al 90~\%, y la EBM es la última en salir ($p_{\mathrm{MCS}} = 0{,}072$): hay una ventaja
+sistemática de XGBoost de décimas de milésima (0,1~\%) que un procedimiento al 10~\% detecta y que ninguna
+prueba al 5~\% con corrección confirma. En regresión el modelo propuesto supera significativamente a 4 de 7
+referencias y es prácticamente equivalente a las otras 3.
+
+\input{tablas/pruebas_clasificacion.tex}
+\input{tablas/efectos_clasificacion.tex}
+\input{tablas/pruebas_regresion.tex}
+\input{tablas/efectos_regresion.tex}
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig_intervals.pdf}
+  \caption{Diferencia de la métrica principal entre la EBM y cada modelo de referencia en la prueba, con su
+  intervalo \emph{bootstrap} BCa al 95~\% (2.000 réplicas): AUC (izquierda; positivo favorece a la EBM) y RMSE
+  en milésimas (derecha; positivo favorece a la EBM). La banda gris es la región de equivalencia práctica.}
+  \label{fig:intervals}
+\end{figure}
+
+\subsection{Resultados del estudio de ablación}
+\label{sec:ablacion_res}
+
+La tabla~\ref{tab:ablacion} y la figura~\ref{fig:ablation} comparan, con el mismo protocolo y Holm dentro de
+cada tarea, las variantes que cambian el modelo con el modelo completo (ponderación, Grid, $K = 0$); la
+fidelidad y la semilla no cambian el modelo y se resumen en la tabla~\ref{tab:semillas}.
+
+\begin{enumerate}
+  \item \textbf{Sin interacciones.} Como la búsqueda eligió $K = 0$, la variante se evalúa en la EBM de la
+        comparación con la entrega anterior (5 pares), que sin pares obtiene 0,7185 de AUC frente a 0,7187
+        (DeLong $p = 0{,}91$) y aun así supera a la logística en $+0{,}035$ ($p < 10^{-21}$). Hipótesis
+        confirmada: la aditividad basta.
+  \item \textbf{Balanceo.} Sin balanceo el AUC de prueba es idéntico (0,8289; probabilidad de equivalencia
+        1,0); SMOTE y ADASYN lo bajan en 0,003
+        sin significancia ($p$ ajustado 0,55 y 0,70) y multiplican el tiempo de la corrida por 4,4
+        y 5,4. Lo que mueve el balanceo es el \emph{recall} con umbral
+        0,5: 0,707 con ponderación frente a 0,355 sin ella y 0,34--0,35 con sobremuestreo. Hipótesis
+        confirmada: el balanceo elige el punto de operación.
+  \item \textbf{Fidelidad de la búsqueda.} En las ocho configuraciones aleatorias, la correlación de Spearman
+        entre el AUC con $B = 2$ y con $B = 8$ es 0,83, la ganadora es la misma y la fidelidad
+        baja ahorra el 66~\% del tiempo de búsqueda. Hipótesis confirmada.
+  \item \textbf{Optimizador.} TPE y la genética llegan, con configuraciones distintas, al mismo AUC que Grid
+        ($+0{,}0003$); Random Search queda $0{,}0049$ por debajo en la prueba, sin sobrevivir a Holm
+        ($p = 0{,}13$) ni aparecer en los pliegues ($p = 0{,}78$). En regresión los cuatro son equivalentes. En
+        las 140 corridas de la guía (tabla~\ref{tab:optimizadores}), Friedman rechaza por la métrica final en
+        clasificación ($p = 0{,}001$, por Random Search) y no en regresión ($p = 0{,}82$); por el área de
+        arrepentimiento la bayesiana tiene el menor rango en las dos tareas (Friedman $p < 10^{-6}$). Hipótesis
+        confirmada en su segunda parte (la eficiencia por evaluación distingue a los métodos) y solo en parte en
+        la primera: la métrica final no distingue a TPE, Grid y la genética, pero sí a Random Search en
+        clasificación.
+  \item \textbf{Semilla.} Con cinco semillas, la desviación del AUC de prueba de la EBM es 0,00004 y la del
+        RMSE 0,000003 (tabla~\ref{tab:semillas}), de 10 a 100 veces menores que sus diferencias con los modelos
+        de árboles. Hipótesis refutada para la EBM, más estable que Random Forest (0,0010) y XGBoost (0,0003),
+        para los que sí se sostiene.
+\end{enumerate}
+
+\input{tablas/ablacion.tex}
+\input{tablas/semillas.tex}
+\input{tablas/optimizadores.tex}
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig_ablation.pdf}
+  \caption{Ablación en clasificación: AUC externa (media $\pm$ desviación de los 5 pliegues; barras) y AUC de
+  prueba (rombos) del modelo completo y de cada variante de balanceo (azul) y de optimizador (verde).}
+  \label{fig:ablation}
+\end{figure}
+
+\subsection{Sensibilidad y robustez}
+\label{sec:sensibilidad}
+
+La tabla~\ref{tab:semillas} y las figuras~\ref{fig:sensitivity} y~\ref{fig:hyper} reúnen las fuentes de
+variabilidad. La semilla del modelo apenas pesa; la del optimizador pesa más: repetir la
+búsqueda del árbol con cinco semillas mueve el AUC de prueba en 0,0009 a 0,0025, el orden de las diferencias
+entre optimizadores. La sensibilidad a los hiperparámetros es baja: variando uno a la vez desde la configuración final, con validación cruzada de 3 pliegues y $B = 2$, el
+AUC se mueve entre 0,8267 y 0,8292 (figura~\ref{fig:hyper}); el más influyente es el número de interacciones.
+Las 16 corridas de clasificación de la EBM terminan con configuraciones muy distintas
+(figura~\ref{fig:sensitivity}) y un AUC externo entre 0,8276 y 0,8292, un rango menor que la desviación entre
+pliegues. La curva de aprendizaje,
+ajustada con el modelo final sobre subconjuntos del entrenamiento y evaluada en la prueba, sube de 0,8234 con
+2.500 clientes a 0,8288 con 38.978, y desde 10.000 solo gana 0,0018: con 2.500 clientes la EBM ya supera a la
+logística entrenada con todos (0,771), mientras que el árbol es el más dependiente del tamaño; las curvas de
+referencia provienen del experimento de escalamiento del Entregable 3, fuera del
+pipeline anidado, por lo que Random Forest termina 0,003 por encima de su modelo final. La robustez al
+desbalance se midió con y sin remuestreo (ablación): el AUC no cambia. La validación anidada predice la
+prueba casi sin sesgo: en las 124 corridas de clasificación la correlación entre el AUC externo y el de
+prueba es 0,997 y la diferencia media $+0{,}0016$.
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig_sensitivity.pdf}
+  \caption{Izquierda: curva de aprendizaje (AUC de prueba frente al número de clientes de entrenamiento, con
+  los hiperparámetros finales de cada modelo; la EBM se ajusta en el guion de esta sección y las referencias
+  provienen del experimento de escalamiento del Entregable 3). Derecha: AUC de la EBM frente a la tasa de
+  aprendizaje en las 16 configuraciones ganadoras de las corridas (círculos; azul $K = 0$, verde $K > 0$; AUC
+  externo) y en las ocho configuraciones aleatorias de la prueba de fidelidad (triángulos; validación cruzada de
+  3 pliegues con $B = 8$).}
+  \label{fig:sensitivity}
+\end{figure}
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig_hyper.pdf}
+  \caption{Sensibilidad de la EBM a cada hiperparámetro por separado: AUC (media $\pm$ desviación de una
+  validación cruzada de 3 pliegues sobre el entrenamiento, con $B = 2$) al variar la tasa de aprendizaje, las
+  hojas por árbol, el mínimo de clientes por hoja y el número de interacciones desde la configuración final
+  (línea punteada).}
+  \label{fig:hyper}
+\end{figure}
+
+\subsection{Costo computacional}
+\label{sec:costo}
+
+Según la tabla~\ref{tab:costo}, la EBM es el modelo más lento de ajustar: 26,7~s en clasificación y 31,8~s en
+regresión, 17 y 15 veces más que XGBoost (1,6 y 2,1~s) y del orden de Random Forest. En inferencia está en el
+grupo rápido (0,067~s para los 9.745 clientes, tres veces menos que Random Forest y cien menos que k-NN),
+ocupa 1,5~MB frente a 44~MB del bosque, guarda 15.485 valores frente a 574.556 nodos y
+necesita 20~MB de memoria pico en el ajuste frente a 68~MB del bosque. La EBM no mejora el AUC de XGBoost y
+cuesta 17 veces más en ajuste, pero el ajuste ocurre una vez y la consulta es igual de barata; el costo extra
+compra un modelo legible sin explicador.
+
+\input{tablas/costo.tex}
+
+\subsection{Interpretabilidad y análisis de errores}
+\label{sec:errores}
+
+\paragraph{Qué usa el modelo.}
+La tabla~\ref{tab:importancia} ordena los términos de la EBM de clasificación: la edad (37,8~\%), la
+frecuencia de uso de la aplicación (30,1~\%), la satisfacción (11,6~\%) y la satisfacción de base (2,5~\%)
+reúnen el 82~\% de la importancia, y la importancia por permutación en la prueba coincide (caídas de AUC de
+0,177 a 0,0008; ningún otro predictor llega a 0,0003). Son las cuatro variables del
+análisis exploratorio y las que SHAP \citep{lundberg2017shap} señala en XGBoost en el Entregable 3. Las
+funciones de forma (figura~\ref{fig:shapes}) muestran la no linealidad que los modelos lineales no captan: la
+edad no es monótona (de $-1{,}57$ a $+1{,}40$ en el logit), la frecuencia de uso reduce el riesgo con fuerza
+hasta unos 20 inicios de sesión y luego se aplana, la satisfacción actúa por escalones y la de base sigue una
+curva en S.
+
+\paragraph{Dónde falla.}
+La tabla~\ref{tab:errores} divide la prueba por cohorte de edad y por \ap, la variable excluida. La cohorte de
+59--60 años, con el 46~\% de riesgo alto, es la más difícil (AUC 0,645 dentro de la cohorte); la de 44--45
+(9~\%) la más fácil (0,922). La EBM y XGBoost alcanzan el mismo \emph{recall} global con clientes distintos:
+con la capacidad del 25~\%, la EBM contacta sobre todo a la cohorte mayor (deja fuera al 37~\% de sus
+clientes de riesgo alto, pero al 91~\% de los de 44--45) y XGBoost reparte más (56~\% y 34~\%), porque la edad domina al modelo aditivo; de los
+1.171 clientes de riesgo alto que la EBM deja fuera, 563 son de 59--60 años, 354 de 29--30 y 254 de 44--45.
+Por \ap, en cambio, el AUC dentro de cada nivel está entre 0,988 y 0,999 en los dos modelos y el sesgo de la
+regresión forma una escalera: $-0{,}055$ con un producto, $-0{,}005$ con dos, $+0{,}045$, $+0{,}095$ y
+$+0{,}145$ con tres, cuatro y cinco. El modelo pronostica a todos cerca del nivel de dos productos porque no
+ve cuántos tienen; los errores grandes son la parte del objetivo que depende de la variable excluida y explican
+la compresión y la asimetría de la figura~\ref{fig:regression}. La tabla~\ref{tab:ejemplos} muestra tres
+clientes representativos de esos errores; en los dos primeros la edad y el uso de la aplicación apuntan en
+sentido contrario al nivel de \ap, que decide el puntaje real.
+
+\input{tablas/importancia.tex}
+\input{tablas/errores.tex}
+\input{tablas/ejemplos.tex}
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig_shapes.pdf}
+  \caption{Funciones de forma de la EBM de clasificación para las cuatro variables con señal: contribución al
+  logit del riesgo alto (centrada) con la banda entre las 8 bolsas externas, en las unidades originales de cada
+  variable.}
+  \label{fig:shapes}
+\end{figure}
+
+\subsection{Discusión, limitaciones y amenazas a la validez}
+\label{sec:discusion}
+
+Los resultados sugieren que, en este problema, un modelo aditivo con funciones de forma alcanza la misma
+capacidad predictiva que los ensambles de árboles: la EBM empata con XGBoost, Random Forest y el árbol en las
+dos tareas y supera con claridad a los modelos lineales, a k-NN y a Naive Bayes, como en \citet{lou2013ga2m}.
+La ablación explica por qué aquí ni siquiera hacen
+falta las interacciones: la señal está en cuatro variables con efectos no lineales y casi independientes, de
+modo que lo que faltaba en la entrega anterior era flexibilidad por variable, no profundidad. El empate con
+XGBoost es una propiedad de los datos: el techo de información sin \ap\ estimado en el Entregable 3 es 0,7223
+de AUC (etiqueta de la mediana) y 0,2197 de $R^2$, y la EBM cubre el 98~\% de ambos ($\auc - 0{,}5$).
+
+Hay un solo conjunto de datos, con rasgos sintéticos (cohortes de edad, escalera de productos activos), y el
+objetivo es el puntaje de otro modelo, no la fuga observada. Con cinco pliegues la $t$ corregida tiene 4 grados de libertad y poca potencia, y McNemar en el punto
+de operación es insensible a diferencias que el AUC sí ve. Otras amenazas son menores: el SVM es lineal (el núcleo RBF multiplicaba por
+70 el costo), la logística cubre L1 y L2 como un solo modelo, la regresión no incluye un modelo bayesiano, los
+tiempos son de un solo equipo y, aunque las variables derivadas no usan el objetivo, en un conjunto sintético
+no puede descartarse una fuga residual. La conclusión proporcional a la evidencia es que la EBM es una
+alternativa equivalente a XGBoost en precisión, más lenta de ajustar, igual de rápida en inferencia y legible
+por construcción; no que sea mejor.

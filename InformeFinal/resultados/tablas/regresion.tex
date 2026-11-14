@@ -1,0 +1,19 @@
+\begin{table}[tbp]
+  \centering\scriptsize\setlength{\tabcolsep}{1.5pt}
+  \caption{Regresión de \cp: mejor optimizador de cada modelo según el bucle externo. RMSE externo (media $\pm$ desviación de los 5 pliegues), RMSE de prueba con intervalo BCa al 95~\%, MAE, MAPE y $R^2$ con intervalo BCa, y $p$-valor del \emph{Model Confidence Set} al 90~\% (pertenecen al conjunto los modelos con $p > 0{,}10$). Negrita: mejor; subrayado: segundo. $^{\dagger}$: difiere de la EBM en Diebold-Mariano tras Holm; $^{\ddagger}$: en la $t$ corregida tras Holm.}
+  \label{tab:regresion}
+  \begin{tabular}{@{}l c c c c c c@{}}
+    \toprule
+    Modelo & RMSE externo & RMSE prueba [IC 95~\%] & MAE & MAPE & $R^2$ [IC 95~\%] & $p$ MCS \\
+    \midrule
+    XGBoost & {\boldmath\textbf{$0{,}05898$ $\pm$ $0{,}00040$}} & {\boldmath\textbf{$0{,}05917$ [$0{,}05841$; $0{,}06002$]}} & {\boldmath\textbf{$0{,}0471$}} & {\boldmath\textbf{$15{,}98$~\%}} & {\boldmath\textbf{$0{,}218$ [$0{,}203$; $0{,}232$]}} & $1{,}000$ \\
+    \textbf{EBM (propuesto)} & \underline{$0{,}05903$ $\pm$ $0{,}00043$} & \underline{$0{,}05925$ [$0{,}05849$; $0{,}06009$]} & \underline{$0{,}0472$} & \underline{$16{,}03$~\%} & \underline{$0{,}216$ [$0{,}201$; $0{,}230$]} & $0{,}072$ \\
+    Random Forest & $0{,}05915$ $\pm$ $0{,}00039$ & $0{,}05931$ [$0{,}05854$; $0{,}06013$] & $0{,}0473$ & $16{,}05$~\% & $0{,}215$ [$0{,}200$; $0{,}228$] & $0{,}006$ \\
+    Árbol de decisión & $0{,}05926$ $\pm$ $0{,}00038$ & $0{,}05944$ [$0{,}05864$; $0{,}06025$] & $0{,}0475$ & $16{,}11$~\% & $0{,}211$ [$0{,}196$; $0{,}225$] & $<0{,}001$ \\
+    Lasso$^{\dagger\ddagger}$ & $0{,}06180$ $\pm$ $0{,}00048$ & $0{,}06166$ [$0{,}06082$; $0{,}06251$] & $0{,}0507$ & $17{,}10$~\% & $0{,}151$ [$0{,}138$; $0{,}164$] & $<0{,}001$ \\
+    Ridge$^{\dagger\ddagger}$ & $0{,}06182$ $\pm$ $0{,}00048$ & $0{,}06167$ [$0{,}06082$; $0{,}06252$] & $0{,}0507$ & $17{,}10$~\% & $0{,}151$ [$0{,}138$; $0{,}164$] & $<0{,}001$ \\
+    SVR lineal$^{\dagger\ddagger}$ & $0{,}06183$ $\pm$ $0{,}00047$ & $0{,}06170$ [$0{,}06087$; $0{,}06255$] & $0{,}0507$ & $17{,}10$~\% & $0{,}150$ [$0{,}137$; $0{,}163$] & $<0{,}001$ \\
+    k-NN$^{\dagger\ddagger}$ & $0{,}06335$ $\pm$ $0{,}00042$ & $0{,}06321$ [$0{,}06238$; $0{,}06409$] & $0{,}0511$ & $17{,}28$~\% & $0{,}108$ [$0{,}101$; $0{,}115$] & $<0{,}001$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}

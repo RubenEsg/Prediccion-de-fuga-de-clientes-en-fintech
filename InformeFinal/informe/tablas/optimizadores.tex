@@ -1,0 +1,20 @@
+\begin{table}[tbp]
+  \centering\small\setlength{\tabcolsep}{3pt}
+  \caption{Los cuatro optimizadores con el mismo presupuesto, en los bloques modelo $\times$ balanceo con las cuatro búsquedas completas de las 140 corridas de la guía (27 en clasificación, 7 en regresión; las de la EBM se excluyen): rango medio por la métrica externa (1 = mejor), bloques ganados, segundos por evaluación, área media bajo la curva de arrepentimiento normalizado (menor es mejor) y evaluaciones hasta cerrar el 95~\% de la brecha, estas dos últimas tal como las publicó el Entregable 3.}
+  \label{tab:optimizadores_res}
+  \begin{tabular}{@{}l l r r r r r@{}}
+    \toprule
+    Tarea & Método & Rango & Victorias & s/eval. & Área arrep. & Evals.\ 95~\% \\
+    \midrule
+    Clas. & Grid & $2{,}22$ & 12 & $2{,}61$ & $0{,}234$ & $14{,}2$ \\
+    Clas. & Random & $3{,}22$ & 4 & $2{,}46$ & $0{,}171$ & $7{,}2$ \\
+    Clas. & TPE & $2{,}63$ & 2 & $4{,}48$ & $0{,}123$ & $10{,}3$ \\
+    Clas. & Genética & $1{,}93$ & 15 & $4{,}27$ & $0{,}137$ & $13{,}1$ \\
+    \midrule
+    Regr. & Grid & $2{,}71$ & 2 & $2{,}43$ & $0{,}181$ & $9{,}9$ \\
+    Regr. & Random & $2{,}71$ & 0 & $2{,}05$ & $0{,}041$ & $7{,}4$ \\
+    Regr. & TPE & $2{,}14$ & 2 & $2{,}94$ & $0{,}038$ & $5{,}5$ \\
+    Regr. & Genética & $2{,}43$ & 3 & $3{,}37$ & $0{,}057$ & $7{,}4$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}

@@ -1,0 +1,65 @@
+% Sección de metodología del proyecto de Machine Learning (Entregables 1 a 3: fuga de clientes, COFINFAD).
+% Compilar: python compilar.py   (usa Tectonic; ver README.md de esta carpeta)
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[spanish,es-tabla,es-noshorthands]{babel}
+\usepackage[a4paper,textwidth=6.3in,textheight=9.4in,headheight=14pt]{geometry}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[authoryear,round]{natbib}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=blue!55!black,urlcolor=blue!55!black]{hyperref}
+
+\graphicspath{{figures/}}
+\captionsetup{font=small,labelfont=bf,width=0.95\linewidth}
+% Las figuras grandes pueden ocupar casi toda una página sin irse al final del documento.
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.6}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.7}
+\widowpenalty=10000 \clubpenalty=10000
+\setlength{\parskip}{3pt plus 1pt}
+\renewcommand{\algorithmicrequire}{\textbf{Entrada:}}
+\renewcommand{\algorithmicensure}{\textbf{Salida:}}
+\algrenewcommand\algorithmicfor{\textbf{para}}
+\algrenewcommand\algorithmicdo{\textbf{hacer}}
+\algrenewcommand\algorithmicend{\textbf{fin}}
+\algrenewcommand\algorithmicif{\textbf{si}}
+\algrenewcommand\algorithmicthen{\textbf{entonces}}
+\algrenewcommand\algorithmicwhile{\textbf{mientras}}
+\algrenewcommand\algorithmicreturn{\textbf{devolver}}
+\floatname{algorithm}{Algoritmo}
+
+% Notación
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\yhat}{\hat{y}}
+\newcommand{\cp}{\texttt{churn\_probability}}
+\newcommand{\ap}{\texttt{active\_products}}
+\newcommand{\auc}{\mathrm{AUC}}
+\newcommand{\rmse}{\mathrm{RMSE}}
+
+\title{\textbf{Predicción de la fuga de clientes de una \emph{fintech} con una Explainable Boosting Machine: sección de metodología}}
+\author{Valerie Martínez Pulido, Abrahan Basto Martínez y Rubén Esguerra Fernández\\[4pt]
+\small Proyecto final de Machine Learning (Entregables 1 a 3)\\ \small Pregrado en Ciencia de Datos, Universidad del Norte}
+\date{Noviembre de 2026}
+
+\begin{document}
+\maketitle
+
+\input{metodologia}
+
+\bibliographystyle{elsarticle-harv}
+\bibliography{referencias}
+
+\end{document}

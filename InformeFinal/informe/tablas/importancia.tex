@@ -1,0 +1,19 @@
+\begin{table}[tbp]
+  \centering\small\setlength{\tabcolsep}{3pt}
+  \caption{Interpretabilidad de la EBM de clasificación: cuota de la importancia de cada término (media del valor absoluto de su función de forma sobre el entrenamiento; los 78 términos suman 100~\%) e importancia por permutación sobre la prueba (caída media $\pm$ desviación del AUC al permutar cada predictor original, 5 repeticiones).}
+  \label{tab:importancia}
+  \begin{tabular}{@{}l r l c@{}}
+    \toprule
+    Término (EBM) & Cuota & Predictor permutado & Caída del AUC \\
+    \midrule
+    \texttt{age} & $37{,}8$~\% & \texttt{age} & $0{,}1772$ $\pm$ $0{,}0050$ \\
+    \texttt{app\_logins\_frequency} & $30{,}1$~\% & \texttt{app\_logins\_frequency} & $0{,}1159$ $\pm$ $0{,}0062$ \\
+    \texttt{satisfaction\_score} & $11{,}6$~\% & \texttt{satisfaction\_score} & $0{,}0282$ $\pm$ $0{,}0021$ \\
+    \texttt{base\_satisfaction} & $2{,}5$~\% & \texttt{base\_satisfaction} & $0{,}0008$ $\pm$ $0{,}0005$ \\
+    \texttt{income\_bracket\_Low} & $1{,}5$~\% & \texttt{prop\_Transfer} & $0{,}0002$ $\pm$ $0{,}0001$ \\
+    \texttt{prop\_Withdrawal} & $1{,}0$~\% & \texttt{customer\_tenure} & $0{,}0002$ $\pm$ $0{,}0001$ \\
+    \texttt{product\_satisfaction} & $0{,}9$~\% & \texttt{credit\_utilization\_ratio} & $0{,}0001$ $\pm$ $0{,}0001$ \\
+    \texttt{investment\_account} & $0{,}8$~\% & \texttt{investment\_account} & $0{,}0001$ $\pm$ $0{,}0000$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}

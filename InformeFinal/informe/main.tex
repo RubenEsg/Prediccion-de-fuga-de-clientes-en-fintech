@@ -1,0 +1,105 @@
+% Informe final del proyecto de Machine Learning (Entregables 1 a 3: fuga de clientes, COFINFAD).
+% Une la introducción, la sección de metodología (../Metodologia Entregable 3), la sección de resultados
+% (../Resultados Entregable 3) y las conclusiones. Armar: python armar.py; compilar: python compilar.py (Tectonic).
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[spanish,es-tabla,es-noshorthands]{babel}
+\usepackage[a4paper,textwidth=6.3in,textheight=9.4in,headheight=14pt]{geometry}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[authoryear,round]{natbib}
+\usepackage[section]{placeins}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=blue!55!black,urlcolor=blue!55!black]{hyperref}
+
+\graphicspath{{figures/}}
+\captionsetup{font=small,labelfont=bf,width=0.95\linewidth}
+% Las figuras grandes pueden ocupar casi toda una página sin irse al final de la sección.
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.6}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.7}
+\widowpenalty=10000 \clubpenalty=10000
+\setlength{\parskip}{3pt plus 1pt}
+\setlength{\bibsep}{3pt plus 1pt}
+\setcounter{tocdepth}{2}
+\renewcommand{\algorithmicrequire}{\textbf{Entrada:}}
+\renewcommand{\algorithmicensure}{\textbf{Salida:}}
+\algrenewcommand\algorithmicfor{\textbf{para}}
+\algrenewcommand\algorithmicdo{\textbf{hacer}}
+\algrenewcommand\algorithmicend{\textbf{fin}}
+\algrenewcommand\algorithmicif{\textbf{si}}
+\algrenewcommand\algorithmicthen{\textbf{entonces}}
+\algrenewcommand\algorithmicwhile{\textbf{mientras}}
+\algrenewcommand\algorithmicreturn{\textbf{devolver}}
+\floatname{algorithm}{Algoritmo}
+
+% Notación (la de las dos secciones)
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\yhat}{\hat{y}}
+\newcommand{\cp}{\texttt{churn\_probability}}
+\newcommand{\ap}{\texttt{active\_products}}
+\newcommand{\auc}{\mathrm{AUC}}
+\newcommand{\rmse}{\mathrm{RMSE}}
+
+\title{\textbf{Predicción de la fuga de clientes de una \emph{fintech} con una Explainable Boosting Machine}\\[6pt]
+\large Informe final del proyecto de Machine Learning (Entregables 1 a 3)}
+\author{Valerie Martínez Pulido, Abrahan Basto Martínez y Rubén Esguerra Fernández\\[4pt]
+\small Pregrado en Ciencia de Datos, Departamento de Matemáticas, Física y Ciencia de Datos\\
+\small Universidad del Norte, Barranquilla, Colombia}
+\date{Noviembre de 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent La fuga de clientes es uno de los problemas de predicción más frecuentes en los servicios financieros
+digitales. Sobre el conjunto público COFINFAD (48.723 clientes de una \emph{fintech} colombiana) este proyecto
+abordó, en tres entregas, la clasificación del cuarto de clientes de mayor riesgo y la regresión del puntaje de
+propensión al abandono. Tras la auditoría de los datos y los modelos lineales de referencia de las dos primeras
+entregas, se propone una \emph{Explainable Boosting Machine} (EBM), un modelo aditivo generalizado cuyas
+funciones de forma se aprenden por \emph{boosting} cíclico de árboles pequeños, adaptada con pesos de clase y
+una búsqueda multi-fidelidad, y se compara con los modelos del curso dentro de un pipeline de 160 corridas con
+validación cruzada anidada $5 \times 3$ y cuatro métodos de optimización de hiperparámetros, bajo un protocolo
+estadístico con pruebas pareadas, corrección de Holm, regiones de equivalencia práctica y tamaños de efecto. En
+la partición y la etiqueta de la entrega anterior la EBM eleva el AUC de 0,6832 a 0,7187 y reduce el RMSE de
+0,06166 a 0,05926 ($p < 0{,}001$); frente a los siete modelos de referencia de cada tarea obtiene el mayor AUC
+de prueba (0,8289) y el segundo RMSE (0,05925), supera con significación a los modelos lineales, a k-NN y a
+Naive Bayes, y empata con XGBoost, Random Forest y el árbol de decisión, con probabilidades de equivalencia
+práctica de 0,94 a 0,9998, cubriendo el 98~\% del techo de información que deja la exclusión de la variable con
+la que se generó el objetivo. La ablación confirma que la aditividad basta y que el balanceo solo mueve el punto
+de operación, y muestra que la EBM es casi determinista frente a la semilla. Su inferencia tarda 0,07~s sobre
+los 9.745 clientes de prueba, como XGBoost, pero su ajuste es de 15 a 17 veces más lento. Cuatro variables
+reúnen el 82~\% de la importancia y sus funciones de forma muestran la no linealidad que explica el desempeño
+de los modelos lineales. La EBM resulta una alternativa equivalente en precisión a los ensambles de árboles y
+legible por construcción.
+
+\medskip
+\noindent\textbf{Palabras clave:} Explainable Boosting Machine; fuga de clientes; clasificación y regresión;
+validación cruzada anidada; pruebas de significancia; interpretabilidad.
+\end{abstract}
+
+\clearpage
+\tableofcontents
+\clearpage
+
+\input{introduccion}
+\input{metodologia}
+\input{resultados}
+\input{conclusiones}
+
+\bibliographystyle{elsarticle-harv}
+\bibliography{referencias}
+
+\end{document}

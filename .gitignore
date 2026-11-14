@@ -12,3 +12,5 @@ Entrega3/articulo/*.bbl
 Entrega3/articulo/*.blg
 Entrega3/articulo/*.out
 Entrega3/articulo/articulo.pdf
+InformeFinal/**/*.log
+InformeFinal/**/*.blg

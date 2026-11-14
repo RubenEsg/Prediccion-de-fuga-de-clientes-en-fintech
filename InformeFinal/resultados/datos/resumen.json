@@ -1,0 +1,15 @@
+{
+ "tau": 0.3927235928772468,
+ "n_prueba": 9745,
+ "prevalencia_prueba": 0.2461775269368907,
+ "mcs_incluidos": [
+  "xgboost"
+ ],
+ "mcs_bloque": 3,
+ "memoria_ebm_mb": 20.21875,
+ "rope": {
+  "auc": 0.01,
+  "rmse": 0.0005
+ },
+ "n_boot": 2000
+}

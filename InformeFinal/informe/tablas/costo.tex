@@ -1,0 +1,28 @@
+\begin{table}[tbp]
+  \centering\scriptsize\setlength{\tabcolsep}{3pt}
+  \caption{Costo computacional de la mejor combinación de cada modelo en el equipo de referencia (AMD de 6 núcleos, 15,9~GB): ajuste del modelo final sobre los 38.978 clientes y puntuación de los 9.745 de prueba (mediana de 3 y 5 repeticiones con el pipeline completo), duración de la corrida anidada completa, tamaño serializado, número de parámetros (valores almacenados: nodos de los árboles, puntajes de las funciones de forma, coeficientes; k-NN guarda la matriz de entrenamiento) y memoria pico del ajuste por encima de la base: en clasificación la midió el Entregable 3 (la de la EBM se midió aquí, mediana de tres ajustes) y en regresión se midió aquí para todos.}
+  \label{tab:costo}
+  \begin{tabular}{@{}l l r r r r r r@{}}
+    \toprule
+    Tarea & Modelo & Ajuste (s) & Inferencia (s) & Corrida (min) & Tamaño (MB) & Parámetros & Memoria (MB) \\
+    \midrule
+    Clas. & k-NN & $0{,}28$ & $7{,}164$ & $34{,}7$ & $23{,}50$ & 3.040.284 & $<1$ \\
+    Clas. & Naive Bayes & $0{,}30$ & $0{,}068$ & $0{,}7$ & $0{,}01$ & 314 & $24$ \\
+    Clas. & SVM lineal & $0{,}92$ & $0{,}052$ & $2{,}1$ & $<0{,}01$ & 79 & $32$ \\
+    Clas. & Árbol de decisión & $1{,}38$ & $0{,}054$ & $1{,}8$ & $0{,}01$ & 53 & $12$ \\
+    Clas. & XGBoost & $1{,}61$ & $0{,}060$ & $8{,}9$ & $0{,}56$ & 14.063 & $13$ \\
+    Clas. & Regresión logística & $1{,}83$ & $0{,}056$ & $3{,}1$ & $<0{,}01$ & 79 & $61$ \\
+    Clas. & Random Forest & $23{,}65$ & $0{,}187$ & $20{,}9$ & $43{,}97$ & 574.556 & $68$ \\
+    Clas. & \textbf{EBM (propuesto)} & $26{,}72$ & $0{,}067$ & $18{,}7$ & $1{,}49$ & 15.485 & $20$ \\
+    \midrule
+    Regr. & k-NN & $0{,}25$ & $4{,}725$ & $24{,}9$ & $23{,}50$ & 3.040.284 & $<1$ \\
+    Regr. & Ridge & $0{,}28$ & $0{,}046$ & $1{,}5$ & $<0{,}01$ & 79 & $24$ \\
+    Regr. & Lasso & $0{,}46$ & $0{,}046$ & $6{,}7$ & $<0{,}01$ & 79 & $23$ \\
+    Regr. & SVR lineal & $0{,}66$ & $0{,}046$ & $2{,}7$ & $<0{,}01$ & 79 & $29$ \\
+    Regr. & Árbol de decisión & $0{,}84$ & $0{,}047$ & $3{,}7$ & $0{,}01$ & 71 & $12$ \\
+    Regr. & XGBoost & $2{,}09$ & $0{,}065$ & $10{,}4$ & $0{,}46$ & 3.582 & $5$ \\
+    Regr. & Random Forest & $12{,}31$ & $0{,}145$ & $16{,}1$ & $6{,}01$ & 85.948 & $13$ \\
+    Regr. & \textbf{EBM (propuesto)} & $31{,}85$ & $0{,}054$ & $26{,}6$ & $1{,}49$ & 15.485 & $25$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}

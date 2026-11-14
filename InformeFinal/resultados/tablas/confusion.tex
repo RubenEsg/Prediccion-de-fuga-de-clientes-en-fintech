@@ -1,0 +1,16 @@
+\begin{table}[tbp]
+  \centering\small\setlength{\tabcolsep}{3pt}
+  \caption{Matrices de confusión en la prueba (9.745 clientes, 2.399 de riesgo alto) de la EBM y de XGBoost con la regla de decisión de la campaña (se contacta al 25~\% de mayor puntaje, 2.436 clientes) y con el umbral 0,5 de probabilidad: verdaderos positivos (VP), falsos positivos (FP), falsos negativos (FN), verdaderos negativos (VN), precisión y \emph{recall}.}
+  \label{tab:confusion}
+  \begin{tabular}{@{}l l r r r r c c@{}}
+    \toprule
+    Regla & Modelo & VP & FP & FN & VN & Precisión & Recall \\
+    \midrule
+    25~\% de mayor riesgo & \textbf{EBM (propuesto)} & 1.228 & 1.208 & 1.171 & 6.138 & $0{,}504$ & $0{,}512$ \\
+    25~\% de mayor riesgo & XGBoost & 1.224 & 1.212 & 1.175 & 6.134 & $0{,}502$ & $0{,}510$ \\
+    \midrule
+    umbral 0,5 & \textbf{EBM (propuesto)} & 1.697 & 1.928 & 702 & 5.418 & $0{,}468$ & $0{,}707$ \\
+    umbral 0,5 & XGBoost & 2.395 & 2.956 & 4 & 4.390 & $0{,}448$ & $0{,}998$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}

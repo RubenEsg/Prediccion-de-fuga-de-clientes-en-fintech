@@ -1,0 +1,18 @@
+\begin{table}[tbp]
+  \centering\small\setlength{\tabcolsep}{3pt}
+  \caption{Regresión: pruebas de la EBM frente a cada modelo de referencia. $t$ corregida sobre el RMSE de los 5 pliegues (positiva cuando la EBM pierde menos); Diebold-Mariano con la corrección HLN sobre las pérdidas cuadráticas de la prueba; $p$ del \emph{Model Confidence Set} al 90~\% de la referencia. Los $p$ de las dos primeras son bilaterales y están ajustados por Holm sobre las siete comparaciones; los tamaños de efecto están en la tabla~\ref{tab:efectos_regresion}.}
+  \label{tab:pruebas_regresion}
+  \begin{tabular}{@{}l c c c@{}}
+    \toprule
+    Referencia & $t$ corr.; $p$ & DM-HLN; $p$ & $p$ MCS \\
+    \midrule
+    XGBoost & $-1{,}48$; $0{,}428$ & $-1{,}85$; $0{,}128$ & $1{,}000$ \\
+    Random Forest & $1{,}31$; $0{,}428$ & $0{,}82$; $0{,}410$ & $0{,}006$ \\
+    Árbol de decisión & $2{,}41$; $0{,}221$ & $2{,}19$; $0{,}086$ & $<0{,}001$ \\
+    Lasso & $57{,}21$; $3{,}4 \times 10^{-6}$ & $13{,}34$; $1{,}2 \times 10^{-39}$ & $<0{,}001$ \\
+    Ridge & $51{,}33$; $4{,}3 \times 10^{-6}$ & $13{,}53$; $1{,}3 \times 10^{-40}$ & $<0{,}001$ \\
+    SVR lineal & $63{,}28$; $2{,}6 \times 10^{-6}$ & $13{,}67$; $2{,}4 \times 10^{-41}$ & $<0{,}001$ \\
+    k-NN & $27{,}88$; $3{,}9 \times 10^{-5}$ & $17{,}48$; $1{,}6 \times 10^{-66}$ & $<0{,}001$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}

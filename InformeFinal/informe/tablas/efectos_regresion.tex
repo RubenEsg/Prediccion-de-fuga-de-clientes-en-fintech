@@ -1,0 +1,18 @@
+\begin{table}[tbp]
+  \centering\small\setlength{\tabcolsep}{3pt}
+  \caption{Regresión: tamaños de efecto de la EBM frente a cada referencia. $\Delta$RMSE $=$ RMSE$_{\mathrm{ref}} - $RMSE$_{\mathrm{EBM}}$ en la prueba (positivo favorece a la EBM) con intervalo BCa al 95~\%; probabilidad posterior bayesiana de que la EBM sea peor ($-$) / equivalente (ROPE $\pm 0{,}0005$ de RMSE) / mejor ($+$); $d_z$ de Cohen entre pliegues y por cliente y delta de Cliff (no pareada) entre pliegues, positivos cuando la EBM pierde menos.}
+  \label{tab:efectos_regresion}
+  \begin{tabular}{@{}l c c c c c@{}}
+    \toprule
+    Referencia & $\Delta$RMSE [IC 95~\%] & Bayes $-$ / ROPE / $+$ & $d_z$ pliegues & $d_z$ clientes & $\delta$ \\
+    \midrule
+    XGBoost & $-0{,}00008$ [$-0{,}00016$; $0{,}00001$] & $0{,}00$ / $1{,}00$ / $0{,}00$ & $-0{,}99$ & $-0{,}019$ & $-0{,}20$ \\
+    Random Forest & $+0{,}00006$ [$-0{,}00007$; $0{,}00019$] & $0{,}00$ / $0{,}99$ / $0{,}01$ & $0{,}88$ & $0{,}008$ & $+0{,}28$ \\
+    Árbol de decisión & $+0{,}00018$ [$0{,}00003$; $0{,}00035$] & $0{,}00$ / $0{,}98$ / $0{,}02$ & $1{,}62$ & $0{,}022$ & $+0{,}44$ \\
+    Lasso & $+0{,}00241$ [$0{,}00204$; $0{,}00275$] & $0{,}00$ / $0{,}00$ / $1{,}00$ & $38{,}38$ & $0{,}135$ & $+1{,}00$ \\
+    Ridge & $+0{,}00242$ [$0{,}00206$; $0{,}00275$] & $0{,}00$ / $0{,}00$ / $1{,}00$ & $34{,}43$ & $0{,}137$ & $+1{,}00$ \\
+    SVR lineal & $+0{,}00245$ [$0{,}00209$; $0{,}00279$] & $0{,}00$ / $0{,}00$ / $1{,}00$ & $42{,}45$ & $0{,}138$ & $+1{,}00$ \\
+    k-NN & $+0{,}00395$ [$0{,}00351$; $0{,}00437$] & $0{,}00$ / $0{,}00$ / $1{,}00$ & $18{,}70$ & $0{,}177$ & $+1{,}00$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}

@@ -1,0 +1,18 @@
+\begin{table}[tbp]
+  \centering\scriptsize\setlength{\tabcolsep}{2pt}
+  \caption{Comparación con los modelos de la entrega anterior (E2) en su misma partición, etiqueta (mediana estimada con el entrenamiento) y prueba, tal como la calculó el Entregable 3. Clasificación: AUC con intervalo BCa, \emph{recall} con umbral 0,5, mejora de AUC frente a la logística L1 con intervalo BCa, $z$ de DeLong y $p$ ajustado por Holm, delta de Cliff sobre los 5 pliegues. Regresión: RMSE con intervalo BCa, $R^2$, reducción del RMSE frente al Lasso con intervalo BCa, Diebold-Mariano (HLN) y $p$ ajustado, delta de Cliff entre pliegues.}
+  \label{tab:entrega2}
+  \begin{tabular}{@{}l c c c c c@{}}
+    \toprule
+    Modelo & AUC o RMSE [IC 95~\%] & Recall$_{0{,}5}$ o $R^2$ & Mejora vs.\ E2 [IC 95~\%] & $z$ o DM; $p$ & $\delta$ \\
+    \midrule
+    Logística L1 (E2) & $0{,}6832$ [$0{,}6725$; $0{,}6931$] & $0{,}6515$ & -- & -- & -- \\
+    XGBoost & $0{,}7206$ [$0{,}7107$; $0{,}7302$] & $0{,}6375$ & $+0{,}0374$ [$0{,}0303$; $0{,}0449$] & $10{,}06$; $2{,}5 \times 10^{-23}$ & $+1{,}00$ \\
+    \textbf{EBM (propuesto)} & $0{,}7187$ [$0{,}7084$; $0{,}7284$] & $0{,}6565$ & $+0{,}0355$ [$0{,}0281$; $0{,}0434$] & $9{,}02$; $3{,}8 \times 10^{-19}$ & $+1{,}00$ \\
+    \midrule
+    Lasso (E2) & $0{,}06166$ [$0{,}06082$; $0{,}06251$] & $0{,}1511$ & -- & -- & -- \\
+    XGBoost & $0{,}05919$ [$0{,}05843$; $0{,}06004$] & $0{,}2177$ & $+0{,}00247$ [$0{,}00210$; $0{,}00279$] & $14{,}05$; $5{,}9 \times 10^{-44}$ & $+1{,}00$ \\
+    \textbf{EBM (propuesto)} & $0{,}05926$ [$0{,}05849$; $0{,}06010$] & $0{,}2159$ & $+0{,}00240$ [$0{,}00205$; $0{,}00274$] & $13{,}33$; $7{,}1 \times 10^{-40}$ & $+1{,}00$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}

@@ -1,0 +1,18 @@
+\begin{table}[tbp]
+  \centering\small\setlength{\tabcolsep}{3pt}
+  \caption{Clasificación: pruebas de la EBM frente a cada modelo de referencia. $t$ corregida de Nadeau--Bengio sobre los AUC de los 5 pliegues externos (positiva cuando la EBM supera a la referencia); $z$ de DeLong sobre la prueba; McNemar exacta sobre las clases del punto de operación ($b$: clientes que solo la referencia clasifica bien; $c$: solo la EBM). Los $p$ son bilaterales y están ajustados por Holm sobre las siete comparaciones de cada prueba; los tamaños de efecto están en la tabla~\ref{tab:efectos_clasificacion}.}
+  \label{tab:pruebas_clasificacion}
+  \begin{tabular}{@{}l c c c@{}}
+    \toprule
+    Referencia & $t$ corr.; $p$ & DeLong $z$; $p$ & McNemar $b$/$c$; $p$ \\
+    \midrule
+    XGBoost & $-1{,}36$; $0{,}245$ & $0{,}19$; $0{,}848$ & 823/831; $1{,}000$ \\
+    Random Forest & $-2{,}72$; $0{,}160$ & $0{,}90$; $0{,}737$ & 866/954; $0{,}248$ \\
+    Árbol de decisión & $-2{,}07$; $0{,}215$ & $1{,}26$; $0{,}620$ & 1.106/1.152; $1{,}000$ \\
+    k-NN & $14{,}32$; $5{,}5 \times 10^{-4}$ & $12{,}52$; $2{,}4 \times 10^{-35}$ & 728/746; $1{,}000$ \\
+    Regresión logística & $18{,}12$; $2{,}7 \times 10^{-4}$ & $16{,}17$; $4{,}2 \times 10^{-58}$ & 730/736; $1{,}000$ \\
+    SVM lineal & $19{,}88$; $2{,}3 \times 10^{-4}$ & $16{,}26$; $1{,}1 \times 10^{-58}$ & 727/733; $1{,}000$ \\
+    Naive Bayes & $23{,}20$; $1{,}4 \times 10^{-4}$ & $27{,}78$; $5{,}4 \times 10^{-169}$ & 865/1.363; $2{,}8 \times 10^{-25}$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}

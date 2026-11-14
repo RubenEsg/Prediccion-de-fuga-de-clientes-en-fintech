@@ -8,7 +8,8 @@ Las tres entregas del proyecto sobre COFINFAD, un conjunto público de 48.723 cl
 análisis exploratorio (Entrega 1), los modelos lineales de referencia (Entrega 2) y el entregable final (Entrega 3): un
 pipeline combinatorio de 140 corridas con cuatro métodos de optimización de hiperparámetros y validación cruzada anidada,
 optimización computacional, evaluación, interpretabilidad, comparación estadística y un modelo nuevo, la *Explainable
-Boosting Machine*, que supera a los modelos de la Entrega 2.
+Boosting Machine*, que supera a los modelos de la Entrega 2. El informe final (`InformeFinal/`) reúne la metodología y
+los resultados de las tres entregas, escritos con las guías del curso, con su introducción y sus conclusiones.
 
 ## Sitio
 
@@ -24,6 +25,7 @@ Sin conexión, se abre igual desde [`docs/index.html`](docs/index.html).
 | `Entrega1/` | `eda_bancario.ipynb`, el cuaderno ejecutado del análisis exploratorio, y su artículo `Entrega1_EDA_articulo.pdf` |
 | `Entrega2/` | `entrega2_modelo.ipynb`, el cuaderno ejecutado de los modelos base, y su artículo `Entrega2_articulo.pdf` |
 | `Entrega3/` | El entregable final (tabla siguiente) |
+| `InformeFinal/` | El informe final del proyecto (más abajo): las secciones de metodología y de resultados escritas con las guías del curso y el informe que las une |
 | `datos/` | COFINFAD comprimido (`customer_data.zip` y `transactions_data.zip`) y cómo usarlo |
 | `codigo/` | Páginas del Jupyter Book que muestran el código fuente completo |
 | `docs/` | El Jupyter Book construido, que sirve GitHub Pages |
@@ -56,6 +58,16 @@ Sin conexión, se abre igual desde [`docs/index.html`](docs/index.html).
 | [`Entrega3/notebook/08_modelo_nuevo.ipynb`](Entrega3/notebook/08_modelo_nuevo.ipynb) | El modelo nuevo (EBM) frente a la Entrega 2, con DeLong y Diebold-Mariano |
 | [`Entrega3/notebook/09_estadistica.ipynb`](Entrega3/notebook/09_estadistica.ipynb) | Friedman, Nemenyi, DeLong, MCS, SPA, Giacomini-White y Diebold-Mariano |
 | [`Entrega3/notebook/10_conclusiones.ipynb`](Entrega3/notebook/10_conclusiones.ipynb) | Conclusiones |
+
+### Informe final
+
+| Archivo o carpeta | Contenido |
+|---|---|
+| [`InformeFinal/informe/main.pdf`](InformeFinal/informe/main.pdf) | **El informe final** (31 páginas): resumen, introducción, metodología, resultados, conclusiones y referencias; `main.tex`, `armar.py` y `compilar.py` lo arman a partir de las dos secciones y lo compilan |
+| [`InformeFinal/metodologia/main.pdf`](InformeFinal/metodologia/main.pdf) | La sección de metodología según la guía del curso (ocho subsecciones, 20 referencias); fuente LaTeX, `figuras.py` y sus tres figuras |
+| [`InformeFinal/resultados/main.pdf`](InformeFinal/resultados/main.pdf) | La sección de resultados según la guía del curso (ocho subsecciones); `generar.py` reproduce cada prueba estadística, tabla y figura desde `Entrega3/resultados/`, con toda cifra en `datos/*.csv` y las nueve figuras en `figures/` |
+
+Cada carpeta tiene su `README.md` con los archivos y cómo regenerarlos.
 
 ## Resultados principales
 

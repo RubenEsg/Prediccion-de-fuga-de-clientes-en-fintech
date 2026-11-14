@@ -1,0 +1,22 @@
+\begin{table}[tbp]
+  \centering\scriptsize\setlength{\tabcolsep}{3pt}
+  \caption{Sensibilidad a la semilla: modelos finales reentrenados con distintas semillas (los datos no cambian) y búsqueda del árbol de decisión repetida con cinco semillas de cada optimizador estocástico; media y desviación de la métrica de prueba.}
+  \label{tab:semillas}
+  \begin{tabular}{@{}l l r l c c@{}}
+    \toprule
+    Tarea & Modelo & Semillas & Métrica & Media & Desviación \\
+    \midrule
+    Clasificación & EBM (propuesto) & 5 & AUC & $0{,}8288$ & $0{,}00004$ \\
+    Clasificación & Random Forest & 5 & AUC & $0{,}8281$ & $0{,}00101$ \\
+    Clasificación & SVM lineal & 10 & AUC & $0{,}7706$ & $0{,}00000$ \\
+    Clasificación & XGBoost & 10 & AUC & $0{,}8282$ & $0{,}00029$ \\
+    Regresión & EBM (propuesto) & 5 & RMSE & $0{,}0593$ & $0{,}000003$ \\
+    Regresión & Random Forest & 5 & RMSE & $0{,}0593$ & $0{,}000009$ \\
+    Regresión & XGBoost & 10 & RMSE & $0{,}0592$ & $0{,}000006$ \\
+    Clasificación & Árbol, búsqueda con TPE & 5 & AUC & $0{,}8246$ & $0{,}00221$ \\
+    Clasificación & Árbol, búsqueda con Genética & 5 & AUC & $0{,}8243$ & $0{,}00087$ \\
+    Clasificación & Árbol, búsqueda con Random & 5 & AUC & $0{,}8252$ & $0{,}00254$ \\
+    \bottomrule
+  \end{tabular}
+  \par\smallskip\begin{minipage}{0.97\linewidth}\scriptsize Multi-fidelidad de la EBM: 8 configuraciones aleatorias evaluadas con $B=2$ y $B=8$; $\rho$ de Spearman entre los dos AUC $0{,}833$, misma configuración ganadora (sí), ahorro de tiempo de búsqueda $66$~\%.\end{minipage}
+\end{table}

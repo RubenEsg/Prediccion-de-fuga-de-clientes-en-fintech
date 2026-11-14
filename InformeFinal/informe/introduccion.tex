@@ -1,0 +1,62 @@
+% Introducción del informe final. Las cifras provienen de las secciones de metodología y de resultados.
+\section{Introducción}
+\label{sec:introduccion}
+
+Retener a un cliente cuesta menos que conseguir uno nuevo, y por eso la predicción de la fuga (\emph{churn}) es
+una de las aplicaciones más extendidas del aprendizaje supervisado en los servicios financieros. En una
+\emph{fintech} casi toda la relación con el cliente deja huella digital (uso de la aplicación, tenencia de
+productos, satisfacción declarada y actividad transaccional), y un modelo capaz de ordenar a los clientes por su
+riesgo de abandono permite concentrar una campaña de retención de capacidad limitada en quienes más la
+necesitan. Este informe reúne el trabajo de las tres entregas del proyecto final del curso sobre el conjunto
+público COFINFAD \citep{cofinfad2025}, que describe a 48.723 clientes de una \emph{fintech} colombiana con 54
+columnas y 3,16 millones de transacciones de 2023, y cuyo objetivo, \cp, es un puntaje de propensión al
+abandono.
+
+El proyecto avanzó en tres entregas. La primera auditó la calidad de los datos y exploró sus variables; la
+segunda preparó los datos y ajustó los modelos lineales de referencia, una regresión logística con penalización
+L1 y un Lasso, que alcanzaron un AUC de 0,6832 al clasificar la mitad de mayor riesgo y un $R^2$ de 0,1511 al
+predecir el puntaje; la tercera construyó el pipeline combinatorio que pide la guía del curso (siete
+clasificadores por cuatro técnicas de balanceo por cuatro métodos de optimización de hiperparámetros, más siete
+regresores por cuatro métodos: 140 corridas con validación cruzada anidada de $5 \times 3$ pliegues) y propuso
+un modelo nuevo, al que dedicó 20 corridas más. Dos hallazgos de las entregas anteriores condicionan todo el
+trabajo. El primero es que el objetivo se generó en buena parte a partir del número de productos activos, \ap,
+que por eso se excluye como predictor por fuga de información \citep{kaufman2012leakage}; sin ella existe un
+techo de información que se estima y con el que se compara cada modelo. El segundo es que, sin esa variable, la
+señal se concentra en cuatro variables (frecuencia de uso de la aplicación, edad y dos medidas de satisfacción)
+cuyos efectos actúan por tramos, mesetas y escalones que una recta no puede representar; esa no linealidad
+explica el desempeño modesto de los modelos lineales.
+
+Los modelos del curso que sí captan la no linealidad, los ensambles de árboles como Random Forest
+\citep{breiman2001rf} y XGBoost \citep{chen2016xgboost}, alcanzan la mejor precisión, pero necesitan
+herramientas auxiliares como SHAP \citep{lundberg2017shap} para explicar por qué un cliente queda marcado, y en
+un contexto financiero la explicación forma parte del producto. Para cerrar esa brecha se propone una
+\emph{Explainable Boosting Machine} (EBM) \citep{lou2012intelligible,lou2013ga2m,nori2019interpretml}, un
+modelo aditivo generalizado con interacciones por pares cuyas funciones de forma se aprenden por \emph{boosting}
+cíclico de árboles de pocas hojas: la predicción es la suma de curvas que se pueden graficar y auditar. No forma
+parte de los modelos del curso. Para adaptarla al problema se implementó la ponderación de clases mediante pesos
+por observación y una búsqueda de hiperparámetros multi-fidelidad, y se integró en el mismo pipeline, con las
+mismas reglas y el mismo presupuesto, que los modelos de referencia.
+
+La pregunta que responde este informe es si un modelo aditivo legible alcanza la precisión de los ensambles de
+árboles en estos datos, y a qué costo. La hipótesis de partida es que sí, porque la señal está en pocas
+variables con efectos no lineales y casi independientes, que es exactamente lo que un modelo aditivo
+representa. Las contribuciones son cuatro: (i) la EBM adaptada al problema, con su formulación, su pseudocódigo
+y la justificación de cada componente; (ii) una comparación con los siete modelos de referencia de cada tarea
+bajo un protocolo estadístico fijado de antemano, con pruebas pareadas, corrección por comparaciones
+múltiples, regiones de equivalencia práctica y tamaños de efecto; (iii) un estudio de ablación con cinco
+hipótesis, análisis de sensibilidad y de costo computacional; y (iv) la interpretación del modelo y el análisis
+de sus errores, que localiza dónde falla y por qué. El resultado, anticipado, es que la EBM supera con
+significación a los modelos lineales, a k-NN y a Naive Bayes, obtiene el mayor AUC de prueba (0,8289 con la
+etiqueta del cuarto superior; en la partición y la etiqueta de la entrega anterior sube el AUC de 0,6832 a
+0,7187) y el segundo RMSE, y empata estadísticamente con XGBoost, Random Forest y el árbol de decisión,
+cubriendo el 98~\% del techo de información; su inferencia es tan rápida como la de XGBoost, pero su ajuste es
+de 15 a 17 veces más lento. La conclusión que la evidencia sostiene es que la EBM es una alternativa equivalente
+en precisión y legible por construcción, no que sea mejor.
+
+El informe se organiza así. La sección~\ref{sec:metodologia} formula el problema y describe los datos y su
+preparación, el modelo propuesto, su entrenamiento, los modelos de referencia, el protocolo de evaluación y el
+diseño de la ablación. La sección~\ref{sec:resultados} presenta el desempeño global, las pruebas de
+significancia, la ablación, la sensibilidad, el costo, la interpretabilidad y el análisis de errores, y discute
+las limitaciones. La sección~\ref{sec:conclusiones} cierra con la respuesta a las hipótesis y el trabajo
+futuro. Toda cifra del informe la producen guiones que se ejecutan sobre los resultados guardados; el código,
+los datos y los documentos están en \url{https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech}.

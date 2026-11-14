@@ -1,0 +1,24 @@
+\begin{table}[tbp]
+  \centering\scriptsize\setlength{\tabcolsep}{1.5pt}
+  \caption{Ablación: cada variante cambia un componente de la EBM completa y conserva el resto. Métrica externa (AUC o RMSE; media $\pm$ desviación de los 5 pliegues) y de prueba, \emph{recall} de prueba con umbral 0,5 (clasificación); $\Delta$ entre la variante y el modelo completo en la prueba, orientada para que un valor positivo indique que la variante pierde (AUC$_{\mathrm{comp}} -$ AUC$_{\mathrm{var}}$; en regresión RMSE$_{\mathrm{var}} - $RMSE$_{\mathrm{comp}}$ en milésimas), con intervalo BCa; $p$ de la $t$ corregida sobre los pliegues y de DeLong o Diebold-Mariano sobre la prueba, ajustados por Holm dentro de cada tarea ($^{*}$: comparación única, sin ajustar); probabilidad bayesiana de equivalencia (ROPE) entre la variante y el modelo completo. La variante sin interacciones se evalúa en la partición y la etiqueta de la comparación con la entrega anterior, donde la búsqueda sí eligió pares.}
+  \label{tab:ablacion}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.26\linewidth} c c c c c c c@{}}
+    \toprule
+    Variante & Métrica externa & Prueba & Recall$_{0{,}5}$ & $\Delta$ [IC 95~\%] & $p$ $t$ corr. & $p$ prueba & $P$(ROPE) \\
+    \midrule
+    EBM completa (ponderación, Grid, $K=0$) & $0{,}8292$ $\pm$ $0{,}0037$ & $0{,}8289$ & $0{,}707$ & -- & -- & -- & -- \\
+    balanceo: sin balanceo (Grid) & $0{,}8285$ $\pm$ $0{,}0035$ & $0{,}8289$ & $0{,}355$ & $0{,}0000$ [$-0{,}0006$; $0{,}0006$] & $0{,}511$ & $1{,}000$ & $1{,}000$ \\
+    balanceo: SMOTE (Grid) & $0{,}8278$ $\pm$ $0{,}0032$ & $0{,}8258$ & $0{,}346$ & $+0{,}0031$ [$-0{,}0008$; $0{,}0069$] & $0{,}511$ & $0{,}549$ & $1{,}000$ \\
+    balanceo: ADASYN (Grid) & $0{,}8280$ $\pm$ $0{,}0033$ & $0{,}8263$ & $0{,}336$ & $+0{,}0026$ [$-0{,}0012$; $0{,}0064$] & $0{,}496$ & $0{,}702$ & $1{,}000$ \\
+    optimizador: Random (ponderación) & $0{,}8276$ $\pm$ $0{,}0024$ & $0{,}8240$ & $0{,}950$ & $+0{,}0049$ [$0{,}0007$; $0{,}0092$] & $0{,}783$ & $0{,}125$ & $0{,}998$ \\
+    optimizador: TPE (ponderación) & $0{,}8287$ $\pm$ $0{,}0041$ & $0{,}8286$ & $0{,}715$ & $+0{,}0003$ [$-0{,}0004$; $0{,}0010$] & $0{,}783$ & $1{,}000$ & $1{,}000$ \\
+    optimizador: Genética (ponderación) & $0{,}8281$ $\pm$ $0{,}0036$ & $0{,}8287$ & $0{,}712$ & $+0{,}0003$ [$-0{,}0004$; $0{,}0009$] & $0{,}783$ & $1{,}000$ & $1{,}000$ \\
+    sin interacciones ($K=0$) frente a la EBM con 5 pares (TPE) & -- & $0{,}7185$ & -- & $+0{,}0002$ [$-0{,}0029$; $0{,}0030$] & -- & $0{,}910$$^{*}$ & -- \\
+    \midrule
+    EBM completa (Grid, $K=0$) & $0{,}0590$ $\pm$ $0{,}0004$ & $0{,}0593$ & -- & -- & -- & -- & -- \\
+    optimizador: Random & $0{,}0591$ $\pm$ $0{,}0004$ & $0{,}0592$ & -- & $-0{,}01$ [$-0{,}05$; $0{,}04$] & $0{,}581$ & $1{,}000$ & $1{,}000$ \\
+    optimizador: TPE & $0{,}0590$ $\pm$ $0{,}0004$ & $0{,}0593$ & -- & $+0{,}03$ [$-0{,}02$; $0{,}09$] & $0{,}581$ & $0{,}884$ & $1{,}000$ \\
+    optimizador: Genética & $0{,}0591$ $\pm$ $0{,}0004$ & $0{,}0593$ & -- & $+0{,}01$ [$-0{,}03$; $0{,}06$] & $0{,}581$ & $1{,}000$ & $1{,}000$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
