@@ -1,0 +1,39 @@
+/* Tablas interactivas (dash_table.DataTable) con los tokens del sistema de diseño (estilos.css). Una vista no escribe
+   estilos en la tabla: le pone className="tabla-datos" al contenedor (un html.Div). Todo va alineado a la izquierda; una
+   columna cuyo id termina en «_num» se alinea a la derecha con cifras tabulares. Los selectores son largos a propósito:
+   las reglas propias de DataTable tienen mucha especificidad. Con filtros, use filter_options={"case": "insensitive"}:
+   el botón «Aa» de mayúsculas se oculta. */
+.tabla-datos { width: 100%; overflow-x: auto; }
+.tabla-datos .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table { width: 100%; border-collapse: collapse;
+  font-family: var(--fuente-texto); font-size: var(--t-s); color: var(--tinta); }
+.tabla-datos .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner th,
+.tabla-datos .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner td {
+  padding: var(--e-2) var(--e-3) !important; border: 0 !important; border-bottom: 1px solid var(--linea) !important;
+  background: transparent !important; font-family: var(--fuente-texto) !important; font-size: var(--t-s) !important;
+  color: var(--tinta) !important; text-align: left !important; white-space: normal !important; height: auto !important; }
+.tabla-datos .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner th { color: var(--tinta-2) !important;
+  font-weight: var(--peso-normal); }
+.tabla-datos .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner td[data-dash-column$="_num"],
+.tabla-datos .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner th[data-dash-column$="_num"] {
+  text-align: right !important; font-variant-numeric: tabular-nums; }
+.tabla-datos .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner td .dash-cell-value { text-align: inherit !important; }
+/* Fila de filtros */
+.tabla-datos .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner th.dash-filter { background: var(--blanco) !important; }
+.tabla-datos .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner th.dash-filter input:not(.dash-filter--case) {
+  width: 100%; font-family: var(--fuente-texto) !important; font-size: var(--t-s) !important; color: var(--tinta) !important;
+  padding: var(--e-1) var(--e-2) !important; border: 1px solid var(--linea-fuerte) !important; border-radius: var(--radio-s);
+  background: var(--blanco) !important; text-align: left !important; }
+.tabla-datos .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner th.dash-filter input:not(.dash-filter--case)::placeholder {
+  color: var(--tinta-3); font-size: var(--t-s); }
+.tabla-datos .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner th.dash-filter input.dash-filter--case { display: none !important; }
+.tabla-datos .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner input:focus-visible { outline: 2px solid var(--foco); outline-offset: 1px; }
+/* Orden, fila bajo el cursor y celda enfocada */
+.tabla-datos .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner .column-header--sort { color: var(--tinta-2); margin-right: var(--e-1); font-size: var(--t-s); }
+.tabla-datos .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner tr:hover td { background: var(--superficie-hover) !important; }
+.tabla-datos .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner td.focused { background: var(--acento-suave) !important; }
+.tabla-datos .dash-spreadsheet-menu, .tabla-datos .dash-table-tooltip, .tabla-datos .previous-next-container {
+  font-family: var(--fuente-texto); font-size: var(--t-s); color: var(--tinta-2); }
+/* Las variables propias de DataTable (rosa de acento, fondo rojizo de selección) pasan a los tokens del sistema */
+.tabla-datos .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table {
+  --accent: var(--acento); --selected-background: var(--acento-suave); --faded-text: var(--tinta-3);
+  --faded-text-header: var(--tinta-2); --text-color: var(--tinta); --border: var(--linea); --hover: var(--superficie-hover); }

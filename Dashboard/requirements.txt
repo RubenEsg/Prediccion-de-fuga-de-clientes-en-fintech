@@ -1,0 +1,16 @@
+# Fuga de clientes · Laboratorio del modelo (Dash). Versiones exactas, probadas con Python 3.13.3 (15-nov-2026).
+# Es lo que instala Render (render.yaml) y lo que necesita la app para correr: carga las tuberías de artifacts/ con la misma
+# versión de scikit-learn con que se guardaron y nunca entrena.
+dash==4.5.0
+plotly==7.1.0
+pandas==3.0.6
+numpy==2.5.3
+pyarrow==25.0.1
+scipy==1.18.1
+scikit-learn==1.9.1
+joblib==1.6.0
+# XGBoost: en Linux (Render) la versión sin CUDA, que pesa unos MB en lugar de cientos; en Windows y macOS la normal
+xgboost-cpu==3.4.1 ; sys_platform == "linux"
+xgboost==3.4.1 ; sys_platform != "linux"
+# Servidor de producción (Render: gunicorn app:server); no corre en Windows, donde se usa python app.py
+gunicorn==27.0.1 ; sys_platform != "win32"

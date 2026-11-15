@@ -1,0 +1,731 @@
+{
+ "tarea": "clasificacion",
+ "modelo": "arbol",
+ "estimador": "sklearn.tree._classes.DecisionTreeClassifier",
+ "balanceo": "class_weight",
+ "optimizador": "random",
+ "semilla": 42,
+ "hiperparametros": {
+  "modelo__ccp_alpha": 0.00038972698898745797,
+  "modelo__criterion": "gini",
+  "modelo__max_depth": 22,
+  "modelo__min_samples_leaf": 7
+ },
+ "versiones": {
+  "python": "3.13.3",
+  "scikit-learn": "1.9.1",
+  "xgboost": "3.4.1",
+  "interpret": "0.7.8",
+  "numpy": "2.5.3",
+  "pandas": "3.0.6",
+  "scipy": "1.18.1",
+  "joblib": "1.6.0",
+  "shap": "0.52.0"
+ },
+ "notas": [],
+ "entrada": {
+  "columnas": [
+   "age",
+   "gender",
+   "location",
+   "income_bracket",
+   "education_level",
+   "marital_status",
+   "household_size",
+   "acquisition_channel",
+   "customer_segment",
+   "savings_account",
+   "credit_card",
+   "personal_loan",
+   "investment_account",
+   "insurance_product",
+   "app_logins_frequency",
+   "feature_usage_diversity",
+   "bill_payment_user",
+   "auto_savings_enabled",
+   "credit_utilization_ratio",
+   "international_transactions",
+   "failed_transactions",
+   "tx_count",
+   "avg_tx_value",
+   "total_tx_volume",
+   "base_satisfaction",
+   "tx_satisfaction",
+   "product_satisfaction",
+   "satisfaction_score",
+   "support_tickets_count",
+   "resolved_tickets_ratio",
+   "app_store_rating",
+   "feedback_sentiment",
+   "transaction_frequency",
+   "preferred_transaction_type",
+   "weekend_transaction_ratio",
+   "customer_tenure",
+   "n_tx",
+   "monto_total",
+   "monto_medio",
+   "monto_mediano",
+   "recencia_dias",
+   "dias_activo",
+   "volatilidad_monto",
+   "meses_activos",
+   "prop_Deposit",
+   "prop_Payment",
+   "prop_Transfer",
+   "prop_Withdrawal"
+  ],
+  "esquema": [
+   {
+    "nombre": "age",
+    "nombre_visible": "Edad",
+    "unidad": "años",
+    "descripcion": "Edad del cliente, en años",
+    "derivada_etl": false,
+    "tipo": "entera",
+    "min": 29,
+    "max": 60,
+    "mediana": 45.0
+   },
+   {
+    "nombre": "gender",
+    "nombre_visible": "Género",
+    "unidad": null,
+    "descripcion": "Género",
+    "derivada_etl": false,
+    "tipo": "categorica",
+    "categorias": [
+     "Female",
+     "Male",
+     "Other"
+    ],
+    "moda": "Female"
+   },
+   {
+    "nombre": "location",
+    "nombre_visible": "Ciudad",
+    "unidad": null,
+    "descripcion": "Ciudad y departamento de residencia (18 ciudades de Colombia)",
+    "derivada_etl": false,
+    "tipo": "categorica",
+    "categorias": [
+     "Armenia, Quindío",
+     "Barranquilla, Atlántico",
+     "Bogotá, Cundinamarca",
+     "Bucaramanga, Santander",
+     "Cali, Valle del Cauca",
+     "Cartagena, Bolívar",
+     "Cúcuta, Norte de Santander",
+     "Ibagué, Tolima",
+     "Manizales, Caldas",
+     "Medellín, Antioquia",
+     "Montería, Córdoba",
+     "Neiva, Huila",
+     "Pasto, Nariño",
+     "Pereira, Risaralda",
+     "Santa Marta, Magdalena",
+     "Sincelejo, Sucre",
+     "Valledupar, Cesar",
+     "Villavicencio, Meta"
+    ],
+    "moda": "Bogotá, Cundinamarca"
+   },
+   {
+    "nombre": "income_bracket",
+    "nombre_visible": "Tramo de ingresos",
+    "unidad": null,
+    "descripcion": "Tramo de ingresos",
+    "derivada_etl": false,
+    "tipo": "categorica",
+    "categorias": [
+     "High",
+     "Low",
+     "Medium",
+     "Very High"
+    ],
+    "moda": "Medium"
+   },
+   {
+    "nombre": "education_level",
+    "nombre_visible": "Nivel educativo",
+    "unidad": null,
+    "descripcion": "Nivel educativo",
+    "derivada_etl": false,
+    "tipo": "categorica",
+    "categorias": [
+     "Bachelor",
+     "High School",
+     "Master",
+     "PhD"
+    ],
+    "moda": "Bachelor"
+   },
+   {
+    "nombre": "marital_status",
+    "nombre_visible": "Estado civil",
+    "unidad": null,
+    "descripcion": "Estado civil",
+    "derivada_etl": false,
+    "tipo": "categorica",
+    "categorias": [
+     "Divorced",
+     "Married",
+     "Single",
+     "Widowed"
+    ],
+    "moda": "Single"
+   },
+   {
+    "nombre": "household_size",
+    "nombre_visible": "Personas en el hogar",
+    "unidad": null,
+    "descripcion": "Número de personas del hogar",
+    "derivada_etl": false,
+    "tipo": "entera",
+    "min": 1,
+    "max": 13,
+    "mediana": 3.0
+   },
+   {
+    "nombre": "acquisition_channel",
+    "nombre_visible": "Canal de llegada",
+    "unidad": null,
+    "descripcion": "Canal por el que llegó el cliente",
+    "derivada_etl": false,
+    "tipo": "categorica",
+    "categorias": [
+     "Organic",
+     "Paid Ad",
+     "Partnership",
+     "Referral"
+    ],
+    "moda": "Organic"
+   },
+   {
+    "nombre": "customer_segment",
+    "nombre_visible": "Segmento de uso",
+    "unidad": null,
+    "descripcion": "Segmento de uso asignado por la fintech",
+    "derivada_etl": false,
+    "tipo": "categorica",
+    "categorias": [
+     "inactive",
+     "occasional",
+     "power",
+     "regular"
+    ],
+    "moda": "occasional"
+   },
+   {
+    "nombre": "savings_account",
+    "nombre_visible": "Cuenta de ahorros",
+    "unidad": null,
+    "descripcion": "Tiene cuenta de ahorros",
+    "derivada_etl": false,
+    "tipo": "booleana",
+    "valores": [
+     false,
+     true
+    ],
+    "moda": true
+   },
+   {
+    "nombre": "credit_card",
+    "nombre_visible": "Tarjeta de crédito",
+    "unidad": null,
+    "descripcion": "Tiene tarjeta de crédito",
+    "derivada_etl": false,
+    "tipo": "booleana",
+    "valores": [
+     false,
+     true
+    ],
+    "moda": true
+   },
+   {
+    "nombre": "personal_loan",
+    "nombre_visible": "Préstamo personal",
+    "unidad": null,
+    "descripcion": "Tiene préstamo personal",
+    "derivada_etl": false,
+    "tipo": "booleana",
+    "valores": [
+     false,
+     true
+    ],
+    "moda": false
+   },
+   {
+    "nombre": "investment_account",
+    "nombre_visible": "Cuenta de inversión",
+    "unidad": null,
+    "descripcion": "Tiene cuenta de inversión",
+    "derivada_etl": false,
+    "tipo": "booleana",
+    "valores": [
+     false,
+     true
+    ],
+    "moda": false
+   },
+   {
+    "nombre": "insurance_product",
+    "nombre_visible": "Seguro",
+    "unidad": null,
+    "descripcion": "Tiene un seguro",
+    "derivada_etl": false,
+    "tipo": "booleana",
+    "valores": [
+     false,
+     true
+    ],
+    "moda": false
+   },
+   {
+    "nombre": "app_logins_frequency",
+    "nombre_visible": "Inicios de sesión en la app",
+    "unidad": null,
+    "descripcion": "Inicios de sesión en la aplicación (frecuencia de uso; el archivo no declara el periodo)",
+    "derivada_etl": false,
+    "tipo": "entera",
+    "min": 4,
+    "max": 100,
+    "mediana": 22.0
+   },
+   {
+    "nombre": "feature_usage_diversity",
+    "nombre_visible": "Funciones de la app que usa",
+    "unidad": null,
+    "descripcion": "Número de funciones distintas de la aplicación que usa",
+    "derivada_etl": false,
+    "tipo": "entera",
+    "min": 0,
+    "max": 10,
+    "mediana": 2.0
+   },
+   {
+    "nombre": "bill_payment_user",
+    "nombre_visible": "Pago de facturas",
+    "unidad": null,
+    "descripcion": "Paga facturas desde la aplicación",
+    "derivada_etl": false,
+    "tipo": "booleana",
+    "valores": [
+     false,
+     true
+    ],
+    "moda": true
+   },
+   {
+    "nombre": "auto_savings_enabled",
+    "nombre_visible": "Ahorro automático",
+    "unidad": null,
+    "descripcion": "Tiene activado el ahorro automático",
+    "derivada_etl": false,
+    "tipo": "booleana",
+    "valores": [
+     false,
+     true
+    ],
+    "moda": false
+   },
+   {
+    "nombre": "credit_utilization_ratio",
+    "nombre_visible": "Uso del cupo de la tarjeta",
+    "unidad": null,
+    "descripcion": "Fracción usada del cupo de la tarjeta de crédito (0 si no tiene tarjeta: imputación del ETL)",
+    "derivada_etl": false,
+    "tipo": "real",
+    "min": 0.0,
+    "max": 0.9375464170640504,
+    "mediana": 0.14123346619590904
+   },
+   {
+    "nombre": "international_transactions",
+    "nombre_visible": "Transacciones internacionales",
+    "unidad": null,
+    "descripcion": "Número de transacciones internacionales",
+    "derivada_etl": false,
+    "tipo": "entera",
+    "min": 0,
+    "max": 6,
+    "mediana": 0.0
+   },
+   {
+    "nombre": "failed_transactions",
+    "nombre_visible": "Transacciones fallidas",
+    "unidad": null,
+    "descripcion": "Número de transacciones fallidas",
+    "derivada_etl": false,
+    "tipo": "entera",
+    "min": 0,
+    "max": 4,
+    "mediana": 0.0
+   },
+   {
+    "nombre": "tx_count",
+    "nombre_visible": "Número de transacciones",
+    "unidad": null,
+    "descripcion": "Número de transacciones (resumen de la tabla de clientes)",
+    "derivada_etl": false,
+    "tipo": "entera",
+    "min": 10,
+    "max": 35499,
+    "mediana": 18.0
+   },
+   {
+    "nombre": "avg_tx_value",
+    "nombre_visible": "Valor medio por transacción",
+    "unidad": null,
+    "descripcion": "Valor medio por transacción (resumen de la tabla de clientes), en pesos",
+    "derivada_etl": false,
+    "tipo": "real",
+    "min": 318215.0,
+    "max": 51670302.777777776,
+    "mediana": 1761562.2058823528
+   },
+   {
+    "nombre": "total_tx_volume",
+    "nombre_visible": "Volumen total transado",
+    "unidad": null,
+    "descripcion": "Volumen total transado (resumen de la tabla de clientes), en pesos",
+    "derivada_etl": false,
+    "tipo": "entera",
+    "min": 3182150,
+    "max": 381072706550,
+    "mediana": 47942725.0
+   },
+   {
+    "nombre": "base_satisfaction",
+    "nombre_visible": "Satisfacción de base",
+    "unidad": null,
+    "descripcion": "Satisfacción de base del cliente (componente continuo del puntaje de satisfacción)",
+    "derivada_etl": false,
+    "tipo": "real",
+    "min": 4.250061906053553,
+    "max": 11.710377798320197,
+    "mediana": 8.004341571871333
+   },
+   {
+    "nombre": "tx_satisfaction",
+    "nombre_visible": "Satisfacción con las transacciones",
+    "unidad": null,
+    "descripcion": "Satisfacción con las transacciones (componente)",
+    "derivada_etl": false,
+    "tipo": "real",
+    "min": 0.05,
+    "max": 1.0,
+    "mediana": 0.09
+   },
+   {
+    "nombre": "product_satisfaction",
+    "nombre_visible": "Satisfacción con los productos",
+    "unidad": null,
+    "descripcion": "Satisfacción con los productos (componente)",
+    "derivada_etl": false,
+    "tipo": "real",
+    "min": 0.0,
+    "max": 1.0,
+    "mediana": 0.4
+   },
+   {
+    "nombre": "satisfaction_score",
+    "nombre_visible": "Puntaje de satisfacción",
+    "unidad": null,
+    "descripcion": "Puntaje de satisfacción declarado en la encuesta (entero)",
+    "derivada_etl": false,
+    "tipo": "entera",
+    "min": 2,
+    "max": 6,
+    "mediana": 4.0
+   },
+   {
+    "nombre": "support_tickets_count",
+    "nombre_visible": "Tiquetes de soporte",
+    "unidad": null,
+    "descripcion": "Número de tiquetes de soporte abiertos",
+    "derivada_etl": false,
+    "tipo": "entera",
+    "min": 0,
+    "max": 7,
+    "mediana": 1.0
+   },
+   {
+    "nombre": "resolved_tickets_ratio",
+    "nombre_visible": "Tiquetes resueltos",
+    "unidad": null,
+    "descripcion": "Fracción de tiquetes de soporte resueltos",
+    "derivada_etl": false,
+    "tipo": "real",
+    "min": 0.0,
+    "max": 1.0,
+    "mediana": 0.5
+   },
+   {
+    "nombre": "app_store_rating",
+    "nombre_visible": "Calificación de la app",
+    "unidad": null,
+    "descripcion": "Calificación que dio a la aplicación en la tienda",
+    "derivada_etl": false,
+    "tipo": "real",
+    "min": 2.0,
+    "max": 5.0,
+    "mediana": 4.0
+   },
+   {
+    "nombre": "feedback_sentiment",
+    "nombre_visible": "Sentimiento de los comentarios",
+    "unidad": null,
+    "descripcion": "Sentimiento de sus comentarios",
+    "derivada_etl": false,
+    "tipo": "categorica",
+    "categorias": [
+     "Negative",
+     "Neutral",
+     "Positive"
+    ],
+    "moda": "Positive"
+   },
+   {
+    "nombre": "transaction_frequency",
+    "nombre_visible": "Transacciones por día",
+    "unidad": null,
+    "descripcion": "Transacciones por día (frecuencia transaccional)",
+    "derivada_etl": false,
+    "tipo": "real",
+    "min": 0.0278551532033426,
+    "max": 102.48467966573816,
+    "mediana": 0.057471264367816
+   },
+   {
+    "nombre": "preferred_transaction_type",
+    "nombre_visible": "Tipo de transacción preferido",
+    "unidad": null,
+    "descripcion": "Tipo de transacción preferido",
+    "derivada_etl": false,
+    "tipo": "categorica",
+    "categorias": [
+     "Deposit",
+     "Payment",
+     "Transfer",
+     "Withdrawal"
+    ],
+    "moda": "Transfer"
+   },
+   {
+    "nombre": "weekend_transaction_ratio",
+    "nombre_visible": "Transacciones en fin de semana",
+    "unidad": null,
+    "descripcion": "Fracción de transacciones hechas en fin de semana",
+    "derivada_etl": false,
+    "tipo": "real",
+    "min": 0.0,
+    "max": 0.9090909090909092,
+    "mediana": 0.2795598055236135
+   },
+   {
+    "nombre": "customer_tenure",
+    "nombre_visible": "Antigüedad",
+    "unidad": null,
+    "descripcion": "Antigüedad del cliente (el archivo no declara la unidad)",
+    "derivada_etl": false,
+    "tipo": "real",
+    "min": 4.7,
+    "max": 11.966666666666669,
+    "mediana": 11.633333333333333
+   },
+   {
+    "nombre": "n_tx",
+    "nombre_visible": "Número de transacciones (detalle)",
+    "unidad": null,
+    "descripcion": "Número de transacciones del cliente en el detalle (transactions_data.csv, sin duplicados)",
+    "derivada_etl": true,
+    "tipo": "entera",
+    "min": 10,
+    "max": 35476,
+    "mediana": 18.0
+   },
+   {
+    "nombre": "monto_total",
+    "nombre_visible": "Monto total (detalle)",
+    "unidad": null,
+    "descripcion": "Suma de amount de sus transacciones",
+    "derivada_etl": true,
+    "tipo": "entera",
+    "min": 3182150,
+    "max": 381072706550,
+    "mediana": 47942725.0
+   },
+   {
+    "nombre": "monto_medio",
+    "nombre_visible": "Monto medio (detalle)",
+    "unidad": null,
+    "descripcion": "Media de amount de sus transacciones",
+    "derivada_etl": true,
+    "tipo": "real",
+    "min": 318215.0,
+    "max": 51670302.777777776,
+    "mediana": 1761562.2058823528
+   },
+   {
+    "nombre": "monto_mediano",
+    "nombre_visible": "Monto mediano (detalle)",
+    "unidad": null,
+    "descripcion": "Mediana de amount de sus transacciones",
+    "derivada_etl": true,
+    "tipo": "real",
+    "min": 255700.0,
+    "max": 26904700.0,
+    "mediana": 1472750.0
+   },
+   {
+    "nombre": "recencia_dias",
+    "nombre_visible": "Días desde la última transacción",
+    "unidad": "días",
+    "descripcion": "Días entre su última transacción y la última fecha del detalle (2023-12-29)",
+    "derivada_etl": true,
+    "tipo": "entera",
+    "min": 0,
+    "max": 232,
+    "mediana": 10.0
+   },
+   {
+    "nombre": "dias_activo",
+    "nombre_visible": "Días activo",
+    "unidad": "días",
+    "descripcion": "Días entre su primera y su última transacción",
+    "derivada_etl": true,
+    "tipo": "entera",
+    "min": 113,
+    "max": 359,
+    "mediana": 333.0
+   },
+   {
+    "nombre": "volatilidad_monto",
+    "nombre_visible": "Volatilidad del monto",
+    "unidad": null,
+    "descripcion": "Coeficiente de variación del monto (desviación típica / media)",
+    "derivada_etl": true,
+    "tipo": "real",
+    "min": 0.18254770420474467,
+    "max": 3.0904306991138246,
+    "mediana": 0.6617264125841588
+   },
+   {
+    "nombre": "meses_activos",
+    "nombre_visible": "Meses activos",
+    "unidad": "meses",
+    "descripcion": "Número de meses distintos con al menos una transacción",
+    "derivada_etl": true,
+    "tipo": "entera",
+    "min": 3,
+    "max": 12,
+    "mediana": 10.0
+   },
+   {
+    "nombre": "prop_Deposit",
+    "nombre_visible": "Proporción de depósitos",
+    "unidad": null,
+    "descripcion": "Proporción de sus transacciones de tipo Deposit",
+    "derivada_etl": true,
+    "tipo": "real",
+    "min": 0.0,
+    "max": 0.6363636363636364,
+    "mediana": 0.09090909090909091
+   },
+   {
+    "nombre": "prop_Payment",
+    "nombre_visible": "Proporción de pagos",
+    "unidad": null,
+    "descripcion": "Proporción de sus transacciones de tipo Payment",
+    "derivada_etl": true,
+    "tipo": "real",
+    "min": 0.0,
+    "max": 0.8333333333333334,
+    "mediana": 0.3
+   },
+   {
+    "nombre": "prop_Transfer",
+    "nombre_visible": "Proporción de transferencias",
+    "unidad": null,
+    "descripcion": "Proporción de sus transacciones de tipo Transfer",
+    "derivada_etl": true,
+    "tipo": "real",
+    "min": 0.0,
+    "max": 1.0,
+    "mediana": 0.45098039215686275
+   },
+   {
+    "nombre": "prop_Withdrawal",
+    "nombre_visible": "Proporción de retiros",
+    "unidad": null,
+    "descripcion": "Proporción de sus transacciones de tipo Withdrawal",
+    "derivada_etl": true,
+    "tipo": "real",
+    "min": 0.0,
+    "max": 0.7,
+    "mediana": 0.14285714285714285
+   }
+  ],
+  "preprocesado": "StandardScaler en las 39 numéricas y booleanas; OneHotEncoder en las 9 categóricas"
+ },
+ "salida": "probabilidad de riesgo alto (predict_proba)",
+ "metricas_bucle_externo": {
+  "metrica": "AUC",
+  "media": 0.8331756166160655,
+  "desviacion": 0.002091125147045647,
+  "pliegues_externos": 5,
+  "pliegues_internos": 3
+ },
+ "metricas_prueba": {
+  "balanceo": "class_weight",
+  "optimizador": "random",
+  "auc_ext_media": 0.8331756166160655,
+  "auc_ext_desv": 0.0020911251470456,
+  "f1_ext_media": 0.6213508466610305,
+  "f1_ext_desv": 0.0039826374316335,
+  "auc_prueba": 0.824294529200217,
+  "auc_bca_inf": 0.8164965098996418,
+  "auc_bca_sup": 0.8318533263707627,
+  "auc_pr": 0.5303749089181639,
+  "recall_op": 0.5022926219258024,
+  "precision_op": 0.494663382594417,
+  "mcc_op": 0.333006408500081,
+  "exactitud_bal_op": 0.6673592159452044,
+  "f1_op": 0.4984488107549121,
+  "vp_op": 1205.0,
+  "fp_op": 1231.0,
+  "fn_op": 1194.0,
+  "vn_op": 6115.0,
+  "vp_05": 2398.0,
+  "fp_05": 2958.0,
+  "fn_05": 1.0,
+  "vn_05": 4388.0,
+  "recall_10": 0.2563568153397249,
+  "recall_50": 0.9099624843684868,
+  "precision_10": 0.6314168377823408,
+  "ece_isotonica": 0.0100358022548006,
+  "auc_isotonica": 0.82559291369135,
+  "corrida_min": 1.80267975166668
+ },
+ "computo": {
+  "ajuste_s": 1.3808616000023903,
+  "ajuste_desv_s": 0.0620594310483545,
+  "inferencia_prueba_s": 0.0541168999989167,
+  "n_prueba": 9745,
+  "carga_artefacto_s": 0.002306400000179565,
+  "inferencia_medida_aqui_s": 0.040852300000096875
+ },
+ "tuberia": "sklearn.pipeline.Pipeline con dos pasos (preprocesado y modelo); la del proyecto era una imblearn.pipeline.Pipeline sin muestreador, con los mismos pasos (diferencia de predicciones: 0)",
+ "ida_y_vuelta": {
+  "filas": 9745,
+  "identicas": true,
+  "max_dif_memoria": 0.0,
+  "max_dif_predicciones_guardadas": 0.0,
+  "max_dif_motor_numpy": null
+ },
+ "origen": {
+  "archivo": "clasificacion__arbol__class_weight__random__42.joblib",
+  "sha256_origen": "b0c65af0e443694643f20e13b4eb3d79c25a917cd8be15ce5700e258469b7016"
+ },
+ "generado": "2026-11-15T10:09:21"
+}

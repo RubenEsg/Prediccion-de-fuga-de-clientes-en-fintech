@@ -1,0 +1,26 @@
+# Integración continua del dashboard (Dashboard/): instala las dependencias exactas y corre pytest en cada push o pull
+# request que cambie esa carpeta, y a mano desde la pestaña Actions.
+name: dashboard
+on:
+  push:
+    paths: ["Dashboard/**", ".github/workflows/dashboard.yml"]
+  pull_request:
+    paths: ["Dashboard/**", ".github/workflows/dashboard.yml"]
+  workflow_dispatch:
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Dashboard
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13.3"
+          cache: pip
+          cache-dependency-path: Dashboard/requirements-dev.txt
+      - name: Dependencias
+        run: python -m pip install -r requirements-dev.txt
+      - name: Pruebas
+        run: python -m pytest -q

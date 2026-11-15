@@ -1,0 +1,459 @@
+{
+ "generado": "2026-11-14T13:34:55",
+ "semilla": 42,
+ "fraccion_prueba": 0.2,
+ "particion": "train_test_split(df.index, test_size=0.20, random_state=42), sin estratificar",
+ "objetivo": "churn_probability",
+ "etiqueta": {
+  "metodo": "percentil",
+  "q": 0.75,
+  "umbral": 0.3927235928772468,
+  "mediana_entrenamiento": 0.353971722744504
+ },
+ "n_entrenamiento": 38978,
+ "n_prueba": 9745,
+ "positivos_prueba": 2399,
+ "prevalencia_prueba": 0.2461775269368907,
+ "prevalencia_entrenamiento": 0.24601057006516497,
+ "predictores": [
+  "age",
+  "gender",
+  "location",
+  "income_bracket",
+  "education_level",
+  "marital_status",
+  "household_size",
+  "acquisition_channel",
+  "customer_segment",
+  "savings_account",
+  "credit_card",
+  "personal_loan",
+  "investment_account",
+  "insurance_product",
+  "app_logins_frequency",
+  "feature_usage_diversity",
+  "bill_payment_user",
+  "auto_savings_enabled",
+  "credit_utilization_ratio",
+  "international_transactions",
+  "failed_transactions",
+  "tx_count",
+  "avg_tx_value",
+  "total_tx_volume",
+  "base_satisfaction",
+  "tx_satisfaction",
+  "product_satisfaction",
+  "satisfaction_score",
+  "support_tickets_count",
+  "resolved_tickets_ratio",
+  "app_store_rating",
+  "feedback_sentiment",
+  "transaction_frequency",
+  "preferred_transaction_type",
+  "weekend_transaction_ratio",
+  "customer_tenure",
+  "n_tx",
+  "monto_total",
+  "monto_medio",
+  "monto_mediano",
+  "recencia_dias",
+  "dias_activo",
+  "volatilidad_monto",
+  "meses_activos",
+  "prop_Deposit",
+  "prop_Payment",
+  "prop_Transfer",
+  "prop_Withdrawal"
+ ],
+ "columnas_contexto": [
+  "customer_id",
+  "active_products",
+  "occupation",
+  "nps_score",
+  "clv_segment",
+  "customer_lifetime_value"
+ ],
+ "punto_operacion": {
+  "fraccion": 0.25,
+  "contactados": 2436,
+  "puntaje_minimo_contactado_ebm": 0.6525954195009681,
+  "puntaje_siguiente_ebm": 0.6525764866927711
+ },
+ "simulador": {
+  "uso_cupo_mediano_con_tarjeta": 0.2664668023187856,
+  "productos": [
+   "savings_account",
+   "credit_card",
+   "personal_loan",
+   "investment_account",
+   "insurance_product"
+  ],
+  "tope_tx_satisfaccion": 200
+ },
+ "ejemplos": {
+  "riesgo alto con menor puntaje": 6383,
+  "riesgo bajo con mayor puntaje": 16840,
+  "mayor error de regresión": 1464
+ },
+ "ebm": {
+  "clasificacion": {
+   "terminos": 78,
+   "parametros": 15485,
+   "intercepto": -0.013184832435428786,
+   "hiperparametros": {
+    "modelo__interactions": 0,
+    "modelo__learning_rate": 0.008,
+    "modelo__max_leaves": 2,
+    "modelo__min_samples_leaf": 100,
+    "modelo__outer_bags": 8
+   }
+  },
+  "regresion": {
+   "terminos": 78,
+   "parametros": 15485,
+   "intercepto": 0.34290466033053857,
+   "hiperparametros": {
+    "modelo__interactions": 0,
+    "modelo__learning_rate": 0.008,
+    "modelo__max_leaves": 3,
+    "modelo__min_samples_leaf": 20,
+    "modelo__outer_bags": 8
+   }
+  }
+ },
+ "metricas_prueba": {
+  "ebm_clasificacion": {
+   "auc": 0.8289210825774012
+  },
+  "xgboost_clasificacion": {
+   "auc": 0.8282838774709537
+  },
+  "logistica_clasificacion": {
+   "auc": 0.7708576504390214
+  },
+  "ebm_regresion": {
+   "rmse": 0.05925241583168005,
+   "r2": 0.21609636595814963
+  },
+  "xgboost_regresion": {
+   "rmse": 0.05917337714814351,
+   "r2": 0.21818631911994113
+  }
+ },
+ "modelos_exportados": {
+  "ebm_clasificacion": {
+   "origen": "clasificacion__ebm__class_weight__grid__42.joblib",
+   "clave": "clasificacion__ebm__class_weight__grid",
+   "balanceo": "class_weight",
+   "optimizador": "grid",
+   "hiperparametros": {
+    "modelo__interactions": 0,
+    "modelo__learning_rate": 0.008,
+    "modelo__max_leaves": 2,
+    "modelo__min_samples_leaf": 100,
+    "modelo__outer_bags": 8
+   },
+   "sha256_origen": "76f9bf4ff275177f4d07d9377919f43ceef4efea272b1e3cf7c0f207ab88003d"
+  },
+  "ebm_regresion": {
+   "origen": "regresion__ebm__ninguno__grid__42.joblib",
+   "clave": "regresion__ebm__ninguno__grid",
+   "balanceo": "ninguno",
+   "optimizador": "grid",
+   "hiperparametros": {
+    "modelo__interactions": 0,
+    "modelo__learning_rate": 0.008,
+    "modelo__max_leaves": 3,
+    "modelo__min_samples_leaf": 20,
+    "modelo__outer_bags": 8
+   },
+   "sha256_origen": "5eef46ea78c884fe8fe1a1d52276d95bf34888a2506676b31787ebe805d45a06"
+  },
+  "logistica_clasificacion": {
+   "origen": "clasificacion__logistica__class_weight__genetica__42.joblib",
+   "clave": "clasificacion__logistica__class_weight__genetica",
+   "balanceo": "class_weight",
+   "optimizador": "genetica",
+   "hiperparametros": {
+    "modelo__C": 0.05630585841252789,
+    "modelo__l1_ratio": 1.0
+   },
+   "sha256_origen": "723b61c8134b2df38c7dde29c7ef24dca760a723f2b7bcde3ab3502d32d84597"
+  }
+ },
+ "modelos_finales": [
+  {
+   "tarea": "clasificacion",
+   "modelo": "xgboost",
+   "balanceo": "class_weight",
+   "optimizador": "genetica",
+   "clave": "clasificacion__xgboost__class_weight__genetica",
+   "metrica_externa": 0.8332144139201197,
+   "desv_externa": 0.004942051134385971,
+   "hiperparametros": {
+    "modelo__n_estimators": 145,
+    "modelo__max_depth": 6,
+    "modelo__learning_rate": 0.00330350005927756,
+    "modelo__subsample": 0.8081424513325175,
+    "modelo__colsample_bytree": 0.968327293856247,
+    "modelo__reg_lambda": 0.8792374048729428,
+    "modelo__min_child_weight": 11
+   },
+   "archivo_origen": "clasificacion__xgboost__class_weight__genetica__42.joblib"
+  },
+  {
+   "tarea": "clasificacion",
+   "modelo": "arbol",
+   "balanceo": "class_weight",
+   "optimizador": "random",
+   "clave": "clasificacion__arbol__class_weight__random",
+   "metrica_externa": 0.8331756166160655,
+   "desv_externa": 0.002091125147045647,
+   "hiperparametros": {
+    "modelo__ccp_alpha": 0.00038972698898745797,
+    "modelo__criterion": "gini",
+    "modelo__max_depth": 22,
+    "modelo__min_samples_leaf": 7
+   },
+   "archivo_origen": "clasificacion__arbol__class_weight__random__42.joblib"
+  },
+  {
+   "tarea": "clasificacion",
+   "modelo": "random_forest",
+   "balanceo": "ninguno",
+   "optimizador": "genetica",
+   "clave": "clasificacion__random_forest__ninguno__genetica",
+   "metrica_externa": 0.8325603127112856,
+   "desv_externa": 0.0029306720500308736,
+   "hiperparametros": {
+    "modelo__max_depth": 32,
+    "modelo__max_features": 0.5,
+    "modelo__min_samples_leaf": 11,
+    "modelo__n_estimators": 300
+   },
+   "archivo_origen": "clasificacion__random_forest__ninguno__genetica__42.joblib"
+  },
+  {
+   "tarea": "clasificacion",
+   "modelo": "ebm",
+   "balanceo": "class_weight",
+   "optimizador": "grid",
+   "clave": "clasificacion__ebm__class_weight__grid",
+   "metrica_externa": 0.8292035404563995,
+   "desv_externa": 0.0037289130741755597,
+   "hiperparametros": {
+    "modelo__interactions": 0,
+    "modelo__learning_rate": 0.008,
+    "modelo__max_leaves": 2,
+    "modelo__min_samples_leaf": 100,
+    "modelo__outer_bags": 8
+   },
+   "archivo_origen": "clasificacion__ebm__class_weight__grid__42.joblib"
+  },
+  {
+   "tarea": "clasificacion",
+   "modelo": "knn",
+   "balanceo": "ninguno",
+   "optimizador": "genetica",
+   "clave": "clasificacion__knn__ninguno__genetica",
+   "metrica_externa": 0.7835524371288687,
+   "desv_externa": 0.007194999335165577,
+   "hiperparametros": {
+    "modelo__n_neighbors": 600,
+    "modelo__weights": "distance",
+    "modelo__p": 1
+   },
+   "archivo_origen": "clasificacion__knn__ninguno__genetica__42.joblib"
+  },
+  {
+   "tarea": "clasificacion",
+   "modelo": "logistica",
+   "balanceo": "class_weight",
+   "optimizador": "genetica",
+   "clave": "clasificacion__logistica__class_weight__genetica",
+   "metrica_externa": 0.7643987798246012,
+   "desv_externa": 0.004695259576416776,
+   "hiperparametros": {
+    "modelo__C": 0.05630585841252789,
+    "modelo__l1_ratio": 1.0
+   },
+   "archivo_origen": "clasificacion__logistica__class_weight__genetica__42.joblib"
+  },
+  {
+   "tarea": "clasificacion",
+   "modelo": "svm",
+   "balanceo": "class_weight",
+   "optimizador": "grid",
+   "clave": "clasificacion__svm__class_weight__grid",
+   "metrica_externa": 0.7641469720230337,
+   "desv_externa": 0.004437112409294757,
+   "hiperparametros": {
+    "modelo__C": 0.001082636733874054
+   },
+   "archivo_origen": "clasificacion__svm__class_weight__grid__42.joblib"
+  },
+  {
+   "tarea": "clasificacion",
+   "modelo": "naive_bayes",
+   "balanceo": "ninguno",
+   "optimizador": "grid",
+   "clave": "clasificacion__naive_bayes__ninguno__grid",
+   "metrica_externa": 0.6721917721143488,
+   "desv_externa": 0.011906833288730384,
+   "hiperparametros": {
+    "modelo__var_smoothing": 0.001
+   },
+   "archivo_origen": "clasificacion__naive_bayes__ninguno__grid__42.joblib"
+  },
+  {
+   "tarea": "regresion",
+   "modelo": "xgboost",
+   "balanceo": "ninguno",
+   "optimizador": "bayesiana",
+   "clave": "regresion__xgboost__ninguno__bayesiana",
+   "metrica_externa": 0.058981509945088294,
+   "desv_externa": 0.0004024850684459983,
+   "hiperparametros": {
+    "modelo__n_estimators": 512,
+    "modelo__max_depth": 2,
+    "modelo__learning_rate": 0.023606589893859945,
+    "modelo__subsample": 0.8025373659554091,
+    "modelo__colsample_bytree": 0.7268451436439588,
+    "modelo__reg_lambda": 0.21582798860657876,
+    "modelo__min_child_weight": 31
+   },
+   "archivo_origen": "regresion__xgboost__ninguno__bayesiana__42.joblib"
+  },
+  {
+   "tarea": "regresion",
+   "modelo": "ebm",
+   "balanceo": "ninguno",
+   "optimizador": "grid",
+   "clave": "regresion__ebm__ninguno__grid",
+   "metrica_externa": 0.059034487624420526,
+   "desv_externa": 0.00042666251507088196,
+   "hiperparametros": {
+    "modelo__interactions": 0,
+    "modelo__learning_rate": 0.008,
+    "modelo__max_leaves": 3,
+    "modelo__min_samples_leaf": 20,
+    "modelo__outer_bags": 8
+   },
+   "archivo_origen": "regresion__ebm__ninguno__grid__42.joblib"
+  },
+  {
+   "tarea": "regresion",
+   "modelo": "random_forest",
+   "balanceo": "ninguno",
+   "optimizador": "grid",
+   "clave": "regresion__random_forest__ninguno__grid",
+   "metrica_externa": 0.05915016458137705,
+   "desv_externa": 0.0003890447138133653,
+   "hiperparametros": {
+    "modelo__max_depth": 8,
+    "modelo__max_features": 0.5,
+    "modelo__min_samples_leaf": 50,
+    "modelo__n_estimators": 300
+   },
+   "archivo_origen": "regresion__random_forest__ninguno__grid__42.joblib"
+  },
+  {
+   "tarea": "regresion",
+   "modelo": "arbol",
+   "balanceo": "ninguno",
+   "optimizador": "genetica",
+   "clave": "regresion__arbol__ninguno__genetica",
+   "metrica_externa": 0.05926493495144658,
+   "desv_externa": 0.0003805006326346684,
+   "hiperparametros": {
+    "modelo__max_depth": 13,
+    "modelo__min_samples_leaf": 101,
+    "modelo__ccp_alpha": 1.8111021603663582e-06
+   },
+   "archivo_origen": "regresion__arbol__ninguno__genetica__42.joblib"
+  },
+  {
+   "tarea": "regresion",
+   "modelo": "lasso",
+   "balanceo": "ninguno",
+   "optimizador": "genetica",
+   "clave": "regresion__lasso__ninguno__genetica",
+   "metrica_externa": 0.061802440250145654,
+   "desv_externa": 0.00047839825127382726,
+   "hiperparametros": {
+    "modelo__alpha": 0.00010870201557158809
+   },
+   "archivo_origen": "regresion__lasso__ninguno__genetica__42.joblib"
+  },
+  {
+   "tarea": "regresion",
+   "modelo": "ridge",
+   "balanceo": "ninguno",
+   "optimizador": "genetica",
+   "clave": "regresion__ridge__ninguno__genetica",
+   "metrica_externa": 0.0618168594767363,
+   "desv_externa": 0.00048195447815460346,
+   "hiperparametros": {
+    "modelo__alpha": 613.87402239704
+   },
+   "archivo_origen": "regresion__ridge__ninguno__genetica__42.joblib"
+  },
+  {
+   "tarea": "regresion",
+   "modelo": "svr",
+   "balanceo": "ninguno",
+   "optimizador": "bayesiana",
+   "clave": "regresion__svr__ninguno__bayesiana",
+   "metrica_externa": 0.06183263876580334,
+   "desv_externa": 0.00047042474580710617,
+   "hiperparametros": {
+    "modelo__C": 46.43268471667696,
+    "modelo__epsilon": 0.000384646884565427
+   },
+   "archivo_origen": "regresion__svr__ninguno__bayesiana__42.joblib"
+  },
+  {
+   "tarea": "regresion",
+   "modelo": "knn",
+   "balanceo": "ninguno",
+   "optimizador": "grid",
+   "clave": "regresion__knn__ninguno__grid",
+   "metrica_externa": 0.0633536437134237,
+   "desv_externa": 0.00041506680766456236,
+   "hiperparametros": {
+    "modelo__n_neighbors": 80,
+    "modelo__p": 1,
+    "modelo__weights": "distance"
+   },
+   "archivo_origen": "regresion__knn__ninguno__grid__42.joblib"
+  }
+ ],
+ "verificacion": {
+  "ebm_clasificacion": {
+   "filas_comparadas": 48723,
+   "max_dif_motor_frente_al_modelo_guardado": 4.440892098500626e-16,
+   "max_dif_con_predicciones_prueba": 0.0
+  },
+  "ebm_regresion": {
+   "filas_comparadas": 48723,
+   "max_dif_motor_frente_al_modelo_guardado": 6.106226635438361e-16,
+   "max_dif_con_predicciones_prueba": 0.0
+  },
+  "logistica_clasificacion": {
+   "filas_comparadas": 48723,
+   "max_dif_motor_frente_al_modelo_guardado": 3.3306690738754696e-16,
+   "max_dif_con_predicciones_prueba": 0.0
+  },
+  "calibracion_isotonica": {
+   "nudos": 78,
+   "max_dif_con_calibracion_prueba": 0.0
+  }
+ },
+ "versiones": {
+  "sklearn": "1.9.1",
+  "interpret": "0.7.8",
+  "numpy": "2.5.3",
+  "pandas": "3.0.6",
+  "joblib": "1.6.0"
+ }
+}

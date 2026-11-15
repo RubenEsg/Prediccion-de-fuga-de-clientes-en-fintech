@@ -1,0 +1,17 @@
+tarea,modelo,clave,auc_entrenamiento,auc_fuera_de_pliegue,rmse_entrenamiento,rmse_fuera_de_pliegue,r2_entrenamiento,r2_fuera_de_pliegue
+clasificacion,xgboost,clasificacion__xgboost__class_weight__genetica,0.8569642217916589,0.8350384103542883,,,,
+clasificacion,arbol,clasificacion__arbol__class_weight__random,0.8357603868301564,0.8326919504358382,,,,
+clasificacion,random_forest,clasificacion__random_forest__ninguno__genetica,0.9868297638970749,0.831757505410867,,,,
+clasificacion,ebm,clasificacion__ebm__class_weight__grid,0.8335068047225856,0.829232555375272,,,,
+clasificacion,knn,clasificacion__knn__ninguno__genetica,1.0,0.7834662742071133,,,,
+clasificacion,logistica,clasificacion__logistica__class_weight__genetica,0.7662864340971128,0.7642909095840827,,,,
+clasificacion,svm,clasificacion__svm__class_weight__grid,0.7665537159550209,0.7641366005566544,,,,
+clasificacion,naive_bayes,clasificacion__naive_bayes__ninguno__grid,0.6807717073734645,0.6640793835102058,,,,
+regresion,xgboost,regresion__xgboost__ninguno__bayesiana,,,0.05872397781622477,0.058966363742684436,0.23430755370347356,0.22797364711613788
+regresion,ebm,regresion__ebm__ninguno__grid,,,0.05871004117893094,0.05904544412350433,0.23467094569541935,0.22590151402438352
+regresion,random_forest,regresion__random_forest__ninguno__grid,,,0.05785598190812377,0.05913709434296645,0.2567755844558043,0.22349654075242598
+regresion,arbol,regresion__arbol__ninguno__genetica,,,0.05903335687957433,0.059240436359676824,0.22621841432563006,0.22078029137415367
+regresion,lasso,regresion__lasso__ninguno__genetica,,,0.06173185417977469,0.0617986086749783,0.15386029617348096,0.15202933971889754
+regresion,ridge,regresion__ridge__ninguno__genetica,,,0.06171118612176726,0.061819034840967374,0.1544267828659146,0.15146869111095895
+regresion,svr,regresion__svr__ninguno__bayesiana,,,0.06170939316350818,0.061846174277375786,0.15447591676057837,0.15072349292038478
+regresion,knn,regresion__knn__ninguno__grid,,,0.0,0.06335473821629739,1.0,0.10878675485813227

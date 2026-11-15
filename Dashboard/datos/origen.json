@@ -1,0 +1,793 @@
+{
+ "generado": "2026-11-14T13:34:55",
+ "archivos": [
+  {
+   "archivo": "calibracion_isotonica_ebm.json",
+   "bytes": 3283,
+   "sha256": "6a6dc396a450aafc2efb2a8b1e4bc55be18cf298bd2e5971daec8ed36d4de943",
+   "de": [
+    "Entregable 3: resultados/complementos/fuera_de_pliegue.parquet"
+   ],
+   "como": "IsotonicRegression sobre el puntaje fuera de pliegue"
+  },
+  {
+   "archivo": "calibracion_modelos.json",
+   "bytes": 38261,
+   "sha256": "c00143b959fa5d254c60d3793aa1e8a91b4144e7edf0585dab3c21c81ce1460f",
+   "de": [
+    "Entregable 3: resultados/complementos/fuera_de_pliegue.parquet y predicciones_prueba.parquet"
+   ],
+   "como": "recalibración isotónica y conjuntos conformes de los 8 clasificadores, con su cobertura en prueba"
+  },
+  {
+   "archivo": "cd.json",
+   "bytes": 3483,
+   "sha256": "91ff7cdbc66ab5d77ae178b46a4f4b6fbc1c01275f675e6aa2c1f5ef6dca9a80",
+   "de": [
+    "Resultados Entregable 3: datos/pliegues_auc.csv y pliegues_rmse.csv"
+   ],
+   "como": "rangos medios por pliegue externo, Friedman, Iman-Davenport y diferencia crítica de Nemenyi (alfa 0,05)"
+  },
+  {
+   "archivo": "clientes_prueba.parquet",
+   "bytes": 1759510,
+   "sha256": "b3c25794831fe4d59a336e1b2302db8e9805948241cd3321e3bdab706eb0dfce",
+   "de": [
+    "Entregable 3: datos/customer_data.csv y transactions_data.csv (ETL de src/datos.py)",
+    "Entregable 3: resultados/predicciones_prueba.parquet"
+   ],
+   "como": "los 9.745 clientes de prueba con su contexto, los 48 predictores, el objetivo, la etiqueta y los puntajes guardados"
+  },
+  {
+   "archivo": "conformal.json",
+   "bytes": 3705,
+   "sha256": "e5ef3c0ae396cc58f21a95bab81dc5f1cba892557a9f20c141a14299dfa4ab25",
+   "de": [
+    "Entregable 3: resultados/complementos/fuera_de_pliegue.parquet y predicciones_prueba.parquet"
+   ],
+   "como": "intervalos conformes al 80, 90 y 95 % de los 8 modelos de regresión, con su cobertura en prueba"
+  },
+  {
+   "archivo": "eda/asociacion.csv",
+   "bytes": 3167,
+   "sha256": "cc3e833f87e8df8bb0d161464c42e27693a844f96892fb95701d372a9fc827f9",
+   "de": [
+    "Entregable 3: ETL de src/datos.py, solo el entrenamiento"
+   ],
+   "como": "asociación de cada variable con churn_probability: ρ de Spearman y r de Pearson (numéricas) o η² (categóricas)"
+  },
+  {
+   "archivo": "eda/cohortes.csv",
+   "bytes": 429,
+   "sha256": "500fddd0cf366689985bd4596822509b720016e9699bf150c1cdbf5fe5239f88",
+   "de": [
+    "Entregable 3: ETL de src/datos.py"
+   ],
+   "como": "clientes, media del objetivo y fracción de riesgo alto por cohorte de edad"
+  },
+  {
+   "archivo": "eda/entrenamiento.parquet",
+   "bytes": 4031294,
+   "sha256": "0d24a5a8bb89a5fd10bfc3fad49f65a456cd1f7b45cafd8d90697b07651bfcc7",
+   "de": [
+    "Entregable 3: ETL de src/datos.py, partición 80/20 con semilla 42"
+   ],
+   "como": "el entrenamiento en el orden de ajuste: 48 predictores, active_products, churn_probability, riesgo_alto e indicadoras de faltantes de las columnas originales que los tienen"
+  },
+  {
+   "archivo": "eda/etl.json",
+   "bytes": 3306,
+   "sha256": "9c72f984fd28dd67fc42b1ad5bfe51176a4d9d2715863b9438542f514703d50d",
+   "de": [
+    "Entregable 3: ETL de src/datos.py"
+   ],
+   "como": "recuentos y listas de columnas de cada paso del ETL"
+  },
+  {
+   "archivo": "eda/faltantes.csv",
+   "bytes": 1659,
+   "sha256": "23543dab99cf8e031cb9d40d1574f67b338bf63a565adcfda2fdfd0e06709935",
+   "de": [
+    "Entregable 3: customer_data.csv, filas de entrenamiento"
+   ],
+   "como": "faltantes de las 54 columnas originales"
+  },
+  {
+   "archivo": "eda/objetivo_hist.csv",
+   "bytes": 2598,
+   "sha256": "b025cc4644a5828d7aa1e85863e0d4a6604802c9b607ade3fd9ffb1c12cb9d92",
+   "de": [
+    "Entregable 3: ETL de src/datos.py, solo el entrenamiento"
+   ],
+   "como": "histograma de churn_probability en 60 tramos"
+  },
+  {
+   "archivo": "eda/por_variable.csv",
+   "bytes": 64488,
+   "sha256": "e22a1074ea3cc59633515d5edf183776efd35fb00ebd9801c4bac53f6c76e19b",
+   "de": [
+    "Entregable 3: ETL de src/datos.py, solo el entrenamiento"
+   ],
+   "como": "media de churn_probability y fracción de riesgo alto por valor, veintil o categoría de cada variable"
+  },
+  {
+   "archivo": "entrega3/comparacion_entrega2/busquedas.json",
+   "bytes": 9560,
+   "sha256": "d87addee99da8614ea9444f756a810467a5318368d8b3afb594f58acba1efc4d",
+   "de": [
+    "Entregable 3: resultados/comparacion_entrega2/busquedas.json"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "entrega3/comparacion_entrega2/contrastes_clasificacion.csv",
+   "bytes": 1145,
+   "sha256": "f40f404bb7ed86a4700f1e28365d88af94f645b18a9a9f60fda50d82b50f98f3",
+   "de": [
+    "Entregable 3: resultados/comparacion_entrega2/contrastes_clasificacion.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "entrega3/comparacion_entrega2/contrastes_regresion.csv",
+   "bytes": 1619,
+   "sha256": "6bc641ec254e3bc89dfeffcd8807450eac82a3cbf9e84cf31e7502e924bc5e7e",
+   "de": [
+    "Entregable 3: resultados/comparacion_entrega2/contrastes_regresion.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "entrega3/comparacion_entrega2/intervalos_clasificacion.csv",
+   "bytes": 448,
+   "sha256": "9ff0d5fd35815f072553f49eb1f7bb8e31a81fcd02fc4f76c19c30ef77067f8e",
+   "de": [
+    "Entregable 3: resultados/comparacion_entrega2/intervalos_clasificacion.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "entrega3/comparacion_entrega2/intervalos_regresion.csv",
+   "bytes": 649,
+   "sha256": "c227238a242ddfdeb61b575689e14b38ad2ab8ff1357bdc30d14a57c1902af55",
+   "de": [
+    "Entregable 3: resultados/comparacion_entrega2/intervalos_regresion.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "entrega3/comparacion_entrega2/techo.json",
+   "bytes": 96,
+   "sha256": "ef84ed98333535be903f7690b8f70310a7437d81f4c978aac332a1696667702b",
+   "de": [
+    "Entregable 3: resultados/comparacion_entrega2/techo.json"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "entrega3/complementos/calibracion.csv",
+   "bytes": 4107,
+   "sha256": "e403279e7ac5d664834d982ac2b5597f14a822e6c376c6c0a301e1921b249ab1",
+   "de": [
+    "Entregable 3: resultados/complementos/calibracion.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "entrega3/complementos/calibracion_prueba.parquet",
+   "bytes": 1236381,
+   "sha256": "f4530106c4e8f688204aad2b81505198f38ba469caf1328b073c34903ef34dd7",
+   "de": [
+    "Entregable 3: resultados/complementos/calibracion_prueba.parquet"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "entrega3/complementos/fuera_de_pliegue.csv",
+   "bytes": 2030,
+   "sha256": "9bb7951e686a2163209a860a871ba3e1c007c0afa6e25964a3c11f3c989905ea",
+   "de": [
+    "Entregable 3: resultados/complementos/fuera_de_pliegue.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "entrega3/complementos/semillas.csv",
+   "bytes": 7734,
+   "sha256": "939f570b689e9bcd6e3b531cebb94176ce5f91b16c93cb70da5412742e24abca",
+   "de": [
+    "Entregable 3: resultados/complementos/semillas.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "entrega3/complementos/semillas_optimizadores.csv",
+   "bytes": 1678,
+   "sha256": "ea7b3e1284d00fa657cb0279930c4bf71fb254d218cc3dfc4ec43965a3d475de",
+   "de": [
+    "Entregable 3: resultados/complementos/semillas_optimizadores.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "entrega3/computo/equipo.json",
+   "bytes": 253,
+   "sha256": "915f7594352832345d13a88fa00abe3c893052f1a305077f6e91de983d397a3b",
+   "de": [
+    "Entregable 3: resultados/computo/equipo.json"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "entrega3/computo/escalamiento.csv",
+   "bytes": 4533,
+   "sha256": "6309e0854af172ac039677a81f7042cb75b9cbbbd40ac9e6ef20816d113a881f",
+   "de": [
+    "Entregable 3: resultados/computo/escalamiento.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "entrega3/computo/fidelidad.csv",
+   "bytes": 2439,
+   "sha256": "e2be63aceff11e9cb2be4dfe75302c7a05fb3daf6f3ce597e8cc1dacc7561fe4",
+   "de": [
+    "Entregable 3: resultados/computo/fidelidad.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "entrega3/computo/tiempos_finales.csv",
+   "bytes": 2499,
+   "sha256": "5fcafb083b00b2cc84606f5d355c116bb80626c0da8e7a8ef3135ec25069705d",
+   "de": [
+    "Entregable 3: resultados/computo/tiempos_finales.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "entrega3/corridas.csv",
+   "bytes": 118430,
+   "sha256": "62d6afb1accdf25741eab6ec2374fac8b46e2a12a7c8f0d3c72e0afe251d2fea",
+   "de": [
+    "Entregable 3: resultados/experimentos.parquet",
+    "Entregable 3: resultados/metricas_prueba.csv"
+   ],
+   "como": "las 160 corridas sin las columnas pesadas ni la ruta local del modelo, con sus métricas de prueba"
+  },
+  {
+   "archivo": "entrega3/curvas_anytime.csv",
+   "bytes": 14089,
+   "sha256": "efd53f27354b6f8d5a62476247debedcf8159a81b89fd3d9a2c9f956de85f518",
+   "de": [
+    "Entregable 3: resultados/experimentos.parquet (columna trazas)"
+   ],
+   "como": "arrepentimiento normalizado de cada optimizador según la fracción del presupuesto (src/analisis.py::curvas_anytime), sin la EBM"
+  },
+  {
+   "archivo": "entrega3/metricas_prueba.csv",
+   "bytes": 28557,
+   "sha256": "f8f5db2134b02ffa41a78bcf6d41431f1d850443d92236f8a9718150cc6fbca2",
+   "de": [
+    "Entregable 3: resultados/metricas_prueba.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "fondo.parquet",
+   "bytes": 44249,
+   "sha256": "9fd6077a1255810c804a941d4bbf9bcac857ba9208397d5acd1e347b4201b36f",
+   "de": [
+    "Entregable 3: entrenamiento"
+   ],
+   "como": "100 clientes de entrenamiento (semilla 42): fondo de las explicaciones"
+  },
+  {
+   "archivo": "metadatos.json",
+   "bytes": 13473,
+   "sha256": "4c7a9f7aecb9fa04cca4e8e55be4e8833fc01e3a3bad787506dfc585e8310dab",
+   "de": [
+    "preparar_datos.py"
+   ],
+   "como": "partición, etiqueta, punto de operación, métricas reproducidas y modelos"
+  },
+  {
+   "archivo": "modelos/ebm_clasificacion.joblib",
+   "bytes": 432750,
+   "sha256": "2bbdd1c8742e467ffa1801e479af0bae419c3a539bdbda6024c0199f017732a6",
+   "de": [
+    "Entregable 3: resultados/modelos/clasificacion__ebm__class_weight__grid__42.joblib"
+   ],
+   "como": "la misma tubería con la EBM de interpret sin la clase propia que la envuelve"
+  },
+  {
+   "archivo": "modelos/ebm_clasificacion.json",
+   "bytes": 1082863,
+   "sha256": "21a19c4abcd65fee4d4d2e8147ebc1b6e1bd5691a7094db88cb973792efee49e",
+   "de": [
+    "Entregable 3: resultados/modelos/clasificacion__ebm__class_weight__grid__42.joblib"
+   ],
+   "como": "tablas de la EBM (cortes y puntajes de cada término) y su preprocesado"
+  },
+  {
+   "archivo": "modelos/ebm_regresion.joblib",
+   "bytes": 1056533,
+   "sha256": "a6739bda5aadc576370875239a345b8127f27776b4b47c790399a17ca6264227",
+   "de": [
+    "Entregable 3: resultados/modelos/regresion__ebm__ninguno__grid__42.joblib"
+   ],
+   "como": "la misma tubería con la EBM de interpret sin la clase propia que la envuelve"
+  },
+  {
+   "archivo": "modelos/ebm_regresion.json",
+   "bytes": 1114802,
+   "sha256": "cd778d5f9a12810c87cae8621a95bfa118a9155cf94b44702babc8623a9eb578",
+   "de": [
+    "Entregable 3: resultados/modelos/regresion__ebm__ninguno__grid__42.joblib"
+   ],
+   "como": "tablas de la EBM (cortes y puntajes de cada término) y su preprocesado"
+  },
+  {
+   "archivo": "modelos/logistica_clasificacion.json",
+   "bytes": 16229,
+   "sha256": "729862d3840e8547d6cff64a8703ca1aea7b495223ff5c0f2b0cca59d833db1a",
+   "de": [
+    "Entregable 3: resultados/modelos/clasificacion__logistica__class_weight__genetica__42.joblib"
+   ],
+   "como": "coeficientes de la regresión logística y su preprocesado"
+  },
+  {
+   "archivo": "pronosticos_prueba.parquet",
+   "bytes": 737496,
+   "sha256": "0d89ae472f1828f2a1797a90b65a4adab4969b8a139b1fd77d31b62031215d3d",
+   "de": [
+    "sección de resultados: datos/pronosticos_prueba.csv"
+   ],
+   "como": "las mismas columnas con el índice del cliente (fila)"
+  },
+  {
+   "archivo": "puntajes_prueba.parquet",
+   "bytes": 686408,
+   "sha256": "46fca37e5c4c27182731fc01ef655d5e89d8a7cc6224c88968fd59d3d48444fd",
+   "de": [
+    "sección de resultados: datos/puntajes_prueba.csv"
+   ],
+   "como": "las mismas columnas con el índice del cliente (fila)"
+  },
+  {
+   "archivo": "resultados/ablacion.csv",
+   "bytes": 4654,
+   "sha256": "b464cedf54356f2aef0079cb8e91649d84e968c736e54c6745e641832394bcd5",
+   "de": [
+    "sección de resultados: datos/ablacion.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/ablacion_interacciones_e2.csv",
+   "bytes": 239,
+   "sha256": "0fbd2970842d3939e7ba26a5e6309b5cb39ebe2979dc8f8722535a241431a86a",
+   "de": [
+    "sección de resultados: datos/ablacion_interacciones_e2.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/clasificacion_prueba.csv",
+   "bytes": 3689,
+   "sha256": "8be1b9838b8b67024492a8b2da3be62d81ff6109fc1dfa01d8736036d89875d2",
+   "de": [
+    "sección de resultados: datos/clasificacion_prueba.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/concordancia_validacion_prueba.csv",
+   "bytes": 160,
+   "sha256": "269066c74a1ab5f838450e36927d77fb36ccc47e2c94e461662cd08d2f92c6f9",
+   "de": [
+    "sección de resultados: datos/concordancia_validacion_prueba.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/costo.csv",
+   "bytes": 1818,
+   "sha256": "2620acf3d8c98cac2d993e50868bc5c788f5d14de7de1fa023d82eeeb4180593",
+   "de": [
+    "sección de resultados: datos/costo.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/curva_aprendizaje.csv",
+   "bytes": 2105,
+   "sha256": "1a4b64259602973283fe300e887410be16b8dd61fecd7b8026d6a375738899f3",
+   "de": [
+    "sección de resultados: datos/curva_aprendizaje.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/ejemplos.csv",
+   "bytes": 529,
+   "sha256": "7173ade6cd2a04a16fbd1f3dca2368583e732072407c25e22afe859d0ef8d602",
+   "de": [
+    "sección de resultados: datos/ejemplos.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/entrega2.csv",
+   "bytes": 1097,
+   "sha256": "f46cf996f2fd4164ba839bde60307b046b7105841b8823052b35b2a74694c1ea",
+   "de": [
+    "sección de resultados: datos/entrega2.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/errores_segmentos.csv",
+   "bytes": 1612,
+   "sha256": "580ed26dd4a0847e9b656a42a31a38ce17940a4e63669aa34913a130e78f17ed",
+   "de": [
+    "sección de resultados: datos/errores_segmentos.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/fidelidad_ebm.csv",
+   "bytes": 1135,
+   "sha256": "3230e5d9b1602275e655ba0d1cd47cbdaa9680d65069004f05634e233a1a8c90",
+   "de": [
+    "sección de resultados: datos/fidelidad_ebm.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/fidelidad_resumen.csv",
+   "bytes": 138,
+   "sha256": "8cddcb47f02679734b391ff66ec0b823e80e7c2ae4369df815e9a06b1d2ef0fe",
+   "de": [
+    "sección de resultados: datos/fidelidad_resumen.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/forma_ebm_age.csv",
+   "bytes": 447,
+   "sha256": "3f9a21a948560d8780851949d27896831a16d17649e878cb3438e9430493a24e",
+   "de": [
+    "sección de resultados: datos/forma_ebm_age.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/forma_ebm_app_logins_frequency.csv",
+   "bytes": 1655,
+   "sha256": "31dfbebf2ae1783a1b38a61acd79645a2ed42e4f193057d5031ac256c774a2e4",
+   "de": [
+    "sección de resultados: datos/forma_ebm_app_logins_frequency.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/forma_ebm_base_satisfaction.csv",
+   "bytes": 101286,
+   "sha256": "78b0c17551b49b4027e46b2deca8b7bb9489c8078d6fc7ed9cf41da7be1fbab8",
+   "de": [
+    "sección de resultados: datos/forma_ebm_base_satisfaction.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/forma_ebm_satisfaction_score.csv",
+   "bytes": 364,
+   "sha256": "23c76a072929e5e3fc1e9470eefff0e3d97348ce25d47b66af99213c2aecd3a4",
+   "de": [
+    "sección de resultados: datos/forma_ebm_satisfaction_score.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/formas_resumen.csv",
+   "bytes": 270,
+   "sha256": "09c1e67fc302f16af2e0051acee9e6ee86e36be428ba63d0bfbc19044cc2356f",
+   "de": [
+    "sección de resultados: datos/formas_resumen.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/friedman_optimizadores.csv",
+   "bytes": 795,
+   "sha256": "4924901afcaa4c281002a6b58669415d4c3f5422605324d15d6a6ab33aacc11a",
+   "de": [
+    "sección de resultados: datos/friedman_optimizadores.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/importancia_permutacion_ebm.csv",
+   "bytes": 3017,
+   "sha256": "5b82c324fe829d2fda8336de8ff795a3556136b4ee3fcfdc6d9170eec9f1ccc7",
+   "de": [
+    "sección de resultados: datos/importancia_permutacion_ebm.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/importancia_terminos_ebm.csv",
+   "bytes": 3505,
+   "sha256": "4047cb5a9f37aa32d2117e00fc8b958a2165f352cc83185b9ff964c1286a72aa",
+   "de": [
+    "sección de resultados: datos/importancia_terminos_ebm.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/optimizadores.csv",
+   "bytes": 1480,
+   "sha256": "a7ffa2db66dafb1d423bfd446c8a491d61df9d57405a9c5cec308a34bfac1a7c",
+   "de": [
+    "sección de resultados: datos/optimizadores.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/pliegues_auc.csv",
+   "bytes": 821,
+   "sha256": "eb23535839a47387ddd37a5e450170bb0c531b773924113c93034ee0eebe7227",
+   "de": [
+    "sección de resultados: datos/pliegues_auc.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/pliegues_rmse.csv",
+   "bytes": 865,
+   "sha256": "9462cc2f25ed9d722da66cf4094e7bf3f61bca35ce829b52697b323a314ee1e4",
+   "de": [
+    "sección de resultados: datos/pliegues_rmse.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/pruebas_clasificacion.csv",
+   "bytes": 2883,
+   "sha256": "378afb91154444b594a8ef2ab99a65fb56a7c20c3778879ceb796d4300f4c9ec",
+   "de": [
+    "sección de resultados: datos/pruebas_clasificacion.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/pruebas_regresion.csv",
+   "bytes": 2442,
+   "sha256": "bccfa1a82b13ae9e56db65bc68c98f47c20a57d726e1eb3441e616e99d4d268e",
+   "de": [
+    "sección de resultados: datos/pruebas_regresion.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/regresion_prueba.csv",
+   "bytes": 2482,
+   "sha256": "8237bfda46708f01f9c3b296810ee959ce373dc219eb28b68482d1ea20031702",
+   "de": [
+    "sección de resultados: datos/regresion_prueba.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/resumen.json",
+   "bytes": 253,
+   "sha256": "f05036c5ffd7249938f60c3fe6dc40487191d123b37783b7b1254c055d8798e9",
+   "de": [
+    "sección de resultados: datos/resumen.json"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/semillas.csv",
+   "bytes": 516,
+   "sha256": "078871ce787516dc1bd202960b8f34dccb0ad1464bca0bc54895e19ccc816a36",
+   "de": [
+    "sección de resultados: datos/semillas.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/semillas_optimizadores.csv",
+   "bytes": 197,
+   "sha256": "d3ff27b45eca6815e9bb2facea38a597f9fce413a6298c8d04fb9acfba86683b",
+   "de": [
+    "sección de resultados: datos/semillas_optimizadores.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/sensibilidad_curvas.csv",
+   "bytes": 824,
+   "sha256": "73abb3d14496eca5bc14c90b5d7ed2902af8bf93d54aed4cc0dcc5426b318605",
+   "de": [
+    "sección de resultados: datos/sensibilidad_curvas.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "resultados/sensibilidad_hiperparametros.csv",
+   "bytes": 1194,
+   "sha256": "81cadb9f254979e253c29281923ed72547867ba36f86b0ca51c97ab9366fa9d2",
+   "de": [
+    "sección de resultados: datos/sensibilidad_hiperparametros.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "shap/clasificacion__arbol.parquet",
+   "bytes": 40037,
+   "sha256": "4f09f4a189b40fabba333eed7cba905a854c3a51ce07b0e6d52fe508ff323bb6",
+   "de": [
+    "artifacts/clasificacion/arbol/modelo.joblib y datos/fondo.parquet"
+   ],
+   "como": "valores SHAP (arbol) de 500 clientes de prueba fijos (semilla 42)"
+  },
+  {
+   "archivo": "shap/clasificacion__ebm.parquet",
+   "bytes": 85169,
+   "sha256": "a8275eee2834efb76862bee6a3c40d555c7dc51c4a5cfa6b45a79da65ae7f535",
+   "de": [
+    "artifacts/clasificacion/ebm/modelo.joblib y datos/fondo.parquet"
+   ],
+   "como": "valores SHAP (ebm) de 500 clientes de prueba fijos (semilla 42)"
+  },
+  {
+   "archivo": "shap/clasificacion__knn.parquet",
+   "bytes": 98799,
+   "sha256": "6a980d880629dd4927f9ad817aede7ccbd63e097b11a82e3814091bb32e50060",
+   "de": [
+    "artifacts/clasificacion/knn/modelo.joblib y datos/fondo.parquet"
+   ],
+   "como": "valores SHAP (vecinos) de 150 clientes de prueba fijos (semilla 42)"
+  },
+  {
+   "archivo": "shap/clasificacion__logistica.parquet",
+   "bytes": 96011,
+   "sha256": "f65b12b27faa3ad5e24a6c560d5c9b81187a49dd1583c2cdc73ba0552c66b2b6",
+   "de": [
+    "artifacts/clasificacion/logistica/modelo.joblib y datos/fondo.parquet"
+   ],
+   "como": "valores SHAP (lineal) de 500 clientes de prueba fijos (semilla 42)"
+  },
+  {
+   "archivo": "shap/clasificacion__naive_bayes.parquet",
+   "bytes": 101991,
+   "sha256": "66feb33c5e7e1d26973c48c6a21812cabc3d03d2049a2ee51e60ae3d2cc32b86",
+   "de": [
+    "artifacts/clasificacion/naive_bayes/modelo.joblib y datos/fondo.parquet"
+   ],
+   "como": "valores SHAP (bayes) de 500 clientes de prueba fijos (semilla 42)"
+  },
+  {
+   "archivo": "shap/clasificacion__random_forest.parquet",
+   "bytes": 258517,
+   "sha256": "67872df61c35b44213da9d4eb03887c4d12c9cce99a441c2294e623baacbcb61",
+   "de": [
+    "artifacts/clasificacion/random_forest/modelo.joblib y datos/fondo.parquet"
+   ],
+   "como": "valores SHAP (arbol) de 500 clientes de prueba fijos (semilla 42)"
+  },
+  {
+   "archivo": "shap/clasificacion__svm.parquet",
+   "bytes": 101847,
+   "sha256": "ca7fdb253cf28554b148cc42de91be87212bcb2911b8dc4f1e2fa47fd14ea3cd",
+   "de": [
+    "artifacts/clasificacion/svm/modelo.joblib y datos/fondo.parquet"
+   ],
+   "como": "valores SHAP (lineal) de 500 clientes de prueba fijos (semilla 42)"
+  },
+  {
+   "archivo": "shap/clasificacion__xgboost.parquet",
+   "bytes": 192923,
+   "sha256": "9545cafb8a34c1492d6bdb905a6cb05384552c06f4fd505c6fd463e1665c8f05",
+   "de": [
+    "artifacts/clasificacion/xgboost/modelo.joblib y datos/fondo.parquet"
+   ],
+   "como": "valores SHAP (xgboost) de 500 clientes de prueba fijos (semilla 42)"
+  },
+  {
+   "archivo": "shap/indice.json",
+   "bytes": 39466,
+   "sha256": "75eca338d2b4f41c3379b641079cae11345bd031c0810844e4494b08fb473893",
+   "de": [
+    "preparar_artefactos.py"
+   ],
+   "como": "método, escala, importancia y verificación de cada resumen SHAP"
+  },
+  {
+   "archivo": "shap/regresion__arbol.parquet",
+   "bytes": 39914,
+   "sha256": "f8e84d81837324c55454902bb9249702291f1dea2628d8677be252863f418dce",
+   "de": [
+    "artifacts/regresion/arbol/modelo.joblib y datos/fondo.parquet"
+   ],
+   "como": "valores SHAP (arbol) de 500 clientes de prueba fijos (semilla 42)"
+  },
+  {
+   "archivo": "shap/regresion__ebm.parquet",
+   "bytes": 94639,
+   "sha256": "bcf4726deb2ace9b83816b808ff202fa875c18e6727b18dce248f0e49f449f1f",
+   "de": [
+    "artifacts/regresion/ebm/modelo.joblib y datos/fondo.parquet"
+   ],
+   "como": "valores SHAP (ebm) de 500 clientes de prueba fijos (semilla 42)"
+  },
+  {
+   "archivo": "shap/regresion__knn.parquet",
+   "bytes": 98799,
+   "sha256": "18303f11bdd5d7e920bec28699d4399e51e7b340d9da0634ded1e400a613123e",
+   "de": [
+    "artifacts/regresion/knn/modelo.joblib y datos/fondo.parquet"
+   ],
+   "como": "valores SHAP (vecinos) de 150 clientes de prueba fijos (semilla 42)"
+  },
+  {
+   "archivo": "shap/regresion__lasso.parquet",
+   "bytes": 83154,
+   "sha256": "a0c55eab6b53c8c04e578cc213ade43f62b6bab0781224a2187862e396929153",
+   "de": [
+    "artifacts/regresion/lasso/modelo.joblib y datos/fondo.parquet"
+   ],
+   "como": "valores SHAP (lineal) de 500 clientes de prueba fijos (semilla 42)"
+  },
+  {
+   "archivo": "shap/regresion__random_forest.parquet",
+   "bytes": 259281,
+   "sha256": "d91389f87baf44c06e13205048e3e18e8e6eddcce2e4a633a7cdfbd3408a4f03",
+   "de": [
+    "artifacts/regresion/random_forest/modelo.joblib y datos/fondo.parquet"
+   ],
+   "como": "valores SHAP (arbol) de 500 clientes de prueba fijos (semilla 42)"
+  },
+  {
+   "archivo": "shap/regresion__ridge.parquet",
+   "bytes": 101918,
+   "sha256": "9c92968767a3c0be1c79a7cb71621743c04290c3356a4285f53eaf07dd671f84",
+   "de": [
+    "artifacts/regresion/ridge/modelo.joblib y datos/fondo.parquet"
+   ],
+   "como": "valores SHAP (lineal) de 500 clientes de prueba fijos (semilla 42)"
+  },
+  {
+   "archivo": "shap/regresion__svr.parquet",
+   "bytes": 101918,
+   "sha256": "f40b2d1a6be57e604f7fcff4aa6f0e1ad35a1d447710737483e4d5df06187fd6",
+   "de": [
+    "artifacts/regresion/svr/modelo.joblib y datos/fondo.parquet"
+   ],
+   "como": "valores SHAP (lineal) de 500 clientes de prueba fijos (semilla 42)"
+  },
+  {
+   "archivo": "shap/regresion__xgboost.parquet",
+   "bytes": 108976,
+   "sha256": "f842cb110fbcde29f639cbbb9c22a175413691a2412ab90836f8a5522b6b4c5a",
+   "de": [
+    "artifacts/regresion/xgboost/modelo.joblib y datos/fondo.parquet"
+   ],
+   "como": "valores SHAP (xgboost) de 500 clientes de prueba fijos (semilla 42)"
+  },
+  {
+   "archivo": "variables.csv",
+   "bytes": 21060,
+   "sha256": "9746f2bb9c89162f0d3eec45d8dc362b774f9de3c156a23556d13c41fe630186",
+   "de": [
+    "variables_base.csv (nombres y papeles, curado a mano)",
+    "Entregable 3: ETL de src/datos.py (rangos del entrenamiento)",
+    "datos/modelos/ebm_*.json (importancia y efectos)"
+   ],
+   "como": "una fila por predictor"
+  }
+ ],
+ "artefactos": "2026-11-15T10:20:06"
+}

@@ -1,0 +1,9 @@
+# Para las pruebas (pytest), los verificadores y preparar_artefactos.py: lo de la app, más interpret-core para abrir las
+# dos EBM de artifacts/ y compararlas con el motor en numpy, y shap para verificar las explicaciones contra la librería y
+# calcular el resumen global exacto (TreeSHAP). La app no los necesita. Son las versiones con que se entrenó y verificó.
+-r requirements.txt
+interpret-core==0.7.8
+shap==0.52.0
+numba==0.68.1
+llvmlite==0.50.0
+pytest==9.2.0

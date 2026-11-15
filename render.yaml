@@ -1,0 +1,25 @@
+# Despliegue del dashboard en Render (Blueprint: New → Blueprint, este repositorio). Render lee este archivo en la raíz;
+# el dash está en Dashboard/ (rootDir), así que construye y arranca allí y solo vuelve a desplegar cuando cambia esa carpeta.
+services:
+  - type: web
+    name: fuga-de-clientes-dash
+    runtime: python
+    plan: free
+    rootDir: Dashboard
+    buildCommand: pip install -r requirements.txt
+    # Un solo proceso (el plan gratuito tiene 512 MB) con cuatro hilos; 120 s de margen para la explicación de k-NN
+    startCommand: gunicorn app:server --workers 1 --threads 4 --timeout 120 --bind 0.0.0.0:$PORT
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.3
+      # Cuántas tuberías guarda en memoria (las 14 caben en unos 400 MB); si Render reinicia por memoria, bájelo a 3
+      - key: FUGA_CACHE_MODELOS
+        value: "16"
+      # Al arrancar, en un hilo aparte, carga los modelos y arma cada vista una vez (la primera visita no espera)
+      - key: FUGA_PRECALENTAR
+        value: "1"
+      # Menos fragmentación de la memoria de glibc con varios hilos
+      - key: MALLOC_ARENA_MAX
+        value: "2"

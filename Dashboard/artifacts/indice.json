@@ -1,0 +1,305 @@
+{
+ "generado": "2026-11-15T10:09:51",
+ "versiones": {
+  "python": "3.13.3",
+  "scikit-learn": "1.9.1",
+  "xgboost": "3.4.1",
+  "interpret": "0.7.8",
+  "numpy": "2.5.3",
+  "pandas": "3.0.6",
+  "scipy": "1.18.1",
+  "joblib": "1.6.0",
+  "shap": "0.52.0"
+ },
+ "semilla": 42,
+ "artefactos": [
+  {
+   "tarea": "clasificacion",
+   "modelo": "xgboost",
+   "ruta": "clasificacion/xgboost/modelo.joblib",
+   "bytes": 197392,
+   "sha256": "fe7a640ae7749d2e098846c530e2e8711edc483553fa50fc3fc6921aeb4a5a04",
+   "estimador": "xgboost.sklearn.XGBClassifier",
+   "balanceo": "class_weight",
+   "optimizador": "genetica",
+   "metrica_externa": {
+    "metrica": "AUC",
+    "media": 0.8332144139201197,
+    "desviacion": 0.004942051134385971,
+    "pliegues_externos": 5,
+    "pliegues_internos": 3
+   },
+   "ida_y_vuelta": "idénticas"
+  },
+  {
+   "tarea": "clasificacion",
+   "modelo": "arbol",
+   "ruta": "clasificacion/arbol/modelo.joblib",
+   "bytes": 6369,
+   "sha256": "3ca062c72edf1b1fdd8f95de46a100cd8d01499d62b0da8d4c76fdd48fc83072",
+   "estimador": "sklearn.tree._classes.DecisionTreeClassifier",
+   "balanceo": "class_weight",
+   "optimizador": "random",
+   "metrica_externa": {
+    "metrica": "AUC",
+    "media": 0.8331756166160655,
+    "desviacion": 0.002091125147045647,
+    "pliegues_externos": 5,
+    "pliegues_internos": 3
+   },
+   "ida_y_vuelta": "idénticas"
+  },
+  {
+   "tarea": "clasificacion",
+   "modelo": "random_forest",
+   "ruta": "clasificacion/random_forest/modelo.joblib",
+   "bytes": 13766889,
+   "sha256": "cc3ed942512d4bae4f37812f934d20018c4a36462d1ece6278199513cf2396c9",
+   "estimador": "sklearn.ensemble._forest.RandomForestClassifier",
+   "balanceo": "ninguno",
+   "optimizador": "genetica",
+   "metrica_externa": {
+    "metrica": "AUC",
+    "media": 0.8325603127112856,
+    "desviacion": 0.0029306720500308736,
+    "pliegues_externos": 5,
+    "pliegues_internos": 3
+   },
+   "ida_y_vuelta": "idénticas"
+  },
+  {
+   "tarea": "clasificacion",
+   "modelo": "ebm",
+   "ruta": "clasificacion/ebm/modelo.joblib",
+   "bytes": 432749,
+   "sha256": "3e5d7ab579f165e54c9192014d4fb387342a6ff0fe3ba65e629bc91e0ab30a90",
+   "estimador": "interpret.glassbox._ebm._ebm.ExplainableBoostingClassifier",
+   "balanceo": "class_weight",
+   "optimizador": "grid",
+   "metrica_externa": {
+    "metrica": "AUC",
+    "media": 0.8292035404563995,
+    "desviacion": 0.0037289130741755597,
+    "pliegues_externos": 5,
+    "pliegues_internos": 3
+   },
+   "ida_y_vuelta": "idénticas"
+  },
+  {
+   "tarea": "clasificacion",
+   "modelo": "knn",
+   "ruta": "clasificacion/knn/modelo.joblib",
+   "bytes": 6356974,
+   "sha256": "988c7f1e509a66818ae87dc3fbbeae83da92d764776b4082bbcda3642788b9ed",
+   "estimador": "sklearn.neighbors._classification.KNeighborsClassifier",
+   "balanceo": "ninguno",
+   "optimizador": "genetica",
+   "metrica_externa": {
+    "metrica": "AUC",
+    "media": 0.7835524371288687,
+    "desviacion": 0.007194999335165577,
+    "pliegues_externos": 5,
+    "pliegues_internos": 3
+   },
+   "ida_y_vuelta": "idénticas"
+  },
+  {
+   "tarea": "clasificacion",
+   "modelo": "logistica",
+   "ruta": "clasificacion/logistica/modelo.joblib",
+   "bytes": 4186,
+   "sha256": "890d7ee1c73e7fbd7a6309afe1cf7d6d7c8cdd7d5050cf792fa6cca36e5f16f8",
+   "estimador": "sklearn.linear_model._logistic.LogisticRegression",
+   "balanceo": "class_weight",
+   "optimizador": "genetica",
+   "metrica_externa": {
+    "metrica": "AUC",
+    "media": 0.7643987798246012,
+    "desviacion": 0.004695259576416776,
+    "pliegues_externos": 5,
+    "pliegues_internos": 3
+   },
+   "ida_y_vuelta": "idénticas"
+  },
+  {
+   "tarea": "clasificacion",
+   "modelo": "svm",
+   "ruta": "clasificacion/svm/modelo.joblib",
+   "bytes": 4331,
+   "sha256": "b0be63a86756070d29b0409c198f583b971b9cd553f5f47d76d6fe56c655244c",
+   "estimador": "sklearn.svm._classes.LinearSVC",
+   "balanceo": "class_weight",
+   "optimizador": "grid",
+   "metrica_externa": {
+    "metrica": "AUC",
+    "media": 0.7641469720230337,
+    "desviacion": 0.004437112409294757,
+    "pliegues_externos": 5,
+    "pliegues_internos": 3
+   },
+   "ida_y_vuelta": "idénticas"
+  },
+  {
+   "tarea": "clasificacion",
+   "modelo": "naive_bayes",
+   "ruta": "clasificacion/naive_bayes/modelo.joblib",
+   "bytes": 6110,
+   "sha256": "328539efbb4753e25891e52691c9d3018651cd4dcefca8d24a360505611ed7f4",
+   "estimador": "sklearn.naive_bayes.GaussianNB",
+   "balanceo": "ninguno",
+   "optimizador": "grid",
+   "metrica_externa": {
+    "metrica": "AUC",
+    "media": 0.6721917721143488,
+    "desviacion": 0.011906833288730384,
+    "pliegues_externos": 5,
+    "pliegues_internos": 3
+   },
+   "ida_y_vuelta": "idénticas"
+  },
+  {
+   "tarea": "regresion",
+   "modelo": "xgboost",
+   "ruta": "regresion/xgboost/modelo.joblib",
+   "bytes": 59954,
+   "sha256": "5f5962deecc3172878a53296d7523554d0990a8e6082dd7b6bf2d08cfc9d80c8",
+   "estimador": "xgboost.sklearn.XGBRegressor",
+   "balanceo": "ninguno",
+   "optimizador": "bayesiana",
+   "metrica_externa": {
+    "metrica": "RMSE",
+    "media": 0.058981509945088294,
+    "desviacion": 0.0004024850684459983,
+    "pliegues_externos": 5,
+    "pliegues_internos": 3
+   },
+   "ida_y_vuelta": "idénticas"
+  },
+  {
+   "tarea": "regresion",
+   "modelo": "ebm",
+   "ruta": "regresion/ebm/modelo.joblib",
+   "bytes": 1056533,
+   "sha256": "a6739bda5aadc576370875239a345b8127f27776b4b47c790399a17ca6264227",
+   "estimador": "interpret.glassbox._ebm._ebm.ExplainableBoostingRegressor",
+   "balanceo": "ninguno",
+   "optimizador": "grid",
+   "metrica_externa": {
+    "metrica": "RMSE",
+    "media": 0.059034487624420526,
+    "desviacion": 0.00042666251507088196,
+    "pliegues_externos": 5,
+    "pliegues_internos": 3
+   },
+   "ida_y_vuelta": "idénticas"
+  },
+  {
+   "tarea": "regresion",
+   "modelo": "random_forest",
+   "ruta": "regresion/random_forest/modelo.joblib",
+   "bytes": 2569717,
+   "sha256": "0bc13de1472c11e4ea70f1bc1d98da21123a648e3f6e32997f7503f3de523c02",
+   "estimador": "sklearn.ensemble._forest.RandomForestRegressor",
+   "balanceo": "ninguno",
+   "optimizador": "grid",
+   "metrica_externa": {
+    "metrica": "RMSE",
+    "media": 0.05915016458137705,
+    "desviacion": 0.0003890447138133653,
+    "pliegues_externos": 5,
+    "pliegues_internos": 3
+   },
+   "ida_y_vuelta": "idénticas"
+  },
+  {
+   "tarea": "regresion",
+   "modelo": "arbol",
+   "ruta": "regresion/arbol/modelo.joblib",
+   "bytes": 5974,
+   "sha256": "95c086bdbbd8375bdee406b8ce514c8ae2235a8388ebbb7ff3f65e08bbf856fe",
+   "estimador": "sklearn.tree._classes.DecisionTreeRegressor",
+   "balanceo": "ninguno",
+   "optimizador": "genetica",
+   "metrica_externa": {
+    "metrica": "RMSE",
+    "media": 0.05926493495144658,
+    "desviacion": 0.0003805006326346684,
+    "pliegues_externos": 5,
+    "pliegues_internos": 3
+   },
+   "ida_y_vuelta": "idénticas"
+  },
+  {
+   "tarea": "regresion",
+   "modelo": "lasso",
+   "ruta": "regresion/lasso/modelo.joblib",
+   "bytes": 4024,
+   "sha256": "7ce83b4b1688a3f1bb7e4c9547b08810065c086521dbd9c293301a6c2fed7823",
+   "estimador": "sklearn.linear_model._coordinate_descent.Lasso",
+   "balanceo": "ninguno",
+   "optimizador": "genetica",
+   "metrica_externa": {
+    "metrica": "RMSE",
+    "media": 0.061802440250145654,
+    "desviacion": 0.00047839825127382726,
+    "pliegues_externos": 5,
+    "pliegues_internos": 3
+   },
+   "ida_y_vuelta": "idénticas"
+  },
+  {
+   "tarea": "regresion",
+   "modelo": "ridge",
+   "ruta": "regresion/ridge/modelo.joblib",
+   "bytes": 4233,
+   "sha256": "81ca7c45429ddcb30508298527f82fb295a4249fa7883cd299be3f769e8dc66c",
+   "estimador": "sklearn.linear_model._ridge.Ridge",
+   "balanceo": "ninguno",
+   "optimizador": "genetica",
+   "metrica_externa": {
+    "metrica": "RMSE",
+    "media": 0.0618168594767363,
+    "desviacion": 0.00048195447815460346,
+    "pliegues_externos": 5,
+    "pliegues_internos": 3
+   },
+   "ida_y_vuelta": "idénticas"
+  },
+  {
+   "tarea": "regresion",
+   "modelo": "svr",
+   "ruta": "regresion/svr/modelo.joblib",
+   "bytes": 4279,
+   "sha256": "2013ba76a6cc6f08cfc6b617119952ca1306ca0c02049cbc03b35c71aa5d41e9",
+   "estimador": "sklearn.svm._classes.LinearSVR",
+   "balanceo": "ninguno",
+   "optimizador": "bayesiana",
+   "metrica_externa": {
+    "metrica": "RMSE",
+    "media": 0.06183263876580334,
+    "desviacion": 0.00047042474580710617,
+    "pliegues_externos": 5,
+    "pliegues_internos": 3
+   },
+   "ida_y_vuelta": "idénticas"
+  },
+  {
+   "tarea": "regresion",
+   "modelo": "knn",
+   "ruta": "regresion/knn/modelo.joblib",
+   "bytes": 6445698,
+   "sha256": "5d2436da725295175061ad8c614b2e949e64a2a6d06632dcde776ae536ada46c",
+   "estimador": "sklearn.neighbors._regression.KNeighborsRegressor",
+   "balanceo": "ninguno",
+   "optimizador": "grid",
+   "metrica_externa": {
+    "metrica": "RMSE",
+    "media": 0.0633536437134237,
+    "desviacion": 0.00041506680766456236,
+    "pliegues_externos": 5,
+    "pliegues_internos": 3
+   },
+   "ida_y_vuelta": "idénticas"
+  }
+ ]
+}

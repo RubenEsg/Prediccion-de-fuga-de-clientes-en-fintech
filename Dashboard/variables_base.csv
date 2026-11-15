@@ -1,0 +1,49 @@
+variable,nombre,unidad,tipo,derivada_etl,papel,regla,descripcion
+age,Edad,años,entera,False,principal,"37,8 % de la importancia; solo toma 6 valores (29, 30, 44, 45, 59, 60): lista desplegable, no deslizador continuo","Edad del cliente, en años"
+gender,Género,,categórica,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Género
+location,Ciudad,,categórica,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Ciudad y departamento de residencia (18 ciudades de Colombia)
+income_bracket,Tramo de ingresos,,categórica,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Tramo de ingresos
+education_level,Nivel educativo,,categórica,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Nivel educativo
+marital_status,Estado civil,,categórica,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Estado civil
+household_size,Personas en el hogar,,entera,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Número de personas del hogar
+acquisition_channel,Canal de llegada,,categórica,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Canal por el que llegó el cliente
+customer_segment,Segmento de uso,,categórica,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Segmento de uso asignado por la fintech
+savings_account,Cuenta de ahorros,,binaria,False,secundaria,interruptor; al cambiarlo se recalculan product_satisfaction y satisfaction_score,Tiene cuenta de ahorros
+credit_card,Tarjeta de crédito,,binaria,False,secundaria,interruptor; al cambiarlo se recalculan product_satisfaction y satisfaction_score y credit_utilization_ratio pasa a 0 si se apaga,Tiene tarjeta de crédito
+personal_loan,Préstamo personal,,binaria,False,secundaria,interruptor; al cambiarlo se recalculan product_satisfaction y satisfaction_score,Tiene préstamo personal
+investment_account,Cuenta de inversión,,binaria,False,secundaria,interruptor; al cambiarlo se recalculan product_satisfaction y satisfaction_score,Tiene cuenta de inversión
+insurance_product,Seguro,,binaria,False,secundaria,interruptor; al cambiarlo se recalculan product_satisfaction y satisfaction_score,Tiene un seguro
+app_logins_frequency,Inicios de sesión en la app,,entera,False,principal,"30,1 % de la importancia; 27 valores discretos entre 4 y 100: deslizador sobre esos valores",Inicios de sesión en la aplicación (frecuencia de uso; el archivo no declara el periodo)
+feature_usage_diversity,Funciones de la app que usa,,entera,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Número de funciones distintas de la aplicación que usa
+bill_payment_user,Pago de facturas,,binaria,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Paga facturas desde la aplicación
+auto_savings_enabled,Ahorro automático,,binaria,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Tiene activado el ahorro automático
+credit_utilization_ratio,Uso del cupo de la tarjeta,,continua,False,calculada,"0 si credit_card es False (imputación del ETL); con tarjeta toma valores en (0, 0,94]: si el usuario activa la tarjeta hay que darle un valor (mediana con tarjeta)",Fracción usada del cupo de la tarjeta de crédito (0 si no tiene tarjeta: imputación del ETL)
+international_transactions,Transacciones internacionales,,entera,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Número de transacciones internacionales
+failed_transactions,Transacciones fallidas,,entera,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Número de transacciones fallidas
+tx_count,Número de transacciones,,entera,False,fija,"duplica a n_tx (iguales en el 99,9 % de las filas) y arrastra tx_satisfaction, total_tx_volume y monto_total",Número de transacciones (resumen de la tabla de clientes)
+avg_tx_value,Valor medio por transacción,,continua,False,fija,duplica a monto_medio (derivada del detalle),"Valor medio por transacción (resumen de la tabla de clientes), en pesos"
+total_tx_volume,Volumen total transado,,entera,False,fija,= tx_count × avg_tx_value; duplica a monto_total,"Volumen total transado (resumen de la tabla de clientes), en pesos"
+base_satisfaction,Satisfacción de base,,continua,False,principal,"continua (4,25 a 11,71 en entrenamiento); al moverla debe recalcularse satisfaction_score",Satisfacción de base del cliente (componente continuo del puntaje de satisfacción)
+tx_satisfaction,Satisfacción con las transacciones,,continua,False,calculada,"= min(tx_count/200, 1), exacto",Satisfacción con las transacciones (componente)
+product_satisfaction,Satisfacción con los productos,,continua,False,calculada,"= (número de productos entre savings_account, credit_card, personal_loan, investment_account, insurance_product)/5, exacto",Satisfacción con los productos (componente)
+satisfaction_score,Puntaje de satisfacción,,entera,False,calculada,"= round(0,5·base_satisfaction + 0,25·tx_satisfaction + 0,25·product_satisfaction), exacto en el 100 % de las filas; o se recalcula (modo coherente) o se deja mover libre de 2 a 6 avisando de que rompe la fórmula",Puntaje de satisfacción declarado en la encuesta (entero)
+support_tickets_count,Tiquetes de soporte,,entera,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Número de tiquetes de soporte abiertos
+resolved_tickets_ratio,Tiquetes resueltos,,continua,False,fija,atada a support_tickets_count (0 si no hay tiquetes; fracciones k/n),Fracción de tiquetes de soporte resueltos
+app_store_rating,Calificación de la app,,continua,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Calificación que dio a la aplicación en la tienda
+feedback_sentiment,Sentimiento de los comentarios,,categórica,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Sentimiento de sus comentarios
+transaction_frequency,Transacciones por día,,continua,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Transacciones por día (frecuencia transaccional)
+preferred_transaction_type,Tipo de transacción preferido,,categórica,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Tipo de transacción preferido
+weekend_transaction_ratio,Transacciones en fin de semana,,continua,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Fracción de transacciones hechas en fin de semana
+customer_tenure,Antigüedad,,continua,False,secundaria,independiente de las demás; efecto pequeño (panel plegado «más variables»),Antigüedad del cliente (el archivo no declara la unidad)
+n_tx,Número de transacciones (detalle),,entera,True,fija,derivada del detalle de transacciones; no es una palanca que alguien pueda mover,"Número de transacciones del cliente en el detalle (transactions_data.csv, sin duplicados)"
+monto_total,Monto total (detalle),,entera,True,fija,derivada del detalle de transacciones; no es una palanca que alguien pueda mover,Suma de amount de sus transacciones
+monto_medio,Monto medio (detalle),,continua,True,fija,derivada del detalle de transacciones; no es una palanca que alguien pueda mover,Media de amount de sus transacciones
+monto_mediano,Monto mediano (detalle),,continua,True,fija,derivada del detalle de transacciones; no es una palanca que alguien pueda mover,Mediana de amount de sus transacciones
+recencia_dias,Días desde la última transacción,días,entera,True,fija,derivada del detalle de transacciones; no es una palanca que alguien pueda mover,Días entre su última transacción y la última fecha del detalle (2023-12-29)
+dias_activo,Días activo,días,entera,True,fija,derivada del detalle de transacciones; no es una palanca que alguien pueda mover,Días entre su primera y su última transacción
+volatilidad_monto,Volatilidad del monto,,continua,True,fija,derivada del detalle de transacciones; no es una palanca que alguien pueda mover,Coeficiente de variación del monto (desviación típica / media)
+meses_activos,Meses activos,meses,entera,True,fija,derivada del detalle de transacciones; no es una palanca que alguien pueda mover,Número de meses distintos con al menos una transacción
+prop_Deposit,Proporción de depósitos,,continua,True,fija,derivada del detalle; las cuatro prop_* suman 1,Proporción de sus transacciones de tipo Deposit
+prop_Payment,Proporción de pagos,,continua,True,fija,derivada del detalle; las cuatro prop_* suman 1,Proporción de sus transacciones de tipo Payment
+prop_Transfer,Proporción de transferencias,,continua,True,fija,derivada del detalle; las cuatro prop_* suman 1,Proporción de sus transacciones de tipo Transfer
+prop_Withdrawal,Proporción de retiros,,continua,True,fija,derivada del detalle; las cuatro prop_* suman 1,Proporción de sus transacciones de tipo Withdrawal

@@ -1,0 +1,79 @@
+,0
+age,0.3775302170482662
+app_logins_frequency,0.30117814247938224
+satisfaction_score,0.11645085311637993
+base_satisfaction,0.024942670101700974
+income_bracket_Low,0.014756820645098511
+prop_Withdrawal,0.010235827425360175
+product_satisfaction,0.008858888470660417
+investment_account,0.007977961192059745
+education_level_Master,0.006909765649602643
+volatilidad_monto,0.006831196264135005
+customer_tenure,0.006710737793338989
+transaction_frequency,0.006624307172495655
+education_level_High School,0.006416203543989642
+credit_card,0.0060935554112452744
+"location_Bogotá, Cundinamarca",0.0051616704960926185
+income_bracket_Very High,0.004998738173347721
+income_bracket_Medium,0.0037682418532472743
+prop_Transfer,0.0037014807522872096
+insurance_product,0.0036718701634756773
+prop_Payment,0.0035507748464070794
+auto_savings_enabled,0.003208865211998803
+avg_tx_value,0.0030554377743820713
+weekend_transaction_ratio,0.003035470093372995
+monto_medio,0.002983358648362022
+acquisition_channel_Referral,0.0029805656880649745
+personal_loan,0.0025683456999817554
+tx_satisfaction,0.0024850241785905466
+customer_segment_occasional,0.0024664988054809785
+dias_activo,0.0024292573027290118
+credit_utilization_ratio,0.002426018847934709
+monto_mediano,0.0021340353524533845
+monto_total,0.002068825190699402
+"location_Santa Marta, Magdalena",0.0020371362025403484
+total_tx_volume,0.002012769003092249
+prop_Deposit,0.0019151950789247087
+"location_Barranquilla, Atlántico",0.0018445486833751116
+tx_count,0.0017798755316722106
+n_tx,0.0017537015705333197
+support_tickets_count,0.0015751625534030443
+marital_status_Single,0.0015446607016773705
+resolved_tickets_ratio,0.001523781739419
+"location_Cartagena, Bolívar",0.001466483820519716
+feature_usage_diversity,0.0014136037238112683
+"location_Bucaramanga, Santander",0.0013369432382140496
+app_store_rating,0.0013066315751649488
+"location_Medellín, Antioquia",0.0012518136326416206
+meses_activos,0.0011714893091743347
+acquisition_channel_Partnership,0.0011566187301203987
+feedback_sentiment_Neutral,0.0011358397645392702
+preferred_transaction_type_Transfer,0.0010636301122837115
+"location_Ibagué, Tolima",0.0010286634660017272
+marital_status_Widowed,0.0010151875731749449
+customer_segment_regular,0.001008336658440675
+"location_Pasto, Nariño",0.000951324651476591
+gender_Other,0.0008436994468380478
+household_size,0.0008028925144262913
+"location_Valledupar, Cesar",0.000771633942536516
+"location_Cúcuta, Norte de Santander",0.0007663304989368711
+gender_Male,0.000740674810316544
+recencia_dias,0.000697601628559969
+education_level_PhD,0.0006452043025431483
+customer_segment_power,0.0006344618730642391
+"location_Cali, Valle del Cauca",0.0005616462738147246
+preferred_transaction_type_Payment,0.0005530485382563254
+preferred_transaction_type_Withdrawal,0.000533753059005043
+marital_status_Married,0.0004947294301757211
+acquisition_channel_Paid Ad,0.0004171249368415355
+"location_Manizales, Caldas",0.00034742792580538264
+"location_Sincelejo, Sucre",0.0003465304747885088
+savings_account,0.0003258604862926875
+feedback_sentiment_Positive,0.00025577635913540114
+bill_payment_user,0.00019044867172914945
+"location_Neiva, Huila",0.0001721394349522937
+failed_transactions,0.00016585069959543962
+"location_Pereira, Risaralda",0.00011152847676323243
+international_transactions,8.191820600501994e-05
+"location_Villavicencio, Meta",3.2766124744452545e-05
+"location_Montería, Córdoba",1.9291720491421904e-06

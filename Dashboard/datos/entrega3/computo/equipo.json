@@ -1,0 +1,9 @@
+{
+ "procesador": "AMD64 Family 23 Model 113 Stepping 0, AuthenticAMD",
+ "nucleos_logicos": 6,
+ "nucleos_fisicos": 6,
+ "memoria_gb": 15.9,
+ "sistema": "Windows-11-10.0.26200-SP0",
+ "python": "3.13.3",
+ "gpu": "NVIDIA GeForce RTX 3050, 6144 MiB"
+}

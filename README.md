@@ -9,7 +9,8 @@ análisis exploratorio (Entrega 1), los modelos lineales de referencia (Entrega 
 pipeline combinatorio de 140 corridas con cuatro métodos de optimización de hiperparámetros y validación cruzada anidada,
 optimización computacional, evaluación, interpretabilidad, comparación estadística y un modelo nuevo, la *Explainable
 Boosting Machine*, que supera a los modelos de la Entrega 2. El informe final (`InformeFinal/`) reúne la metodología y
-los resultados de las tres entregas, escritos con las guías del curso, con su introducción y sus conclusiones.
+los resultados de las tres entregas, escritos con las guías del curso, con su introducción y sus conclusiones. El
+dashboard predictivo (`Dashboard/`) pone a predecir en vivo a los modelos finales y se despliega en Render.
 
 ## Sitio
 
@@ -26,6 +27,8 @@ Sin conexión, se abre igual desde [`docs/index.html`](docs/index.html).
 | `Entrega2/` | `entrega2_modelo.ipynb`, el cuaderno ejecutado de los modelos base, y su artículo `Entrega2_articulo.pdf` |
 | `Entrega3/` | El entregable final (tabla siguiente) |
 | `InformeFinal/` | El informe final del proyecto (más abajo): las secciones de metodología y de resultados escritas con las guías del curso y el informe que las une |
+| `Dashboard/` | El dashboard predictivo en Plotly Dash (más abajo): Contexto, EDA y Modelos, con los 16 modelos finales en vivo |
+| `render.yaml`, `.github/workflows/` | El despliegue del dashboard en Render (Blueprint) y sus pruebas en GitHub Actions |
 | `datos/` | COFINFAD comprimido (`customer_data.zip` y `transactions_data.zip`) y cómo usarlo |
 | `codigo/` | Páginas del Jupyter Book que muestran el código fuente completo |
 | `docs/` | El Jupyter Book construido, que sirve GitHub Pages |
@@ -68,6 +71,27 @@ Sin conexión, se abre igual desde [`docs/index.html`](docs/index.html).
 | [`InformeFinal/resultados/main.pdf`](InformeFinal/resultados/main.pdf) | La sección de resultados según la guía del curso (ocho subsecciones); `generar.py` reproduce cada prueba estadística, tabla y figura desde `Entrega3/resultados/`, con toda cifra en `datos/*.csv` y las nueve figuras en `figures/` |
 
 Cada carpeta tiene su `README.md` con los archivos y cómo regenerarlos.
+
+### Dashboard
+
+[`Dashboard/`](Dashboard/) es la app en Plotly Dash sobre la que se hace la sustentación. Tiene tres secciones:
+**Contexto** (problema, pregunta, formulación, datos, pipeline, limitaciones y ética), **EDA** (con filtros globales,
+solo sobre el entrenamiento) y **Modelos**. Modelos tiene doce vistas: tabla de líderes, predicción en vivo con
+incertidumbre y SHAP local, diagnóstico, interpretabilidad, comparación estadística, y el modelo propuesto con su
+algoritmo, pruebas, robustez, veredicto y ficha. Carga las 16 tuberías finales de `Dashboard/artifacts/` (cada una con su
+`metadata.json` y su prueba de ida y vuelta) y nunca entrena.
+
+```bash
+cd Dashboard
+python -m venv .venv
+.venv/Scripts/pip install -r requirements.txt      # en Linux o macOS: .venv/bin/pip
+.venv/Scripts/python app.py                        # http://127.0.0.1:8060
+```
+
+En Windows basta con doble clic en `Dashboard/iniciar_dash.bat`. Se despliega en Render con `render.yaml` (New →
+Blueprint, este repositorio). [`Dashboard/README.md`](Dashboard/README.md) explica el despliegue, cómo funciona y cómo se
+comprueba. [`MODEL_CARD.md`](Dashboard/MODEL_CARD.md) es la ficha del modelo y
+[`DATA_STATEMENT.md`](Dashboard/DATA_STATEMENT.md) la declaración de los datos.
 
 ## Resultados principales
 

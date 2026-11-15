@@ -1,0 +1,6 @@
+# Entorno, cachés y capturas: no van al repositorio
+.venv/
+__pycache__/
+*.pyc
+capturas/
+.pytest_cache/
