@@ -5,6 +5,9 @@ Dashboard predictivo en Plotly Dash del proyecto final de Machine Learning sobre
 ocho modelos finales de cada tarea, con su incertidumbre y su explicación local. Es el Bloque E de la guía «Proyecto
 Final: Tercer Entregable» y la sustentación se hace sobre él.
 
+**En línea: <https://fuga-de-clientes-dash.onrender.com>** (Render, plan gratuito: si lleva un rato sin visitas, la primera carga tarda cerca de un
+minuto).
+
 Proyecto final de Machine Learning · Pregrado en Ciencia de Datos, Universidad del Norte · Valerie Martínez Pulido,
 Abrahan Basto Martínez y Rubén Esguerra Fernández.
 

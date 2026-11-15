@@ -19,6 +19,9 @@ El Jupyter Book (el notebook en línea) con las tres entregas y todo el código:
 
 Sin conexión, se abre igual desde [`docs/index.html`](docs/index.html).
 
+El dashboard predictivo, desplegado en Render: **https://fuga-de-clientes-dash.onrender.com** (plan gratuito: si lleva un rato sin visitas, la primera
+carga tarda cerca de un minuto).
+
 ## Contenido
 
 | Carpeta | Contenido |
@@ -74,7 +77,7 @@ Cada carpeta tiene su `README.md` con los archivos y cómo regenerarlos.
 
 ### Dashboard
 
-[`Dashboard/`](Dashboard/) es la app en Plotly Dash sobre la que se hace la sustentación. Tiene tres secciones:
+[`Dashboard/`](Dashboard/) es la app en Plotly Dash sobre la que se hace la sustentación, en línea en <https://fuga-de-clientes-dash.onrender.com>. Tiene tres secciones:
 **Contexto** (problema, pregunta, formulación, datos, pipeline, limitaciones y ética), **EDA** (con filtros globales,
 solo sobre el entrenamiento) y **Modelos**. Modelos tiene doce vistas: tabla de líderes, predicción en vivo con
 incertidumbre y SHAP local, diagnóstico, interpretabilidad, comparación estadística, y el modelo propuesto con su
