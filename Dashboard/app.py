@@ -56,6 +56,13 @@ if str(AQUI) not in sys.path:
 import datos_app as D  # noqa: E402
 import ui  # noqa: E402
 
+# El lector de parquet de pandas (pyarrow.parquet) se importa aquí, en el hilo principal y antes de atender visitas. Si su
+# primera importación ocurre en dos hilos a la vez, Python 3.13 puede dejar el submódulo a medio registrar y desde entonces
+# toda lectura de parquet falla («cannot access submodule 'parquet' of module 'pyarrow'»): pasó en Render el 15-nov-2026.
+from pandas.io.parquet import get_engine as _motor_parquet  # noqa: E402
+
+_motor_parquet("auto")
+
 MARCA = "Fuga de clientes"
 TITULO = "Fuga de clientes · Laboratorio del modelo"
 DESCRIPCION = ("Una Explainable Boosting Machine que predice el riesgo de fuga de clientes de una fintech, "
@@ -296,10 +303,13 @@ def servir_documento(clave):
 
 def precalentar():
     """Llena las cachés antes de la primera visita: carga las 14 tuberías de artifacts/ (y predice una vez con cada una) y
-    arma una vez cada sección y vista. Corre en un hilo aparte (FUGA_PRECALENTAR=1, lo pone render.yaml), así el servidor
-    responde desde el principio; en el servidor gratuito, sin esto, la primera predicción tardaría varios segundos."""
+    arma una vez cada sección y vista. Con FUGA_PRECALENTAR=1 (lo pone render.yaml) corre al importar la app, en el hilo
+    principal: gunicorn no atiende visitas hasta que termina (unos 25 s en Render). No corre en un hilo aparte a propósito:
+    así ninguna librería se importa ni ningún modelo se carga en dos hilos a la vez; en el servidor gratuito, sin esto, la
+    primera predicción tardaría varios segundos."""
     import time
     t0 = time.perf_counter()
+    fallas = 0
     try:
         import modelos_vivos as V
         import motor as M
@@ -308,6 +318,7 @@ def precalentar():
             for modelo in V.modelos(tarea):
                 V.predecir(tarea, modelo, X)
     except Exception as e:  # noqa: BLE001 - el precalentamiento nunca debe tumbar la app
+        fallas += 1
         print(f"precalentar: los modelos fallaron: {type(e).__name__}: {e}", flush=True)
     for pagina in list(dash.page_registry.values()):
         variantes = ([{"vista": v} for v, *_ in VISTAS] if pagina.get("path_template") else [{}])
@@ -315,13 +326,13 @@ def precalentar():
             try:
                 pagina["layout"](**kw) if callable(pagina["layout"]) else None
             except Exception as e:  # noqa: BLE001
+                fallas += 1
                 print(f"precalentar: {pagina['module']} {kw} falló: {type(e).__name__}: {e}", flush=True)
-    print(f"precalentar: listo en {time.perf_counter() - t0:.1f} s", flush=True)
+    print(f"precalentar: listo en {time.perf_counter() - t0:.1f} s, {fallas} fallas", flush=True)
 
 
 if os.environ.get("FUGA_PRECALENTAR") == "1":
-    import threading
-    threading.Thread(target=precalentar, name="precalentar", daemon=True).start()
+    precalentar()
 
 
 if __name__ == "__main__":

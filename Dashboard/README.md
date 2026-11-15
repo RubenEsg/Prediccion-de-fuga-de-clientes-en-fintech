@@ -79,7 +79,9 @@ porque Render y GitHub Actions los buscan allí: `render.yaml` dice `rootDir: Da
 
 El plan gratuito tiene 512 MB y 0,1 CPU, y se suspende tras un rato sin visitas: el primer acceso tarda en responder
 (abrir la URL unos minutos antes de la sustentación). La app nunca entrena ni optimiza: solo carga artefactos. Al arrancar,
-un hilo aparte carga los 14 modelos y arma cada vista una vez (`FUGA_PRECALENTAR=1`), así la primera visita no espera.
+antes de atender visitas, carga los 14 modelos y arma cada vista una vez (`FUGA_PRECALENTAR=1`; unos 25 s en Render),
+así la primera visita no espera. Lo hace en el hilo principal y no en uno aparte: en Render, importar el lector de parquet
+en dos hilos a la vez dejó rotas todas las lecturas de parquet.
 
 El `Dockerfile` reproduce ese servidor (Linux, Python 3.13.3, `requirements.txt`, el mismo `gunicorn`). Con los límites del
 plan gratuito (`docker run --memory=512m --cpus=0.1 -p 8060:8060 fuga-dash`), el 15-nov-2026: el precalentamiento tardó

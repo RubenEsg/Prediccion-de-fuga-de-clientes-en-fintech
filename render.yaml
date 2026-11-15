@@ -17,7 +17,7 @@ services:
       # Cuántas tuberías guarda en memoria (las 14 caben en unos 400 MB); si Render reinicia por memoria, bájelo a 3
       - key: FUGA_CACHE_MODELOS
         value: "16"
-      # Al arrancar, en un hilo aparte, carga los modelos y arma cada vista una vez (la primera visita no espera)
+      # Al arrancar, antes de atender visitas, carga los modelos y arma cada vista una vez (la primera visita no espera)
       - key: FUGA_PRECALENTAR
         value: "1"
       # Menos fragmentación de la memoria de glibc con varios hilos
