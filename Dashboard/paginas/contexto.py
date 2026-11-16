@@ -6,7 +6,8 @@ objetivos, la formulación, los datos con su diccionario, la metodología (el pi
 cada paso), la búsqueda con dos fidelidades (y por qué no es Successive Halving), las limitaciones, la ética y los sesgos,
 las conclusiones, los autores y el recorrido de la sustentación.
 
-Toda cifra sale de datos/, de artifacts/, del motor o de CITATION.cff, y cada tarjeta dice de qué archivo. Los textos
+Toda cifra sale de datos/, de artifacts/, del motor o de CITATION.cff, y cada tarjeta dice de qué archivo; la única
+excepción es la del costo de retener frente a conseguir un cliente, citada de Gallo (2014). Los textos
 siguen el informe final (introducción, metodología, resultados y conclusiones) con su tono: la EBM alcanza a los modelos
 de árboles, no los supera. Reutiliza el héroe de secciones/inicio.py y los enlaces de secciones/limites.py.
 """
@@ -46,7 +47,8 @@ LICENCIA_CC_BY = "https://creativecommons.org/licenses/by/4.0/deed.es"
 CARDINAL = {2: "dos", 3: "tres", 4: "cuatro", 5: "cinco", 6: "seis", 7: "siete", 8: "ocho", 9: "nueve", 10: "diez",
             11: "once", 12: "doce"}
 
-# Referencias que cita la página: las del informe (referencias.bib) y las dos de Successive Halving, que no están en él.
+# Referencias que cita la página: las del informe (referencias.bib), y las de Successive Halving y la cifra del costo de
+# retener, que no están en él (`motivo` dice por qué se citan; `url`, dónde leerla).
 # El año va como número para escribirlo con la cita.
 REFERENCIAS = {
     "kaufman": {"corto": "Kaufman et al.", "autores": "Kaufman, S., Rosset, S., Perlich, C. y Stitelman, O.", "anio": 2012,
@@ -78,10 +80,15 @@ REFERENCIAS = {
     "jamieson": {"corto": "Jamieson y Talwalkar", "autores": "Jamieson, K. y Talwalkar, A.", "anio": 2016,
                  "titulo": "Non-stochastic best arm identification and hyperparameter optimization",
                  "fuente": "Proceedings of the International Conference on Artificial Intelligence and Statistics (AISTATS)",
-                 "informe": False},
+                 "informe": False, "motivo": "para precisar la búsqueda con dos fidelidades"},
     "li": {"corto": "Li et al.", "autores": "Li, L., Jamieson, K., DeSalvo, G., Rostamizadeh, A. y Talwalkar, A.", "anio": 2018,
            "titulo": "Hyperband: A novel bandit-based approach to hyperparameter optimization",
-           "fuente": "Journal of Machine Learning Research", "informe": False},
+           "fuente": "Journal of Machine Learning Research", "informe": False,
+           "motivo": "para precisar la búsqueda con dos fidelidades"},
+    "gallo": {"corto": "Gallo", "autores": "Gallo, A.", "anio": 2014, "titulo": "The value of keeping the right customers",
+              "fuente": "Harvard Business Review, 29 de octubre", "informe": False,
+              "motivo": "para la cifra del costo de retener frente a conseguir un cliente",
+              "url": "https://hbr.org/2014/10/the-value-of-keeping-the-right-customers"},
 }
 
 # Las columnas que el ETL eliminó: nombre visible, tipo y motivo (la tabla «Columnas eliminadas» de la metodología)
@@ -275,10 +282,21 @@ def _importa():
         ui.parrafo(f"La EBM ({_cita('lou2012')}; {_cita('nori')}) es una suma de curvas que se pueden graficar y auditar: la "
                    "explicación es el propio modelo, y en un contexto financiero la explicación forma parte del producto."),
     ], titulo="En finanzas hay que poder explicar la decisión")
-    premisa = ui.aviso("El informe parte de que retener a un cliente cuesta menos que conseguir uno nuevo, pero no cuantifica ese costo ni "
-                       "cita una cifra: por eso no se muestra ninguna aquí. Incorporar el costo de cada acción de retención es parte del "
-                       "trabajo futuro.", None, "Lo que el informe no cuantifica")
-    return [ui.rejilla([campana, huella, explicar], "3"), premisa]
+    g = REFERENCIAS["gallo"]
+    costo = ui.tarjeta([ui.rejilla([
+        ui.cifra("Conseguir un cliente nuevo cuesta", f"5{UNION}–{UNION}25", "veces más que retener uno",
+                 nota=f"Según el estudio y el sector ({_cita('gallo')}, Harvard Business Review)."),
+        html.Div([
+            ui.parrafo(["Es la cifra con la que suele justificarse la retención: ",
+                        html.A(f"{g['corto']} ({g['anio']})", href=g["url"], target="_blank", rel="noopener"),
+                        " la recoge en Harvard Business Review y advierte que el múltiplo depende del estudio y del sector. Por "
+                        "eso conviene ordenar a los clientes por riesgo y llegar a tiempo a los que se van a ir."]),
+            ui.parrafo("Es una cifra general, no medida en esta fintech: COFINFAD es sintético y no trae lo que cuesta captar ni retener "
+                       "a un cliente, así que el proyecto no traduce la campaña a dinero. Incorporar el costo de cada acción de "
+                       "retención queda como trabajo futuro."),
+        ], className="apilado"),
+    ], "1-2")], titulo="Retener cuesta menos que conseguir")
+    return [costo, ui.rejilla([campana, huella, explicar], "3")]
 
 
 # --- 3. Pregunta y objetivos ----------------------------------------------------------------------------------------------
@@ -928,10 +946,15 @@ def _autores():
     refs = [ui.nota([f"{_autores_cita(d['autores'])} ({d['anio']}). {d['titulo']}. {d['editor']}, versión {d['version']}. ",
                      html.A(f"doi:{d['doi']}", href=f"https://doi.org/{d['doi']}", target="_blank", rel="noopener"), "."])]
     for r in sorted(REFERENCIAS.values(), key=lambda r: r["autores"]):
-        refs.append(ui.nota(f"{r['autores']} ({r['anio']}). {r['titulo']}. {r['fuente']}."
-                            + ("" if r["informe"] else " No está en el informe: se cita para precisar la búsqueda con dos fidelidades.")))
+        texto = [f"{r['autores']} ({r['anio']}). {r['titulo']}. {r['fuente']}."]
+        if r.get("url"):
+            texto += [" ", html.A(r["url"].replace("https://", ""), href=r["url"], target="_blank", rel="noopener"), "."]
+        if not r["informe"]:
+            texto.append(f" No está en el informe: se cita {r['motivo']}.")
+        refs.append(ui.nota(texto))
     referencias = ui.tarjeta(refs, titulo="Referencias citadas en esta página",
-                             subtitulo="Las del informe final, más las dos de Successive Halving y Hyperband.")
+                             subtitulo="Las del informe final, más las dos de Successive Halving y Hyperband y la de la cifra del "
+                                       "costo de retener.")
     return [ui.rejilla([equipo, referencias], "1-1"), ui.destinos(limites._destinos())]
 
 
@@ -992,7 +1015,8 @@ def layout(**_):
                    subtitulo="La cifra principal va con lo que la acota: la diferencia con el mejor modelo de árboles y con el mejor "
                              "lineal. Cambie la tarea para ver la regresión.", controles=[tarea], fuentes=FUENTES_PRUEBAS,
                    id=f"{PRE}-respuesta"),
-        ui.seccion("Por qué importa: la campaña no alcanza para todos y la decisión debe poder explicarse", _importa(), id=f"{PRE}-importa"),
+        ui.seccion("Por qué importa: retener cuesta menos que conseguir, la campaña no alcanza para todos y la decisión debe poder "
+                   "explicarse", _importa(), id=f"{PRE}-importa"),
         ui.seccion("La pregunta: ¿alcanza un modelo legible la precisión de los ensambles de árboles, y a qué costo?", [_pregunta()],
                    id=f"{PRE}-pregunta"),
         ui.seccion(f"La formulación: una clasificación y una regresión sobre los mismos {F.entero(h['n_pred'])} predictores",

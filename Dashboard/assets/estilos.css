@@ -321,6 +321,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .tarjeta__cab, .grafico__cab { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--e-3); min-width: 0; }
 .tarjeta__textos, .grafico__textos { display: grid; gap: var(--e-1); min-width: 0; }
 .tarjeta__titulo { font-size: var(--t-xl); font-weight: var(--peso-normal); letter-spacing: var(--ls-titulo); }
+/* Párrafos apilados dentro de una columna de la rejilla, con el mismo aire que entre las partes de una tarjeta */
+.apilado { display: grid; align-content: start; gap: var(--e-5); min-width: 0; }
 .tarjeta__sub { color: var(--tinta-2); font-size: var(--t-s); text-wrap: pretty; }
 /* Lo anidado (ficha, saldo, aviso, tabla dentro de una tarjeta) va en blanco con borde fino y sin sombra */
 .tarjeta .tarjeta, .tarjeta .cifra:not(.cifra--llana), .tarjeta .cambio, .tarjeta .aviso, .tarjeta .tabla-marco, .tarjeta .desplegable:not(.desplegable--llano):not(.desplegable--pequeno),
