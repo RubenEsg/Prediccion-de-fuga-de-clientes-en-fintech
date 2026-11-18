@@ -1,0 +1,824 @@
+
+<!DOCTYPE html>
+
+
+<html lang="es" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>9. Conclusiones y limitaciones &#8212; Predicción de fuga de clientes en una fintech colombiana</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=33c23bfc" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../_static/documentation_options.js?v=78d55cf8"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Haz clic para mostrar';</script>
+    <script>let toggleHintHide = 'Haz clic para ocultar';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../_static/translations.js?v=d190bf04"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ProyectoFinal/09_conclusiones';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Índice" href="../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../search.html" />
+    <link rel="next" title="10. Reproducibilidad y bibliografía" href="10_reproducibilidad.html" />
+    <link rel="prev" title="8. Dashboard y despliegue" href="08_dashboard.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="es"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Saltar al contenido principal</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Volver arriba</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Advertencia de versión"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Navegación del sitio">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="En esta página">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Predicción de fuga de clientes en una fintech colombiana</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Proyecto final · Dashboard, modelo original y evaluación rigurosa</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_introduccion.html">Proyecto final: dashboard predictivo, modelo original y evaluación rigurosa</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_correcciones.html">1. Trazabilidad de las correcciones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_datos.html">2. Datos: ETL, EDA y auditoría de fuga</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_benchmarks.html">3. Modelos benchmark</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_literatura.html">4. Revisión de literatura y novedad</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_modelo_original.html">5. El modelo original: Boosting con Desplazamiento Latente (BDL)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_validacion.html">6. Protocolo y validación estadística</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_evaluacion_ampliada.html">7. Evaluación ampliada y robustez</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_dashboard.html">8. Dashboard y despliegue</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">9. Conclusiones y limitaciones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_reproducibilidad.html">10. Reproducibilidad y bibliografía</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codigo_modelo_original.html">Código del modelo original</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 1 · EDA</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega1/eda_bancario.html">Caracterización y auditoría de calidad de datos para predecir la fuga (<em>churn</em>) y el valor del cliente (<em>CLV</em>) en una <em>fintech</em> colombiana</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 2 · Modelos base</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega2/entrega2_modelo.html">Entrega 2 — Procesamiento de datos y modelo base</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Introducción</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/00_introduccion.html">Fuga de clientes en una <em>fintech</em> colombiana: modelos, optimización y evaluación</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/01_datos.html">Datos, análisis exploratorio y construcción de la etiqueta</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Metodología</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/02_metodologia.html">Metodología</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Modelos y Resultados</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/03_corridas.html">Las 140 corridas del pipeline combinatorio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/04_optimizadores.html">Comparación de los métodos de optimización</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/05_computo.html">Optimización computacional</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/06_evaluacion.html">Evaluación en prueba, calibración, residuos y robustez</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/07_interpretabilidad.html">Interpretabilidad: SHAP, LIME y las funciones de forma de la EBM</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · El modelo nuevo</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/08_modelo_nuevo.html">El modelo nuevo frente a la Entrega 2</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Comparación estadística y conclusiones</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/09_estadistica.html">Comparación estadística de los modelos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/10_conclusiones.html">Conclusiones</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Código fuente</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../codigo/indice.html">Código fuente</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src___init__.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/__init__.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_analisis.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/analisis.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_balanceo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/balanceo.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_comparacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/comparacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_config.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/config.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_datos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/datos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_estadistica.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/estadistica.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_evaluacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/evaluacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_experimento.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/experimento.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_formato.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/formato.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_graficos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/graficos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_modelos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/modelos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_optimizacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/optimizacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_preprocesamiento.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/preprocesamiento.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_registro.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/registro.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/correr_140.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/correr_140.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/comparar_entrega2.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/comparar_entrega2.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/computo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/computo.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/complementos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/complementos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/medir_tiempos_finales.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/medir_tiempos_finales.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/notebook_construir.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/notebook/construir.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/notebook_exportar_pdf.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/notebook/exportar_pdf.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/articulo_generar_material.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/articulo/generar_material.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/articulo_compilar.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/articulo/compilar.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_analisis.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_analisis.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_bloque0.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_bloque0.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_estadistica.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_estadistica.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_modelo_nuevo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_modelo_nuevo.py</span></code></a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Descarga esta pagina">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/ProyectoFinal/09_conclusiones.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Descargar archivo fuente"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Imprimir en PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Modo de pantalla completa"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Tema" data-bs-title="Tema"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Claro"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Oscuro"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="Sistema"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>9. Conclusiones y limitaciones</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contenido </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hallazgos">9.1. Hallazgos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#veredicto-sobre-r1-r2-y-r3">9.2. Veredicto sobre R1, R2 y R3</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitaciones">9.3. Limitaciones</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#riesgos-y-usos-no-recomendados">9.4. Riesgos y usos no recomendados</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trabajo-futuro">9.5. Trabajo futuro</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#declaracion-de-autoria-y-uso-de-herramientas">9.6. Declaración de autoría y uso de herramientas</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="conclusiones-y-limitaciones">
+<h1>9. Conclusiones y limitaciones<a class="headerlink" href="#conclusiones-y-limitaciones" title="Link to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Preparación: acceso a los resultados versionados y a las funciones que generan las</span>
+<span class="c1"># tablas y textos del informe.</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">'../ModeloOriginal'</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src</span><span class="w"> </span><span class="kn">import</span> <span class="n">informe</span> <span class="k">as</span> <span class="n">inf</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="hallazgos">
+<h2>9.1. Hallazgos<a class="headerlink" href="#hallazgos" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Cada hallazgo cita las cifras de los archivos de resultados (veredicto.json,</span>
+<span class="c1"># metricas_prueba.csv, techo.json, incertidumbre_prueba.csv, ablacion.csv,</span>
+<span class="c1"># semillas.csv, condicion4.json y auditoria_fuga.json).</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">texto</span><span class="p">(</span><span class="s1">'hallazgos'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<ol class="arabic simple">
+<li><p><strong>Los benchmarks no fallan por falta de ajuste: tratan un escalón como ruido.</strong> El error fuera de pliegue del mejor benchmark de regresión se concentra en cinco niveles separados 0,05 (Figura 5.1), que son el efecto de la variable excluida por fuga de información. Con esa estructura se puede calcular qué obtendría el mejor predictor posible, el que conociera el índice real de cada cliente: en prueba, RMSE 0,05911 y AUC 0,8313. Es el límite teórico de este informe, y los mejores benchmarks ya estaban a 0,00007 y 0,0030 de él.</p></li>
+<li><p><strong>El modelo original recupera esa estructura sin ver la variable que la causa.</strong> El criterio BIC elige <span class="math notranslate nohighlight">\(K = 5\)</span> clases; sus pesos (0,050, 0,098, 0,149, 0,301, 0,402) difieren de la distribución real de <code class="docutils literal notranslate"><span class="pre">active_products</span></code> en menos de 0,001; la separación media entre desplazamientos es 0,0500 (la real es 0,05), y una vez descontado el escalón el error del índice en validación es 0,00076, unas 78 veces menor que el RMSE.</p></li>
+<li><p><strong>En regresión, el original tiene la mejor media externa de los diez modelos</strong>: RMSE 0,05887 frente a 0,05897 de XGBoost, por delante en 15 de 15 pliegues. En prueba obtiene 0,05912 (puesto 1 de 10), a 0,000010 del límite teórico. 2 de las 4 pruebas registradas rechazan la igualdad con el mejor benchmark a favor del original tras la corrección de Holm, y la guía pide tres: <strong>no se demuestra superioridad</strong>.</p></li>
+<li><p><strong>En clasificación, el original no tiene la mejor media externa</strong>: AUC 0,8313, puesto 5 de 10; XGBoost obtiene 0,8333. En prueba obtiene 0,8311 (puesto 1 de 10), a 0,00024 del límite teórico. Ninguna de las 4 pruebas registradas rechaza la igualdad con el mejor benchmark a favor del original tras la corrección de Holm, y la guía pide tres: <strong>no se demuestra superioridad</strong>.</p></li>
+<li><p><strong>Qué habría obtenido el mejor predictor posible.</strong> En clasificación, el predictor óptimo (el que conoce el índice real de cada cliente, que ningún modelo puede aprender sin la variable excluida) no rechaza la igualdad con XGBoost en ninguna de las 4 pruebas. En regresión, el predictor óptimo sí reúne 4 rechazos frente a XGBoost (P1, P2, P3 y P4): con una estimación casi perfecta del índice la condición era alcanzable, y el original se queda en 2.</p></li>
+<li><p><strong>La incertidumbre es donde el modelo cambia el resultado.</strong> Con cobertura del 90 %, su conjunto de predicción mide 0,0062 y el intervalo conforme del mejor benchmark, 0,1905: unas 31 veces más corto, con una cobertura medida de 89,9 % (H3 se cumple). En lugar de un intervalo ancho, el modelo dice en cuál de los niveles puede estar el puntaje. Frente a un conjunto del mismo tipo construido con los residuos de XGBoost (0,0436), unas 7 veces (comparación exploratoria).</p></li>
+<li><p><strong>Las probabilidades salen calibradas, pero con bordes abruptos.</strong> El error de calibración esperado del original es 0,008 sin recalibrar (XGBoost: 0,216). Aun así, su pérdida logarítmica (0,3688) no mejora la del mejor benchmark recalibrado (0,3675): H4 no se cumple, por unos pocos clientes en el borde de una meseta (sección 7.9).</p></li>
+<li><p><strong>Qué aporta cada componente con todas las filas</strong> (ablación, sección 5.9; lo que empeora la media externa con cada cambio, con su p ajustado): retirar la mezcla (<span class="math notranslate nohighlight">\(K = 1\)</span>), 0,000107 de RMSE (p = 0,040); retirar la mezcla (<span class="math notranslate nohighlight">\(K = 1\)</span>), 0,00211 de AUC (p = 0,652); aprender de la etiqueta en lugar del puntaje, 0,00284 de AUC (p = 0,652); cambiar la salida de la mezcla por la conforme empírica, 0,00075 de AUC (p = 0,729). En prueba ningún aporte es significativo.</p></li>
+<li><p><strong>La clase latente da eficiencia muestral, no precisión cuando sobran datos.</strong> Con el 10 % de las filas (3.118), el modelo completo obtiene un RMSE de 0,05896; sin la mezcla, 0,05971, y XGBoost, 0,05972. Con todas las filas los tres quedan en 0,05888, 0,05902 y 0,05896: con la mezcla, el modelo consigue con 3.118 filas lo que XGBoost consigue con 31.182 (sección 7.5; análisis exploratorio, añadido después de ver los resultados).</p></li>
+<li><p><strong>Fuera de COFINFAD no hay ventaja.</strong> En los 4 conjuntos de datos adicionales, el original no supera al mejor benchmark en ninguno, ni en regresión ni en clasificación; en regresión es peor de forma significativa en Vivienda de California y en clasificación es peor de forma significativa en Seguros médicos y Vivienda de California (sección 7.1). En 4 de ellos la búsqueda de hiperparámetros eligió para la regresión la variante sin mezcla, incluidos los construidos con una variable omitida: la ventaja que el protocolo esperaba ahí no apareció.</p></li>
+<li><p><strong>El reajuste del modelo final casi no depende de la semilla, y el modelo cuesta más.</strong> Al reajustar con diez semillas (misma partición y mismos hiperparámetros; solo cambia la semilla del modelo), el RMSE en prueba del original es 0,059116 ± 0,000002 y el de XGBoost, 0,059171 ± 0,000005. Ajustar el original tarda 5,8 s y XGBoost, 1,7 s: está escrito en <code class="docutils literal notranslate"><span class="pre">numpy</span></code>, sin compilar.</p></li>
+<li><p><strong>La corrección de la recencia no cambia ningún dato.</strong> Calculada solo con los clientes de entrenamiento, la fecha de corte es la misma (2023-12-29) y cambian 0 celdas: los resultados de las entregas anteriores siguen siendo válidos (capítulo 2).</p></li>
+</ol>
+</div>
+</div>
+</section>
+<section id="veredicto-sobre-r1-r2-y-r3">
+<h2>9.2. Veredicto sobre R1, R2 y R3<a class="headerlink" href="#veredicto-sobre-r1-r2-y-r3" title="Link to this heading">#</a></h2>
+<p>La <a class="reference internal" href="#tab-r123"><span class="std std-ref">Tabla 9.1</span></a> resume el estado de las tres condiciones de la guía y la
+<a class="reference internal" href="#tab-veredicto-final"><span class="std std-ref">Tabla 9.2</span></a> detalla la tercera.</p>
+<p id="tab-r123"><strong>Tabla 9.1.</strong> Veredicto sobre las condiciones R1, R2 y R3, con la evidencia de cada una.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Condición</p></th>
+<th class="head"><p>Veredicto</p></th>
+<th class="head"><p>Evidencia</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>R1. Novedad en la aplicación</strong></p></td>
+<td><p>Se cumple, con el alcance declarado en la sección 4.5</p></td>
+<td><p>Búsqueda en tres bases con trece cadenas, hecha dos veces, búsqueda por citación en los dos sentidos y revisión de repositorios: no se encontró ningún estudio que aplique a la fuga de clientes un boosting con una mezcla latente de desplazamientos ajustado por EM, ni otro algoritmo de esa familia. La regla de aprendizaje pertenece a una familia ya publicada (EM con paso de boosting); lo propio de BDL es el modelo al que se aplica, su regla de salida y su implementación (<a class="reference internal" href="04_literatura.html#tab-cercanos"><span class="std std-ref">Tabla 4.3</span></a>). El mecanismo está formulado de manera general (Algoritmo 1), tiene cinco propiedades demostradas y responde a una limitación identificada con un experimento (<a class="reference internal" href="05_modelo_original.html#fig-escalones"><span class="std std-ref">Figura 5.1</span></a>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>R2. Implementación algorítmica propia</strong></p></td>
+<td><p>Se cumple</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ModeloOriginal/src/original_model.py</span></code>: discretización, histogramas, árboles, EM de la mezcla, salida de excedencia y salida conforme, programados con <code class="docutils literal notranslate"><span class="pre">numpy</span></code> y <code class="docutils literal notranslate"><span class="pre">scipy</span></code>. El módulo no importa ningún modelo (lo comprueba una prueba unitaria). Las pruebas unitarias del modelo (<a class="reference internal" href="05_modelo_original.html#tab-pruebas-unitarias"><span class="std std-ref">Tabla 5.4</span></a>) y las del marco de experimentos, de las pruebas de hipótesis y del informe se ejecutan en integración continua</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>R3. Superioridad estadísticamente verificada</strong></p></td>
+<td><p>Ver la <a class="reference internal" href="#tab-veredicto-final"><span class="std std-ref">Tabla 9.2</span></a></p></td>
+<td><p>Capítulos 6 y 7</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p id="tab-veredicto-final"><strong>Tabla 9.2.</strong> Veredicto sobre R3 por tarea, con las cuatro condiciones de la guía (la misma de la sección 6.8).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 9.2. Lee veredicto.json y condicion4.json: el veredicto se calcula a partir</span>
+<span class="c1"># de las cuatro condiciones.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_veredicto'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Tarea</p></th>
+<th class="head text-left"><p>Mejor benchmark</p></th>
+<th class="head text-left"><p>1. Media externa mejor</p></th>
+<th class="head text-left"><p>2. Al menos tres pruebas rechazan</p></th>
+<th class="head text-left"><p>3. Efecto no despreciable</p></th>
+<th class="head text-left"><p>4. Conjuntos adicionales</p></th>
+<th class="head text-left"><p>Veredicto R3</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>RMSE (regresión)</p></td>
+<td class="text-left"><p>XGBoost</p></td>
+<td class="text-left"><p>Sí (0,000099)</p></td>
+<td class="text-left"><p>No (2 de 4)</p></td>
+<td class="text-left"><p>Sí (δ = 0,20; <em>d</em> = 0,21)</p></td>
+<td class="text-left"><p>No (mejor en 0 de 4; peor de forma significativa en Vivienda de California)</p></td>
+<td class="text-left"><p><strong>No superior</strong></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>AUC (clasificación)</p></td>
+<td class="text-left"><p>XGBoost</p></td>
+<td class="text-left"><p>No (−0,00200)</p></td>
+<td class="text-left"><p>No (0 de 4)</p></td>
+<td class="text-left"><p>No (δ = −0,31; <em>d</em> = −0,51)</p></td>
+<td class="text-left"><p>No (mejor en 0 de 4; peor de forma significativa en Seguros médicos, Vivienda de California)</p></td>
+<td class="text-left"><p><strong>No superior</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>En las condiciones 1 y 3, el número entre paréntesis es la ventaja del original (positiva: a su favor) y el tamaño del efecto con ese mismo signo. En la 2, las pruebas que rechazan a favor del original con p ajustado &lt; 0,05.</p>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Discusión del veredicto y análisis de la causa (el mismo texto de la sección 6.8).</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">texto</span><span class="p">(</span><span class="s1">'veredicto_texto'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<p><strong>Regresión (H1).</strong> El RMSE medio del modelo original en los 15 pliegues externos es 0,05887, frente a 0,05897 de XGBoost, el mejor benchmark: una ventaja de 0,000099 (0,17 %), con el original por delante en 15 de los 15 pliegues. La condición 1 se cumple. De las 4 pruebas, rechazan la igualdad con XGBoost a favor del original P1 (Wilcoxon; p ajustado &lt; 0,001) y P2 (<em>t</em> corregida; p ajustado = 0,001); no rechazan P3 (permutación pareada; p ajustado = 0,092) y P4 (bootstrap pareado; p ajustado = 0,076). La condición 2 pide tres rechazos: no se cumple. El tamaño del efecto entre los valores por pliegue (δ de Cliff = 0,20 y <em>d</em> de Cohen = 0,21) supera los umbrales de 0,147 y 0,2: la condición 3 se cumple. En los 4 conjuntos adicionales el original es mejor en 0 de 4; peor de forma significativa en Vivienda de California: la condición 4 no se cumple. <strong>Veredicto: no superior.</strong></p>
+<p>En prueba, el original obtiene 0,05912 (puesto 1 de 10) y XGBoost, 0,05917; el límite teórico es 0,05911, así que el benchmark queda a 0,000068 del límite y el original, a 0,000010. <strong>Causa.</strong> La diferencia es sistemática, pero tan pequeña que, con la corrección por comparaciones múltiples, las pruebas no alcanzan a detectarla todas: el benchmark ya estaba casi en el límite del conjunto y no dejaba margen para una diferencia mayor.</p>
+<p><strong>Clasificación (H2).</strong> El AUC medio del modelo original en los 15 pliegues externos es 0,8313 y el de XGBoost, el mejor benchmark, 0,8333: el original queda en el puesto 5 de 10, a 0,00200 del primero, y va por delante en 4 de los 15 pliegues. La condición 1 no se cumple. Ninguna de las 4 pruebas rechaza la igualdad con XGBoost a favor del original: P1 (Wilcoxon; p ajustado = 0,128), P2 (<em>t</em> corregida; p ajustado = 1,000), P3 (DeLong; p ajustado = 0,765) y P4 (McNemar; p ajustado = 1,000). La condición 2 pide tres rechazos: no se cumple. El tamaño del efecto (δ de Cliff = −0,31 y <em>d</em> de Cohen = −0,51) va en contra del original: la condición 3 no se cumple. En los 4 conjuntos adicionales el original es mejor en 0 de 4; peor de forma significativa en Seguros médicos, Vivienda de California: la condición 4 no se cumple. <strong>Veredicto: no superior.</strong></p>
+<p>En prueba, el original obtiene 0,8311 (puesto 1 de 10) y XGBoost, 0,8283; el límite teórico es 0,8313, así que el benchmark queda a 0,00301 del límite y el original, a 0,00024. <strong>Análisis de la causa.</strong> El espacio de búsqueda incluía la variante que aprende solo de la etiqueta (<code class="docutils literal notranslate"><span class="pre">usar_puntaje</span> <span class="pre">=</span> <span class="pre">False</span></code>), y la búsqueda interna la eligió en 7 de los 15 pliegues externos. En esos pliegues el original obtuvo un AUC medio de 0,8295 y XGBoost, 0,8332 (diferencia: −0,0037); en los 8 en que usó el puntaje, 0,8329 frente a 0,8334 (diferencia: −0,0005; por delante en 4 de 8). La desventaja en la media viene sobre todo de los pliegues en que el modelo no usó el puntaje. El modelo final, reajustado con toda la partición de entrenamiento, sí usa el puntaje. En cualquier caso, estas diferencias son menores que la desviación entre pliegues del propio benchmark (0,0041): con estos datos, los primeros modelos de la tabla no se distinguen entre sí en esta tarea. La ablación de la sección 5.9 mide por separado la variante sin puntaje.</p>
+<p><strong>Hipótesis secundarias (no cuentan para R3).</strong> H3: con cobertura nominal del 90 %, el conjunto de predicción del modelo original mide 0,0062 (la unión de 4 tramos) y el intervalo conforme de XGBoost, 0,1905; la cobertura medida en prueba es 89,9 %, dentro del error de muestreo (±0,6 puntos). H3 se cumple. H4: la pérdida logarítmica del original en prueba es 0,3688 y la de XGBoost con sus probabilidades recalibradas, 0,3675 (mínimo teórico: 0,3652). H4 no se cumple; la sección 7.9 muestra de dónde sale la diferencia.</p>
+<p><strong>En conjunto, R3 no se cumple en ninguna de las dos tareas</strong>: con el protocolo registrado, no se puede afirmar que el modelo original supere a los benchmarks.</p>
+</div>
+</div>
+</section>
+<section id="limitaciones">
+<h2>9.3. Limitaciones<a class="headerlink" href="#limitaciones" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Los datos son sintéticos.</strong> COFINFAD no describe clientes reales. El escalón que BDL aprovecha existe porque el
+generador del conjunto resta una cantidad fija por producto activo; en datos reales un efecto así sería menos
+limpio. La evaluación en cuatro conjuntos públicos (capítulo 7), dos de mediciones reales y dos simulados, mide el
+comportamiento del modelo fuera de COFINFAD, pero no convierte estos resultados en evidencia sobre una fintech real.</p></li>
+<li><p><strong>El margen de mejora era mínimo.</strong> Los mejores benchmarks ya estaban a milésimas del límite teórico del conjunto
+(sección 6.4). Ningún modelo puede ofrecer una mejora grande en la métrica principal; lo que BDL añade es
+estructura (los niveles del puntaje) e incertidumbre mejor descrita, no precisión puntual.</p></li>
+<li><p><strong>Con todas las filas, la mezcla apenas mueve la métrica.</strong> La ablación (sección 5.9) muestra que retirar la clase
+latente cuesta del orden de una diezmilésima de RMSE cuando el modelo dispone de toda la muestra. Su aporte medible es de eficiencia
+muestral: con la décima parte de las filas es lo que separa al modelo de los benchmarks (sección 7.5). Ese análisis
+se hizo después de ver los resultados y es exploratorio.</p></li>
+<li><p><strong>Supuestos del modelo.</strong> Desplazamiento aditivo, independiente de los predictores y con la misma dispersión en
+todas las clases. Si la clase latente dependiera de los predictores haría falta una compuerta; si el efecto no fuera
+aditivo, una regresión por clase. Cuando los supuestos no se cumplen, el criterio BIC deja <span class="math notranslate nohighlight">\(K = 1\)</span> y el modelo es un
+boosting de mínimos cuadrados.</p></li>
+<li><p><strong>El puntaje continuo tiene que existir.</strong> El modo de excedencia del clasificador necesita que la etiqueta sea un
+umbral de una variable continua observada en entrenamiento. Sin ella, el modelo aprende de la etiqueta y pierde su
+ventaja.</p></li>
+<li><p><strong>La clasificación es frágil.</strong> El resultado del clasificador depende de que la mezcla identifique bien los niveles:
+empeora con árboles de profundidad mayor que 1, con menos clases de las que hay o con un calentamiento corto, y con
+ninguna de las configuraciones probadas supera al mejor de los benchmarks de boosting evaluado con la misma receta
+(<a class="reference internal" href="07_evaluacion_ampliada.html#tab-sensibilidad"><span class="std std-ref">Tabla 7.5</span></a>). Tolera peor que los benchmarks los valores atípicos en el puntaje y el ruido
+en los predictores (sección 7.4). En la validación anidada, la búsqueda llegó a elegir la variante sin puntaje en
+algunos pliegues (sección 6.8).</p></li>
+<li><p><strong>Probabilidades con bordes abruptos y con mesetas.</strong> La dispersión robusta hace que la probabilidad salte de una
+meseta a otra en un intervalo muy estrecho del índice. Un cliente mal situado en ese borde recibe una probabilidad
+casi segura y equivocada, y la pérdida logarítmica lo castiga (sección 7.9). Y dentro de una meseta el modelo no
+distingue a los clientes: cuando el corte de una campaña cae en una de ellas, a quién se contacta lo decide el
+desempate, y las métricas que dependen del orden entre empatados (la captura, la precisión media) cambian con la
+convención (<a class="reference internal" href="06_validacion.html#tab-empates"><span class="std std-ref">Tabla 6.11</span></a>). Le ocurre también al predictor óptimo: en este conjunto esos clientes
+son indistinguibles sin la variable excluida.</p></li>
+<li><p><strong>La cobertura de los conjuntos de predicción es marginal.</strong> Se garantiza sobre el total de clientes, no dentro de
+cada grupo: el nivel menos probable del escalón es el que queda fuera (sección 7.9).</p></li>
+<li><p><strong>La cola de <code class="docutils literal notranslate"><span class="pre">tx_count</span></code>.</strong> En menos del 2 % de los clientes el índice depende además del número de transacciones;
+ahí el modelo confunde parte de ese efecto con un cambio de nivel (sección 7.9).</p></li>
+<li><p><strong>Costo.</strong> Ajustar BDL cuesta varias veces más que ajustar XGBoost o LightGBM, porque está escrito en <code class="docutils literal notranslate"><span class="pre">numpy</span></code> sin
+compilar (sección 7.3).</p></li>
+<li><p><strong>El conjunto de prueba ya se había usado</strong> para evaluar los benchmarks en el Entregable 3. No intervino en el
+diseño del modelo original, y las repeticiones 2 y 3 de la validación anidada y los conjuntos adicionales son
+evidencia nueva para todos los modelos.</p></li>
+<li><p><strong>Los pliegues del diseño forman parte de la comparación.</strong> Las cinco iteraciones de diseño se evaluaron en los
+cinco pliegues externos de la semilla 42, que son cinco de los quince de la comparación confirmatoria (sección 6.1).
+En ellos el resultado puede favorecer al original; las repeticiones 2 y 3 y la partición de prueba no intervinieron
+en el diseño.</p></li>
+<li><p><strong>El registro previo solo está certificado desde su publicación.</strong> La etiqueta del protocolo se creó antes de la
+primera corrida, pero se publicó horas después, cuando ya existían los resultados de la primera repetición y de la
+prueba (sección 6.2). Para esa parte, la anterioridad del protocolo descansa en la fecha local de la etiqueta.</p></li>
+<li><p><strong>La evidencia fuera de COFINFAD es limitada.</strong> Los conjuntos adicionales son cuatro, pequeños o medianos, y lo
+que se obtiene en ellos (sección 7.1) no respalda una ventaja general: el mecanismo solo puede aportar cuando el
+objetivo tiene de verdad un desplazamiento discreto y bien separado, y cuando no lo encuentra el modelo se reduce a
+un boosting de mínimos cuadrados.</p></li>
+<li><p><strong>Los benchmarks recientes no son los más nuevos.</strong> LightGBM es de 2017 y la EBM, en su implementación actual, de
+2019. No se compararon redes neuronales para datos tabulares ni modelos preentrenados, y la búsqueda de los
+benchmarks no parte de sus hiperparámetros recomendados, aunque se midieron aparte (sección 3.6).</p></li>
+</ol>
+</section>
+<section id="riesgos-y-usos-no-recomendados">
+<h2>9.4. Riesgos y usos no recomendados<a class="headerlink" href="#riesgos-y-usos-no-recomendados" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>No es una probabilidad de fuga observada.</strong> «Riesgo alto» es el cuarto superior de un puntaje de propensión; el
+modelo reproduce ese puntaje, no el comportamiento real de los clientes.</p></li>
+<li><p><strong>No usar para decidir sobre personas sin validación externa.</strong> Antes de usarlo en una fintech habría que reentrenar
+y validar en el tiempo con fuga observada, y revisar el trato a los distintos grupos (la edad es la variable de más
+peso).</p></li>
+<li><p><strong>No extrapolar.</strong> Fuera del rango de los datos de entrenamiento el modelo asigna el primer o el último bin de cada
+variable.</p></li>
+</ul>
+</section>
+<section id="trabajo-futuro">
+<h2>9.5. Trabajo futuro<a class="headerlink" href="#trabajo-futuro" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Hacer que los pesos de las clases dependan de los predictores (una compuerta por boosting) y permitir una dispersión
+distinta por clase.</p></li>
+<li><p>Elegir la dispersión de la probabilidad de excedencia con una regla de puntuación propia (la pérdida logarítmica en
+validación), para suavizar los bordes de las mesetas sin perder el orden.</p></li>
+<li><p>Conjuntos de predicción con cobertura condicionada al nivel del escalón.</p></li>
+<li><p>Incorporar el costo de cada acción de retención para fijar el umbral y la capacidad de la campaña.</p></li>
+<li><p>Compilar el bucle de histogramas para reducir el tiempo de ajuste.</p></li>
+<li><p>Validar con datos reales y con fuga observada, en una partición temporal.</p></li>
+</ul>
+</section>
+<section id="declaracion-de-autoria-y-uso-de-herramientas">
+<span id="sec-declaracion"></span><h2>9.6. Declaración de autoría y uso de herramientas<a class="headerlink" href="#declaracion-de-autoria-y-uso-de-herramientas" title="Link to this heading">#</a></h2>
+<p>Los autores de este trabajo son Valerie Martínez Pulido, Abrahan Basto Martínez y Rubén Esguerra Fernández, estudiantes
+del pregrado en Ciencia de Datos de la Universidad del Norte.</p>
+<p><strong>Uso de herramientas de inteligencia artificial.</strong> En este entregable se usó un asistente de programación basado en
+inteligencia artificial generativa (Claude Code, de Anthropic) como apoyo en:</p>
+<ul class="simple">
+<li><p>el análisis de la retroalimentación del docente y de la guía del curso;</p></li>
+<li><p>el diseño del modelo original y los experimentos piloto que lo motivaron;</p></li>
+<li><p>la programación del modelo, del marco de experimentos, de las pruebas unitarias y del dashboard;</p></li>
+<li><p>la ejecución de los experimentos y la generación de tablas y figuras;</p></li>
+<li><p>la búsqueda bibliográfica reproducible y la redacción y revisión de este libro.</p></li>
+</ul>
+<p>El código del modelo original no se copió de ningún repositorio ni librería: se escribió para este proyecto. El equipo
+revisó el trabajo, lo ejecutó, verificó sus resultados y responde por cada línea entregada; durante la sustentación
+puede explicar y modificar cualquier parte del algoritmo, como exige la guía.</p>
+<p><em>Firmas del equipo:</em></p>
+<ul class="simple">
+<li><p>Valerie Martínez Pulido: ____________________</p></li>
+<li><p>Abrahan Basto Martínez: ____________________</p></li>
+<li><p>Rubén Esguerra Fernández: ____________________</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./ProyectoFinal"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="08_dashboard.html"
+       title="página anterior">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">anterior</p>
+        <p class="prev-next-title">8. Dashboard y despliegue</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="10_reproducibilidad.html"
+       title="siguiente página">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">siguiente</p>
+        <p class="prev-next-title">10. Reproducibilidad y bibliografía</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contenido
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hallazgos">9.1. Hallazgos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#veredicto-sobre-r1-r2-y-r3">9.2. Veredicto sobre R1, R2 y R3</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitaciones">9.3. Limitaciones</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#riesgos-y-usos-no-recomendados">9.4. Riesgos y usos no recomendados</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trabajo-futuro">9.5. Trabajo futuro</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#declaracion-de-autoria-y-uso-de-herramientas">9.6. Declaración de autoría y uso de herramientas</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+Por Martínez Pulido Valerie · Basto Martínez Abrahan · Esguerra Fernández Rubén
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

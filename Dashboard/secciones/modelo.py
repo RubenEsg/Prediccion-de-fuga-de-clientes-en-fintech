@@ -1,6 +1,6 @@
-"""Modelo · ¿Qué modelo es y cómo decide?
+"""Cómo decide · ¿Cómo decide la EBM?
 
-La EBM por dentro, leída del modelo en vivo: qué variables pesan (cuota de importancia), la curva que el modelo aprendió
+La EBM (el benchmark interpretable; el modelo original es BDL) por dentro, leída del modelo en vivo: qué variables pesan (cuota de importancia), la curva que el modelo aprendió
 para cada una de las 48 (su función de forma, con la desviación entre bolsas y los clientes de entrenamiento que la
 respaldan) y las cifras del modelo completo (términos, parámetros, intercepto, hiperparámetros y costo).
 
@@ -23,7 +23,7 @@ import ui
 
 
 PRE = "mo"
-PREGUNTA = "¿Qué modelo es y cómo decide?"
+PREGUNTA = "¿Cómo decide la EBM?"                 # la de app.VISTAS («decide»)
 VARIABLE_INICIAL = "age"
 
 N_FOCO = 4                # las variables que el informe nombra: van sólidas

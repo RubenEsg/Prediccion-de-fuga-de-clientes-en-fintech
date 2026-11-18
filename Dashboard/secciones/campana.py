@@ -1,9 +1,11 @@
 """Campaña · ¿A quién contactar si no alcanza para todos?
 
 Segunda pantalla en vivo. Una campaña con capacidad limitada contacta a los clientes a los que el modelo da mayor puntaje:
-el deslizador fija la capacidad y todo se recalcula en el momento con el puntaje guardado de los ocho modelos finales
-(D.puntajes()) y la regla del informe (M.resumen_capacidad, con su desempate): las cifras de la EBM, la curva de captura con
-el punto elegido, la matriz de confusión, los ocho modelos con esa capacidad y quién queda fuera por cohorte de edad. Es la
+el deslizador fija la capacidad y todo se recalcula en el momento con el puntaje guardado de los modelos finales
+(D.puntajes(): los ocho del Entregable 3 y, si la corrección ya los dejó, el modelo original y LightGBM) y la regla del
+informe (M.resumen_capacidad, con su desempate): las cifras de la EBM, la curva de captura con el punto elegido, la matriz
+de confusión, todos los modelos con esa capacidad y quién queda fuera por cohorte de edad. La vista es del grupo de la EBM:
+ella es la serie en foco y cualquier otro modelo, también el original, se puede elegir como comparación. Es la
 pantalla de «significancia estadística no es relevancia práctica»: con la capacidad del informe la EBM y la regresión
 logística alcanzan casi a los mismos clientes; la diferencia aparece con más capacidad.
 
@@ -35,13 +37,14 @@ PRE = "ca"
 PANTALLA = "campana"
 PREGUNTA = app.pregunta(PANTALLA)
 
-PROPUESTO = "ebm"
-MODELOS = D.ORDEN_MODELOS["clasificacion"]                  # los ocho clasificadores, en el orden de las tablas del informe
-REFERENCIAS = [m for m in MODELOS if m != PROPUESTO]        # los siete con los que se puede comparar la EBM
+FOCO = "ebm"                                                # el modelo en foco de la vista (el benchmark interpretable)
+# los clasificadores con puntaje guardado en la prueba, en el orden de las tablas
+MODELOS = [m for m in D.ORDEN_MODELOS["clasificacion"] if m in D.puntajes().columns]
+REFERENCIAS = [m for m in MODELOS if m != FOCO]             # los modelos con los que se puede comparar la EBM
 RIVAL_INICIAL = "logistica"                                 # la referencia con la que el informe discute el punto de operación
 RIVAL_COHORTES = "xgboost"                                  # el modelo con el que el informe compara los errores por cohorte
 N_COHORTES = 3                                              # la edad solo toma tres cohortes en el conjunto de datos
-NUMERO = {1: "uno", 2: "dos", 3: "tres", 4: "cuatro", 5: "cinco", 6: "seis", 7: "siete", 8: "ocho"}
+NUMERO = {1: "uno", 2: "dos", 3: "tres", 4: "cuatro", 5: "cinco", 6: "seis", 7: "siete", 8: "ocho", 9: "nueve", 10: "diez"}
 
 # La capacidad de la campaña se maneja en puntos porcentuales de los clientes de prueba (lo que mueve el deslizador)
 CAP_MIN, CAP_MAX, CAP_PASO = 5, 100, 1
@@ -74,7 +77,7 @@ HOJAS_COHORTES = tuple(f"c-{i}-{quien}" for i in range(N_COHORTES + 1) for quien
 
 FUENTE_PUNTAJES = D.fuente("puntajes_prueba.parquet")
 FUENTE_CLIENTES = D.fuente("clientes_prueba.parquet")
-FUENTE_PRUEBA = D.fuente("resultados/clasificacion_prueba.csv")
+FUENTE_PRUEBA = f"{D.fuente('resultados/clasificacion_prueba.csv')} · {D.fuente_original('lideres_clasificacion.csv')}"
 
 RAYA_EDAD = "–"                                        # la raya de las cohortes («59–60»)
 UNION = "⁠"                                            # impide el salto de línea después de esa raya
@@ -169,19 +172,19 @@ def _textos_curva(modelo):
 
 @lru_cache(maxsize=1)
 def _auc_prueba():
-    t = D.prueba("clasificacion")
+    t = D.lideres("clasificacion")
     return dict(zip(t["modelo"], t["auc_prueba"]))
 
 
 def _texto_capacidad(cap):
-    return f"{_pct(cap)} · {F.entero(_resumen(PROPUESTO, cap)['contactados'])} clientes"
+    return f"{_pct(cap)} · {F.entero(_resumen(FOCO, cap)['contactados'])} clientes"
 
 
 # --- Tarjeta de control: deslizador, modelo de comparación y cifras de la EBM ----------------------------------------
 def _textos_cifras(cap, rival):
     """Los textos de las cifras de la EBM con esa capacidad y lo que alcanza el modelo de comparación, en el orden de
     HOJAS_CIFRAS."""
-    e, r = _resumen(PROPUESTO, cap), _resumen(rival, cap)
+    e, r = _resumen(FOCO, cap), _resumen(rival, cap)
     dif = e["vp"] - r["vp"]
     if dif:
         frente = f"Alcanza a {F.entero(r['vp'])}: {F.entero(abs(dif))} {'menos' if dif > 0 else 'más'} que la EBM."
@@ -214,7 +217,7 @@ def _control(cap, rival):
 # --- Matriz de confusión de la EBM -----------------------------------------------------------------------------------
 def _textos_matriz(cap):
     """Título de la tarjeta de la matriz de confusión de la EBM y sus cifras, en el orden de HOJAS_MATRIZ."""
-    e = _resumen(PROPUESTO, cap)
+    e = _resumen(FOCO, cap)
     if e["fn"]:
         titulo = (f"La EBM alcanza a {F.entero(e['vp'])} clientes de riesgo alto y se le "
                   f"{'escapa' if e['fn'] == 1 else 'escapan'} {F.entero(e['fn'])}")
@@ -240,7 +243,7 @@ def _porcentajes(fracciones):
 def _marca_curva(cap, rival):
     """Lo que se mueve en la curva con la capacidad: los dos puntos, la línea de referencia y su rótulo."""
     a_la_izquierda = cap > CAP_GIRO
-    return {"x": cap, "y_ebm": round(100 * _resumen(PROPUESTO, cap)["captura"], 3), "y_rival": round(100 * _resumen(rival, cap)["captura"], 3),
+    return {"x": cap, "y_ebm": round(100 * _resumen(FOCO, cap)["captura"], 3), "y_rival": round(100 * _resumen(rival, cap)["captura"], 3),
             "text": f"{_pct(cap)} de capacidad", "xanchor": "right" if a_la_izquierda else "left",
             "xshift": -ui.px("--e-2") if a_la_izquierda else ui.px("--e-2")}
 
@@ -248,20 +251,20 @@ def _marca_curva(cap, rival):
 def _figura_curva(cap, rival):
     """La curva de captura de la EBM (gruesa) y del modelo de comparación (a trazos, encima, para que se vean las dos donde
     coinciden), la diagonal del azar y la capacidad elegida con el punto de cada modelo."""
-    ce, cr = _curva(PROPUESTO), _curva(rival)
-    rol = D.ROL_MODELO[rival]
+    ce, cr = _curva(FOCO), _curva(rival)
+    rol = D.ROL_VISTA_EBM[rival]
     x = [round(100 * c) for c in ce["capacidad"]]
     m = _marca_curva(cap, rival)
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=x, y=_porcentajes(ce["captura"]), name=D.NOMBRE_MODELO[PROPUESTO], **ui.traza("modelo", "gruesa"),
-                             **ui.hover_texto(_textos_curva(PROPUESTO))))
+    fig.add_trace(go.Scatter(x=x, y=_porcentajes(ce["captura"]), name=D.NOMBRE_MODELO[FOCO], **ui.traza("modelo", "gruesa"),
+                             **ui.hover_texto(_textos_curva(FOCO))))
     fig.add_trace(go.Scatter(x=x, y=_porcentajes(cr["captura"]), name=D.NOMBRE_MODELO[rival], **ui.traza(rol, "trazos"),
                              **ui.hover_texto(_textos_curva(rival))))
     fig.add_trace(go.Scatter(x=x, y=x, name="Contactar al azar", **ui.traza("contexto"),
                              **ui.hover_texto([f"Contactar al azar: <b>{_pct(v, 1)}</b>" for v in x])))
     fig.add_trace(go.Scatter(x=[m["x"]], y=[m["y_rival"]], name=D.NOMBRE_MODELO[rival], hoverinfo="skip", cliponaxis=False,
                              **ui.traza(rol, "punto")))
-    fig.add_trace(go.Scatter(x=[m["x"]], y=[m["y_ebm"]], name=D.NOMBRE_MODELO[PROPUESTO], hoverinfo="skip", cliponaxis=False,
+    fig.add_trace(go.Scatter(x=[m["x"]], y=[m["y_ebm"]], name=D.NOMBRE_MODELO[FOCO], hoverinfo="skip", cliponaxis=False,
                              **ui.traza("modelo", "punto")))
     ui.unidad_eje(fig, "clientes de riesgo alto alcanzados")
     ui.referencia(fig, x=m["x"])
@@ -290,31 +293,31 @@ def _parche_curva(cap, rival):
 
 
 def _titulo_curva(cap, rival):
-    e, r = _resumen(PROPUESTO, cap), _resumen(rival, cap)
+    e, r = _resumen(FOCO, cap), _resumen(rival, cap)
     return f"Con el {_pct(cap)} la EBM alcanza al {F.pct(e['captura'])} del riesgo alto; {D.en_frase(rival)}, al {F.pct(r['captura'])}"
 
 
 def _etiqueta_curva(cap, rival):
-    ce, cr = _curva(PROPUESTO), _curva(rival)
+    ce, cr = _curva(FOCO), _curva(rival)
     otras = "; ".join(f"con el {_pct(c)}, {F.pct(ce['captura'].iat[c])} y {F.pct(cr['captura'].iat[c])}"
                       for c in range(PASO_EJE, CAP_MAX, PASO_EJE))
     return f"{_titulo_curva(cap, rival)}. Captura de la EBM y de {D.NOMBRE_MODELO[rival]} con otras capacidades: {otras}."
 
 
 def _leyenda_curva(rival):
-    return ui.leyenda([(D.NOMBRE_MODELO[PROPUESTO], "modelo", "gruesa"), (D.NOMBRE_MODELO[rival], D.ROL_MODELO[rival], "trazos"),
+    return ui.leyenda([(D.NOMBRE_MODELO[FOCO], "modelo", "gruesa"), (D.NOMBRE_MODELO[rival], D.ROL_VISTA_EBM[rival], "trazos"),
                        ("Contactar al azar", "contexto", "linea")])
 
 
 def _tabla_curva(rival):
     """Tabla gemela de la curva: clientes de riesgo alto alcanzados (y captura) por los dos modelos, de cinco en cinco puntos."""
-    ce, cr = _curva(PROPUESTO), _curva(rival)
+    ce, cr = _curva(FOCO), _curva(rival)
     filas = [[_pct(c), F.entero(ce["contactados"].iat[c]), f"{F.entero(ce['vp'].iat[c])} ({F.pct(ce['captura'].iat[c])})",
               f"{F.entero(cr['vp'].iat[c])} ({F.pct(cr['captura'].iat[c])})"] for c in range(PASO_TABLA, CAP_MAX + 1, PASO_TABLA)]
-    return ui.tabla(["Capacidad", "Contactados", D.NOMBRE_MODELO[PROPUESTO], D.NOMBRE_MODELO[rival]], filas, compacta=True)
+    return ui.tabla(["Capacidad", "Contactados", D.NOMBRE_MODELO[FOCO], D.NOMBRE_MODELO[rival]], filas, compacta=True)
 
 
-# --- Los ocho modelos con la misma capacidad -------------------------------------------------------------------------
+# --- Todos los modelos con la misma capacidad ------------------------------------------------------------------------
 def _grupos(res):
     """Los modelos que van juntos y los que se descuelgan con esa capacidad, de más a menos clientes alcanzados. El corte
     está en el mayor salto entre dos modelos consecutivos, y solo cuenta si ese salto es mayor que toda la distancia entre
@@ -351,19 +354,36 @@ def _textos_modelos(cap):
     return titulo, celdas
 
 
+def _nota_empates():
+    """Los modelos cuyo corte, con la capacidad del informe, cae en un empate (datos/original/empates_campana.json, de la
+    corrección): su fila de la tabla es uno de los desempates posibles. None si no hay ninguno o si el análisis no está."""
+    con = [(m, D.empate_campana(m)) for m in D.modelos_con_empate() if m in MODELOS]
+    if not con:
+        return None
+    partes = [f"en {D.en_frase(m)} ({F.entero(x['empatados'])} clientes con el puntaje del corte, de los que entran {F.entero(x['cupos'])}; "
+              f"captura esperada con un desempate al azar: {F.pct(x['captura_esperada'])} ± {ui.num(100 * x['captura_desviacion'], 1)} puntos)"
+              for m, x in con]
+    return ui.nota(f"Con el {_pct(CAP_INFORME)} de capacidad, el corte cae en un empate {F.enumerar(partes)}: a quién se contacta "
+                   "dentro de ese grupo lo decide el desempate, y la fila de la tabla es uno de los posibles. Con otra capacidad el "
+                   "corte puede caer en otro empate.")
+
+
 def _modelos(cap):
-    """La tarjeta con la tabla de los ocho modelos: el AUC de prueba es fijo; lo demás son hojas que cambian con la capacidad."""
+    """La tarjeta con la tabla de todos los modelos: el AUC de prueba es fijo; lo demás son hojas que cambian con la capacidad."""
     titulo, celdas = _textos_modelos(cap)
     auc = _auc_prueba()
+    empates = _nota_empates()
     filas = [[D.NOMBRE_MODELO[m], ui.num(auc[m], 4)] + [_hoja(f"t-{m}-{c}", t) for c, t in zip(CAMPOS_MODELO, celdas[i * len(CAMPOS_MODELO):])]
              for i, m in enumerate(MODELOS)]
     tabla = ui.tabla(["Modelo", "AUC de prueba", "Alcanzados", "Captura", "Precisión", "Corte de la campaña"], filas, compacta=True,
-                     muestras=[D.ROL_MODELO[m] for m in MODELOS], ocultar_movil=(1, 4, 5))
+                     muestras=[D.ROL_VISTA_EBM[m] for m in MODELOS], ocultar_movil=(1, 4, 5))
     return ui.tarjeta([
         tabla,
         ui.nota(f"El corte de la campaña es el puntaje, sin recalibrar, del último cliente que contacta cada modelo; no se compara "
                 f"entre modelos. El del {D.NOMBRE_MODELO['svm']} es una función de decisión, no una probabilidad."),
-    ], titulo=_hoja("modelos-titulo", titulo), fuentes=[FUENTE_PUNTAJES, FUENTE_PRUEBA],
+        *([empates] if empates is not None else []),
+    ], titulo=_hoja("modelos-titulo", titulo),
+        fuentes=[FUENTE_PUNTAJES, FUENTE_PRUEBA] + ([D.fuente_original("empates_campana.json")] if empates is not None else []),
         subtitulo="Todos contactan al mismo número de clientes, cada uno a los que él da mayor puntaje. El AUC de prueba no depende "
                   "de la capacidad.")
 
@@ -371,8 +391,8 @@ def _modelos(cap):
 def _lectura():
     """La lectura del informe sobre el punto de operación: en AUC la EBM supera a la regresión logística, pero con la
     capacidad del informe alcanzan casi a los mismos clientes y McNemar no las separa."""
-    e, r = _resumen(PROPUESTO, CAP_INFORME), _resumen(RIVAL_INICIAL, CAP_INFORME)
-    e2, r2 = _resumen(PROPUESTO, CAP_AMPLIA), _resumen(RIVAL_INICIAL, CAP_AMPLIA)
+    e, r = _resumen(FOCO, CAP_INFORME), _resumen(RIVAL_INICIAL, CAP_INFORME)
+    e2, r2 = _resumen(FOCO, CAP_AMPLIA), _resumen(RIVAL_INICIAL, CAP_AMPLIA)
     f = D.fila(D.pruebas("clasificacion"), modelo=RIVAL_INICIAL)
     dif = e["vp"] - r["vp"]
     return ui.tarjeta_insight(
@@ -393,7 +413,7 @@ def _figura_cohortes(cap, rival):
     ancho = ui.ancho_barra(len(cohortes), ALTO_BAJO)
     hueco = ancho * 0.1
     fig = go.Figure()
-    for modelo, rol, forma, offset in ((PROPUESTO, "modelo", "barra", hueco), (rival, D.ROL_MODELO[rival], "rayada", -ancho - hueco)):
+    for modelo, rol, forma, offset in ((FOCO, "modelo", "barra", hueco), (rival, D.ROL_VISTA_EBM[rival], "rayada", -ancho - hueco)):
         fuera = _fuera(modelo, cap)
         textos = [f"{D.NOMBRE_MODELO[modelo]}: <b>{F.entero(v)}</b> de {F.entero(c['positivos'])} ({F.pct(v / c['positivos'])})"
                   for v, c in zip(fuera, cohortes)]
@@ -414,7 +434,7 @@ def _textos_cohortes(cap, rival):
     """Título, subtítulo y etiqueta del gráfico por cohorte, y las celdas de su tabla gemela en el orden de HOJAS_COHORTES
     (cada cohorte y, al final, el total: clientes de riesgo alto que quedan fuera con la EBM y con el otro modelo)."""
     cohortes = _prueba()[2]
-    fe, fr = _fuera(PROPUESTO, cap), _fuera(rival, cap)
+    fe, fr = _fuera(FOCO, cap), _fuera(rival, cap)
     if sum(fe) or sum(fr):
         i = max(range(len(cohortes)), key=lambda j: abs(fe[j] - fr[j]))        # la cohorte en la que más difieren
         titulo = (f"Con el {_pct(cap)}, la EBM deja fuera a {F.entero(fe[i])} clientes de riesgo alto de {_edad(cohortes[i]['nivel'])}; "
@@ -435,12 +455,12 @@ def _tabla_cohortes(cap, rival):
     h = _hojas(HOJAS_COHORTES, _textos_cohortes(cap, rival)[3])
     filas = [[_edad(c["nivel"]), F.entero(c["positivos"]), h[f"c-{i}-ebm"], h[f"c-{i}-rival"]] for i, c in enumerate(cohortes)]
     total = ["Total", F.entero(sum(c["positivos"] for c in cohortes)), h[f"c-{N_COHORTES}-ebm"], h[f"c-{N_COHORTES}-rival"]]
-    return ui.tabla(["Cohorte de edad", "De riesgo alto", D.NOMBRE_MODELO[PROPUESTO], _hoja("c-rival", D.NOMBRE_MODELO[rival])], filas,
+    return ui.tabla(["Cohorte de edad", "De riesgo alto", D.NOMBRE_MODELO[FOCO], _hoja("c-rival", D.NOMBRE_MODELO[rival])], filas,
                     total=total, compacta=True)
 
 
 def _leyenda_cohortes(rival):
-    return ui.leyenda([(D.NOMBRE_MODELO[PROPUESTO], "modelo", "barra"), (D.NOMBRE_MODELO[rival], D.ROL_MODELO[rival], "rayada")])
+    return ui.leyenda([(D.NOMBRE_MODELO[FOCO], "modelo", "barra"), (D.NOMBRE_MODELO[rival], D.ROL_VISTA_EBM[rival], "rayada")])
 
 
 def _lectura_cohortes():
@@ -465,7 +485,8 @@ def _lectura_cohortes():
 def _umbral():
     """Cuántos clientes marca cada modelo con su umbral de clase (vp_05 + fp_05 de la tabla de prueba) y por qué eso no
     sirve para comparar: los puntajes no están calibrados ni son comparables entre modelos."""
-    t = D.prueba("clasificacion")
+    t = D.lideres("clasificacion")
+    t = t[t["modelo"].isin(MODELOS)]
     marcados = (t["vp_05"] + t["fp_05"]).astype(int).tolist()
     modelos = t["modelo"].tolist()
     n = M.meta()["n_prueba"]
@@ -478,8 +499,8 @@ def _umbral():
               f"({D.NOMBRE_MODELO[modelos[i_min]]}) a {cuantos(marcados[i_max])} ({D.NOMBRE_MODELO[modelos[i_max]]})")
     filas = [[D.NOMBRE_MODELO[m], D.NOMBRE_BALANCEO[b], cuantos(k), F.pct(k / n)] for m, b, k in zip(modelos, t["balanceo"], marcados)]
     tabla = ui.tabla(["Modelo", "Balanceo", "Marcados", "Parte de la prueba"], filas, compacta=True,
-                     muestras=[D.ROL_MODELO[m] for m in modelos], num=[False, False, True, True], ocultar_movil=(1,))
-    cal = D.fila(D.tabla("entrega3/complementos/calibracion.csv"), modelo=PROPUESTO, version="sin recalibrar")
+                     muestras=[D.ROL_VISTA_EBM[m] for m in modelos], num=[False, False, True, True], ocultar_movil=(1,))
+    cal = D.fila(D.tabla("entrega3/complementos/calibracion.csv"), modelo=FOCO, version="sin recalibrar")
     marcar = ui.tarjeta([tabla], titulo=titulo, fuentes=[FUENTE_PRUEBA],
                         subtitulo=f"Clientes de prueba (de {F.entero(n)}) que cada modelo final clasifica como de riesgo alto. El "
                                   f"{D.NOMBRE_MODELO['svm']} no da una probabilidad: se cuenta la clase que predice.")
@@ -496,8 +517,8 @@ def _umbral():
 
 # --- Pantalla ----------------------------------------------------------------------------------------------------------
 def _subtitulo():
-    e, r = _resumen(PROPUESTO, CAP_INFORME), _resumen(RIVAL_INICIAL, CAP_INFORME)
-    e2, r2 = _resumen(PROPUESTO, CAP_AMPLIA), _resumen(RIVAL_INICIAL, CAP_AMPLIA)
+    e, r = _resumen(FOCO, CAP_INFORME), _resumen(RIVAL_INICIAL, CAP_INFORME)
+    e2, r2 = _resumen(FOCO, CAP_AMPLIA), _resumen(RIVAL_INICIAL, CAP_AMPLIA)
     return (f"Con capacidad para el {_pct(CAP_INFORME)} de los clientes ({F.entero(e['contactados'])}), la EBM alcanza a "
             f"{F.entero(e['vp'])} de los {F.entero(e['positivos'])} de riesgo alto ({F.pct(e['captura'])}), casi lo mismo que "
             f"{D.en_frase(RIVAL_INICIAL)} ({F.entero(r['vp'])}). La diferencia aparece con más capacidad: con el {_pct(CAP_AMPLIA)}, "
@@ -506,7 +527,7 @@ def _subtitulo():
 
 def layout(**_):
     cap, rival = CAP_INFORME, RIVAL_INICIAL                 # la pantalla nace con la capacidad y la comparación del informe
-    n = _resumen(PROPUESTO, cap)["n"]
+    n = _resumen(FOCO, cap)["n"]
     # La curva nace con el lienzo bajo (cabe bajo la tarjeta pegada en cualquier ventana); _alto_curva lo agranda si hay sitio
     curva = ui.grafico(_figura_curva(cap, rival), _titulo_curva(cap, rival), f"Captura acumulada en los {F.entero(n)} clientes de prueba.",
                        _etiqueta_curva(cap, rival), tabla=_tabla_curva(rival), leyenda=_leyenda_curva(rival), alto="bajo",
@@ -526,7 +547,7 @@ def layout(**_):
                      "«Riesgo alto» es el cuarto superior del puntaje de propensión del conjunto de datos, no fuga observada; "
                      "«alcanzar» es contactar a un cliente de riesgo alto.",
             fuentes=[FUENTE_PUNTAJES]),
-        ui.seccion("Los ocho modelos con la misma capacidad", [
+        ui.seccion(f"Los {NUMERO[len(MODELOS)]} modelos con la misma capacidad", [
             ui.rejilla([_modelos(cap), _lectura()], "2-1"),
         ], fuentes=[FUENTE_PUNTAJES, FUENTE_PRUEBA, D.fuente("resultados/pruebas_clasificacion.csv")]),
         ui.seccion("Quién queda fuera", [
@@ -574,7 +595,7 @@ def _en_vivo(arrastre, capacidad, rival, dibujado):
     *[Output(f"{PRE}-{clave}", "children") for clave in HOJAS_COHORTES],
     Input(f"{PRE}-capacidad", "value"), Input(f"{PRE}-rival", "value"))
 def _al_soltar(capacidad, rival):
-    """Lo que queda bajo la parte interactiva (los ocho modelos y las cohortes): se rehace al soltar el deslizador, al
+    """Lo que queda bajo la parte interactiva (todos los modelos y las cohortes): se rehace al soltar el deslizador, al
     moverlo con el teclado o al cambiar el modelo de comparación."""
     cap, rival = _capacidad(capacidad), _referencia(rival)
     titulo_modelos, celdas_modelos = _textos_modelos(cap)

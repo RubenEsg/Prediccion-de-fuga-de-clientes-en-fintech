@@ -1,0 +1,2586 @@
+
+<!DOCTYPE html>
+
+
+<html lang="es" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>7. Evaluación ampliada y robustez &#8212; Predicción de fuga de clientes en una fintech colombiana</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=33c23bfc" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../_static/documentation_options.js?v=78d55cf8"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Haz clic para mostrar';</script>
+    <script>let toggleHintHide = 'Haz clic para ocultar';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../_static/translations.js?v=d190bf04"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ProyectoFinal/07_evaluacion_ampliada';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Índice" href="../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../search.html" />
+    <link rel="next" title="8. Dashboard y despliegue" href="08_dashboard.html" />
+    <link rel="prev" title="6. Protocolo y validación estadística" href="06_validacion.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="es"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Saltar al contenido principal</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Volver arriba</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Advertencia de versión"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Navegación del sitio">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="En esta página">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Predicción de fuga de clientes en una fintech colombiana</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Proyecto final · Dashboard, modelo original y evaluación rigurosa</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_introduccion.html">Proyecto final: dashboard predictivo, modelo original y evaluación rigurosa</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_correcciones.html">1. Trazabilidad de las correcciones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_datos.html">2. Datos: ETL, EDA y auditoría de fuga</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_benchmarks.html">3. Modelos benchmark</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_literatura.html">4. Revisión de literatura y novedad</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_modelo_original.html">5. El modelo original: Boosting con Desplazamiento Latente (BDL)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_validacion.html">6. Protocolo y validación estadística</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">7. Evaluación ampliada y robustez</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_dashboard.html">8. Dashboard y despliegue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_conclusiones.html">9. Conclusiones y limitaciones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_reproducibilidad.html">10. Reproducibilidad y bibliografía</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codigo_modelo_original.html">Código del modelo original</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 1 · EDA</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega1/eda_bancario.html">Caracterización y auditoría de calidad de datos para predecir la fuga (<em>churn</em>) y el valor del cliente (<em>CLV</em>) en una <em>fintech</em> colombiana</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 2 · Modelos base</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega2/entrega2_modelo.html">Entrega 2 — Procesamiento de datos y modelo base</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Introducción</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/00_introduccion.html">Fuga de clientes en una <em>fintech</em> colombiana: modelos, optimización y evaluación</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/01_datos.html">Datos, análisis exploratorio y construcción de la etiqueta</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Metodología</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/02_metodologia.html">Metodología</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Modelos y Resultados</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/03_corridas.html">Las 140 corridas del pipeline combinatorio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/04_optimizadores.html">Comparación de los métodos de optimización</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/05_computo.html">Optimización computacional</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/06_evaluacion.html">Evaluación en prueba, calibración, residuos y robustez</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/07_interpretabilidad.html">Interpretabilidad: SHAP, LIME y las funciones de forma de la EBM</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · El modelo nuevo</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/08_modelo_nuevo.html">El modelo nuevo frente a la Entrega 2</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Comparación estadística y conclusiones</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/09_estadistica.html">Comparación estadística de los modelos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/10_conclusiones.html">Conclusiones</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Código fuente</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../codigo/indice.html">Código fuente</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src___init__.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/__init__.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_analisis.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/analisis.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_balanceo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/balanceo.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_comparacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/comparacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_config.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/config.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_datos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/datos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_estadistica.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/estadistica.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_evaluacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/evaluacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_experimento.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/experimento.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_formato.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/formato.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_graficos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/graficos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_modelos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/modelos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_optimizacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/optimizacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_preprocesamiento.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/preprocesamiento.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_registro.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/registro.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/correr_140.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/correr_140.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/comparar_entrega2.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/comparar_entrega2.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/computo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/computo.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/complementos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/complementos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/medir_tiempos_finales.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/medir_tiempos_finales.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/notebook_construir.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/notebook/construir.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/notebook_exportar_pdf.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/notebook/exportar_pdf.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/articulo_generar_material.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/articulo/generar_material.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/articulo_compilar.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/articulo/compilar.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_analisis.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_analisis.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_bloque0.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_bloque0.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_estadistica.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_estadistica.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_modelo_nuevo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_modelo_nuevo.py</span></code></a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Descarga esta pagina">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/ProyectoFinal/07_evaluacion_ampliada.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Descargar archivo fuente"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Imprimir en PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Modo de pantalla completa"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Tema" data-bs-title="Tema"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Claro"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Oscuro"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="Sistema"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>7. Evaluación ampliada y robustez</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contenido </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conjuntos-de-datos-adicionales">7.1. Conjuntos de datos adicionales</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sensibilidad-a-los-hiperparametros-propios">7.2. Sensibilidad a los hiperparámetros propios</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estabilidad-por-semilla-y-computo">7.3. Estabilidad por semilla y cómputo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ruido-y-valores-atipicos">7.4. Ruido y valores atípicos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tamano-de-muestra-y-escalabilidad">7.5. Tamaño de muestra y escalabilidad</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cambio-de-distribucion">7.6. Cambio de distribución</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calibracion-y-reglas-de-puntuacion">7.7. Calibración y reglas de puntuación</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cuantificacion-de-la-incertidumbre">7.8. Cuantificación de la incertidumbre</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-de-errores">7.9. Análisis de errores</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="evaluacion-ampliada-y-robustez">
+<h1>7. Evaluación ampliada y robustez<a class="headerlink" href="#evaluacion-ampliada-y-robustez" title="Link to this heading">#</a></h1>
+<p>Un resultado en un solo escenario no basta. Este capítulo evalúa el modelo original en otros conjuntos de datos y mide
+cómo se comporta cuando cambian los hiperparámetros, la semilla, el ruido, el tamaño de la muestra y la distribución.
+Salvo la evaluación en prueba, todo se hace dentro de la partición de entrenamiento, con los cinco pliegues externos de
+la semilla 42 y los hiperparámetros finales de cada modelo. En los estudios de robustez el original se compara con los
+dos benchmarks de boosting, XGBoost y LightGBM, que son los que más se le parecen y los mejores en regresión.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Preparación: acceso a los resultados versionados y a las funciones que generan las</span>
+<span class="c1"># tablas y figuras del informe.</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">'../ModeloOriginal'</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src</span><span class="w"> </span><span class="kn">import</span> <span class="n">informe</span> <span class="k">as</span> <span class="n">inf</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="conjuntos-de-datos-adicionales">
+<h2>7.1. Conjuntos de datos adicionales<a class="headerlink" href="#conjuntos-de-datos-adicionales" title="Link to this heading">#</a></h2>
+<p>Los cuatro conjuntos se eligieron en el protocolo, <strong>antes de ajustar ningún modelo en ellos</strong>: dos con una variable
+categórica omitida para todos los modelos (la situación para la que se diseñó BDL, que reproduce la exclusión de
+<code class="docutils literal notranslate"><span class="pre">active_products</span></code>) y dos sin modificar, como control. La <a class="reference internal" href="#tab-conjuntos-fuente"><span class="std std-ref">Tabla 7.1</span></a> dice de dónde sale
+cada uno y por qué se eligió, y la <a class="reference internal" href="#tab-conjuntos"><span class="std std-ref">Tabla 7.2</span></a>, cómo quedó tras prepararlo.</p>
+<p id="tab-conjuntos-fuente"><strong>Tabla 7.1.</strong> Conjuntos de datos adicionales: fuente, origen de los datos, objetivo con su unidad y criterio de
+elección.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Conjunto</p></th>
+<th class="head"><p>Fuente</p></th>
+<th class="head"><p>Origen</p></th>
+<th class="head"><p>Objetivo (unidad)</p></th>
+<th class="head"><p>Por qué se eligió</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Seguros médicos</p></td>
+<td><p><span class="bibtex-citation" id="id1">Lantz [<a class="reference internal" href="10_reproducibilidad.html#id32" title="Brett Lantz. Machine Learning with R. Packt Publishing, 2013.">2013</a>]</span>, <code class="docutils literal notranslate"><span class="pre">insurance.csv</span></code></p></td>
+<td><p>Simulado a partir de estadísticas demográficas de Estados Unidos</p></td>
+<td><p>Costo médico facturado al año (dólares)</p></td>
+<td><p>Se omite <code class="docutils literal notranslate"><span class="pre">smoker</span></code>, que desplaza el costo</p></td>
+</tr>
+<tr class="row-odd"><td><p>Eficiencia energética</p></td>
+<td><p>UCI n.º 242, <span class="bibtex-citation" id="id2">Tsanas and Xifara [<a class="reference internal" href="10_reproducibilidad.html#id49" title="Athanasios Tsanas and Angeliki Xifara. Accurate quantitative estimation of energy performance of residential buildings using statistical machine learning tools. Energy and Buildings, 49:560–567, 2012. doi:10.1016/j.enbuild.2012.03.003.">2012</a>]</span></p></td>
+<td><p>Simulación de edificios por computador</p></td>
+<td><p>Carga de calefacción (kWh/m²)</p></td>
+<td><p>Casi sin ruido; se omite el área de vidrio (cuatro niveles)</p></td>
+</tr>
+<tr class="row-even"><td><p>Abulón</p></td>
+<td><p>UCI n.º 1, <span class="bibtex-citation" id="id3">Nash <em>et al.</em> [<a class="reference internal" href="10_reproducibilidad.html#id41" title="Warwick J. Nash, Tracy L. Sellers, Simon R. Talbot, Andrew J. Cawthorn, and Wes B. Ford. The population biology of abalone (Haliotis species) in Tasmania. I. blacklip abalone (H. rubra) from the north coast and islands of Bass Strait. Technical Report 48, Sea Fisheries Division, Tasmania, 1994.">1994</a>]</span></p></td>
+<td><p>Mediciones de ejemplares reales</p></td>
+<td><p>Anillos de la concha (conteo; la edad en años es ese número más 1,5)</p></td>
+<td><p>Control: objetivo entero, datos biológicos</p></td>
+</tr>
+<tr class="row-odd"><td><p>Vivienda de California</p></td>
+<td><p><span class="bibtex-citation" id="id4">Pace and Barry [<a class="reference internal" href="10_reproducibilidad.html#id43" title="R. Kelley Pace and Ronald Barry. Sparse spatial autoregressions. Statistics &amp; Probability Letters, 33(3):291–297, 1997. doi:10.1016/S0167-7152(96)00140-X.">1997</a>]</span></p></td>
+<td><p>Censo de 1990, por grupo de manzanas censales</p></td>
+<td><p>Valor mediano de la vivienda (cientos de miles de dólares)</p></td>
+<td><p>Control: el más grande, datos de censo con estructura espacial</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Dos de los cuatro son simulados y dos provienen de mediciones reales; COFINFAD, el problema principal, es sintético.</p>
+<p id="tab-conjuntos"><strong>Tabla 7.2.</strong> Conjuntos adicionales ya preparados: filas, predictores, variable omitida, proporción de la clase
+positiva en entrenamiento y huella SHA-256 del archivo descargado.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 7.2. Lee la ficha de cada conjunto</span>
+<span class="c1"># (resultados/adicionales/&lt;conjunto&gt;/ficha.json), que escribe</span>
+<span class="c1"># experiments/05_conjuntos_adicionales.py al descargarlo y partirlo.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_conjuntos'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Conjunto</p></th>
+<th class="head text-right"><p>Filas</p></th>
+<th class="head text-right"><p>Predictores</p></th>
+<th class="head text-left"><p>Variable omitida</p></th>
+<th class="head text-right"><p>Clase positiva (entrenamiento)</p></th>
+<th class="head text-left"><p>Huella del archivo</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Seguros médicos</p></td>
+<td class="text-right"><p>1.338</p></td>
+<td class="text-right"><p>5</p></td>
+<td class="text-left"><p>smoker</p></td>
+<td class="text-right"><p>25,0 %</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">505c1cbc2e63</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Eficiencia energética</p></td>
+<td class="text-right"><p>768</p></td>
+<td class="text-right"><p>7</p></td>
+<td class="text-left"><p>X7 (área de vidrio)</p></td>
+<td class="text-right"><p>25,1 %</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">499441eee279</span></code></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Abulón</p></td>
+<td class="text-right"><p>4.177</p></td>
+<td class="text-right"><p>8</p></td>
+<td class="text-left"><p>—</p></td>
+<td class="text-right"><p>23,3 %</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">755a6a67c5b2</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Vivienda de California</p></td>
+<td class="text-right"><p>20.640</p></td>
+<td class="text-right"><p>8</p></td>
+<td class="text-left"><p>—</p></td>
+<td class="text-right"><p>25,0 %</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">aea03e914281</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>En cada uno se repite el procedimiento del problema principal: 20 % de prueba, validación anidada de 5 × 3 con la
+semilla 42 para los diez modelos, y la etiqueta «cuarto superior del objetivo» con el umbral estimado en entrenamiento.</p>
+<p id="tab-adicionales"><strong>Tabla 7.3.</strong> Resultados por conjunto adicional y tarea: mejor benchmark, métrica en los pliegues externos del
+benchmark y del original, puesto del original entre los diez modelos, ventaja relativa, p-valor de la <em>t</em> corregida,
+resultado, métrica en prueba y número de clases latentes del modelo final.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 7.3. De la tabla maestra de cada conjunto</span>
+<span class="c1"># (resultados/adicionales/&lt;conjunto&gt;/experimentos.parquet): métrica por pliegue</span>
+<span class="c1"># externo de cada modelo, mejor benchmark y prueba t corregida de Nadeau-Bengio del</span>
+<span class="c1"># original contra él.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_adicionales'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<p><strong>Regresión (RMSE, menor es mejor).</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Conjunto</p></th>
+<th class="head text-left"><p>Mejor benchmark</p></th>
+<th class="head text-right"><p>Benchmark (externo)</p></th>
+<th class="head text-right"><p>Original (externo)</p></th>
+<th class="head text-right"><p>Puesto del original</p></th>
+<th class="head text-right"><p>Ventaja relativa</p></th>
+<th class="head text-right"><p>p (<em>t</em> corregida)</p></th>
+<th class="head text-left"><p>Resultado</p></th>
+<th class="head text-right"><p>Prueba: benchmark / original</p></th>
+<th class="head text-right"><p><span class="math notranslate nohighlight">\(K\)</span> del modelo final</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Seguros médicos †</p></td>
+<td class="text-left"><p>EBM</p></td>
+<td class="text-right"><p>11.332 ± 279</p></td>
+<td class="text-right"><p>11.435 ± 334</p></td>
+<td class="text-right"><p>7 de 10</p></td>
+<td class="text-right"><p>−0,90 %</p></td>
+<td class="text-right"><p>0,414</p></td>
+<td class="text-left"><p>Peor, no significativo</p></td>
+<td class="text-right"><p>11.459 / 11.630</p></td>
+<td class="text-right"><p>1 (sin mezcla)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Eficiencia energética †</p></td>
+<td class="text-left"><p>EBM</p></td>
+<td class="text-right"><p>2,263 ± 0,116</p></td>
+<td class="text-right"><p>2,313 ± 0,068</p></td>
+<td class="text-right"><p>2 de 10</p></td>
+<td class="text-right"><p>−2,18 %</p></td>
+<td class="text-right"><p>0,474</p></td>
+<td class="text-left"><p>Peor, no significativo</p></td>
+<td class="text-right"><p>2,317 / 2,301</p></td>
+<td class="text-right"><p>1 (sin mezcla)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Abulón</p></td>
+<td class="text-left"><p>Random Forest</p></td>
+<td class="text-right"><p>2,129 ± 0,093</p></td>
+<td class="text-right"><p>2,168 ± 0,094</p></td>
+<td class="text-right"><p>5 de 10</p></td>
+<td class="text-right"><p>−1,83 %</p></td>
+<td class="text-right"><p>0,286</p></td>
+<td class="text-left"><p>Peor, no significativo</p></td>
+<td class="text-right"><p>2,187 / 2,217</p></td>
+<td class="text-right"><p>1 (sin mezcla)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Vivienda de California</p></td>
+<td class="text-left"><p>LightGBM</p></td>
+<td class="text-right"><p>0,44258 ± 0,01121</p></td>
+<td class="text-right"><p>0,46449 ± 0,00910</p></td>
+<td class="text-right"><p>3 de 10</p></td>
+<td class="text-right"><p>−4,95 %</p></td>
+<td class="text-right"><p>0,002</p></td>
+<td class="text-left"><p>Peor, significativo</p></td>
+<td class="text-right"><p>0,43536 / 0,45210</p></td>
+<td class="text-right"><p>1 (sin mezcla)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Clasificación (AUC, mayor es mejor).</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Conjunto</p></th>
+<th class="head text-left"><p>Mejor benchmark</p></th>
+<th class="head text-right"><p>Benchmark (externo)</p></th>
+<th class="head text-right"><p>Original (externo)</p></th>
+<th class="head text-right"><p>Puesto del original</p></th>
+<th class="head text-right"><p>Ventaja relativa</p></th>
+<th class="head text-right"><p>p (<em>t</em> corregida)</p></th>
+<th class="head text-left"><p>Resultado</p></th>
+<th class="head text-right"><p>Prueba: benchmark / original</p></th>
+<th class="head text-right"><p><span class="math notranslate nohighlight">\(K\)</span> del modelo final</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Seguros médicos †</p></td>
+<td class="text-left"><p>EBM</p></td>
+<td class="text-right"><p>0,5722 ± 0,0323</p></td>
+<td class="text-right"><p>0,5152 ± 0,0254</p></td>
+<td class="text-right"><p>10 de 10</p></td>
+<td class="text-right"><p>−9,96 %</p></td>
+<td class="text-right"><p>0,037</p></td>
+<td class="text-left"><p>Peor, significativo</p></td>
+<td class="text-right"><p>0,5998 / 0,5659</p></td>
+<td class="text-right"><p>1 (sin mezcla)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Eficiencia energética †</p></td>
+<td class="text-left"><p>XGBoost</p></td>
+<td class="text-right"><p>0,9771 ± 0,0062</p></td>
+<td class="text-right"><p>0,9733 ± 0,0099</p></td>
+<td class="text-right"><p>4 de 10</p></td>
+<td class="text-right"><p>−0,38 %</p></td>
+<td class="text-right"><p>0,607</p></td>
+<td class="text-left"><p>Peor, no significativo</p></td>
+<td class="text-right"><p>0,9601 / 0,9629</p></td>
+<td class="text-right"><p>sin puntaje</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Abulón</p></td>
+<td class="text-left"><p>LightGBM</p></td>
+<td class="text-right"><p>0,8591 ± 0,0071</p></td>
+<td class="text-right"><p>0,8485 ± 0,0116</p></td>
+<td class="text-right"><p>7 de 10</p></td>
+<td class="text-right"><p>−1,24 %</p></td>
+<td class="text-right"><p>0,093</p></td>
+<td class="text-left"><p>Peor, no significativo</p></td>
+<td class="text-right"><p>0,8622 / 0,8606</p></td>
+<td class="text-right"><p>sin puntaje</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Vivienda de California</p></td>
+<td class="text-left"><p>LightGBM</p></td>
+<td class="text-right"><p>0,9680 ± 0,0038</p></td>
+<td class="text-right"><p>0,9639 ± 0,0035</p></td>
+<td class="text-right"><p>3 de 10</p></td>
+<td class="text-right"><p>−0,42 %</p></td>
+<td class="text-right"><p>0,017</p></td>
+<td class="text-left"><p>Peor, significativo</p></td>
+<td class="text-right"><p>0,9712 / 0,9664</p></td>
+<td class="text-right"><p>sin puntaje</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>† Conjunto con una variable omitida. Externo: media ± desviación de los cinco pliegues externos. Ventaja relativa: positiva si el original es mejor. La prueba <em>t</em> corregida compara al original con el mejor benchmark del conjunto. <span class="math notranslate nohighlight">\(K\)</span>: clases latentes del modelo final. «Sin mezcla»: la búsqueda de hiperparámetros eligió <code class="docutils literal notranslate"><span class="pre">n_componentes</span> <span class="pre">=</span> <span class="pre">1</span></code> y el modelo es un boosting de mínimos cuadrados con árboles propios. «BIC»: la búsqueda eligió la mezcla y el criterio BIC fijó el número de clases. «Sin puntaje»: en clasificación, la búsqueda eligió aprender de la etiqueta.</p>
+</div>
+</div>
+<p><strong>Prueba consolidada entre conjuntos.</strong> Friedman con corrección de Iman-Davenport sobre los rangos de los diez modelos
+en los cinco conjuntos (los cuatro adicionales y COFINFAD), y Wilcoxon-Holm del original contra cada benchmark
+(<a class="reference internal" href="#tab-consolidada"><span class="std std-ref">Tabla 7.4</span></a>). Las métricas no se promedian entre conjuntos porque sus escalas son distintas.</p>
+<p id="tab-consolidada"><strong>Tabla 7.4.</strong> Prueba consolidada entre conjuntos de datos: Friedman con Iman-Davenport sobre los rangos de los diez
+modelos, rango medio del original y menor p-valor de Wilcoxon-Holm frente a los benchmarks.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 7.4. Rangos de los diez modelos por conjunto (media de los pliegues</span>
+<span class="c1"># externos), prueba de Friedman con la corrección de Iman-Davenport y Wilcoxon del</span>
+<span class="c1"># original contra cada benchmark con el ajuste de Holm.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_consolidada'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Tarea</p></th>
+<th class="head text-right"><p>Conjuntos</p></th>
+<th class="head text-right"><p>Friedman con Iman-Davenport</p></th>
+<th class="head text-right"><p>p</p></th>
+<th class="head text-left"><p>Rango medio del original</p></th>
+<th class="head text-left"><p>Mejor rango medio</p></th>
+<th class="head text-right"><p>Menor p de Wilcoxon-Holm (original contra cada benchmark)</p></th>
+<th class="head text-right"><p>Menor p posible con estos conjuntos</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-right"><p>5</p></td>
+<td class="text-right"><p>F = 3,60</p></td>
+<td class="text-right"><p>0,003</p></td>
+<td class="text-left"><p>3,60 (puesto 3 de 10)</p></td>
+<td class="text-left"><p>EBM (2,80)</p></td>
+<td class="text-right"><p>0,562</p></td>
+<td class="text-right"><p>0,062</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-right"><p>5</p></td>
+<td class="text-right"><p>F = 3,21</p></td>
+<td class="text-right"><p>0,006</p></td>
+<td class="text-left"><p>5,80 (puesto 5 de 10)</p></td>
+<td class="text-left"><p>XGBoost (2,20)</p></td>
+<td class="text-right"><p>0,562</p></td>
+<td class="text-right"><p>0,062</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Con tan pocos conjuntos la prueba de Wilcoxon no puede dar un p-valor menor que 0,05 (con cinco, el mínimo posible es
+0,0625): la comparación por pares entre conjuntos no puede ser significativa sea cual sea el resultado, y se reporta por
+transparencia.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Lectura de las tablas 7.3 y 7.4 frente a la expectativa declarada en el protocolo</span>
+<span class="c1"># (resultados/condicion4.json).</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">texto</span><span class="p">(</span><span class="s1">'adicionales_texto'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<p><strong>Lectura.</strong> El protocolo declaró de antemano la expectativa: ventaja en los dos conjuntos con una variable omitida y empate en los dos de control.</p>
+<p><strong>Regresión, el original frente al mejor benchmark de cada conjunto:</strong> en Seguros médicos †, peor que EBM por un 0,90 % (p = 0,414); en Eficiencia energética †, peor que EBM por un 2,18 % (p = 0,474); en Abulón, peor que Random Forest por un 1,83 % (p = 0,286); en Vivienda de California, peor que LightGBM por un 4,95 % (p = 0,002). Con variable omitida, la ventaja esperada aparece en 0 de 2. En los controles, la diferencia con el mejor benchmark no es significativa en 1 de 2 (Abulón). En Seguros médicos, Eficiencia energética, Abulón y Vivienda de California la búsqueda de hiperparámetros eligió la variante sin mezcla para el modelo final (y en 5 de 5, 4 de 5, 5 de 5 y 5 de 5 pliegues externos, en ese orden): ahí el original es un boosting de mínimos cuadrados con árboles propios, y lo que gane o pierda no se debe a la clase latente. Que ocurra también en los conjuntos con una variable omitida dice que omitir una variable no basta: el modelo necesita que su efecto sea un desplazamiento constante e independiente de los demás predictores. Una explicación probable, que aquí no se contrastó: en Seguros médicos el efecto de fumar depende del índice de masa corporal, y en Eficiencia energética el área de vidrio omitida se deduce en parte de otra variable del conjunto. Condición 4: no se cumple (mejor en 0 de 4; peor de forma significativa en Vivienda de California).</p>
+<p><strong>Clasificación, el original frente al mejor benchmark de cada conjunto:</strong> en Seguros médicos †, peor que EBM por un 9,96 % (p = 0,037); en Eficiencia energética †, peor que XGBoost por un 0,38 % (p = 0,607); en Abulón, peor que LightGBM por un 1,24 % (p = 0,093); en Vivienda de California, peor que LightGBM por un 0,42 % (p = 0,017). Con variable omitida, la ventaja esperada aparece en 0 de 2. En los controles, la diferencia con el mejor benchmark no es significativa en 1 de 2 (Abulón). Condición 4: no se cumple (mejor en 0 de 4; peor de forma significativa en Seguros médicos, Vivienda de California).</p>
+<p>En los conjuntos pequeños los pliegues externos tienen pocas filas y la desviación entre pliegues es grande: con cinco pliegues, la prueba <em>t</em> corregida solo detecta diferencias amplias, y un «no significativo» no es evidencia de igualdad.</p>
+</div>
+</div>
+</section>
+<section id="sensibilidad-a-los-hiperparametros-propios">
+<h2>7.2. Sensibilidad a los hiperparámetros propios<a class="headerlink" href="#sensibilidad-a-los-hiperparametros-propios" title="Link to this heading">#</a></h2>
+<p>Se varía un hiperparámetro cada vez alrededor de la configuración final (<a class="reference internal" href="#fig-sensibilidad"><span class="std std-ref">Figura 7.1</span></a> y
+<a class="reference internal" href="#tab-sensibilidad"><span class="std std-ref">Tabla 7.5</span></a>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Figura 7.1. Lee resultados/robustez/sensibilidad.csv (experiments/06_robustez.py</span>
+<span class="c1"># sensibilidad): una fila por tarea, hiperparámetro y valor, con la media y la</span>
+<span class="c1"># desviación en los cinco pliegues externos de la semilla 42.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">figura</span><span class="p">(</span><span class="s1">'sensibilidad'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<figure class="align-default" id="fig-sensibilidad">
+<a class="reference internal image-reference" href="../_images/34fe0739af4c039eafdbe1ab5985527dbbe88684b6d7642f475039617cc6ed1e.png"><img alt="../_images/34fe0739af4c039eafdbe1ab5985527dbbe88684b6d7642f475039617cc6ed1e.png" class="align-center" src="../_images/34fe0739af4c039eafdbe1ab5985527dbbe88684b6d7642f475039617cc6ed1e.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figura 8 </span><span class="caption-text"><strong>Figura 7.1.</strong> Métrica del modelo original al variar cada hiperparámetro propio (media ± desviación en cinco pliegues): en las dos primeras filas, RMSE de la regresión; en las dos últimas, AUC de la clasificación. La línea discontinua es el mejor benchmark con sus hiperparámetros finales, evaluado en los mismos pliegues, y el círculo marca la configuración final cuando su valor está entre los probados. <strong>Interpretación:</strong> en regresión el resultado casi no depende de los hiperparámetros, salvo con una tasa de aprendizaje muy baja; en clasificación depende de la profundidad de los árboles, del número de clases y del calentamiento. La comparación con la línea discontinua se cuenta en la <a class="reference internal" href="#tab-sensibilidad"><span class="std std-ref">Tabla 7.5</span></a>.</span><a class="headerlink" href="#fig-sensibilidad" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</div>
+</div>
+<p id="tab-sensibilidad"><strong>Tabla 7.5.</strong> Sensibilidad: número de configuraciones evaluadas, métrica de la configuración final y del mejor
+benchmark con sus hiperparámetros finales, cuántas configuraciones quedan mejor que ese benchmark, y peor y mejor valor
+de la métrica.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 7.5. Resume sensibilidad.csv frente al mejor benchmark evaluado igual que el</span>
+<span class="c1"># original: con sus hiperparámetros finales y en los mismos pliegues</span>
+<span class="c1"># (resultados/robustez/muestra.csv, fila del 100 % de las filas).</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_sensibilidad'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Tarea</p></th>
+<th class="head text-right"><p>Configuraciones</p></th>
+<th class="head text-right"><p>Configuración final</p></th>
+<th class="head text-right"><p>Mejor benchmark, con sus hiperparámetros finales</p></th>
+<th class="head text-right"><p>Configuraciones mejores que ese benchmark</p></th>
+<th class="head text-right"><p>Peor valor</p></th>
+<th class="head text-right"><p>Mejor valor</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-right"><p>34</p></td>
+<td class="text-right"><p>0,05888</p></td>
+<td class="text-right"><p>0,05896 (XGBoost)</p></td>
+<td class="text-right"><p>30</p></td>
+<td class="text-right"><p>0,05959</p></td>
+<td class="text-right"><p>0,05887</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-right"><p>34</p></td>
+<td class="text-right"><p>0,8339</p></td>
+<td class="text-right"><p>0,8356 (XGBoost)</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>0,8239</p></td>
+<td class="text-right"><p>0,8345</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Cada configuración cambia un solo hiperparámetro respecto de la final y se evalúa en los cinco pliegues externos de la semilla 42, sin nueva búsqueda. La referencia es el mejor benchmark evaluado igual: con sus hiperparámetros finales y en los mismos pliegues.</p>
+<p><strong>Lectura.</strong> En regresión, 30 de las 34 configuraciones quedan por delante de XGBoost con sus hiperparámetros finales (0,05896). La configuración final obtiene 0,05888 ± 0,00041. Pierden más de una desviación entre pliegues respecto de ella: <code class="docutils literal notranslate"><span class="pre">tasa</span></code> = 0,05. Los demás valores, y todos los de <code class="docutils literal notranslate"><span class="pre">profundidad</span></code>, <code class="docutils literal notranslate"><span class="pre">min_hoja</span></code>, <code class="docutils literal notranslate"><span class="pre">lambda_l2</span></code>, <code class="docutils literal notranslate"><span class="pre">max_bins</span></code>, <code class="docutils literal notranslate"><span class="pre">n_componentes</span></code> y <code class="docutils literal notranslate"><span class="pre">rondas_calentamiento</span></code>, quedan dentro de esa desviación. En clasificación, ninguna de las 34 configuraciones queda por delante de XGBoost con sus hiperparámetros finales (0,8356): la mejor obtiene 0,8345. La configuración final obtiene 0,8339 ± 0,0030. Pierden más de una desviación entre pliegues respecto de ella: <code class="docutils literal notranslate"><span class="pre">tasa</span></code> = 0,05; <code class="docutils literal notranslate"><span class="pre">profundidad</span></code> = 6; <code class="docutils literal notranslate"><span class="pre">n_componentes</span></code> = 1, 2 y 3; <code class="docutils literal notranslate"><span class="pre">rondas_calentamiento</span></code> = 10 y 30. Los demás valores, y todos los de <code class="docutils literal notranslate"><span class="pre">min_hoja</span></code>, <code class="docutils literal notranslate"><span class="pre">lambda_l2</span></code> y <code class="docutils literal notranslate"><span class="pre">max_bins</span></code>, quedan dentro de esa desviación. La comparación con el benchmark es homogénea: los dos modelos usan hiperparámetros finales, que se eligieron con toda la partición de entrenamiento, y por eso estas cifras son algo optimistas para ambos; la estimación del desempeño es la de la validación anidada (tablas 6.5 y 6.6). En clasificación, además, aquí el modelo original siempre usa el puntaje, mientras que en la validación anidada la búsqueda eligió no usarlo en 7 de 15 pliegues (sección 6.8).</p>
+</div>
+</div>
+</section>
+<section id="estabilidad-por-semilla-y-computo">
+<h2>7.3. Estabilidad por semilla y cómputo<a class="headerlink" href="#estabilidad-por-semilla-y-computo" title="Link to this heading">#</a></h2>
+<p>Cada modelo final se reajustó con diez semillas (42 a 51) con sus hiperparámetros finales y se evaluó en prueba
+(<a class="reference internal" href="#fig-semillas"><span class="std std-ref">Figura 7.2</span></a> y <a class="reference internal" href="#tab-semillas"><span class="std std-ref">Tabla 7.6</span></a>). Esta sección mide la variación que se debe solo a
+la semilla del modelo. La que se debe a la partición es la desviación entre pliegues externos de las tablas
+<a class="reference internal" href="06_validacion.html#tab-resumen-regresion"><span class="std std-ref">6.5</span></a> y <a class="reference internal" href="06_validacion.html#tab-resumen-clasificacion"><span class="std std-ref">6.6</span></a>; la que se debe a la búsqueda de
+hiperparámetros no se mide por separado: va dentro de esa misma desviación, porque cada pliegue externo repite la
+búsqueda. Al interpretar una diferencia entre modelos hay que compararla con las tres.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Figura 7.2. Lee resultados/semillas.csv (experiments/03b_semillas.py): una fila</span>
+<span class="c1"># por tarea, modelo y semilla.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">figura</span><span class="p">(</span><span class="s1">'semillas'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<figure class="align-default" id="fig-semillas">
+<a class="reference internal image-reference" href="../_images/cbb5afc9c09f00559f5a864b3fe07bd949bb0903ecda286fce2f3a48cd6817cf.png"><img alt="../_images/cbb5afc9c09f00559f5a864b3fe07bd949bb0903ecda286fce2f3a48cd6817cf.png" class="align-center" src="../_images/cbb5afc9c09f00559f5a864b3fe07bd949bb0903ecda286fce2f3a48cd6817cf.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figura 9 </span><span class="caption-text"><strong>Figura 7.2.</strong> Métrica en prueba de los seis mejores modelos de cada tarea al reajustarlos con diez semillas (cajas: cuartiles). <strong>Interpretación:</strong> el ancho de cada caja es la variación que se debe solo a la semilla; las diferencias entre modelos menores que ese ancho no son atribuibles al modelo.</span><a class="headerlink" href="#fig-semillas" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</div>
+</div>
+<p id="tab-semillas"><strong>Tabla 7.6.</strong> Estabilidad por semilla y cómputo de los diez modelos de cada tarea. Primera parte: media, desviación,
+intervalo de confianza del 95 % de la media, mínimo y máximo de la métrica en prueba con diez semillas. Segunda parte:
+tiempo de ajuste, tiempo de inferencia sobre la prueba, memoria y tamaño del modelo serializado.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 7.6. Resume semillas.csv por tarea y modelo (los modelos deterministas dan</span>
+<span class="c1"># el mismo valor las diez veces) y añade la memoria medida en un proceso aparte por</span>
+<span class="c1"># modelo (resultados/memoria.csv, experiments/03c_memoria.py).</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_semillas'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<p><strong>Estabilidad: métrica en prueba con diez semillas.</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Tarea</p></th>
+<th class="head text-left"><p>Modelo</p></th>
+<th class="head text-right"><p>Media</p></th>
+<th class="head text-right"><p>Desviación</p></th>
+<th class="head text-right"><p>IC 95 % de la media</p></th>
+<th class="head text-right"><p>Mínimo</p></th>
+<th class="head text-right"><p>Máximo</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>BDL (original)</p></td>
+<td class="text-right"><p>0,059116</p></td>
+<td class="text-right"><p>0,000002</p></td>
+<td class="text-right"><p>[0,059115; 0,059118]</p></td>
+<td class="text-right"><p>0,059114</p></td>
+<td class="text-right"><p>0,059119</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>XGBoost</p></td>
+<td class="text-right"><p>0,059171</p></td>
+<td class="text-right"><p>0,000005</p></td>
+<td class="text-right"><p>[0,059168; 0,059175]</p></td>
+<td class="text-right"><p>0,059162</p></td>
+<td class="text-right"><p>0,059178</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>LightGBM</p></td>
+<td class="text-right"><p>0,059183</p></td>
+<td class="text-right"><p>0,000012</p></td>
+<td class="text-right"><p>[0,059174; 0,059192]</p></td>
+<td class="text-right"><p>0,059157</p></td>
+<td class="text-right"><p>0,059203</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>EBM</p></td>
+<td class="text-right"><p>0,059259</p></td>
+<td class="text-right"><p>0,000007</p></td>
+<td class="text-right"><p>[0,059254; 0,059263]</p></td>
+<td class="text-right"><p>0,059247</p></td>
+<td class="text-right"><p>0,059269</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>Random Forest</p></td>
+<td class="text-right"><p>0,059306</p></td>
+<td class="text-right"><p>0,000010</p></td>
+<td class="text-right"><p>[0,059299; 0,059314]</p></td>
+<td class="text-right"><p>0,059288</p></td>
+<td class="text-right"><p>0,059321</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>Árbol de decisión</p></td>
+<td class="text-right"><p>0,059436</p></td>
+<td class="text-right"><p>0,000000</p></td>
+<td class="text-right"><p>[0,059436; 0,059436]</p></td>
+<td class="text-right"><p>0,059436</p></td>
+<td class="text-right"><p>0,059436</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>Lasso</p></td>
+<td class="text-right"><p>0,061661</p></td>
+<td class="text-right"><p>0,000000</p></td>
+<td class="text-right"><p>[0,061661; 0,061661]</p></td>
+<td class="text-right"><p>0,061661</p></td>
+<td class="text-right"><p>0,061661</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>Ridge</p></td>
+<td class="text-right"><p>0,061668</p></td>
+<td class="text-right"><p>0,000000</p></td>
+<td class="text-right"><p>[0,061668; 0,061668]</p></td>
+<td class="text-right"><p>0,061668</p></td>
+<td class="text-right"><p>0,061668</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>SVR lineal</p></td>
+<td class="text-right"><p>0,061703</p></td>
+<td class="text-right"><p>0,000000</p></td>
+<td class="text-right"><p>[0,061703; 0,061703]</p></td>
+<td class="text-right"><p>0,061703</p></td>
+<td class="text-right"><p>0,061703</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>k-NN</p></td>
+<td class="text-right"><p>0,063206</p></td>
+<td class="text-right"><p>0,000000</p></td>
+<td class="text-right"><p>[0,063206; 0,063206]</p></td>
+<td class="text-right"><p>0,063206</p></td>
+<td class="text-right"><p>0,063206</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>BDL (original)</p></td>
+<td class="text-right"><p>0,83097</p></td>
+<td class="text-right"><p>0,00014</p></td>
+<td class="text-right"><p>[0,83086; 0,83107]</p></td>
+<td class="text-right"><p>0,83072</p></td>
+<td class="text-right"><p>0,83122</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>LightGBM</p></td>
+<td class="text-right"><p>0,82919</p></td>
+<td class="text-right"><p>0,00066</p></td>
+<td class="text-right"><p>[0,82872; 0,82966]</p></td>
+<td class="text-right"><p>0,82773</p></td>
+<td class="text-right"><p>0,83015</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>EBM</p></td>
+<td class="text-right"><p>0,82881</p></td>
+<td class="text-right"><p>0,00009</p></td>
+<td class="text-right"><p>[0,82874; 0,82887]</p></td>
+<td class="text-right"><p>0,82867</p></td>
+<td class="text-right"><p>0,82894</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>XGBoost</p></td>
+<td class="text-right"><p>0,82811</p></td>
+<td class="text-right"><p>0,00023</p></td>
+<td class="text-right"><p>[0,82794; 0,82827]</p></td>
+<td class="text-right"><p>0,82765</p></td>
+<td class="text-right"><p>0,82853</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>Random Forest</p></td>
+<td class="text-right"><p>0,82805</p></td>
+<td class="text-right"><p>0,00136</p></td>
+<td class="text-right"><p>[0,82708; 0,82902]</p></td>
+<td class="text-right"><p>0,82601</p></td>
+<td class="text-right"><p>0,82981</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>Árbol de decisión</p></td>
+<td class="text-right"><p>0,82429</p></td>
+<td class="text-right"><p>0,00000</p></td>
+<td class="text-right"><p>[0,82429; 0,82429]</p></td>
+<td class="text-right"><p>0,82429</p></td>
+<td class="text-right"><p>0,82429</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>k-NN</p></td>
+<td class="text-right"><p>0,78736</p></td>
+<td class="text-right"><p>0,00000</p></td>
+<td class="text-right"><p>[0,78736; 0,78736]</p></td>
+<td class="text-right"><p>0,78736</p></td>
+<td class="text-right"><p>0,78736</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>Regresión logística</p></td>
+<td class="text-right"><p>0,77086</p></td>
+<td class="text-right"><p>0,00000</p></td>
+<td class="text-right"><p>[0,77086; 0,77086]</p></td>
+<td class="text-right"><p>0,77086</p></td>
+<td class="text-right"><p>0,77086</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>SVM lineal</p></td>
+<td class="text-right"><p>0,77058</p></td>
+<td class="text-right"><p>0,00000</p></td>
+<td class="text-right"><p>[0,77058; 0,77058]</p></td>
+<td class="text-right"><p>0,77058</p></td>
+<td class="text-right"><p>0,77058</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>Naive Bayes</p></td>
+<td class="text-right"><p>0,66625</p></td>
+<td class="text-right"><p>0,00000</p></td>
+<td class="text-right"><p>[0,66625; 0,66625]</p></td>
+<td class="text-right"><p>0,66625</p></td>
+<td class="text-right"><p>0,66625</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Cómputo de cada modelo final.</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Tarea</p></th>
+<th class="head text-left"><p>Modelo</p></th>
+<th class="head text-right"><p>Ajuste (s)</p></th>
+<th class="head text-right"><p>Inferencia (s)</p></th>
+<th class="head text-right"><p>Memoria (MB)</p></th>
+<th class="head text-right"><p>Tamaño (KB)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>BDL (original)</p></td>
+<td class="text-right"><p>5,8</p></td>
+<td class="text-right"><p>0,07</p></td>
+<td class="text-right"><p>153</p></td>
+<td class="text-right"><p>149</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>XGBoost</p></td>
+<td class="text-right"><p>1,7</p></td>
+<td class="text-right"><p>0,06</p></td>
+<td class="text-right"><p>154</p></td>
+<td class="text-right"><p>58</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>LightGBM</p></td>
+<td class="text-right"><p>0,6</p></td>
+<td class="text-right"><p>0,06</p></td>
+<td class="text-right"><p>66</p></td>
+<td class="text-right"><p>46</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>EBM</p></td>
+<td class="text-right"><p>25,5</p></td>
+<td class="text-right"><p>0,05</p></td>
+<td class="text-right"><p>81</p></td>
+<td class="text-right"><p>1.032</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>Random Forest</p></td>
+<td class="text-right"><p>11,2</p></td>
+<td class="text-right"><p>0,13</p></td>
+<td class="text-right"><p>66</p></td>
+<td class="text-right"><p>2.347</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>Árbol de decisión</p></td>
+<td class="text-right"><p>0,8</p></td>
+<td class="text-right"><p>0,05</p></td>
+<td class="text-right"><p>55</p></td>
+<td class="text-right"><p>6</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>Lasso</p></td>
+<td class="text-right"><p>0,4</p></td>
+<td class="text-right"><p>0,05</p></td>
+<td class="text-right"><p>65</p></td>
+<td class="text-right"><p>4</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>Ridge</p></td>
+<td class="text-right"><p>0,4</p></td>
+<td class="text-right"><p>0,05</p></td>
+<td class="text-right"><p>67</p></td>
+<td class="text-right"><p>4</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>SVR lineal</p></td>
+<td class="text-right"><p>0,6</p></td>
+<td class="text-right"><p>0,05</p></td>
+<td class="text-right"><p>72</p></td>
+<td class="text-right"><p>4</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>k-NN</p></td>
+<td class="text-right"><p>0,3</p></td>
+<td class="text-right"><p>4,89</p></td>
+<td class="text-right"><p>64</p></td>
+<td class="text-right"><p>6.295</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>BDL (original)</p></td>
+<td class="text-right"><p>11,2</p></td>
+<td class="text-right"><p>0,15</p></td>
+<td class="text-right"><p>158</p></td>
+<td class="text-right"><p>90</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>LightGBM</p></td>
+<td class="text-right"><p>1,2</p></td>
+<td class="text-right"><p>0,17</p></td>
+<td class="text-right"><p>64</p></td>
+<td class="text-right"><p>187</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>EBM</p></td>
+<td class="text-right"><p>23,4</p></td>
+<td class="text-right"><p>0,14</p></td>
+<td class="text-right"><p>91</p></td>
+<td class="text-right"><p>422</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>XGBoost</p></td>
+<td class="text-right"><p>1,1</p></td>
+<td class="text-right"><p>0,13</p></td>
+<td class="text-right"><p>162</p></td>
+<td class="text-right"><p>193</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>Random Forest</p></td>
+<td class="text-right"><p>16,2</p></td>
+<td class="text-right"><p>0,30</p></td>
+<td class="text-right"><p>111</p></td>
+<td class="text-right"><p>12.992</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>Árbol de decisión</p></td>
+<td class="text-right"><p>1,1</p></td>
+<td class="text-right"><p>0,11</p></td>
+<td class="text-right"><p>65</p></td>
+<td class="text-right"><p>6</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>k-NN</p></td>
+<td class="text-right"><p>0,2</p></td>
+<td class="text-right"><p>9,68</p></td>
+<td class="text-right"><p>227</p></td>
+<td class="text-right"><p>6.208</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>Regresión logística</p></td>
+<td class="text-right"><p>1,2</p></td>
+<td class="text-right"><p>0,11</p></td>
+<td class="text-right"><p>101</p></td>
+<td class="text-right"><p>4</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>SVM lineal</p></td>
+<td class="text-right"><p>0,8</p></td>
+<td class="text-right"><p>0,11</p></td>
+<td class="text-right"><p>72</p></td>
+<td class="text-right"><p>4</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>Naive Bayes</p></td>
+<td class="text-right"><p>0,3</p></td>
+<td class="text-right"><p>0,12</p></td>
+<td class="text-right"><p>78</p></td>
+<td class="text-right"><p>6</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Diez semillas (42 a 51) con los hiperparámetros finales; solo cambia la semilla del modelo, no la partición ni la búsqueda. IC 95 % de la media: con la <em>t</em> de Student sobre las diez semillas. Los modelos deterministas dan el mismo valor las diez veces. Ajuste e inferencia: media de las diez semillas; la inferencia es sobre los 9.745 clientes de prueba. Memoria: aumento máximo del conjunto de trabajo del proceso al ajustar el modelo y predecir la prueba, medido en un proceso aparte (<code class="docutils literal notranslate"><span class="pre">experiments/03c_memoria.py</span></code>). Tamaño: el modelo serializado y comprimido.</p>
+</div>
+</div>
+</section>
+<section id="ruido-y-valores-atipicos">
+<h2>7.4. Ruido y valores atípicos<a class="headerlink" href="#ruido-y-valores-atipicos" title="Link to this heading">#</a></h2>
+<p>Se contamina la partición de entrenamiento de tres maneras (ruido en el puntaje, puntajes reemplazados por valores al
+azar y ruido en los predictores numéricos) y se evalúa siempre contra datos sin contaminar
+(<a class="reference internal" href="#tab-ruido"><span class="std std-ref">Tabla 7.7</span></a>).</p>
+<p id="tab-ruido"><strong>Tabla 7.7.</strong> Métrica del original y de los dos benchmarks de boosting con distintos niveles de contaminación de los
+datos de entrenamiento.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 7.7. Lee resultados/robustez/ruido.csv (experiments/06_robustez.py ruido):</span>
+<span class="c1"># media en los cinco pliegues por escenario, nivel de contaminación y modelo.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_ruido'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<p><strong>Regresión (RMSE, menor es mejor).</strong> El original es el mejor de los tres en 8 de 11 escenarios.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Contaminación</p></th>
+<th class="head text-right"><p>Nivel</p></th>
+<th class="head text-right"><p>BDL (original)</p></th>
+<th class="head text-right"><p>XGBoost</p></th>
+<th class="head text-right"><p>LightGBM</p></th>
+<th class="head text-left"><p>Mejor</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>sin contaminar</p></td>
+<td class="text-right"><p>0,000</p></td>
+<td class="text-right"><p>0,05888</p></td>
+<td class="text-right"><p>0,05896</p></td>
+<td class="text-right"><p>0,05899</p></td>
+<td class="text-left"><p>BDL (original)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>ruido gaussiano en el objetivo</p></td>
+<td class="text-right"><p>0,005</p></td>
+<td class="text-right"><p>0,05889</p></td>
+<td class="text-right"><p>0,05896</p></td>
+<td class="text-right"><p>0,05898</p></td>
+<td class="text-left"><p>BDL (original)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>ruido gaussiano en el objetivo</p></td>
+<td class="text-right"><p>0,010</p></td>
+<td class="text-right"><p>0,05890</p></td>
+<td class="text-right"><p>0,05896</p></td>
+<td class="text-right"><p>0,05899</p></td>
+<td class="text-left"><p>BDL (original)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>ruido gaussiano en el objetivo</p></td>
+<td class="text-right"><p>0,020</p></td>
+<td class="text-right"><p>0,05898</p></td>
+<td class="text-right"><p>0,05897</p></td>
+<td class="text-right"><p>0,05899</p></td>
+<td class="text-left"><p>XGBoost</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>ruido gaussiano en el objetivo</p></td>
+<td class="text-right"><p>0,050</p></td>
+<td class="text-right"><p>0,05910</p></td>
+<td class="text-right"><p>0,05901</p></td>
+<td class="text-right"><p>0,05904</p></td>
+<td class="text-left"><p>XGBoost</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>atípicos en el objetivo</p></td>
+<td class="text-right"><p>0,010</p></td>
+<td class="text-right"><p>0,05888</p></td>
+<td class="text-right"><p>0,05897</p></td>
+<td class="text-right"><p>0,05899</p></td>
+<td class="text-left"><p>BDL (original)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>atípicos en el objetivo</p></td>
+<td class="text-right"><p>0,050</p></td>
+<td class="text-right"><p>0,05893</p></td>
+<td class="text-right"><p>0,05906</p></td>
+<td class="text-right"><p>0,05908</p></td>
+<td class="text-left"><p>BDL (original)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>atípicos en el objetivo</p></td>
+<td class="text-right"><p>0,100</p></td>
+<td class="text-right"><p>0,05899</p></td>
+<td class="text-right"><p>0,05923</p></td>
+<td class="text-right"><p>0,05925</p></td>
+<td class="text-left"><p>BDL (original)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>ruido en los predictores numéricos</p></td>
+<td class="text-right"><p>0,100</p></td>
+<td class="text-right"><p>0,05897</p></td>
+<td class="text-right"><p>0,05907</p></td>
+<td class="text-right"><p>0,05907</p></td>
+<td class="text-left"><p>BDL (original)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>ruido en los predictores numéricos</p></td>
+<td class="text-right"><p>0,250</p></td>
+<td class="text-right"><p>0,05933</p></td>
+<td class="text-right"><p>0,05940</p></td>
+<td class="text-right"><p>0,05942</p></td>
+<td class="text-left"><p>BDL (original)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>ruido en los predictores numéricos</p></td>
+<td class="text-right"><p>0,500</p></td>
+<td class="text-right"><p>0,06157</p></td>
+<td class="text-right"><p>0,06145</p></td>
+<td class="text-right"><p>0,06147</p></td>
+<td class="text-left"><p>XGBoost</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Clasificación (AUC, mayor es mejor).</strong> El original es el mejor de los tres en 3 de 11 escenarios.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Contaminación</p></th>
+<th class="head text-right"><p>Nivel</p></th>
+<th class="head text-right"><p>BDL (original)</p></th>
+<th class="head text-right"><p>XGBoost</p></th>
+<th class="head text-right"><p>LightGBM</p></th>
+<th class="head text-left"><p>Mejor</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>sin contaminar</p></td>
+<td class="text-right"><p>0,000</p></td>
+<td class="text-right"><p>0,8339</p></td>
+<td class="text-right"><p>0,8356</p></td>
+<td class="text-right"><p>0,8325</p></td>
+<td class="text-left"><p>XGBoost</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>ruido gaussiano en el objetivo</p></td>
+<td class="text-right"><p>0,005</p></td>
+<td class="text-right"><p>0,8302</p></td>
+<td class="text-right"><p>0,8308</p></td>
+<td class="text-right"><p>0,8305</p></td>
+<td class="text-left"><p>XGBoost</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>ruido gaussiano en el objetivo</p></td>
+<td class="text-right"><p>0,010</p></td>
+<td class="text-right"><p>0,8301</p></td>
+<td class="text-right"><p>0,8284</p></td>
+<td class="text-right"><p>0,8297</p></td>
+<td class="text-left"><p>BDL (original)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>ruido gaussiano en el objetivo</p></td>
+<td class="text-right"><p>0,020</p></td>
+<td class="text-right"><p>0,8304</p></td>
+<td class="text-right"><p>0,8260</p></td>
+<td class="text-right"><p>0,8287</p></td>
+<td class="text-left"><p>BDL (original)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>ruido gaussiano en el objetivo</p></td>
+<td class="text-right"><p>0,050</p></td>
+<td class="text-right"><p>0,8297</p></td>
+<td class="text-right"><p>0,8225</p></td>
+<td class="text-right"><p>0,8262</p></td>
+<td class="text-left"><p>BDL (original)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>atípicos en el objetivo</p></td>
+<td class="text-right"><p>0,010</p></td>
+<td class="text-right"><p>0,8323</p></td>
+<td class="text-right"><p>0,8354</p></td>
+<td class="text-right"><p>0,8330</p></td>
+<td class="text-left"><p>XGBoost</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>atípicos en el objetivo</p></td>
+<td class="text-right"><p>0,050</p></td>
+<td class="text-right"><p>0,8305</p></td>
+<td class="text-right"><p>0,8348</p></td>
+<td class="text-right"><p>0,8323</p></td>
+<td class="text-left"><p>XGBoost</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>atípicos en el objetivo</p></td>
+<td class="text-right"><p>0,100</p></td>
+<td class="text-right"><p>0,8311</p></td>
+<td class="text-right"><p>0,8331</p></td>
+<td class="text-right"><p>0,8317</p></td>
+<td class="text-left"><p>XGBoost</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>ruido en los predictores numéricos</p></td>
+<td class="text-right"><p>0,100</p></td>
+<td class="text-right"><p>0,8257</p></td>
+<td class="text-right"><p>0,8310</p></td>
+<td class="text-right"><p>0,8286</p></td>
+<td class="text-left"><p>XGBoost</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>ruido en los predictores numéricos</p></td>
+<td class="text-right"><p>0,250</p></td>
+<td class="text-right"><p>0,8197</p></td>
+<td class="text-right"><p>0,8180</p></td>
+<td class="text-right"><p>0,8208</p></td>
+<td class="text-left"><p>LightGBM</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>ruido en los predictores numéricos</p></td>
+<td class="text-right"><p>0,500</p></td>
+<td class="text-right"><p>0,7768</p></td>
+<td class="text-right"><p>0,7802</p></td>
+<td class="text-right"><p>0,7821</p></td>
+<td class="text-left"><p>LightGBM</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Nivel: desviación del ruido añadido al puntaje de entrenamiento; fracción de puntajes de entrenamiento reemplazados por un valor al azar; o desviación del ruido en los predictores numéricos, en desviaciones típicas de cada uno. La evaluación siempre es contra el puntaje y la etiqueta sin contaminar.</p>
+<p><strong>Lectura.</strong> En regresión, el original, con ruido gaussiano en el objetivo, es el mejor con 0,005 y 0,010 y no con 0,020 y 0,050 (en el nivel más alto, 0,05910 frente a 0,05901 de XGBoost); con atípicos en el objetivo, es el mejor de los tres en los 3 niveles (en el nivel más alto, 0,05899 frente a 0,05923 de XGBoost); con ruido en los predictores numéricos, es el mejor con 0,100 y 0,250 y no con 0,500 (en el nivel más alto, 0,06157 frente a 0,06145 de XGBoost). En clasificación, el original, con ruido gaussiano en el objetivo, es el mejor con 0,010, 0,020 y 0,050 y no con 0,005 (en el nivel más alto, 0,8297 frente a 0,8262 de LightGBM); con atípicos en el objetivo, no es el mejor en ninguno de los 3 niveles (en el nivel más alto, 0,8311 frente a 0,8331 de XGBoost); con ruido en los predictores numéricos, no es el mejor en ninguno de los 3 niveles (en el nivel más alto, 0,7768 frente a 0,7821 de LightGBM). En 19 de los 22 escenarios de las dos tareas la diferencia entre el original y el mejor de los otros dos es menor que la desviación del original entre pliegues; la supera a favor del original en 0 y en contra en 3 (atípicos en el objetivo de 0,050 en clasificación, ruido en los predictores numéricos de 0,100 en clasificación y ruido en los predictores numéricos de 0,500 en clasificación). El estudio muestra que una contaminación moderada no rompe al modelo, no que sea más robusto que los benchmarks. En regresión la ventaja se pierde cuando el ruido en el puntaje llega a 0,020: los niveles del escalón están separados 0,05, y la Proposición 4 solo promete ganancia mientras esa separación sea grande frente al ruido.</p>
+</div>
+</div>
+</section>
+<section id="tamano-de-muestra-y-escalabilidad">
+<h2>7.5. Tamaño de muestra y escalabilidad<a class="headerlink" href="#tamano-de-muestra-y-escalabilidad" title="Link to this heading">#</a></h2>
+<p>La <a class="reference internal" href="#fig-aprendizaje"><span class="std std-ref">Figura 7.3</span></a> y la <a class="reference internal" href="#tab-muestra"><span class="std std-ref">Tabla 7.8</span></a> muestran la curva de aprendizaje y el tiempo
+de ajuste al variar el número de filas; la <a class="reference internal" href="#tab-columnas"><span class="std std-ref">Tabla 7.9</span></a>, el tiempo de ajuste al variar el número de
+columnas y el de inferencia al variar el número de filas.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Figura 7.3. Lee resultados/robustez/muestra.csv y muestra_sin_mezcla.csv</span>
+<span class="c1"># (experiments/06_robustez.py muestra mezcla): las filas se submuestrean dentro de</span>
+<span class="c1"># cada pliegue de entrenamiento y la evaluación usa el pliegue de prueba completo.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">figura</span><span class="p">(</span><span class="s1">'aprendizaje'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<figure class="align-default" id="fig-aprendizaje">
+<a class="reference internal image-reference" href="../_images/2d17a82df387ebde0ad2b839fda9cc1f1183c7006c96a93a124a505fd6e6ff0d.png"><img alt="../_images/2d17a82df387ebde0ad2b839fda9cc1f1183c7006c96a93a124a505fd6e6ff0d.png" class="align-center" src="../_images/2d17a82df387ebde0ad2b839fda9cc1f1183c7006c96a93a124a505fd6e6ff0d.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figura 10 </span><span class="caption-text"><strong>Figura 7.3.</strong> Curva de aprendizaje con el 10 %, 25 %, 50 % y 100 % de las filas de entrenamiento (media ± desviación en cinco pliegues; la línea discontinua es el modelo original sin la mezcla) y tiempo de ajuste en segundos, en escala logarítmica. <strong>Interpretación:</strong> con pocas filas el modelo original lleva una ventaja clara, que se cierra al crecer la muestra, cuando todos los modelos se acercan al límite. Sin la mezcla esa ventaja desaparece y el modelo sigue la curva de los benchmarks: al quitar el escalón, cada fila informa más sobre el índice (Proposición 4).</span><a class="headerlink" href="#fig-aprendizaje" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</div>
+</div>
+<p id="tab-muestra"><strong>Tabla 7.8.</strong> Curva de aprendizaje: métrica (media ± desviación) de los tres modelos y del original sin la mezcla, y
+tiempo de ajuste, según el número de filas de entrenamiento.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 7.8. Resume muestra.csv y muestra_sin_mezcla.csv: con cuántas filas alcanza</span>
+<span class="c1"># el original el valor del mejor de los otros dos, y qué parte de esa ventaja</span>
+<span class="c1"># desaparece al retirar la mezcla.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_muestra'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<p><strong>Métrica: RMSE en regresión y AUC en clasificación.</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Tarea</p></th>
+<th class="head text-right"><p>Filas</p></th>
+<th class="head text-right"><p>BDL (original)</p></th>
+<th class="head text-right"><p>XGBoost</p></th>
+<th class="head text-right"><p>LightGBM</p></th>
+<th class="head text-right"><p>BDL sin mezcla (K = 1)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-right"><p>3.118</p></td>
+<td class="text-right"><p>0,05896 ± 0,00039</p></td>
+<td class="text-right"><p>0,05972 ± 0,00032</p></td>
+<td class="text-right"><p>0,05981 ± 0,00035</p></td>
+<td class="text-right"><p>0,05971 ± 0,00035</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-right"><p>7.796</p></td>
+<td class="text-right"><p>0,05891 ± 0,00040</p></td>
+<td class="text-right"><p>0,05917 ± 0,00037</p></td>
+<td class="text-right"><p>0,05920 ± 0,00035</p></td>
+<td class="text-right"><p>0,05924 ± 0,00035</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-right"><p>15.591</p></td>
+<td class="text-right"><p>0,05889 ± 0,00041</p></td>
+<td class="text-right"><p>0,05901 ± 0,00037</p></td>
+<td class="text-right"><p>0,05905 ± 0,00035</p></td>
+<td class="text-right"><p>0,05908 ± 0,00035</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-right"><p>31.182</p></td>
+<td class="text-right"><p>0,05888 ± 0,00041</p></td>
+<td class="text-right"><p>0,05896 ± 0,00040</p></td>
+<td class="text-right"><p>0,05899 ± 0,00040</p></td>
+<td class="text-right"><p>0,05902 ± 0,00040</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-right"><p>3.118</p></td>
+<td class="text-right"><p>0,8318 ± 0,0025</p></td>
+<td class="text-right"><p>0,8226 ± 0,0055</p></td>
+<td class="text-right"><p>0,8241 ± 0,0039</p></td>
+<td class="text-right"><p>0,8232 ± 0,0034</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-right"><p>7.796</p></td>
+<td class="text-right"><p>0,8338 ± 0,0025</p></td>
+<td class="text-right"><p>0,8279 ± 0,0026</p></td>
+<td class="text-right"><p>0,8282 ± 0,0019</p></td>
+<td class="text-right"><p>0,8269 ± 0,0047</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-right"><p>15.591</p></td>
+<td class="text-right"><p>0,8336 ± 0,0030</p></td>
+<td class="text-right"><p>0,8309 ± 0,0037</p></td>
+<td class="text-right"><p>0,8306 ± 0,0032</p></td>
+<td class="text-right"><p>0,8294 ± 0,0032</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-right"><p>31.182</p></td>
+<td class="text-right"><p>0,8339 ± 0,0030</p></td>
+<td class="text-right"><p>0,8356 ± 0,0039</p></td>
+<td class="text-right"><p>0,8325 ± 0,0018</p></td>
+<td class="text-right"><p>0,8303 ± 0,0035</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Tiempo de ajuste, en segundos.</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Tarea</p></th>
+<th class="head text-right"><p>Filas</p></th>
+<th class="head text-right"><p>BDL (original)</p></th>
+<th class="head text-right"><p>XGBoost</p></th>
+<th class="head text-right"><p>LightGBM</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-right"><p>3.118</p></td>
+<td class="text-right"><p>0,9</p></td>
+<td class="text-right"><p>0,4</p></td>
+<td class="text-right"><p>0,1</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-right"><p>7.796</p></td>
+<td class="text-right"><p>1,9</p></td>
+<td class="text-right"><p>0,4</p></td>
+<td class="text-right"><p>0,2</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-right"><p>15.591</p></td>
+<td class="text-right"><p>2,3</p></td>
+<td class="text-right"><p>1,0</p></td>
+<td class="text-right"><p>0,4</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-right"><p>31.182</p></td>
+<td class="text-right"><p>4,9</p></td>
+<td class="text-right"><p>1,1</p></td>
+<td class="text-right"><p>0,5</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-right"><p>3.118</p></td>
+<td class="text-right"><p>1,5</p></td>
+<td class="text-right"><p>0,4</p></td>
+<td class="text-right"><p>0,5</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-right"><p>7.796</p></td>
+<td class="text-right"><p>2,6</p></td>
+<td class="text-right"><p>0,4</p></td>
+<td class="text-right"><p>0,3</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-right"><p>15.591</p></td>
+<td class="text-right"><p>4,6</p></td>
+<td class="text-right"><p>0,5</p></td>
+<td class="text-right"><p>0,5</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-right"><p>31.182</p></td>
+<td class="text-right"><p>8,5</p></td>
+<td class="text-right"><p>0,8</p></td>
+<td class="text-right"><p>1,2</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Media ± desviación en los cinco pliegues externos de la semilla 42, con los hiperparámetros finales; las filas se submuestrean dentro de cada pliegue de entrenamiento y la evaluación usa el pliegue de prueba completo. Ningún modelo se reajusta para cada tamaño: parte de la diferencia con pocas filas puede deberse a que los hiperparámetros se eligieron con todas.</p>
+<p><strong>Regresión.</strong> Con 3.118 filas (el 10 %), el original obtiene 0,05896 y XGBoost, 0,05972; con las 31.182, 0,05888 y 0,05896. El original alcanza con 3.118 filas el valor que XGBoost obtiene con todas: la ventaja del modelo es de eficiencia muestral y se reduce al crecer la muestra, cuando todos se acercan al límite.</p>
+<p><strong>Clasificación.</strong> Con 3.118 filas (el 10 %), el original obtiene 0,8318 y XGBoost, 0,8226; con las 31.182, 0,8339 y 0,8356. Con todas las filas, XGBoost queda por delante: la ventaja del original aparece con muestras pequeñas y desaparece al crecer la muestra.</p>
+<p><strong>Qué parte se debe a la mezcla.</strong> La misma curva para el modelo original con <span class="math notranslate nohighlight">\(K = 1\)</span> (línea discontinua): en regresión, con 3.118 filas el modelo completo obtiene 0,05896; sin la mezcla, 0,05971, y XGBoost, 0,05972 (con las 31.182, la variante sin mezcla llega a 0,05902, que el modelo completo ya supera con 3.118); en clasificación, con 3.118 filas el modelo completo obtiene 0,8318; sin la mezcla, 0,8232, y LightGBM, 0,8241 (con las 31.182, la variante sin mezcla llega a 0,8303, que el modelo completo ya supera con 3.118). Sin la clase latente, el modelo se comporta como los benchmarks: la ventaja con pocas filas la da la mezcla, que es lo que predice la Proposición 4. La variante usa aquí los hiperparámetros del modelo completo; en la ablación de la sección 5.9, donde tiene su propia búsqueda, la diferencia con todas las filas es de 0,000107 de RMSE y 0,00211 de AUC. Este análisis se añadió después de ver los resultados y es exploratorio (sección 6.2).</p>
+<p><strong>Costo.</strong> Al multiplicar las filas por 10, el tiempo de ajuste del original se multiplica por 5,5 (el de XGBoost, por 3,1): crece como mucho de forma lineal, como predice la sección 5.7. Con todas las filas el original tarda 4,5 veces lo que XGBoost.</p>
+</div>
+</div>
+<p id="tab-columnas"><strong>Tabla 7.9.</strong> Escalabilidad. Primera parte: tiempo de ajuste al variar el número de columnas originales, con las
+mismas filas. Segunda parte: tiempo de inferencia del modelo original y del mejor benchmark de regresión al variar el
+número de filas.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 7.9. Lee resultados/robustez/columnas.csv (tiempo de ajuste con las primeras</span>
+<span class="c1"># 6, 12, 24 y 48 columnas) y resultados/inferencia_filas.csv</span>
+<span class="c1"># (experiments/03c_memoria.py: mediana de cinco medidas con 1.000, 10.000 y 100.000</span>
+<span class="c1"># filas).</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_columnas'</span><span class="p">,</span> <span class="s1">'tabla_inferencia'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-right"><p>Columnas originales</p></th>
+<th class="head text-right"><p>Ajuste BDL (original) (s)</p></th>
+<th class="head text-right"><p>Ajuste XGBoost (s)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-right"><p>6</p></td>
+<td class="text-right"><p>0,9</p></td>
+<td class="text-right"><p>0,8</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>12</p></td>
+<td class="text-right"><p>1,0</p></td>
+<td class="text-right"><p>0,9</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>24</p></td>
+<td class="text-right"><p>2,7</p></td>
+<td class="text-right"><p>1,0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>48</p></td>
+<td class="text-right"><p>4,3</p></td>
+<td class="text-right"><p>2,7</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Al multiplicar las columnas por 8, el tiempo del original se multiplica por 4,9 y el de XGBoost, por 3,4.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-right"><p>Filas</p></th>
+<th class="head text-right"><p>Inferencia BDL (original) (s)</p></th>
+<th class="head text-right"><p>Inferencia XGBoost (s)</p></th>
+<th class="head text-right"><p>BDL (original): microsegundos por fila</p></th>
+<th class="head text-right"><p>XGBoost: microsegundos por fila</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-right"><p>1.000</p></td>
+<td class="text-right"><p>0,014</p></td>
+<td class="text-right"><p>0,012</p></td>
+<td class="text-right"><p>14,1</p></td>
+<td class="text-right"><p>12,0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>10.000</p></td>
+<td class="text-right"><p>0,064</p></td>
+<td class="text-right"><p>0,062</p></td>
+<td class="text-right"><p>6,4</p></td>
+<td class="text-right"><p>6,2</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>100.000</p></td>
+<td class="text-right"><p>0,623</p></td>
+<td class="text-right"><p>0,585</p></td>
+<td class="text-right"><p>6,2</p></td>
+<td class="text-right"><p>5,9</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Mediana de cinco medidas; la tubería incluye el preprocesamiento. Al multiplicar las filas por 100, el tiempo de inferencia del original se multiplica por 44,2: crece de forma lineal o menos, como predice la sección 5.7.</p>
+</div>
+</div>
+<p>La complejidad de la sección 5.7 predice un costo de ajuste lineal en <span class="math notranslate nohighlight">\(n\)</span> y en <span class="math notranslate nohighlight">\(p\)</span> y un costo de inferencia lineal en
+<span class="math notranslate nohighlight">\(n\)</span>; las tablas <a class="reference internal" href="#tab-muestra"><span class="std std-ref">7.8</span></a> y <a class="reference internal" href="#tab-columnas"><span class="std std-ref">7.9</span></a> lo contrastan con el tiempo medido.</p>
+</section>
+<section id="cambio-de-distribucion">
+<h2>7.6. Cambio de distribución<a class="headerlink" href="#cambio-de-distribucion" title="Link to this heading">#</a></h2>
+<p>Se deja fuera una ciudad cada vez: los modelos se ajustan con los clientes de las demás y se evalúan en la que quedó
+fuera (<a class="reference internal" href="#tab-ciudades"><span class="std std-ref">Tabla 7.10</span></a>). Los hiperparámetros son los finales, que se eligieron con clientes de todas las
+ciudades: la ciudad excluida no interviene en el ajuste, pero sí intervino en esa elección.</p>
+<p id="tab-ciudades"><strong>Tabla 7.10.</strong> Cambio de distribución espacial: métrica de los tres modelos en la ciudad que se deja fuera.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 7.10. Lee resultados/robustez/ciudades.csv (experiments/06_robustez.py</span>
+<span class="c1"># ciudades): una fila por tarea, ciudad excluida y modelo.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_ciudades'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<p><strong>Regresión (RMSE, menor es mejor).</strong> El original es el mejor de los tres en 16 de 18 ciudades.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Ciudad que se deja fuera</p></th>
+<th class="head text-right"><p>Clientes</p></th>
+<th class="head text-right"><p>BDL (original)</p></th>
+<th class="head text-right"><p>XGBoost</p></th>
+<th class="head text-right"><p>LightGBM</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Armenia, Quindío</p></td>
+<td class="text-right"><p>405</p></td>
+<td class="text-right"><p>0,06048</p></td>
+<td class="text-right"><p>0,06048</p></td>
+<td class="text-right"><p>0,06060</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Barranquilla, Atlántico</p></td>
+<td class="text-right"><p>3.069</p></td>
+<td class="text-right"><p>0,05873</p></td>
+<td class="text-right"><p>0,05879</p></td>
+<td class="text-right"><p>0,05887</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Bogotá, Cundinamarca</p></td>
+<td class="text-right"><p>13.613</p></td>
+<td class="text-right"><p>0,05944</p></td>
+<td class="text-right"><p>0,05950</p></td>
+<td class="text-right"><p>0,05950</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Bucaramanga, Santander</p></td>
+<td class="text-right"><p>1.512</p></td>
+<td class="text-right"><p>0,05897</p></td>
+<td class="text-right"><p>0,05913</p></td>
+<td class="text-right"><p>0,05907</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Cali, Valle del Cauca</p></td>
+<td class="text-right"><p>4.669</p></td>
+<td class="text-right"><p>0,05817</p></td>
+<td class="text-right"><p>0,05825</p></td>
+<td class="text-right"><p>0,05827</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Cartagena, Bolívar</p></td>
+<td class="text-right"><p>1.898</p></td>
+<td class="text-right"><p>0,05878</p></td>
+<td class="text-right"><p>0,05888</p></td>
+<td class="text-right"><p>0,05887</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Cúcuta, Norte de Santander</p></td>
+<td class="text-right"><p>1.556</p></td>
+<td class="text-right"><p>0,05879</p></td>
+<td class="text-right"><p>0,05890</p></td>
+<td class="text-right"><p>0,05896</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Ibagué, Tolima</p></td>
+<td class="text-right"><p>849</p></td>
+<td class="text-right"><p>0,05793</p></td>
+<td class="text-right"><p>0,05819</p></td>
+<td class="text-right"><p>0,05819</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Manizales, Caldas</p></td>
+<td class="text-right"><p>782</p></td>
+<td class="text-right"><p>0,05883</p></td>
+<td class="text-right"><p>0,05891</p></td>
+<td class="text-right"><p>0,05902</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Medellín, Antioquia</p></td>
+<td class="text-right"><p>5.909</p></td>
+<td class="text-right"><p>0,05895</p></td>
+<td class="text-right"><p>0,05908</p></td>
+<td class="text-right"><p>0,05909</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Montería, Córdoba</p></td>
+<td class="text-right"><p>172</p></td>
+<td class="text-right"><p>0,05396</p></td>
+<td class="text-right"><p>0,05413</p></td>
+<td class="text-right"><p>0,05423</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Neiva, Huila</p></td>
+<td class="text-right"><p>395</p></td>
+<td class="text-right"><p>0,06065</p></td>
+<td class="text-right"><p>0,06075</p></td>
+<td class="text-right"><p>0,06067</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Pasto, Nariño</p></td>
+<td class="text-right"><p>786</p></td>
+<td class="text-right"><p>0,05862</p></td>
+<td class="text-right"><p>0,05876</p></td>
+<td class="text-right"><p>0,05879</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Pereira, Risaralda</p></td>
+<td class="text-right"><p>1.131</p></td>
+<td class="text-right"><p>0,05810</p></td>
+<td class="text-right"><p>0,05824</p></td>
+<td class="text-right"><p>0,05822</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Santa Marta, Magdalena</p></td>
+<td class="text-right"><p>1.243</p></td>
+<td class="text-right"><p>0,05730</p></td>
+<td class="text-right"><p>0,05732</p></td>
+<td class="text-right"><p>0,05738</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Sincelejo, Sucre</p></td>
+<td class="text-right"><p>175</p></td>
+<td class="text-right"><p>0,06123</p></td>
+<td class="text-right"><p>0,06116</p></td>
+<td class="text-right"><p>0,06123</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Valledupar, Cesar</p></td>
+<td class="text-right"><p>406</p></td>
+<td class="text-right"><p>0,05780</p></td>
+<td class="text-right"><p>0,05788</p></td>
+<td class="text-right"><p>0,05782</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Villavicencio, Meta</p></td>
+<td class="text-right"><p>408</p></td>
+<td class="text-right"><p>0,05751</p></td>
+<td class="text-right"><p>0,05751</p></td>
+<td class="text-right"><p>0,05755</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong>Media</strong></p></td>
+<td class="text-right"><p>—</p></td>
+<td class="text-right"><p><strong>0,05857</strong></p></td>
+<td class="text-right"><p><strong>0,05866</strong></p></td>
+<td class="text-right"><p><strong>0,05869</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Clasificación (AUC, mayor es mejor).</strong> El original es el mejor de los tres en 6 de 18 ciudades.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Ciudad que se deja fuera</p></th>
+<th class="head text-right"><p>Clientes</p></th>
+<th class="head text-right"><p>BDL (original)</p></th>
+<th class="head text-right"><p>XGBoost</p></th>
+<th class="head text-right"><p>LightGBM</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Armenia, Quindío</p></td>
+<td class="text-right"><p>405</p></td>
+<td class="text-right"><p>0,8572</p></td>
+<td class="text-right"><p>0,8571</p></td>
+<td class="text-right"><p>0,8483</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Barranquilla, Atlántico</p></td>
+<td class="text-right"><p>3.069</p></td>
+<td class="text-right"><p>0,8236</p></td>
+<td class="text-right"><p>0,8191</p></td>
+<td class="text-right"><p>0,8170</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Bogotá, Cundinamarca</p></td>
+<td class="text-right"><p>13.613</p></td>
+<td class="text-right"><p>0,8345</p></td>
+<td class="text-right"><p>0,8342</p></td>
+<td class="text-right"><p>0,8376</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Bucaramanga, Santander</p></td>
+<td class="text-right"><p>1.512</p></td>
+<td class="text-right"><p>0,8312</p></td>
+<td class="text-right"><p>0,8398</p></td>
+<td class="text-right"><p>0,8287</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Cali, Valle del Cauca</p></td>
+<td class="text-right"><p>4.669</p></td>
+<td class="text-right"><p>0,8443</p></td>
+<td class="text-right"><p>0,8482</p></td>
+<td class="text-right"><p>0,8418</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Cartagena, Bolívar</p></td>
+<td class="text-right"><p>1.898</p></td>
+<td class="text-right"><p>0,8245</p></td>
+<td class="text-right"><p>0,8253</p></td>
+<td class="text-right"><p>0,8141</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Cúcuta, Norte de Santander</p></td>
+<td class="text-right"><p>1.556</p></td>
+<td class="text-right"><p>0,8256</p></td>
+<td class="text-right"><p>0,8283</p></td>
+<td class="text-right"><p>0,8282</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Ibagué, Tolima</p></td>
+<td class="text-right"><p>849</p></td>
+<td class="text-right"><p>0,8434</p></td>
+<td class="text-right"><p>0,8516</p></td>
+<td class="text-right"><p>0,8465</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Manizales, Caldas</p></td>
+<td class="text-right"><p>782</p></td>
+<td class="text-right"><p>0,8331</p></td>
+<td class="text-right"><p>0,8457</p></td>
+<td class="text-right"><p>0,8515</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Medellín, Antioquia</p></td>
+<td class="text-right"><p>5.909</p></td>
+<td class="text-right"><p>0,8301</p></td>
+<td class="text-right"><p>0,8318</p></td>
+<td class="text-right"><p>0,8283</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Montería, Córdoba</p></td>
+<td class="text-right"><p>172</p></td>
+<td class="text-right"><p>0,8453</p></td>
+<td class="text-right"><p>0,8505</p></td>
+<td class="text-right"><p>0,8522</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Neiva, Huila</p></td>
+<td class="text-right"><p>395</p></td>
+<td class="text-right"><p>0,7898</p></td>
+<td class="text-right"><p>0,7861</p></td>
+<td class="text-right"><p>0,7691</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Pasto, Nariño</p></td>
+<td class="text-right"><p>786</p></td>
+<td class="text-right"><p>0,8443</p></td>
+<td class="text-right"><p>0,8387</p></td>
+<td class="text-right"><p>0,8339</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Pereira, Risaralda</p></td>
+<td class="text-right"><p>1.131</p></td>
+<td class="text-right"><p>0,8477</p></td>
+<td class="text-right"><p>0,8399</p></td>
+<td class="text-right"><p>0,8423</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Santa Marta, Magdalena</p></td>
+<td class="text-right"><p>1.243</p></td>
+<td class="text-right"><p>0,8328</p></td>
+<td class="text-right"><p>0,8330</p></td>
+<td class="text-right"><p>0,8238</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Sincelejo, Sucre</p></td>
+<td class="text-right"><p>175</p></td>
+<td class="text-right"><p>0,8413</p></td>
+<td class="text-right"><p>0,8471</p></td>
+<td class="text-right"><p>0,8447</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Valledupar, Cesar</p></td>
+<td class="text-right"><p>406</p></td>
+<td class="text-right"><p>0,8412</p></td>
+<td class="text-right"><p>0,8262</p></td>
+<td class="text-right"><p>0,8139</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Villavicencio, Meta</p></td>
+<td class="text-right"><p>408</p></td>
+<td class="text-right"><p>0,8291</p></td>
+<td class="text-right"><p>0,8257</p></td>
+<td class="text-right"><p>0,8399</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong>Media</strong></p></td>
+<td class="text-right"><p>—</p></td>
+<td class="text-right"><p><strong>0,8344</strong></p></td>
+<td class="text-right"><p><strong>0,8349</strong></p></td>
+<td class="text-right"><p><strong>0,8312</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Lectura.</strong> En regresión, la media simple de las 18 ciudades es 0,05857 para el original y 0,05866 para XGBoost; con pliegues al azar y la misma configuración, el original obtiene 0,05888 ± 0,00041: evaluar en una ciudad que no se vio no empeora su resultado. En clasificación, la media simple de las 18 ciudades es 0,8344 para el original y 0,8349 para XGBoost; con pliegues al azar y la misma configuración, el original obtiene 0,8339 ± 0,0030: evaluar en una ciudad que no se vio no empeora su resultado. Las ciudades pequeñas pesan lo mismo que las grandes en esa media, y en las de pocos cientos de clientes (6 de 18 tienen menos de 500) las diferencias entre modelos son ruido de muestreo. Como dejar fuera una ciudad no degrada a ninguno de los tres modelos, en COFINFAD la relación entre los predictores y el puntaje no parece cambiar de una ciudad a otra: este estudio no es una prueba exigente de cambio de distribución.</p>
+</div>
+</div>
+</section>
+<section id="calibracion-y-reglas-de-puntuacion">
+<h2>7.7. Calibración y reglas de puntuación<a class="headerlink" href="#calibracion-y-reglas-de-puntuacion" title="Link to this heading">#</a></h2>
+<p>La <a class="reference internal" href="#tab-calibracion"><span class="std std-ref">Tabla 7.11</span></a> reporta las reglas de puntuación propias de los diez clasificadores y la
+<a class="reference internal" href="#fig-calibracion"><span class="std std-ref">Figura 7.4</span></a>, la curva de calibración del original frente al mejor benchmark.</p>
+<p id="tab-calibracion"><strong>Tabla 7.11.</strong> Clasificación en prueba: AUC, precisión media, captura de la campaña del 25 %, pérdida logarítmica,
+puntaje de Brier y error de calibración esperado (ECE), tal como sale cada modelo y tras recalibrarlo.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 7.11. Lee resultados/metricas_prueba.csv (experiments/03_prueba.py). La</span>
+<span class="c1"># recalibración isotónica de cada modelo se ajusta con sus predicciones fuera de</span>
+<span class="c1"># pliegue de entrenamiento, nunca con la prueba.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_calibracion'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Modelo</p></th>
+<th class="head text-right"><p>AUC</p></th>
+<th class="head text-right"><p>Precisión media</p></th>
+<th class="head text-right"><p>Captura al 25 %</p></th>
+<th class="head text-right"><p>Pérdida log.</p></th>
+<th class="head text-right"><p>Brier</p></th>
+<th class="head text-right"><p>ECE</p></th>
+<th class="head text-right"><p>Pérdida log. (isotónica)</p></th>
+<th class="head text-right"><p>Brier (isotónica)</p></th>
+<th class="head text-right"><p>ECE (isotónica)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><strong>BDL (original)</strong></p></td>
+<td class="text-right"><p>0,8311</p></td>
+<td class="text-right"><p>0,5103</p></td>
+<td class="text-right"><p>51,4 %</p></td>
+<td class="text-right"><p>0,3688</p></td>
+<td class="text-right"><p>0,1301</p></td>
+<td class="text-right"><p>0,0081</p></td>
+<td class="text-right"><p>0,3683</p></td>
+<td class="text-right"><p>0,1301</p></td>
+<td class="text-right"><p>0,0067</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>LightGBM</p></td>
+<td class="text-right"><p>0,8296</p></td>
+<td class="text-right"><p>0,5535</p></td>
+<td class="text-right"><p>51,0 %</p></td>
+<td class="text-right"><p>0,4571</p></td>
+<td class="text-right"><p>0,1667</p></td>
+<td class="text-right"><p>0,1488</p></td>
+<td class="text-right"><p>0,3698</p></td>
+<td class="text-right"><p>0,1315</p></td>
+<td class="text-right"><p>0,0219</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>EBM</p></td>
+<td class="text-right"><p>0,8289</p></td>
+<td class="text-right"><p>0,5512</p></td>
+<td class="text-right"><p>51,2 %</p></td>
+<td class="text-right"><p>0,5214</p></td>
+<td class="text-right"><p>0,1732</p></td>
+<td class="text-right"><p>0,1698</p></td>
+<td class="text-right"><p>0,3863</p></td>
+<td class="text-right"><p>0,1338</p></td>
+<td class="text-right"><p>0,0050</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>XGBoost</p></td>
+<td class="text-right"><p>0,8283</p></td>
+<td class="text-right"><p>0,5480</p></td>
+<td class="text-right"><p>51,0 %</p></td>
+<td class="text-right"><p>0,5621</p></td>
+<td class="text-right"><p>0,1875</p></td>
+<td class="text-right"><p>0,2161</p></td>
+<td class="text-right"><p>0,3675</p></td>
+<td class="text-right"><p>0,1305</p></td>
+<td class="text-right"><p>0,0066</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Random Forest</p></td>
+<td class="text-right"><p>0,8260</p></td>
+<td class="text-right"><p>0,5444</p></td>
+<td class="text-right"><p>49,4 %</p></td>
+<td class="text-right"><p>0,3735</p></td>
+<td class="text-right"><p>0,1323</p></td>
+<td class="text-right"><p>0,0211</p></td>
+<td class="text-right"><p>0,3676</p></td>
+<td class="text-right"><p>0,1307</p></td>
+<td class="text-right"><p>0,0107</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Árbol de decisión</p></td>
+<td class="text-right"><p>0,8243</p></td>
+<td class="text-right"><p>0,5304</p></td>
+<td class="text-right"><p>49,5 %</p></td>
+<td class="text-right"><p>0,4524</p></td>
+<td class="text-right"><p>0,1690</p></td>
+<td class="text-right"><p>0,1442</p></td>
+<td class="text-right"><p>0,3678</p></td>
+<td class="text-right"><p>0,1308</p></td>
+<td class="text-right"><p>0,0111</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>k-NN</p></td>
+<td class="text-right"><p>0,7874</p></td>
+<td class="text-right"><p>0,5017</p></td>
+<td class="text-right"><p>50,8 %</p></td>
+<td class="text-right"><p>0,5045</p></td>
+<td class="text-right"><p>0,1660</p></td>
+<td class="text-right"><p>0,1079</p></td>
+<td class="text-right"><p>0,4549</p></td>
+<td class="text-right"><p>0,1510</p></td>
+<td class="text-right"><p>0,0077</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión logística</p></td>
+<td class="text-right"><p>0,7709</p></td>
+<td class="text-right"><p>0,5079</p></td>
+<td class="text-right"><p>51,1 %</p></td>
+<td class="text-right"><p>0,5747</p></td>
+<td class="text-right"><p>0,1977</p></td>
+<td class="text-right"><p>0,1993</p></td>
+<td class="text-right"><p>0,4586</p></td>
+<td class="text-right"><p>0,1521</p></td>
+<td class="text-right"><p>0,0053</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>SVM lineal</p></td>
+<td class="text-right"><p>0,7706</p></td>
+<td class="text-right"><p>0,5067</p></td>
+<td class="text-right"><p>51,1 %</p></td>
+<td class="text-right"><p>—</p></td>
+<td class="text-right"><p>—</p></td>
+<td class="text-right"><p>—</p></td>
+<td class="text-right"><p>0,4624</p></td>
+<td class="text-right"><p>0,1523</p></td>
+<td class="text-right"><p>0,0072</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Naive Bayes</p></td>
+<td class="text-right"><p>0,6662</p></td>
+<td class="text-right"><p>0,3627</p></td>
+<td class="text-right"><p>40,8 %</p></td>
+<td class="text-right"><p>3,2131</p></td>
+<td class="text-right"><p>0,6600</p></td>
+<td class="text-right"><p>0,6647</p></td>
+<td class="text-right"><p>0,5250</p></td>
+<td class="text-right"><p>0,1736</p></td>
+<td class="text-right"><p>0,0072</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>ECE: error de calibración esperado con diez tramos de igual número de clientes; el dashboard lo calcula con diez tramos de igual ancho, como el Entregable 3, y por eso sus cifras no coinciden exactamente con las de esta tabla. Isotónica: recalibración ajustada con las predicciones fuera de pliegue de entrenamiento. El SVM lineal no da probabilidades: solo se reporta recalibrado.</p>
+<p><strong>Dos columnas dependen de los empates.</strong> La probabilidad del original toma 219 valores distintos, y 4.354 clientes comparten la del corte de la campaña (Tabla 6.11). Su captura al 25 % es la del desempate del protocolo; con un desempate al azar se espera 51,3 % ± 0,6 puntos. Su precisión media es la de la convención de scikit-learn, que cuenta a los empatados como un solo punto; con los empates rotos al azar es 0,5507 ± 0,0046.</p>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Figura 7.4. De resultados/predicciones_prueba.parquet: el original, y el mejor</span>
+<span class="c1"># benchmark antes y después de recalibrar.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">figura</span><span class="p">(</span><span class="s1">'calibracion'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<figure class="align-default" id="fig-calibracion">
+<a class="reference internal image-reference" href="../_images/42df99e59c5b7d8cc3ab03408d8f237d51c050924af6d7234c061de57e3ea31a.png"><img alt="../_images/42df99e59c5b7d8cc3ab03408d8f237d51c050924af6d7234c061de57e3ea31a.png" class="align-center" src="../_images/42df99e59c5b7d8cc3ab03408d8f237d51c050924af6d7234c061de57e3ea31a.png" style="width: 60%;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figura 11 </span><span class="caption-text"><strong>Figura 7.4.</strong> Curva de calibración en prueba (diez tramos de igual número de clientes): probabilidad predicha media de cada tramo frente a la frecuencia observada de riesgo alto. <strong>Interpretación:</strong> sobre la diagonal, la probabilidad predicha coincide con la frecuencia observada; el original queda sobre ella sin recalibrar.</span><a class="headerlink" href="#fig-calibracion" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="cuantificacion-de-la-incertidumbre">
+<h2>7.8. Cuantificación de la incertidumbre<a class="headerlink" href="#cuantificacion-de-la-incertidumbre" title="Link to this heading">#</a></h2>
+<p>La <a class="reference internal" href="#tab-incertidumbre"><span class="std std-ref">Tabla 7.12</span></a> compara la cobertura medida y el largo de los intervalos y de los conjuntos de
+predicción, y la <a class="reference internal" href="#fig-predictiva"><span class="std std-ref">Figura 7.5</span></a> muestra la distribución predictiva de un cliente.</p>
+<p id="tab-incertidumbre"><strong>Tabla 7.12.</strong> Regresión en prueba: cobertura medida y largo de los intervalos y de los conjuntos de predicción, para
+tres coberturas nominales.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 7.12. Lee resultados/incertidumbre_prueba.csv: intervalo conforme del mejor</span>
+<span class="c1"># benchmark (pronóstico ± q, con q de sus errores fuera de pliegue), y los</span>
+<span class="c1"># intervalos y conjuntos de predicción del modelo original.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_incertidumbre'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Cobertura nominal</p></th>
+<th class="head text-left"><p>Método</p></th>
+<th class="head text-right"><p>Cobertura en prueba</p></th>
+<th class="head text-right"><p>Largo</p></th>
+<th class="head text-right"><p>Tramos</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>80 %</p></td>
+<td class="text-left"><p>XGBoost: intervalo conforme</p></td>
+<td class="text-right"><p>80,5 %</p></td>
+<td class="text-right"><p>0,1161</p></td>
+<td class="text-right"><p>—</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>80 %</p></td>
+<td class="text-left"><p>XGBoost: conjunto por densidad de sus residuos (exploratorio)</p></td>
+<td class="text-right"><p>82,2 %</p></td>
+<td class="text-right"><p>0,0301</p></td>
+<td class="text-right"><p>4</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>80 %</p></td>
+<td class="text-left"><p>BDL: intervalo conforme con la misma receta</p></td>
+<td class="text-right"><p>84,4 %</p></td>
+<td class="text-right"><p>0,1101</p></td>
+<td class="text-right"><p>—</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>80 %</p></td>
+<td class="text-left"><p>BDL: intervalo central</p></td>
+<td class="text-right"><p>80,5 %</p></td>
+<td class="text-right"><p>0,1500</p></td>
+<td class="text-right"><p>—</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>80 %</p></td>
+<td class="text-left"><p>BDL: conjunto de predicción</p></td>
+<td class="text-right"><p>79,8 %</p></td>
+<td class="text-right"><p>0,0040</p></td>
+<td class="text-right"><p>3</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>90 %</p></td>
+<td class="text-left"><p>XGBoost: intervalo conforme</p></td>
+<td class="text-right"><p>90,0 %</p></td>
+<td class="text-right"><p>0,1905</p></td>
+<td class="text-right"><p>—</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>90 %</p></td>
+<td class="text-left"><p>XGBoost: conjunto por densidad de sus residuos (exploratorio)</p></td>
+<td class="text-right"><p>91,6 %</p></td>
+<td class="text-right"><p>0,0436</p></td>
+<td class="text-right"><p>5</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>90 %</p></td>
+<td class="text-left"><p>BDL: intervalo conforme con la misma receta</p></td>
+<td class="text-right"><p>84,7 %</p></td>
+<td class="text-right"><p>0,1903</p></td>
+<td class="text-right"><p>—</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>90 %</p></td>
+<td class="text-left"><p>BDL: intervalo central</p></td>
+<td class="text-right"><p>89,9 %</p></td>
+<td class="text-right"><p>0,1502</p></td>
+<td class="text-right"><p>—</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>90 %</p></td>
+<td class="text-left"><p>BDL: conjunto de predicción</p></td>
+<td class="text-right"><p>89,9 %</p></td>
+<td class="text-right"><p>0,0062</p></td>
+<td class="text-right"><p>4</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>95 %</p></td>
+<td class="text-left"><p>XGBoost: intervalo conforme</p></td>
+<td class="text-right"><p>95,1 %</p></td>
+<td class="text-right"><p>0,2375</p></td>
+<td class="text-right"><p>—</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>95 %</p></td>
+<td class="text-left"><p>XGBoost: conjunto por densidad de sus residuos (exploratorio)</p></td>
+<td class="text-right"><p>95,9 %</p></td>
+<td class="text-right"><p>0,0550</p></td>
+<td class="text-right"><p>5</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>95 %</p></td>
+<td class="text-left"><p>BDL: intervalo conforme con la misma receta</p></td>
+<td class="text-right"><p>95,0 %</p></td>
+<td class="text-right"><p>0,2311</p></td>
+<td class="text-right"><p>—</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>95 %</p></td>
+<td class="text-left"><p>BDL: intervalo central</p></td>
+<td class="text-right"><p>95,4 %</p></td>
+<td class="text-right"><p>0,2001</p></td>
+<td class="text-right"><p>—</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>95 %</p></td>
+<td class="text-left"><p>BDL: conjunto de predicción</p></td>
+<td class="text-right"><p>95,0 %</p></td>
+<td class="text-right"><p>0,0099</p></td>
+<td class="text-right"><p>5</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Al 90 %, el conjunto de predicción del modelo original mide 0,0062 y el intervalo del mejor benchmark, 0,1905: <strong>31 veces más corto</strong> con la misma cobertura nominal. Con 9.745 clientes de prueba, el error de muestreo de una cobertura del 90 % es de ±0,6 puntos.</p>
+<p><strong>La receta «pronóstico ± q» no sirve para el modelo original.</strong> Su cobertura medida fue 84,4 % para el 80 % nominal y 84,7 % para el 90 % nominal. La causa no está en el modelo sino en la receta: cuando el error tiene escalones, el cuantil <em>q</em> cae justo sobre uno de ellos, y que ese nivel entero quede dentro o fuera del intervalo depende de diferencias de diezmilésimas entre el modelo final y los modelos de los pliegues con los que se calculó <em>q</em>. En los benchmarks no se nota porque su propio error difumina los escalones. Los conjuntos de predicción del modelo no tienen ese problema: se construyen con la densidad del error, no con una distancia al pronóstico.</p>
+<p><strong>Con la misma receta para los dos.</strong> El conjunto del original es un conjunto por densidad y el intervalo del benchmark es simétrico, así que parte de la diferencia es de receta. Una mezcla ajustada a los residuos fuera de pliegue de XGBoost también encuentra 5 niveles, y el conjunto por densidad que resulta mide 0,0436 al 90 % (cobertura en prueba: 91,6 %). Frente a esa referencia, el conjunto del original es 7 veces más corto: esa es la parte atribuible a que estima mejor el índice. Es una comparación exploratoria, añadida después de ver los resultados (<code class="docutils literal notranslate"><span class="pre">experiments/04e_referencias_homogeneas.py</span></code>).</p>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Figura 7.5. Para el primer cliente de prueba: índice del modelo más sus residuos</span>
+<span class="c1"># de calibración (la distribución predictiva), tramos del conjunto al 90 %</span>
+<span class="c1"># (conjunto_residual) e intervalo del mejor benchmark.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">figura</span><span class="p">(</span><span class="s1">'distribucion_predictiva'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<figure class="align-default" id="fig-predictiva">
+<a class="reference internal image-reference" href="../_images/e42e8dafe3d29b7cb875e5d10d865d5ff1e256afc8aefff82ff2077547508e1a.png"><img alt="../_images/e42e8dafe3d29b7cb875e5d10d865d5ff1e256afc8aefff82ff2077547508e1a.png" class="align-center" src="../_images/e42e8dafe3d29b7cb875e5d10d865d5ff1e256afc8aefff82ff2077547508e1a.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figura 12 </span><span class="caption-text"><strong>Figura 7.5.</strong> Distribución predictiva del modelo original para un cliente de prueba: niveles posibles del puntaje (azul), conjunto de predicción al 90 % (naranja), intervalo al 90 % del mejor benchmark (gris), valor real (verde) y umbral de riesgo alto (línea discontinua). <strong>Interpretación:</strong> el modelo no dice «el puntaje está en algún lugar de este intervalo ancho», sino «está en uno de estos niveles, con estas probabilidades».</span><a class="headerlink" href="#fig-predictiva" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="analisis-de-errores">
+<h2>7.9. Análisis de errores<a class="headerlink" href="#analisis-de-errores" title="Link to this heading">#</a></h2>
+<p>La <a class="reference internal" href="#tab-errores"><span class="std std-ref">Tabla 7.13</span></a> compara al original con el mejor benchmark de cada tarea por subgrupos de clientes
+de prueba.</p>
+<p id="tab-errores"><strong>Tabla 7.13.</strong> Error por subgrupo de prueba: RMSE y AUC del original y del mejor benchmark de cada tarea, y cuál es
+mejor en cada subgrupo.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 7.13. De predicciones_prueba.parquet: RMSE y AUC por edad, por la cola de</span>
+<span class="c1"># tx_count y por segmento de cliente.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_errores'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Subgrupo de prueba</p></th>
+<th class="head text-right"><p>Clientes</p></th>
+<th class="head text-right"><p>RMSE original</p></th>
+<th class="head text-right"><p>RMSE XGBoost</p></th>
+<th class="head text-left"><p>Mejor</p></th>
+<th class="head text-right"><p>AUC original</p></th>
+<th class="head text-right"><p>AUC XGBoost</p></th>
+<th class="head text-left"><p>Mejor</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Todos</p></td>
+<td class="text-right"><p>9.745</p></td>
+<td class="text-right"><p>0,05912</p></td>
+<td class="text-right"><p>0,05917</p></td>
+<td class="text-left"><p>original</p></td>
+<td class="text-right"><p>0,8311</p></td>
+<td class="text-right"><p>0,8283</p></td>
+<td class="text-left"><p>original</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Edad 29</p></td>
+<td class="text-right"><p>1.643</p></td>
+<td class="text-right"><p>0,05928</p></td>
+<td class="text-right"><p>0,05942</p></td>
+<td class="text-left"><p>original</p></td>
+<td class="text-right"><p>0,8252</p></td>
+<td class="text-right"><p>0,8269</p></td>
+<td class="text-left"><p>benchmark</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Edad 30</p></td>
+<td class="text-right"><p>1.581</p></td>
+<td class="text-right"><p>0,06012</p></td>
+<td class="text-right"><p>0,06010</p></td>
+<td class="text-left"><p>benchmark</p></td>
+<td class="text-right"><p>0,8497</p></td>
+<td class="text-right"><p>0,8537</p></td>
+<td class="text-left"><p>benchmark</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Edad 44</p></td>
+<td class="text-right"><p>1.598</p></td>
+<td class="text-right"><p>0,05843</p></td>
+<td class="text-right"><p>0,05853</p></td>
+<td class="text-left"><p>original</p></td>
+<td class="text-right"><p>0,9183</p></td>
+<td class="text-right"><p>0,9153</p></td>
+<td class="text-left"><p>original</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Edad 45</p></td>
+<td class="text-right"><p>1.576</p></td>
+<td class="text-right"><p>0,05830</p></td>
+<td class="text-right"><p>0,05830</p></td>
+<td class="text-left"><p>benchmark</p></td>
+<td class="text-right"><p>0,9384</p></td>
+<td class="text-right"><p>0,9448</p></td>
+<td class="text-left"><p>benchmark</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Edad 59</p></td>
+<td class="text-right"><p>1.631</p></td>
+<td class="text-right"><p>0,05858</p></td>
+<td class="text-right"><p>0,05869</p></td>
+<td class="text-left"><p>original</p></td>
+<td class="text-right"><p>0,6171</p></td>
+<td class="text-right"><p>0,6172</p></td>
+<td class="text-left"><p>benchmark</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Edad 60</p></td>
+<td class="text-right"><p>1.716</p></td>
+<td class="text-right"><p>0,05989</p></td>
+<td class="text-right"><p>0,05993</p></td>
+<td class="text-left"><p>original</p></td>
+<td class="text-right"><p>0,6675</p></td>
+<td class="text-right"><p>0,6595</p></td>
+<td class="text-left"><p>original</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>tx_count &gt; 500 (cola)</p></td>
+<td class="text-right"><p>134</p></td>
+<td class="text-right"><p>0,06306</p></td>
+<td class="text-right"><p>0,06344</p></td>
+<td class="text-left"><p>original</p></td>
+<td class="text-right"><p>0,8117</p></td>
+<td class="text-right"><p>0,8531</p></td>
+<td class="text-left"><p>benchmark</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>tx_count ≤ 500</p></td>
+<td class="text-right"><p>9.611</p></td>
+<td class="text-right"><p>0,05906</p></td>
+<td class="text-right"><p>0,05911</p></td>
+<td class="text-left"><p>original</p></td>
+<td class="text-right"><p>0,8309</p></td>
+<td class="text-right"><p>0,8275</p></td>
+<td class="text-left"><p>original</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Segmento inactive</p></td>
+<td class="text-right"><p>1.954</p></td>
+<td class="text-right"><p>0,05874</p></td>
+<td class="text-right"><p>0,05875</p></td>
+<td class="text-left"><p>original</p></td>
+<td class="text-right"><p>0,8275</p></td>
+<td class="text-right"><p>0,8333</p></td>
+<td class="text-left"><p>benchmark</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Segmento occasional</p></td>
+<td class="text-right"><p>3.852</p></td>
+<td class="text-right"><p>0,05870</p></td>
+<td class="text-right"><p>0,05877</p></td>
+<td class="text-left"><p>original</p></td>
+<td class="text-right"><p>0,8342</p></td>
+<td class="text-right"><p>0,8268</p></td>
+<td class="text-left"><p>original</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Segmento power</p></td>
+<td class="text-right"><p>1.026</p></td>
+<td class="text-right"><p>0,05885</p></td>
+<td class="text-right"><p>0,05894</p></td>
+<td class="text-left"><p>original</p></td>
+<td class="text-right"><p>0,8272</p></td>
+<td class="text-right"><p>0,8195</p></td>
+<td class="text-left"><p>original</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Segmento regular</p></td>
+<td class="text-right"><p>2.913</p></td>
+<td class="text-right"><p>0,06000</p></td>
+<td class="text-right"><p>0,06006</p></td>
+<td class="text-left"><p>original</p></td>
+<td class="text-right"><p>0,8309</p></td>
+<td class="text-right"><p>0,8308</p></td>
+<td class="text-left"><p>original</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Dónde falla el modelo y por qué: descompone el error con active_products (solo</span>
+<span class="c1"># para el análisis) y con las probabilidades de prueba.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">texto</span><span class="p">(</span><span class="s1">'errores_texto'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<p><strong>El error de regresión es casi todo escalón.</strong> Con <code class="docutils literal notranslate"><span class="pre">active_products</span></code> (que el modelo nunca ve) se puede reconstruir el índice real de cada cliente de prueba y compararlo con el que estima el modelo: la desviación de esa diferencia es 0,00130, frente a un RMSE total de 0,05912. Más del 99,9 % del error cuadrático es el escalón, que ningún modelo puede predecir sin la variable excluida.</p>
+<p><strong>Los errores grandes son los clientes con muchos productos.</strong> Predecir la media obliga a equivocarse más con los niveles poco frecuentes: los clientes con 5 productos son el 4,9 % de la prueba y aportan el 29,9 % del error cuadrático (RMSE de 0,1454 en ese grupo). La cobertura de los conjuntos de predicción es del total de clientes, no de cada grupo: como ese es el nivel menos probable, es el que queda fuera. Al 90 % el conjunto cubre al 0,0 % de esos clientes; al 95 %, al 10,0 %, y al 99 %, al 91,3 %. Quien necesite cubrir a los clientes con muchos productos tiene que pedir una cobertura alta.</p>
+<p><strong>La cola de <code class="docutils literal notranslate"><span class="pre">tx_count</span></code>.</strong> En los 134 clientes de prueba con más de 500 transacciones (1,4 %) el índice depende además de esa variable. Ahí el RMSE del original sube a 0,06306 y su AUC es 0,8117, frente a 0,8531 de XGBoost: es el subgrupo donde el original pierde con más claridad. Hay pocos clientes para aprender ese efecto, y el modelo lo confunde en parte con un cambio de nivel.</p>
+<p><strong>H4 no se cumple, y la diferencia está en 2 clientes.</strong> La probabilidad del original tiene mesetas: vale casi 0 cuando ningún nivel del escalón deja al cliente por encima del umbral, y salta al entrar el primero. Si el índice estimado queda una milésima por debajo del real justo en ese borde, el modelo dice «casi imposible» y se equivoca. En prueba pasó con 2 de 9.745 clientes, que aportan 0,0018 de los 0,3688 de pérdida logarítmica del original. Sin esos clientes, y quitándoselos a los dos modelos, la pérdida del original es 0,3670 y la de XGBoost recalibrado, 0,3674: un empate. Es el precio de una probabilidad tan nítida: la dispersión robusta con la que se calcula la excedencia hace los bordes muy abruptos. Una dispersión mayor suavizaría los bordes; no se cambió porque el protocolo ya estaba registrado. Este desglose se hizo después de ver los resultados.</p>
+<p><strong>Por subgrupos</strong>, el original tiene menor RMSE que el mejor benchmark en 10 de 12 y mayor AUC en 6 de 12. Las diferencias dentro de cada subgrupo son del mismo orden que en el total y cambian de signo de uno a otro: no hay un grupo de clientes al que el modelo sirva claramente peor, salvo la cola de <code class="docutils literal notranslate"><span class="pre">tx_count</span></code>.</p>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./ProyectoFinal"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="06_validacion.html"
+       title="página anterior">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">anterior</p>
+        <p class="prev-next-title">6. Protocolo y validación estadística</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="08_dashboard.html"
+       title="siguiente página">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">siguiente</p>
+        <p class="prev-next-title">8. Dashboard y despliegue</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contenido
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conjuntos-de-datos-adicionales">7.1. Conjuntos de datos adicionales</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sensibilidad-a-los-hiperparametros-propios">7.2. Sensibilidad a los hiperparámetros propios</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estabilidad-por-semilla-y-computo">7.3. Estabilidad por semilla y cómputo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ruido-y-valores-atipicos">7.4. Ruido y valores atípicos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tamano-de-muestra-y-escalabilidad">7.5. Tamaño de muestra y escalabilidad</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cambio-de-distribucion">7.6. Cambio de distribución</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calibracion-y-reglas-de-puntuacion">7.7. Calibración y reglas de puntuación</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cuantificacion-de-la-incertidumbre">7.8. Cuantificación de la incertidumbre</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-de-errores">7.9. Análisis de errores</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+Por Martínez Pulido Valerie · Basto Martínez Abrahan · Esguerra Fernández Rubén
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

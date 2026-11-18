@@ -300,6 +300,55 @@
     "pliegues_internos": 3
    },
    "ida_y_vuelta": "idénticas"
+  },
+  {
+   "tarea": "clasificacion",
+   "modelo": "bdl",
+   "ruta": "clasificacion/bdl/modelo.joblib",
+   "bytes": 92342,
+   "sha256": "0c4dfcea9996b9eb1ef20bbaa20a8a05cefdadc7027bbb60a75cf1ea93501d8e",
+   "estimador": "src.original_model.ClasificadorBDL",
+   "balanceo": "ninguno",
+   "optimizador": "bayesiana",
+   "metrica_externa": {
+    "metrica": "AUC",
+    "media": 0.8320219894205817,
+    "desviacion": 0.002600202188234955,
+    "pliegues_externos": 5,
+    "pliegues_internos": 3
+   },
+   "ida_y_vuelta": "idénticas"
+  },
+  {
+   "tarea": "regresion",
+   "modelo": "bdl",
+   "ruta": "regresion/bdl/modelo.joblib",
+   "bytes": 143539,
+   "sha256": "56a1214c226883a4b4f0a05d5b5bfa21e637fe03173d10031d5a61d092eed8e7",
+   "estimador": "src.original_model.RegresorBDL",
+   "balanceo": "ninguno",
+   "optimizador": "bayesiana",
+   "metrica_externa": {
+    "metrica": "RMSE",
+    "media": 0.05887062308373016,
+    "desviacion": 0.00041051987099464054,
+    "pliegues_externos": 5,
+    "pliegues_internos": 3
+   },
+   "ida_y_vuelta": "idénticas"
   }
- ]
+ ],
+ "original": {
+  "generado": "2026-11-18T14:15:49",
+  "versiones": {
+   "python": "3.13.3",
+   "scikit-learn": "1.9.1",
+   "numpy": "2.5.3",
+   "pandas": "3.0.6",
+   "scipy": "1.18.1",
+   "joblib": "1.6.0"
+  },
+  "codigo": "src/original_model.py",
+  "sha256_codigo": "6e03a92afa235ebccebb83ee4f76b5bf0f0ccb243cb86f6b5d208eb773d7a733"
+ }
 }

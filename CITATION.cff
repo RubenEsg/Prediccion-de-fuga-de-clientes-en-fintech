@@ -1,0 +1,46 @@
+cff-version: 1.2.0
+message: "Si usa este repositorio, su modelo original o su dashboard, cítelo así."
+title: "Predicción de fuga de clientes en una fintech colombiana: dashboard predictivo, modelo original (Boosting con Desplazamiento Latente) y evaluación rigurosa"
+type: software
+authors:
+  - family-names: "Martínez Pulido"
+    given-names: "Valerie"
+  - family-names: "Basto Martínez"
+    given-names: "Abrahan"
+  - family-names: "Esguerra Fernández"
+    given-names: "Rubén"
+version: "2.0.0"
+date-released: "2026-11-18"
+license: MIT
+repository-code: "https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech"
+url: "https://rubenesg.github.io/Prediccion-de-fuga-de-clientes-en-fintech/"
+abstract: >-
+  Proyecto final del curso de Machine Learning (Universidad del Norte): predicción del riesgo de fuga de clientes con el
+  conjunto público y sintético COFINFAD. Incluye un modelo original programado desde cero (BDL, un boosting con una mezcla
+  latente de desplazamientos ajustado por EM generalizado), su comparación con nueve benchmarks bajo un protocolo
+  pre-registrado, un dashboard en Plotly Dash desplegado en Render y el informe técnico en Jupyter Book.
+keywords:
+  - churn
+  - fintech
+  - boosting
+  - mezcla finita
+  - clase latente
+  - algoritmo EM
+  - predicción conforme
+  - dash
+references:
+  - type: dataset
+    title: "COFINFAD: Colombian Fintech Financial Analytics Dataset"
+    authors:
+      - family-names: "Muñoz Guerrero"
+        given-names: "Luis Eduardo"
+      - family-names: "Ceballos"
+        given-names: "Yony Fernando"
+      - family-names: "Trejos Rojas"
+        given-names: "Luis David"
+    year: 2025
+    publisher:
+      name: "Mendeley Data"
+    version: "1"
+    doi: "10.17632/mhb4zn3258.1"
+    license: CC-BY-4.0

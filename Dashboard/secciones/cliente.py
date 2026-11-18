@@ -1,6 +1,7 @@
-"""Cliente · ¿Por qué el modelo marca a este cliente?
+"""Un cliente · ¿Por qué la EBM marca a este cliente?
 
-La pantalla de la demostración en vivo. Se elige un cliente de la prueba (los tres casos del informe, uno al azar o una
+La pantalla de la demostración en vivo con la EBM, el benchmark interpretable (la predicción en vivo de los diez
+modelos, con el original, está en secciones/prediccion.py). Se elige un cliente de la prueba (los tres casos del informe, uno al azar o una
 fila; también con /cliente?fila=16840) y la EBM lo puntúa y lo explica en el momento: la cascada va del intercepto al logit
 del cliente. El panel «¿Y si…?» cambia las variables que tiene sentido mover; M.simular recalcula las variables atadas,
 M.puntuar da los puntajes y M.explicar, los aportes. Debajo, lo que pasó con el cliente real (con la variable que el modelo
@@ -29,7 +30,7 @@ import ui
 
 PRE = "cl"
 PANTALLA = "cliente"
-PREGUNTA = "¿Por qué el modelo marca a este cliente?"
+PREGUNTA = "¿Por qué la EBM marca a este cliente?"      # la de app.VISTAS
 
 # Los tres casos del informe (claves de M.meta()["ejemplos"]) con su nombre corto; la pantalla nace con el primero
 CASO_OMISION = "riesgo bajo con mayor puntaje"
@@ -508,7 +509,7 @@ def _otros_modelos(fila, sim, hay):
             puesto = f"{puesto} → {F.entero(_puesto(m, p))}"
             campana = f"{campana} → {'entraría' if p >= _corte(m) else 'quedaría fuera'}"
         filas.append([D.NOMBRE_MODELO[m], ui.num(c[f"p_{m}"], DEC_PUNTAJE), puesto, campana])
-    tabla = ui.tabla(["Modelo", "Puntaje", "Puesto", "Campaña"], filas, compacta=True, muestras=[D.ROL_MODELO[m] for m in MODELOS],
+    tabla = ui.tabla(["Modelo", "Puntaje", "Puesto", "Campaña"], filas, compacta=True, muestras=[D.ROL_VISTA_EBM[m] for m in MODELOS],
                      num=[False, True, True, False], ocultar_movil=(1,))
     titulo = (f"{D.en_frase('xgboost')} lo pone en el puesto {F.entero(puestos['xgboost'])}; {D.en_frase('logistica')}, en el "
               f"{F.entero(puestos['logistica'])}; {D.en_frase('ebm')}, en el {F.entero(puestos['ebm'])}")

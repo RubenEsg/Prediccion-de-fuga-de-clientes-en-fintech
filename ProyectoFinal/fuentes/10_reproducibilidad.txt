@@ -1,0 +1,150 @@
+#%% md
+# 10. Reproducibilidad y bibliografía
+
+#%% code
+# Preparación: acceso a los resultados versionados y a las funciones que generan las tablas del informe.
+import sys
+sys.path.insert(0, '../ModeloOriginal')
+from src import informe as inf
+
+#%% md
+## 10.1. Entorno
+
+La {ref}`Tabla 10.1 <tab-entorno>` describe el equipo y las versiones con que se ejecutaron los experimentos y se
+generó este libro. Las versiones exactas de todas las dependencias están en
+[`Entrega3/requirements.txt`](https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech/blob/main/Entrega3/requirements.txt)
+(experimentos), `ModeloOriginal/requirements-dev.txt` (pruebas del modelo original) y `Dashboard/requirements.txt`
+(aplicación desplegada). El modelo original solo necesita `numpy`, `scipy` y `scikit-learn`.
+
+(tab-entorno)=
+**Tabla 10.1.** Equipo y versiones del software. Todos los tiempos del libro se midieron en este equipo.
+
+#%% code
+# Tabla 10.1. Consulta al intérprete, al sistema y a los paquetes instalados en el entorno que ejecuta esta celda.
+inf.tabla('tabla_entorno')
+
+#%% md
+## 10.2. Semillas
+
+(tab-semillas-usadas)=
+**Tabla 10.2.** Semillas del proyecto y su uso.
+
+| Uso | Semilla |
+|---|---|
+| Partición entrenamiento/prueba (80/20) | 42 |
+| Validación anidada, repeticiones 1, 2 y 3 (partición externa, interna, modelos y optimizador) | 42, 43 y 44 |
+| Estabilidad de los modelos finales | 42 a 51 |
+| Reparto interno del modelo original (ajuste, validación, calibración) | la del modelo |
+| Permutaciones y bootstrap de las pruebas de hipótesis | 42 |
+
+La única aleatoriedad del modelo original es su reparto interno (ajuste, validación y calibración), que depende de la
+semilla. Fijado el reparto, el ajuste es determinista, porque no submuestrea filas ni columnas; por eso su desviación
+entre semillas es pequeña pero no nula ({ref}`Tabla 7.6 <tab-semillas>`).
+
+## 10.3. Cómo reproducir cada resultado
+
+Desde `ModeloOriginal/`, con los CSV de COFINFAD en `datos/` (el repositorio los trae comprimidos y se extraen solos),
+la {ref}`Tabla 10.3 <tab-reproducir>` dice qué guion produce cada resultado.
+
+(tab-reproducir)=
+**Tabla 10.3.** Guiones del proyecto final, en el orden en que se ejecutan, y lo que produce cada uno.
+
+| Paso | Orden | Produce |
+|---|---|---|
+| Pruebas unitarias | `python -m pytest -q` | Verifica el modelo, el marco de experimentos, las pruebas de hipótesis y el informe |
+| Búsqueda de literatura | `python experiments/00_busqueda_literatura.py` | `resultados/literatura/` (capítulo 4) |
+| Auditoría de fuga | `python experiments/01_auditoria_fuga.py` | `resultados/auditoria_fuga.json` (sección 2.5) |
+| Validación anidada | `python experiments/02_validacion_anidada.py --semillas 42 43 44` | `resultados/experimentos.parquet`, la tabla maestra (capítulos 3 y 6) |
+| Evaluación en prueba | `python experiments/03_prueba.py` | `predicciones_prueba.parquet`, `metricas_prueba.csv`, `incertidumbre_prueba.csv` |
+| Estabilidad por semilla y cómputo | `python experiments/03b_semillas.py` | `semillas.csv` |
+| Memoria e inferencia según las filas | `python experiments/03c_memoria.py` | `memoria.csv`, `inferencia_filas.csv` (secciones 7.3 y 7.5) |
+| Métodos recientes con hiperparámetros recomendados | `python experiments/03d_recomendados.py` | `recomendados.csv` (sección 3.6) |
+| Techo teórico | `python experiments/04b_techo.py` | `techo.json` (sección 6.4) |
+| Pruebas de hipótesis | `python experiments/04_pruebas_hipotesis.py` | `pruebas_hipotesis.csv`, `veredicto.json`, `pliegues_<tarea>.csv` |
+| Predictor óptimo | `python experiments/04c_optimo.py` | `optimo.json` (sección 6.9) |
+| Empates de la campaña | `python experiments/04d_empates_campana.py` | `empates_campana.json` (sección 6.9) |
+| Referencias homogéneas | `python experiments/04e_referencias_homogeneas.py` | `referencias_homogeneas.json` (secciones 6.7 y 7.8) |
+| Conjuntos adicionales | `python experiments/05_conjuntos_adicionales.py` | `resultados/adicionales/<conjunto>/` (sección 7.1) |
+| Robustez | `python experiments/06_robustez.py` | `resultados/robustez/` (secciones 7.2 a 7.6), incluida la curva de aprendizaje sin la mezcla |
+| Ablación | `python experiments/07_ablacion.py` | `ablacion.csv` (sección 5.9) |
+| Rutas relativas | `python experiments/09_rutas_relativas.py` | Reescribe las rutas de las tablas maestras relativas al repositorio, para publicarlas |
+| Tablas y figuras del libro | `python experiments/08_tablas_libro.py` | `ProyectoFinal/_generado/` y `ProyectoFinal/figuras/` |
+| Todo lo anterior, en dos colas | `python experiments/correr_todo.py` y `python experiments/correr_todo.py --cola b` | Ejecuta los pasos en orden y salta lo ya hecho |
+| Capturas del dashboard | `python ProyectoFinal/capturar_dash.py --url <dirección del dashboard>` (en la raíz del repositorio) | `ProyectoFinal/figuras/dash_*.png` (capítulo 8) |
+| Cuadernos del libro | `python ProyectoFinal/construir.py` (en la raíz del repositorio) | Los capítulos ejecutados, `ProyectoFinal/*.ipynb` |
+| Libro | `jupyter-book build .` (en la raíz del repositorio) | `_build/html`, que se publica en `docs/` |
+| Informe en PDF | `python ProyectoFinal/exportar_pdf.py` | `ProyectoFinal/ProyectoFinal_informe.pdf` |
+
+Los guiones 02, 03b, 03c, 03d, 05, 06 y 07 se pueden interrumpir y relanzar: saltan lo que ya está registrado. Las
+tablas y las figuras de resultados no se escriben a mano: cada una sale de una celda que llama a
+`ModeloOriginal/src/informe.py`, y ese módulo lee los resultados. Hay dos excepciones declaradas: la
+{ref}`Tabla 6.3 <tab-iteraciones>`, con las cifras de los pilotos de diseño, que no dejaron archivos, y las cifras que
+el texto corrido repite de esas tablas para comentarlas.
+
+## 10.4. Tabla maestra de experimentos
+
+`ModeloOriginal/resultados/experimentos.parquet` tiene una fila por corrida, con la clave (tarea, modelo, balanceo,
+optimizador, semilla) y, para cada una: la métrica de cada pliegue externo, su media y su desviación, los
+hiperparámetros por pliegue y los finales, el presupuesto, el número de evaluaciones, los tiempos y el origen
+(`Entregable 3` para las corridas reutilizadas). Los conjuntos adicionales tienen su propia tabla en
+`resultados/adicionales/<conjunto>/experimentos.parquet`. La {ref}`Tabla 10.4 <tab-maestra>` la resume.
+
+(tab-maestra)=
+**Tabla 10.4.** Resumen de la tabla maestra: corridas, evaluaciones de hiperparámetros y tiempo de cómputo, por
+conjunto de datos, origen y semilla.
+
+#%% code
+# Tabla 10.4. Agrupa resultados/experimentos.parquet y la tabla de cada conjunto adicional por origen y semilla.
+inf.tabla('tabla_maestra')
+
+#%% md
+## 10.5. Lista de verificación de reproducibilidad
+
+La {ref}`Tabla 10.5 <tab-verificacion>` recorre los elementos que pide la guía y dice dónde está cada uno.
+
+(tab-verificacion)=
+**Tabla 10.5.** Lista de verificación de reproducibilidad.
+
+| Elemento | Estado |
+|---|---|
+| Código público y versionado | Repositorio de GitHub, con el historial completo |
+| Versiones del software y del hardware | {ref}`Tabla 10.1 <tab-entorno>`; `requirements.txt` con versiones exactas |
+| Semillas declaradas | {ref}`Tabla 10.2 <tab-semillas-usadas>` |
+| Rangos de hiperparámetros | {ref}`Tabla 3.2 <tab-espacios>`; valores finales en la {ref}`Tabla 3.4 <tab-hiperparametros>` |
+| Número de ejecuciones | {ref}`Tabla 10.4 <tab-maestra>`: tres repeticiones de cinco pliegues externos por modelo y diez semillas por modelo final |
+| Medidas de dispersión | Desviación típica entre pliegues externos, intervalos de confianza BCa en prueba y desviación entre semillas (capítulos 6 y 7) |
+| Tiempo de cómputo y memoria | {ref}`Tabla 10.4 <tab-maestra>` (búsqueda), {ref}`Tabla 7.6 <tab-semillas>` (ajuste, inferencia y memoria de cada modelo final) y {ref}`Tabla 7.9 <tab-columnas>` (escalabilidad) |
+| Datos o instrucciones exactas para obtenerlos | COFINFAD en `datos/` (CC BY 4.0, DOI 10.17632/mhb4zn3258.1); los conjuntos adicionales se descargan de su fuente y se registra su huella SHA-256 ({ref}`Tabla 7.2 <tab-conjuntos>`) |
+| Protocolo registrado antes de los experimentos definitivos | `ModeloOriginal/experiments/protocolo.md`, etiqueta `protocolo-modelo-original-v1` ({ref}`Tabla 6.2 <tab-registro>`) |
+| Desviaciones del protocolo declaradas | Sección 6.2 |
+| Pruebas unitarias que verifican las propiedades del algoritmo | `ModeloOriginal/tests/`, en integración continua ({ref}`Tabla 5.4 <tab-pruebas-unitarias>`) |
+| Mismo preprocesamiento, particiones y semilla para todos los modelos | `src/plan.py`, `src/optimizacion.py` |
+| Presupuesto de ajuste reportado por modelo | {ref}`Tabla 3.3 <tab-benchmarks>` |
+| Todas las corridas reportadas, no la mejor de varias | Tabla maestra |
+| Modelos serializados con metadatos y prueba de ida y vuelta | `Dashboard/artifacts/` |
+| Ficha del modelo y declaración de los datos | `Dashboard/MODEL_CARD.md`, `Dashboard/DATA_STATEMENT.md`; la declaración de los datos, resumida en la {ref}`Tabla 2.1 <tab-declaracion>` |
+| Archivo del repositorio con identificador persistente | Pendiente del equipo: generar el DOI en Zenodo a partir de una *release* de GitHub (sección 10.6) |
+| Declaración de autoría y uso de herramientas, firmada | {ref}`Sección 9.6 <sec-declaracion>`, enlazada desde la sección 10.7 |
+
+## 10.6. Archivo del repositorio
+
+El identificador persistente se obtiene creando una *release* en GitHub con el repositorio enlazado a Zenodo. Es un
+paso que solo puede hacer el propietario del repositorio con su cuenta; cuando se genere, el DOI se cita aquí y en
+`CITATION.cff`.
+
+## 10.7. Declaración de autoría y uso de herramientas
+
+La declaración de autoría y de uso de herramientas, incluidas las de inteligencia artificial, con las firmas del equipo,
+está en la {ref}`sección 9.6 <sec-declaracion>`. La guía la sitúa en el capítulo 9 en su tabla de capítulos y en el
+último capítulo en su lista de entregables: el texto se deja en el capítulo 9 y se enlaza desde aquí para que conste en
+los dos.
+
+## 10.8. Bibliografía
+
+Las referencias están en formato BibTeX en
+[`ProyectoFinal/references.bib`](https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech/blob/main/ProyectoFinal/references.bib).
+Cada DOI se comprobó contra el registro de Crossref.
+
+```{bibliography}
+:style: plain
+```

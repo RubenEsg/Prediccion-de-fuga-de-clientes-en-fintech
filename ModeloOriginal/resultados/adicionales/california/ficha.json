@@ -1,0 +1,14 @@
+{
+  "fuente": "sklearn.datasets.fetch_california_housing (StatLib, Pace y Barry, 1997)",
+  "sha256": "aea03e914281e512e79d6e4fc7fb314925d9322cf9f63a697f89c42da4aadcca",
+  "omitida": null,
+  "objetivo": "valor mediano de la vivienda (cientos de miles de dólares, tope en 5)",
+  "nombre": "Vivienda de California",
+  "n": 20640,
+  "p": 8,
+  "n_train": 16512,
+  "n_test": 4128,
+  "umbral": 2.65125,
+  "prevalencia_train": 0.25,
+  "prevalencia_test": 0.24612403100775193
+}

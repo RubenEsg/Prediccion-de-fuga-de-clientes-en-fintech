@@ -1,6 +1,6 @@
 """Prueba de humo sin navegador: arma cada pantalla y ejecuta todos sus callbacks con los valores con que nace.
 
-    python probar_app.py                  las tres secciones y las doce vistas de Modelos
+    python probar_app.py                  las tres secciones y las vistas de Modelos (app.VISTAS: trece, con «original»)
     python probar_app.py cliente eda      solo esas (contexto, eda o el id de una vista de Modelos)
 
 Para cada pantalla comprueba que su layout se arma, que no repite ningún id, que cada callback del servidor encuentra en la

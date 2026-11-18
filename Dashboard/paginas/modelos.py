@@ -1,11 +1,13 @@
-"""Sección Modelos (/modelos/<vista>): una sola página con doce vistas en dos grupos.
+"""Sección Modelos (/modelos/<vista>): una sola página con las vistas de app.VISTAS en tres grupos (app.GRUPOS).
 
-«Los ocho modelos» reúne lo que la guía pide para todos (tabla de líderes, predicción en vivo con selector de modelo,
-diagnóstico, interpretabilidad global y comparación estadística); «El modelo propuesto: la EBM» reúne su subsección
-(algoritmo, pseudocódigo, diferencias con la literatura, pruebas, robustez y veredicto), su explicación, sus usos y su
-ficha. La subnavegación va arriba de cada vista; cada vista es un módulo de secciones/ y la página lo arma con los
-parámetros de la dirección (?tarea=, ?fila=, ?modelo=…). Todos los módulos se importan al cargar este archivo, para que
-sus callbacks queden registrados antes de que arranque el servidor.
+«Los diez modelos» reúne lo que la guía pide para todos (tabla de líderes, predicción en vivo con selector de modelo,
+diagnóstico, interpretabilidad global y comparación estadística); «El modelo original: BDL» reúne la subsección del
+modelo original (descripción, pseudocódigo, diferencias con la literatura, convergencia, pruebas, robustez y veredicto) y
+su ficha; «La EBM, benchmark interpretable» conserva las vistas de la EBM del Entregable 3 (su algoritmo, cómo decide, un
+cliente, la campaña, su robustez y sus errores), con un aviso arriba que dice que es un benchmark y no el modelo original.
+La subnavegación va arriba de cada vista; cada vista es un módulo de secciones/ y la página lo arma con los parámetros de
+la dirección (?tarea=, ?fila=, ?modelo=…). Todos los módulos se importan al cargar este archivo, para que sus callbacks
+queden registrados antes de que arranque el servidor.
 """
 import importlib
 
@@ -18,6 +20,7 @@ import ui
 MODULOS = {v: importlib.import_module(f"secciones.{modulo}") for v, _n, _p, _g, modulo, _i in app.VISTAS
            if not app.SOLO or v in app.SOLO}
 NOMBRE = {v: n for v, n, *_ in app.VISTAS}
+GRUPO = {v: g for v, _n, _p, g, *_ in app.VISTAS}
 
 
 def _titulo(vista=None, **_):
@@ -34,7 +37,7 @@ dash.register_page(__name__, path=app.ruta_vista(app.VISTA_INICIAL), path_templa
 
 
 def subnav(vista):
-    """Las vistas de Modelos en dos grupos de píldoras; la actual en negro (y «vista actual» para lectores de pantalla)."""
+    """Las vistas de Modelos en sus grupos de píldoras; la actual en negro (y «vista actual» para lectores de pantalla)."""
     bloques = []
     for grupo, rotulo in app.GRUPOS:
         enlaces = []
@@ -50,9 +53,22 @@ def subnav(vista):
     return html.Nav(bloques, className="subnav", **{"aria-label": "Vistas de Modelos"})
 
 
+def aviso_benchmark():
+    """El aviso que encabeza las vistas del grupo de la EBM: es un benchmark, y el modelo original es otro."""
+    return ui.aviso(html.Div([
+        html.P("La EBM viene de la librería interpret: fue el «modelo nuevo» del Entregable 3 y, tras la corrección del proyecto, "
+               "queda como benchmark reciente e interpretable. Estas vistas conservan su análisis de entonces, frente a los siete "
+               "modelos de clase. El modelo original del proyecto es BDL, programado desde cero."),
+        html.Div(ui.boton("Ver el modelo original", href=app.ruta_vista("original"), icono="modelo", pequeno=True), className="botonera"),
+    ]), None, "La EBM es un benchmark, no el modelo original")
+
+
 def layout(vista=None, **consulta):
     if vista not in MODULOS:
         return html.Div([subnav(None), ui.pantalla([
             ui.encabezado("Esa vista no existe", "Elija una de las vistas de Modelos de arriba.", pantalla="inicio")])],
             className="modelos")
-    return html.Div([subnav(vista), MODULOS[vista].layout(**consulta)], className="modelos")
+    pantalla = MODULOS[vista].layout(**consulta)
+    if GRUPO.get(vista) == "ebm" and isinstance(getattr(pantalla, "children", None), list):
+        pantalla.children.insert(1, aviso_benchmark())          # bajo la cabecera de la vista, con el espacio de una sección
+    return html.Div([subnav(vista), pantalla], className="modelos")

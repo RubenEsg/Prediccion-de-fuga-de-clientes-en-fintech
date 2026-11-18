@@ -3,7 +3,8 @@
 Cubren lo que pide la guía (§5.4): que aprende en datos sintéticos con solución conocida, la reproducibilidad con la
 misma semilla, el manejo de entradas inválidas, la compatibilidad con ``sklearn.base.clone`` y con ``Pipeline``, y la
 verificación numérica de las propiedades teóricas (la verosimilitud no decrece, la pérdida logística no sube, la
-cobertura de los intervalos y conjuntos conformes, y que los aportes de las variables suman la predicción).
+cobertura de los intervalos y conjuntos conformes, las cotas de la información de Fisher de la mezcla, la calibración de
+la probabilidad de excedencia y que los aportes de las variables suman la predicción).
 
 Ejecución: ``python -m pytest -q`` desde la carpeta ``ModeloOriginal``.
 """
@@ -176,6 +177,30 @@ def test_conjunto_es_union_de_intervalos_alrededor_de_los_escalones(regresor):
     assert tramos.shape[1] == 2 and np.all(tramos[:, 1] >= tramos[:, 0])
     assert 2 <= len(tramos) <= 3                                   # tres escalones; el menos pesado puede quedar fuera
     assert np.all(np.diff(tramos.ravel()) >= 0)                    # intervalos ordenados y sin solaparse
+
+
+def test_informacion_de_fisher_entre_las_cotas():
+    """Proposición 4 del informe: 1/(σ² + Var(c)) ≤ I_f ≤ 1/σ², con igualdad si K = 1 e I_f → 1/σ² al separar las clases."""
+    sigma = 1.0
+
+    def informacion(pi, c):
+        r = np.linspace(c.min() - 12 * sigma, c.max() + 12 * sigma, 400_001)
+        f = om.densidad_mezcla(r, pi, c, sigma)
+        g = np.gradient(f, r) ** 2 / np.maximum(f, 1e-300)
+        return float(((g[1:] + g[:-1]) / 2 * np.diff(r)).sum())    # regla del trapecio
+
+    assert informacion(np.array([1.0]), np.array([0.0])) == pytest.approx(1 / sigma ** 2, rel=1e-5)   # K = 1: las dos cotas coinciden
+    valores, ganancias = [], []
+    for separacion in (0.5, 1.0, 2.0, 4.0, 8.0, 16.0):
+        c = separacion * np.array([-1.0, 0.0, 1.0])
+        varianza_c = float(PESOS @ (c - PESOS @ c) ** 2)
+        valor = informacion(PESOS, c)
+        assert 1 / (sigma ** 2 + varianza_c) < valor < 1 / sigma ** 2    # desigualdades estrictas con K > 1
+        valores.append(valor)
+        ganancias.append(valor * (sigma ** 2 + varianza_c))             # cuánto mejora la cota respecto de los mínimos cuadrados
+    assert np.all(np.diff(valores[2:]) > 0)                         # al separar las clases la información crece...
+    assert valores[-1] == pytest.approx(1 / sigma ** 2, rel=1e-4)   # ...hasta 1/σ²: no se pierde nada por no observar la clase
+    assert ganancias[0] < 1.05 and ganancias[-1] > 100              # clases pegadas: casi nada que ganar; separadas: mucho
 
 
 def test_aportes_suman_la_prediccion(escalones):

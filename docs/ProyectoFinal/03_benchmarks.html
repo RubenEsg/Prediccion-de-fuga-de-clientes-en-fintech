@@ -1,0 +1,1170 @@
+
+<!DOCTYPE html>
+
+
+<html lang="es" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>3. Modelos benchmark &#8212; Predicción de fuga de clientes en una fintech colombiana</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=33c23bfc" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../_static/documentation_options.js?v=78d55cf8"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Haz clic para mostrar';</script>
+    <script>let toggleHintHide = 'Haz clic para ocultar';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../_static/translations.js?v=d190bf04"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ProyectoFinal/03_benchmarks';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Índice" href="../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../search.html" />
+    <link rel="next" title="4. Revisión de literatura y novedad" href="04_literatura.html" />
+    <link rel="prev" title="2. Datos: ETL, EDA y auditoría de fuga" href="02_datos.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="es"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Saltar al contenido principal</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Volver arriba</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Advertencia de versión"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Navegación del sitio">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="En esta página">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Predicción de fuga de clientes en una fintech colombiana</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Proyecto final · Dashboard, modelo original y evaluación rigurosa</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_introduccion.html">Proyecto final: dashboard predictivo, modelo original y evaluación rigurosa</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_correcciones.html">1. Trazabilidad de las correcciones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_datos.html">2. Datos: ETL, EDA y auditoría de fuga</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">3. Modelos benchmark</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_literatura.html">4. Revisión de literatura y novedad</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_modelo_original.html">5. El modelo original: Boosting con Desplazamiento Latente (BDL)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_validacion.html">6. Protocolo y validación estadística</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_evaluacion_ampliada.html">7. Evaluación ampliada y robustez</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_dashboard.html">8. Dashboard y despliegue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_conclusiones.html">9. Conclusiones y limitaciones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_reproducibilidad.html">10. Reproducibilidad y bibliografía</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codigo_modelo_original.html">Código del modelo original</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 1 · EDA</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega1/eda_bancario.html">Caracterización y auditoría de calidad de datos para predecir la fuga (<em>churn</em>) y el valor del cliente (<em>CLV</em>) en una <em>fintech</em> colombiana</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 2 · Modelos base</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega2/entrega2_modelo.html">Entrega 2 — Procesamiento de datos y modelo base</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Introducción</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/00_introduccion.html">Fuga de clientes en una <em>fintech</em> colombiana: modelos, optimización y evaluación</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/01_datos.html">Datos, análisis exploratorio y construcción de la etiqueta</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Metodología</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/02_metodologia.html">Metodología</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Modelos y Resultados</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/03_corridas.html">Las 140 corridas del pipeline combinatorio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/04_optimizadores.html">Comparación de los métodos de optimización</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/05_computo.html">Optimización computacional</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/06_evaluacion.html">Evaluación en prueba, calibración, residuos y robustez</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/07_interpretabilidad.html">Interpretabilidad: SHAP, LIME y las funciones de forma de la EBM</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · El modelo nuevo</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/08_modelo_nuevo.html">El modelo nuevo frente a la Entrega 2</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Comparación estadística y conclusiones</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/09_estadistica.html">Comparación estadística de los modelos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/10_conclusiones.html">Conclusiones</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Código fuente</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../codigo/indice.html">Código fuente</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src___init__.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/__init__.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_analisis.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/analisis.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_balanceo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/balanceo.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_comparacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/comparacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_config.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/config.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_datos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/datos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_estadistica.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/estadistica.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_evaluacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/evaluacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_experimento.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/experimento.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_formato.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/formato.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_graficos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/graficos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_modelos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/modelos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_optimizacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/optimizacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_preprocesamiento.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/preprocesamiento.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_registro.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/registro.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/correr_140.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/correr_140.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/comparar_entrega2.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/comparar_entrega2.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/computo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/computo.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/complementos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/complementos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/medir_tiempos_finales.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/medir_tiempos_finales.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/notebook_construir.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/notebook/construir.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/notebook_exportar_pdf.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/notebook/exportar_pdf.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/articulo_generar_material.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/articulo/generar_material.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/articulo_compilar.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/articulo/compilar.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_analisis.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_analisis.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_bloque0.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_bloque0.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_estadistica.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_estadistica.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_modelo_nuevo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_modelo_nuevo.py</span></code></a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Descarga esta pagina">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/ProyectoFinal/03_benchmarks.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Descargar archivo fuente"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Imprimir en PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Modo de pantalla completa"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Tema" data-bs-title="Tema"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Claro"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Oscuro"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="Sistema"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>3. Modelos benchmark</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contenido </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#los-nueve-benchmarks">3.1. Los nueve benchmarks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#presupuesto-de-ajuste">3.2. Presupuesto de ajuste</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dos-fidelidades-y-por-que-no-es-successive-halving">3.3. Dos fidelidades, y por qué no es Successive Halving</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#seleccion-de-la-mejor-combinacion-y-serializacion">3.4. Selección de la mejor combinación y serialización</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resultados-de-los-benchmarks">3.5. Resultados de los benchmarks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#los-metodos-recientes-con-sus-hiperparametros-recomendados">3.6. Los métodos recientes con sus hiperparámetros recomendados</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="modelos-benchmark">
+<h1>3. Modelos benchmark<a class="headerlink" href="#modelos-benchmark" title="Link to this heading">#</a></h1>
+<p>El modelo original se compara con nueve benchmarks por tarea: los siete modelos de clase y dos métodos recientes del
+estado del arte. Todos pasan por el mismo preprocesamiento, las mismas variables, las mismas particiones y la misma
+métrica de selección.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Preparación. Las celdas de este libro no entrenan nada: leen los resultados</span>
+<span class="c1"># versionados en ModeloOriginal/resultados y vuelven a generar cada tabla y cada</span>
+<span class="c1"># figura con las funciones de ModeloOriginal/src/informe.py.</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">'../ModeloOriginal'</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src</span><span class="w"> </span><span class="kn">import</span> <span class="n">informe</span> <span class="k">as</span> <span class="n">inf</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="los-nueve-benchmarks">
+<h2>3.1. Los nueve benchmarks<a class="headerlink" href="#los-nueve-benchmarks" title="Link to this heading">#</a></h2>
+<p>La <a class="reference internal" href="#tab-familias"><span class="std std-ref">Tabla 3.1</span></a> los agrupa por familia.</p>
+<p id="tab-familias"><strong>Tabla 3.1.</strong> Los nueve benchmarks de cada tarea, por familia de modelos.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Familia</p></th>
+<th class="head"><p>Clasificación</p></th>
+<th class="head"><p>Regresión</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Vecinos</p></td>
+<td><p>k-NN</p></td>
+<td><p>k-NN</p></td>
+</tr>
+<tr class="row-odd"><td><p>Probabilístico</p></td>
+<td><p>Naive Bayes gaussiano</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>Lineales</p></td>
+<td><p>Regresión logística (L1 o L2), SVM lineal</p></td>
+<td><p>Ridge, Lasso, SVR lineal</p></td>
+</tr>
+<tr class="row-odd"><td><p>Árboles</p></td>
+<td><p>Árbol de decisión, Random Forest <span class="bibtex-citation" id="id1">[<a class="reference internal" href="10_reproducibilidad.html#id7" title="Leo Breiman. Random forests. Machine Learning, 45(1):5–32, 2001. doi:10.1023/A:1010933404324.">Breiman, 2001</a>]</span></p></td>
+<td><p>Árbol de decisión, Random Forest</p></td>
+</tr>
+<tr class="row-even"><td><p>Boosting</p></td>
+<td><p>XGBoost <span class="bibtex-citation" id="id2">[<a class="reference internal" href="10_reproducibilidad.html#id9" title="Tianqi Chen and Carlos Guestrin. Xgboost: a scalable tree boosting system. In Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, 785–794. 2016. doi:10.1145/2939672.2939785.">Chen and Guestrin, 2016</a>]</span></p></td>
+<td><p>XGBoost</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Recientes</strong></p></td>
+<td><p>EBM <span class="bibtex-citation" id="id3">[<a class="reference internal" href="10_reproducibilidad.html#id34" title="Yin Lou, Rich Caruana, Johannes Gehrke, and Giles Hooker. Accurate intelligible models with pairwise interactions. In Proceedings of the 19th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, 623–631. 2013. doi:10.1145/2487575.2487579.">Lou <em>et al.</em>, 2013</a>, <a class="reference internal" href="10_reproducibilidad.html#id42" title="Harsha Nori, Samuel Jenkins, Paul Koch, and Rich Caruana. InterpretML: a unified framework for machine learning interpretability. arXiv:1909.09223, 2019. URL: https://arxiv.org/abs/1909.09223.">Nori <em>et al.</em>, 2019</a>]</span> y LightGBM <span class="bibtex-citation" id="id4">[<a class="reference internal" href="10_reproducibilidad.html#id31" title="Guolin Ke, Qi Meng, Thomas Finley, Taifeng Wang, Wei Chen, Weidong Ma, Qiwei Ye, and Tie-Yan Liu. LightGBM: a highly efficient gradient boosting decision tree. In Advances in Neural Information Processing Systems, volume 30. 2017.">Ke <em>et al.</em>, 2017</a>]</span></p></td>
+<td><p>EBM y LightGBM</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>La <strong>EBM</strong> era el «modelo nuevo» del Entregable 3. Proviene de la librería <code class="docutils literal notranslate"><span class="pre">interpret</span></code>, así que no cumple la condición
+R2 y aquí es un benchmark reciente, que es lo que le corresponde. <strong>LightGBM</strong> se añade como segundo método reciente.
+«Reciente» se entiende aquí como posterior a los modelos de clase y vigente como referencia para datos tabulares:
+LightGBM se publicó en 2017 y la EBM, en la implementación de InterpretML, en 2019. No son métodos de los últimos dos o
+tres años (redes neuronales para datos tabulares, modelos preentrenados), que no se evaluaron; es una limitación que se
+declara en el capítulo 9.</p>
+<p>La <a class="reference internal" href="#tab-espacios"><span class="std std-ref">Tabla 3.2</span></a> da el espacio de búsqueda de cada modelo, incluido el original. Su justificación
+está en <a class="reference external" href="https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech/blob/main/ModeloOriginal/src/modelos.py"><code class="docutils literal notranslate"><span class="pre">ModeloOriginal/src/modelos.py</span></code></a>
+(y, para los modelos del Entregable 3, en el capítulo <a class="reference internal" href="../Entrega3/notebook/02_metodologia.html"><span class="doc std std-doc">Metodología</span></a>).</p>
+<p id="tab-espacios"><strong>Tabla 3.2.</strong> Hiperparámetros que se ajustan en cada modelo y rango de búsqueda.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 3.2. Recorre el catálogo de modelos (src/modelos.py) y escribe el espacio de</span>
+<span class="c1"># búsqueda de cada uno; el mismo espacio lo usan los cuatro optimizadores.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_espacios'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Modelo</p></th>
+<th class="head text-left"><p>Tarea</p></th>
+<th class="head text-left"><p>Hiperparámetros y rango de búsqueda</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>k-NN</p></td>
+<td class="text-left"><p>Las dos</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_neighbors</span></code>: 5 a 600 (entero, escala logarítmica); <code class="docutils literal notranslate"><span class="pre">weights</span></code>: {«uniform», «distance»}; <code class="docutils literal notranslate"><span class="pre">p</span></code>: {1, 2}</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Naive Bayes</p></td>
+<td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">var_smoothing</span></code>: 10⁻¹¹ a 0,001 (escala logarítmica)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Regresión logística</p></td>
+<td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">C</span></code>: 0,001 a 100 (escala logarítmica); <code class="docutils literal notranslate"><span class="pre">l1_ratio</span></code>: {1, 0}</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Árbol de decisión</p></td>
+<td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">max_depth</span></code>: 3 a 30 (entero); <code class="docutils literal notranslate"><span class="pre">min_samples_leaf</span></code>: 1 a 300 (entero, escala logarítmica); <code class="docutils literal notranslate"><span class="pre">ccp_alpha</span></code>: 10⁻⁶ a 0,01 (escala logarítmica); <code class="docutils literal notranslate"><span class="pre">criterion</span></code>: {«gini», «entropy»}</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Árbol de decisión</p></td>
+<td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">max_depth</span></code>: 3 a 30 (entero); <code class="docutils literal notranslate"><span class="pre">min_samples_leaf</span></code>: 1 a 300 (entero, escala logarítmica); <code class="docutils literal notranslate"><span class="pre">ccp_alpha</span></code>: 10⁻⁸ a 10⁻⁴ (escala logarítmica)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Random Forest</p></td>
+<td class="text-left"><p>Las dos</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">max_depth</span></code>: 4 a 40 (entero); <code class="docutils literal notranslate"><span class="pre">max_features</span></code>: {«sqrt», «log2», 0,3, 0,5}; <code class="docutils literal notranslate"><span class="pre">min_samples_leaf</span></code>: 1 a 100 (entero, escala logarítmica)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>XGBoost</p></td>
+<td class="text-left"><p>Las dos</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_estimators</span></code>: 100 a 1.000 (entero, escala logarítmica); <code class="docutils literal notranslate"><span class="pre">max_depth</span></code>: 2 a 10 (entero); <code class="docutils literal notranslate"><span class="pre">learning_rate</span></code>: 0,001 a 0,3 (escala logarítmica); <code class="docutils literal notranslate"><span class="pre">subsample</span></code>: 0,5 a 1 (continuo); <code class="docutils literal notranslate"><span class="pre">colsample_bytree</span></code>: 0,5 a 1 (continuo); <code class="docutils literal notranslate"><span class="pre">reg_lambda</span></code>: 0,01 a 10 (escala logarítmica); <code class="docutils literal notranslate"><span class="pre">min_child_weight</span></code>: 1 a 50 (entero, escala logarítmica)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>SVM lineal</p></td>
+<td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">C</span></code>: 10⁻⁴ a 100 (escala logarítmica)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>EBM</p></td>
+<td class="text-left"><p>Las dos</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">learning_rate</span></code>: 0,008 a 0,1 (escala logarítmica); <code class="docutils literal notranslate"><span class="pre">max_leaves</span></code>: 2 a 4 (entero); <code class="docutils literal notranslate"><span class="pre">min_samples_leaf</span></code>: 2 a 200 (entero, escala logarítmica); <code class="docutils literal notranslate"><span class="pre">interactions</span></code>: 0 a 20 (entero); <code class="docutils literal notranslate"><span class="pre">max_bins</span></code>: 64 a 1.024 (entero, escala logarítmica)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>LightGBM</p></td>
+<td class="text-left"><p>Las dos</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_estimators</span></code>: 100 a 1.000 (entero, escala logarítmica); <code class="docutils literal notranslate"><span class="pre">num_leaves</span></code>: 4 a 127 (entero, escala logarítmica); <code class="docutils literal notranslate"><span class="pre">learning_rate</span></code>: 0,001 a 0,3 (escala logarítmica); <code class="docutils literal notranslate"><span class="pre">subsample</span></code>: 0,5 a 1 (continuo); <code class="docutils literal notranslate"><span class="pre">colsample_bytree</span></code>: 0,5 a 1 (continuo); <code class="docutils literal notranslate"><span class="pre">reg_lambda</span></code>: 0,01 a 10 (escala logarítmica); <code class="docutils literal notranslate"><span class="pre">min_child_samples</span></code>: 5 a 200 (entero, escala logarítmica)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong>BDL (original)</strong></p></td>
+<td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">tasa</span></code>: 0,05 a 1 (escala logarítmica); <code class="docutils literal notranslate"><span class="pre">profundidad</span></code>: 1 a 6 (entero); <code class="docutils literal notranslate"><span class="pre">min_hoja</span></code>: 5 a 200 (entero, escala logarítmica); <code class="docutils literal notranslate"><span class="pre">lambda_l2</span></code>: 0,01 a 10 (escala logarítmica); <code class="docutils literal notranslate"><span class="pre">max_bins</span></code>: 32 a 1.024 (entero, escala logarítmica); <code class="docutils literal notranslate"><span class="pre">n_componentes</span></code>: {«auto», 1}; <code class="docutils literal notranslate"><span class="pre">usar_puntaje</span></code>: {sí, no}</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>BDL (original)</strong></p></td>
+<td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">tasa</span></code>: 0,05 a 1 (escala logarítmica); <code class="docutils literal notranslate"><span class="pre">profundidad</span></code>: 1 a 6 (entero); <code class="docutils literal notranslate"><span class="pre">min_hoja</span></code>: 5 a 200 (entero, escala logarítmica); <code class="docutils literal notranslate"><span class="pre">lambda_l2</span></code>: 0,01 a 10 (escala logarítmica); <code class="docutils literal notranslate"><span class="pre">max_bins</span></code>: 32 a 1.024 (entero, escala logarítmica); <code class="docutils literal notranslate"><span class="pre">n_componentes</span></code>: {«auto», 1}</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Ridge</p></td>
+<td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code>: 0,001 a 10⁵ (escala logarítmica)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Lasso</p></td>
+<td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code>: 10⁻⁶ a 0,1 (escala logarítmica)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>SVR lineal</p></td>
+<td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">C</span></code>: 0,001 a 100 (escala logarítmica); <code class="docutils literal notranslate"><span class="pre">epsilon</span></code>: 10⁻⁴ a 0,05 (escala logarítmica)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="presupuesto-de-ajuste">
+<h2>3.2. Presupuesto de ajuste<a class="headerlink" href="#presupuesto-de-ajuste" title="Link to this heading">#</a></h2>
+<p>Cada búsqueda evalúa tantas configuraciones como puntos tiene la rejilla de Grid Search del modelo, con un mínimo de
+30. Los cuatro optimizadores del Entregable 3 (Grid, Random, bayesiano con TPE <span class="bibtex-citation" id="id5">[<a class="reference internal" href="10_reproducibilidad.html#id4" title="Takuya Akiba, Shotaro Sano, Toshihiko Yanase, Takeru Ohta, and Masanori Koyama. Optuna: a next-generation hyperparameter optimization framework. In Proceedings of the 25th ACM SIGKDD International Conference on Knowledge Discovery &amp; Data Mining, 2623–2631. 2019. doi:10.1145/3292500.3330701.">Akiba <em>et al.</em>, 2019</a>]</span> y genético) consumen lo
+mismo dentro de cada modelo. El modelo original recibe <strong>30 evaluaciones, el mínimo: ningún benchmark recibió menos.</strong>
+El presupuesto no es idéntico entre modelos: va de 30 a 48 evaluaciones por búsqueda, según el tamaño de la rejilla de
+cada uno. No se fijó un tiempo máximo de cómputo; el original, programado en <code class="docutils literal notranslate"><span class="pre">numpy</span></code> y no en código compilado, es el
+que más tiempo consumió en las dos tareas. El presupuesto, las evaluaciones y el tiempo reales de cada modelo están en la
+<a class="reference internal" href="#tab-benchmarks"><span class="std std-ref">Tabla 3.3</span></a>.</p>
+<p><strong>Punto de partida de los métodos recientes.</strong> La guía pide que partan de los hiperparámetros recomendados por la
+literatura. Los cuatro optimizadores muestrean el espacio de búsqueda y no empiezan en una configuración fija; lo que el
+diseño garantiza es que el espacio de cada método reciente contiene casi todos los valores por defecto de su librería,
+que son los que recomiendan sus autores. La sección 3.6 mide ese punto de partida y lo compara con el resultado del
+ajuste.</p>
+</section>
+<section id="dos-fidelidades-y-por-que-no-es-successive-halving">
+<h2>3.3. Dos fidelidades, y por qué no es Successive Halving<a class="headerlink" href="#dos-fidelidades-y-por-que-no-es-successive-halving" title="Link to this heading">#</a></h2>
+<p>En Random Forest y en la EBM la búsqueda evalúa cada configuración con un presupuesto bajo (100 árboles; 2 bolsas
+externas) y solo la ganadora se reajusta con el presupuesto alto (300 árboles; 8 bolsas): un factor de 3 y de 4.</p>
+<p>Eso <strong>no</strong> es Successive Halving. Successive Halving parte de <span class="math notranslate nohighlight">\(n\)</span> configuraciones con un presupuesto pequeño, conserva
+la fracción <span class="math notranslate nohighlight">\(1/r\)</span> mejor, multiplica el presupuesto por <span class="math notranslate nohighlight">\(r\)</span> y repite hasta que queda una; <span class="math notranslate nohighlight">\(r\)</span> es el <strong>factor de
+reducción</strong>, habitualmente 3, y Hyperband repite el procedimiento con varias parejas de <span class="math notranslate nohighlight">\(n\)</span> y presupuesto inicial. En el
+esquema del proyecto no hay rondas intermedias ni configuraciones que compitan con el presupuesto alto: es una búsqueda
+con dos fidelidades. La comparación lado a lado, con las mismas configuraciones, está en el
+<a class="reference external" href="https://fuga-de-clientes-dash.onrender.com">dashboard</a> (Contexto › «Dos fidelidades, no Successive Halving»).</p>
+</section>
+<section id="seleccion-de-la-mejor-combinacion-y-serializacion">
+<h2>3.4. Selección de la mejor combinación y serialización<a class="headerlink" href="#seleccion-de-la-mejor-combinacion-y-serializacion" title="Link to this heading">#</a></h2>
+<p>Para cada modelo se elige la combinación (balanceo × optimizador) de mejor métrica media del bucle externo, sin mirar
+la prueba. Esa es la combinación que entra en el dashboard y la que se repite en las repeticiones 2 y 3. El modelo final
+se reajusta con todo el entrenamiento y se serializa en <code class="docutils literal notranslate"><span class="pre">Dashboard/artifacts/</span></code> con su <code class="docutils literal notranslate"><span class="pre">metadata.json</span></code> (versiones,
+semilla, hiperparámetros, esquema de entrada y métricas) y la prueba de ida y vuelta: el modelo cargado predice
+exactamente lo mismo que el modelo en memoria.</p>
+</section>
+<section id="resultados-de-los-benchmarks">
+<h2>3.5. Resultados de los benchmarks<a class="headerlink" href="#resultados-de-los-benchmarks" title="Link to this heading">#</a></h2>
+<p id="tab-benchmarks"><strong>Tabla 3.3.</strong> Resultados de los nueve benchmarks de cada tarea y, en negrita, del modelo original: combinación elegida
+y motivo de la elección, presupuesto por búsqueda, evaluaciones y tiempo de la repetición de la semilla 42, y media ±
+desviación de la métrica principal en los pliegues externos de las repeticiones completas. Debajo, la mejor combinación
+global y los finalistas de la comparación estadística.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 3.3. Lee la tabla maestra (resultados/experimentos.parquet), la del</span>
+<span class="c1"># Entregable 3 (para el margen entre las combinaciones de cada modelo) y la métrica</span>
+<span class="c1"># de cada pliegue externo (resultados/pliegues_&lt;tarea&gt;.csv); ordena los modelos de</span>
+<span class="c1"># mejor a peor y calcula los finalistas de Nemenyi y el Model Confidence Set de</span>
+<span class="c1"># regresión.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_benchmarks'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<p><strong>Clasificación (AUC, mayor es mejor), 15 pliegues externos.</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Modelo</p></th>
+<th class="head text-left"><p>Combinación</p></th>
+<th class="head text-left"><p>Por qué esa combinación</p></th>
+<th class="head text-right"><p>Presupuesto</p></th>
+<th class="head text-right"><p>Evaluaciones</p></th>
+<th class="head text-right"><p>Tiempo (min)</p></th>
+<th class="head text-right"><p>AUC externo</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>XGBoost</p></td>
+<td class="text-left"><p>ponderación de clases, genética</p></td>
+<td class="text-left"><p>La mejor de 16; margen sobre la segunda: 0,00091</p></td>
+<td class="text-right"><p>32</p></td>
+<td class="text-right"><p>192</p></td>
+<td class="text-right"><p>8,9</p></td>
+<td class="text-right"><p>0,8333 ± 0,0041</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Árbol de decisión</p></td>
+<td class="text-left"><p>ponderación de clases, aleatoria (Random)</p></td>
+<td class="text-left"><p>La mejor de 16; margen sobre la segunda: 0,00027</p></td>
+<td class="text-right"><p>48</p></td>
+<td class="text-right"><p>288</p></td>
+<td class="text-right"><p>1,8</p></td>
+<td class="text-right"><p>0,8322 ± 0,0033</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Random Forest</p></td>
+<td class="text-left"><p>sin balanceo, genética</p></td>
+<td class="text-left"><p>La mejor de 16; margen sobre la segunda: 0,00035</p></td>
+<td class="text-right"><p>36</p></td>
+<td class="text-right"><p>216</p></td>
+<td class="text-right"><p>20,9</p></td>
+<td class="text-right"><p>0,8320 ± 0,0030</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>LightGBM *</p></td>
+<td class="text-left"><p>ponderación de clases, bayesiana (TPE)</p></td>
+<td class="text-left"><p>La única, fijada en el protocolo</p></td>
+<td class="text-right"><p>32</p></td>
+<td class="text-right"><p>192</p></td>
+<td class="text-right"><p>13,2</p></td>
+<td class="text-right"><p>0,8313 ± 0,0036</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong>BDL (original)</strong></p></td>
+<td class="text-left"><p>sin balanceo, bayesiana (TPE)</p></td>
+<td class="text-left"><p>La única, fijada en el protocolo</p></td>
+<td class="text-right"><p>30</p></td>
+<td class="text-right"><p>180</p></td>
+<td class="text-right"><p>42,3</p></td>
+<td class="text-right"><p>0,8313 ± 0,0038</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>EBM *</p></td>
+<td class="text-left"><p>ponderación de clases, rejilla (Grid)</p></td>
+<td class="text-left"><p>La mejor de 16; margen sobre la segunda: 0,00012</p></td>
+<td class="text-right"><p>36</p></td>
+<td class="text-right"><p>216</p></td>
+<td class="text-right"><p>18,7</p></td>
+<td class="text-right"><p>0,8293 ± 0,0045</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>k-NN</p></td>
+<td class="text-left"><p>sin balanceo, genética</p></td>
+<td class="text-left"><p>La mejor de 12; margen sobre la segunda: 0,00045</p></td>
+<td class="text-right"><p>32</p></td>
+<td class="text-right"><p>192</p></td>
+<td class="text-right"><p>34,7</p></td>
+<td class="text-right"><p>0,7841 ± 0,0069</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión logística</p></td>
+<td class="text-left"><p>ponderación de clases, genética</p></td>
+<td class="text-left"><p>La mejor de 16; margen sobre la segunda: 0,00004</p></td>
+<td class="text-right"><p>30</p></td>
+<td class="text-right"><p>180</p></td>
+<td class="text-right"><p>3,1</p></td>
+<td class="text-right"><p>0,7644 ± 0,0060</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>SVM lineal</p></td>
+<td class="text-left"><p>ponderación de clases, rejilla (Grid)</p></td>
+<td class="text-left"><p>La mejor de 16; margen sobre la segunda: 0,00002</p></td>
+<td class="text-right"><p>30</p></td>
+<td class="text-right"><p>180</p></td>
+<td class="text-right"><p>2,1</p></td>
+<td class="text-right"><p>0,7643 ± 0,0059</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Naive Bayes</p></td>
+<td class="text-left"><p>sin balanceo, rejilla (Grid)</p></td>
+<td class="text-left"><p>La mejor de 16; margen sobre la segunda: 0,00000</p></td>
+<td class="text-right"><p>30</p></td>
+<td class="text-right"><p>180</p></td>
+<td class="text-right"><p>0,7</p></td>
+<td class="text-right"><p>0,6715 ± 0,0117</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Regresión (RMSE, menor es mejor), 15 pliegues externos.</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Modelo</p></th>
+<th class="head text-left"><p>Combinación</p></th>
+<th class="head text-left"><p>Por qué esa combinación</p></th>
+<th class="head text-right"><p>Presupuesto</p></th>
+<th class="head text-right"><p>Evaluaciones</p></th>
+<th class="head text-right"><p>Tiempo (min)</p></th>
+<th class="head text-right"><p>RMSE externo</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><strong>BDL (original)</strong></p></td>
+<td class="text-left"><p>bayesiana (TPE)</p></td>
+<td class="text-left"><p>La única, fijada en el protocolo</p></td>
+<td class="text-right"><p>30</p></td>
+<td class="text-right"><p>180</p></td>
+<td class="text-right"><p>27,6</p></td>
+<td class="text-right"><p>0,05887 ± 0,00047</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>XGBoost</p></td>
+<td class="text-left"><p>bayesiana (TPE)</p></td>
+<td class="text-left"><p>La mejor de 4; margen sobre la segunda: 0,000012</p></td>
+<td class="text-right"><p>32</p></td>
+<td class="text-right"><p>192</p></td>
+<td class="text-right"><p>10,4</p></td>
+<td class="text-right"><p>0,05897 ± 0,00047</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>LightGBM *</p></td>
+<td class="text-left"><p>bayesiana (TPE)</p></td>
+<td class="text-left"><p>La única, fijada en el protocolo</p></td>
+<td class="text-right"><p>32</p></td>
+<td class="text-right"><p>192</p></td>
+<td class="text-right"><p>6,8</p></td>
+<td class="text-right"><p>0,05899 ± 0,00048</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>EBM *</p></td>
+<td class="text-left"><p>rejilla (Grid)</p></td>
+<td class="text-left"><p>La mejor de 4; margen sobre la segunda: 0,000012</p></td>
+<td class="text-right"><p>36</p></td>
+<td class="text-right"><p>216</p></td>
+<td class="text-right"><p>26,6</p></td>
+<td class="text-right"><p>0,05903 ± 0,00047</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Random Forest</p></td>
+<td class="text-left"><p>rejilla (Grid)</p></td>
+<td class="text-left"><p>La mejor de 4; margen sobre la segunda: 0,000020</p></td>
+<td class="text-right"><p>36</p></td>
+<td class="text-right"><p>216</p></td>
+<td class="text-right"><p>16,1</p></td>
+<td class="text-right"><p>0,05913 ± 0,00049</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Árbol de decisión</p></td>
+<td class="text-left"><p>genética</p></td>
+<td class="text-left"><p>La mejor de 4; margen sobre la segunda: 0,000014</p></td>
+<td class="text-right"><p>48</p></td>
+<td class="text-right"><p>288</p></td>
+<td class="text-right"><p>3,7</p></td>
+<td class="text-right"><p>0,05928 ± 0,00048</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Lasso</p></td>
+<td class="text-left"><p>genética</p></td>
+<td class="text-left"><p>La mejor de 4; margen sobre la segunda: 0,000004</p></td>
+<td class="text-right"><p>30</p></td>
+<td class="text-right"><p>180</p></td>
+<td class="text-right"><p>6,7</p></td>
+<td class="text-right"><p>0,06181 ± 0,00053</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Ridge</p></td>
+<td class="text-left"><p>genética</p></td>
+<td class="text-left"><p>La mejor de 4; margen sobre la segunda: 0,000001</p></td>
+<td class="text-right"><p>30</p></td>
+<td class="text-right"><p>180</p></td>
+<td class="text-right"><p>1,5</p></td>
+<td class="text-right"><p>0,06183 ± 0,00053</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>SVR lineal</p></td>
+<td class="text-left"><p>bayesiana (TPE)</p></td>
+<td class="text-left"><p>La mejor de 4; margen sobre la segunda: 0,000002</p></td>
+<td class="text-right"><p>30</p></td>
+<td class="text-right"><p>180</p></td>
+<td class="text-right"><p>2,7</p></td>
+<td class="text-right"><p>0,06185 ± 0,00052</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>k-NN</p></td>
+<td class="text-left"><p>rejilla (Grid)</p></td>
+<td class="text-left"><p>La mejor de 4; margen sobre la segunda: 0,000007</p></td>
+<td class="text-right"><p>32</p></td>
+<td class="text-right"><p>192</p></td>
+<td class="text-right"><p>24,9</p></td>
+<td class="text-right"><p>0,06334 ± 0,00052</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>* Método reciente. En negrita, el modelo original, que no es un benchmark: se incluye para comparar el presupuesto. Presupuesto: evaluaciones por búsqueda. Evaluaciones y tiempo: los de la repetición de la semilla 42 (cinco búsquedas externas y la final); los de los ocho modelos del Entregable 3 se midieron en ese entregable y los de LightGBM y el original, en este: son ejecuciones distintas, comparables en orden de magnitud y no al segundo. Margen: diferencia de la métrica externa entre la combinación elegida y la siguiente del mismo modelo.</p>
+<p><strong>Mejor combinación global y finalistas.</strong> En clasificación, la mejor combinación global entre los benchmarks es XGBoost con ponderación de clases y búsqueda genética: AUC externo de 0,8333 ± 0,0041. La prueba de Friedman rechaza que los diez modelos rindan igual (p &lt; 0,001 con la corrección de Iman-Davenport) y son finalistas de Nemenyi los 6 modelos a menos de la diferencia crítica (3,50 rangos) del mejor rango medio: XGBoost, Árbol de decisión, Random Forest, LightGBM, BDL (original) y EBM. XGBoost está entre ellos, con rango medio 2,4. En regresión, la mejor combinación global entre los benchmarks es XGBoost con búsqueda bayesiana (TPE): RMSE externo de 0,05897 ± 0,00047. La prueba de Friedman rechaza que los diez modelos rindan igual (p &lt; 0,001 con la corrección de Iman-Davenport) y son finalistas de Nemenyi los 4 modelos a menos de la diferencia crítica (3,50 rangos) del mejor rango medio: BDL (original), XGBoost, LightGBM y EBM. XGBoost está entre ellos, con rango medio 2,3. El <em>Model Confidence Set</em> al 90 % sobre los errores cuadráticos de prueba: entre los nueve benchmarks conserva a EBM, LightGBM y XGBoost, de modo que XGBoost pertenece al conjunto; con el modelo original incluido conserva a BDL (original) (XGBoost: p = 0,098). El <em>Model Confidence Set</em> no es una de las cuatro pruebas del protocolo: se reporta porque la guía lo pide para la selección de combinaciones, y no cuenta para el veredicto.</p>
+</div>
+</div>
+<p>Los cuatro mejores benchmarks quedan a muy poca distancia entre sí en las dos tareas. El capítulo 6 muestra por qué:
+están cerca del límite que permite el conjunto.</p>
+<p>La <a class="reference internal" href="#tab-hiperparametros"><span class="std std-ref">Tabla 3.4</span></a> da los hiperparámetros con los que se reajustó cada modelo final. Para los
+ocho modelos del Entregable 3 y para el original son los de los 18 artefactos del dashboard; LightGBM se añadió en este
+entregable como benchmark y no se publica como artefacto.</p>
+<p id="tab-hiperparametros"><strong>Tabla 3.4.</strong> Hiperparámetros finales de los diez modelos de cada tarea (búsqueda sobre toda la partición de
+entrenamiento, semilla 42).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 3.4. De la tabla maestra: la columna hiperparametros de la corrida de la</span>
+<span class="c1"># semilla 42 de cada modelo.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_hiperparametros'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Tarea</p></th>
+<th class="head text-left"><p>Modelo</p></th>
+<th class="head text-left"><p>Hiperparámetros finales (semilla 42)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>k-NN</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_neighbors</span></code> = 600; <code class="docutils literal notranslate"><span class="pre">weights</span></code> = «distance»; <code class="docutils literal notranslate"><span class="pre">p</span></code> = 1</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>Naive Bayes</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">var_smoothing</span></code> = 0,001</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>Regresión logística</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">C</span></code> = 0,05631; <code class="docutils literal notranslate"><span class="pre">l1_ratio</span></code> = 1</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>Árbol de decisión</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">ccp_alpha</span></code> = 3,9 × 10⁻⁴; <code class="docutils literal notranslate"><span class="pre">criterion</span></code> = «gini»; <code class="docutils literal notranslate"><span class="pre">max_depth</span></code> = 22; <code class="docutils literal notranslate"><span class="pre">min_samples_leaf</span></code> = 7</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>Random Forest</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">max_depth</span></code> = 32; <code class="docutils literal notranslate"><span class="pre">max_features</span></code> = 0,5; <code class="docutils literal notranslate"><span class="pre">min_samples_leaf</span></code> = 11; <code class="docutils literal notranslate"><span class="pre">n_estimators</span></code> = 300</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>XGBoost</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_estimators</span></code> = 145; <code class="docutils literal notranslate"><span class="pre">max_depth</span></code> = 6; <code class="docutils literal notranslate"><span class="pre">learning_rate</span></code> = 0,003304; <code class="docutils literal notranslate"><span class="pre">subsample</span></code> = 0,8081; <code class="docutils literal notranslate"><span class="pre">colsample_bytree</span></code> = 0,9683; <code class="docutils literal notranslate"><span class="pre">reg_lambda</span></code> = 0,8792; <code class="docutils literal notranslate"><span class="pre">min_child_weight</span></code> = 11</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>SVM lineal</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">C</span></code> = 0,001083</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>EBM</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">interactions</span></code> = 0; <code class="docutils literal notranslate"><span class="pre">learning_rate</span></code> = 0,008; <code class="docutils literal notranslate"><span class="pre">max_leaves</span></code> = 2; <code class="docutils literal notranslate"><span class="pre">min_samples_leaf</span></code> = 100; <code class="docutils literal notranslate"><span class="pre">outer_bags</span></code> = 8</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>LightGBM</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_estimators</span></code> = 244; <code class="docutils literal notranslate"><span class="pre">num_leaves</span></code> = 16; <code class="docutils literal notranslate"><span class="pre">learning_rate</span></code> = 0,02042; <code class="docutils literal notranslate"><span class="pre">subsample</span></code> = 0,7871; <code class="docutils literal notranslate"><span class="pre">colsample_bytree</span></code> = 0,9424; <code class="docutils literal notranslate"><span class="pre">reg_lambda</span></code> = 0,03961; <code class="docutils literal notranslate"><span class="pre">min_child_samples</span></code> = 150</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p><strong>BDL (original)</strong></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">tasa</span></code> = 0,09834; <code class="docutils literal notranslate"><span class="pre">profundidad</span></code> = 1; <code class="docutils literal notranslate"><span class="pre">min_hoja</span></code> = 11; <code class="docutils literal notranslate"><span class="pre">lambda_l2</span></code> = 0,02269; <code class="docutils literal notranslate"><span class="pre">max_bins</span></code> = 73; <code class="docutils literal notranslate"><span class="pre">n_componentes</span></code> = «auto»; <code class="docutils literal notranslate"><span class="pre">usar_puntaje</span></code> = sí</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>k-NN</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_neighbors</span></code> = 80; <code class="docutils literal notranslate"><span class="pre">p</span></code> = 1; <code class="docutils literal notranslate"><span class="pre">weights</span></code> = «distance»</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>Ridge</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code> = 613,9</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>Lasso</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code> = 1,1 × 10⁻⁴</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>Árbol de decisión</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">max_depth</span></code> = 13; <code class="docutils literal notranslate"><span class="pre">min_samples_leaf</span></code> = 101; <code class="docutils literal notranslate"><span class="pre">ccp_alpha</span></code> = 1,8 × 10⁻⁶</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>Random Forest</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">max_depth</span></code> = 8; <code class="docutils literal notranslate"><span class="pre">max_features</span></code> = 0,5; <code class="docutils literal notranslate"><span class="pre">min_samples_leaf</span></code> = 50; <code class="docutils literal notranslate"><span class="pre">n_estimators</span></code> = 300</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>XGBoost</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_estimators</span></code> = 512; <code class="docutils literal notranslate"><span class="pre">max_depth</span></code> = 2; <code class="docutils literal notranslate"><span class="pre">learning_rate</span></code> = 0,02361; <code class="docutils literal notranslate"><span class="pre">subsample</span></code> = 0,8025; <code class="docutils literal notranslate"><span class="pre">colsample_bytree</span></code> = 0,7268; <code class="docutils literal notranslate"><span class="pre">reg_lambda</span></code> = 0,2158; <code class="docutils literal notranslate"><span class="pre">min_child_weight</span></code> = 31</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>SVR lineal</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">C</span></code> = 46,43; <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> = 3,8 × 10⁻⁴</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>EBM</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">interactions</span></code> = 0; <code class="docutils literal notranslate"><span class="pre">learning_rate</span></code> = 0,008; <code class="docutils literal notranslate"><span class="pre">max_leaves</span></code> = 3; <code class="docutils literal notranslate"><span class="pre">min_samples_leaf</span></code> = 20; <code class="docutils literal notranslate"><span class="pre">outer_bags</span></code> = 8</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>LightGBM</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_estimators</span></code> = 260; <code class="docutils literal notranslate"><span class="pre">num_leaves</span></code> = 4; <code class="docutils literal notranslate"><span class="pre">learning_rate</span></code> = 0,05085; <code class="docutils literal notranslate"><span class="pre">subsample</span></code> = 0,7569; <code class="docutils literal notranslate"><span class="pre">colsample_bytree</span></code> = 0,5365; <code class="docutils literal notranslate"><span class="pre">reg_lambda</span></code> = 1,686; <code class="docutils literal notranslate"><span class="pre">min_child_samples</span></code> = 104</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p><strong>BDL (original)</strong></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">tasa</span></code> = 0,5816; <code class="docutils literal notranslate"><span class="pre">profundidad</span></code> = 1; <code class="docutils literal notranslate"><span class="pre">min_hoja</span></code> = 88; <code class="docutils literal notranslate"><span class="pre">lambda_l2</span></code> = 0,01508; <code class="docutils literal notranslate"><span class="pre">max_bins</span></code> = 885; <code class="docutils literal notranslate"><span class="pre">n_componentes</span></code> = «auto»</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>La tabla lista los hiperparámetros que fijó el optimizador elegido para cada modelo. Cuando ese optimizador es la rejilla, los que la rejilla no recorre quedan en el valor de partida del modelo: EBM (clasificación), <code class="docutils literal notranslate"><span class="pre">max_bins</span></code> = 1.024; EBM (regresión), <code class="docutils literal notranslate"><span class="pre">max_bins</span></code> = 1.024.</p>
+</div>
+</div>
+</section>
+<section id="los-metodos-recientes-con-sus-hiperparametros-recomendados">
+<h2>3.6. Los métodos recientes con sus hiperparámetros recomendados<a class="headerlink" href="#los-metodos-recientes-con-sus-hiperparametros-recomendados" title="Link to this heading">#</a></h2>
+<p>La <a class="reference internal" href="#tab-recomendados"><span class="std std-ref">Tabla 3.5</span></a> ajusta la EBM y LightGBM con los valores por defecto de su librería, sin
+búsqueda, y los evalúa en los mismos cinco pliegues externos de la semilla 42 y en la misma partición de prueba que la
+versión ajustada. Es una medida añadida después de ver los resultados (sección 6.2): no cambia qué combinación
+representa a cada benchmark en las pruebas de hipótesis.</p>
+<p id="tab-recomendados"><strong>Tabla 3.5.</strong> EBM y LightGBM con los hiperparámetros recomendados por su librería, frente a los que encontró la
+búsqueda.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 3.5. Lee resultados/recomendados.csv (experiments/03d_recomendados.py) y lo</span>
+<span class="c1"># compara con los pliegues externos de la semilla 42</span>
+<span class="c1"># (resultados/pliegues_&lt;tarea&gt;.csv) y con resultados/metricas_prueba.csv.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_recomendados'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Tarea</p></th>
+<th class="head text-left"><p>Modelo</p></th>
+<th class="head text-right"><p>Recomendados: externo</p></th>
+<th class="head text-right"><p>Ajustados: externo</p></th>
+<th class="head text-right"><p>Pliegues en que gana el ajustado</p></th>
+<th class="head text-right"><p>Recomendados: prueba</p></th>
+<th class="head text-right"><p>Ajustados: prueba</p></th>
+<th class="head text-right"><p>Ajuste con los recomendados (s)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>EBM</p></td>
+<td class="text-right"><p>0,8277 ± 0,0023</p></td>
+<td class="text-right"><p>0,8292 ± 0,0037</p></td>
+<td class="text-right"><p>3 de 5</p></td>
+<td class="text-right"><p>0,8255</p></td>
+<td class="text-right"><p>0,8289</p></td>
+<td class="text-right"><p>380,7</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Clasificación</p></td>
+<td class="text-left"><p>LightGBM</p></td>
+<td class="text-right"><p>0,8303 ± 0,0033</p></td>
+<td class="text-right"><p>0,8310 ± 0,0038</p></td>
+<td class="text-right"><p>3 de 5</p></td>
+<td class="text-right"><p>0,8270</p></td>
+<td class="text-right"><p>0,8296</p></td>
+<td class="text-right"><p>0,9</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>EBM</p></td>
+<td class="text-right"><p>0,05913 ± 0,00044</p></td>
+<td class="text-right"><p>0,05903 ± 0,00043</p></td>
+<td class="text-right"><p>5 de 5</p></td>
+<td class="text-right"><p>0,05929</p></td>
+<td class="text-right"><p>0,05925</p></td>
+<td class="text-right"><p>505,6</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Regresión</p></td>
+<td class="text-left"><p>LightGBM</p></td>
+<td class="text-right"><p>0,05927 ± 0,00039</p></td>
+<td class="text-right"><p>0,05899 ± 0,00040</p></td>
+<td class="text-right"><p>5 de 5</p></td>
+<td class="text-right"><p>0,05948</p></td>
+<td class="text-right"><p>0,05918</p></td>
+<td class="text-right"><p>0,9</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Métrica: AUC en clasificación y RMSE en regresión. Externo: media ± desviación en los cinco pliegues externos de la semilla 42, los mismos para las dos versiones. Recomendados: los valores por defecto de la librería (interpret y LightGBM), con el mismo preprocesamiento y el mismo tratamiento del desbalance que la combinación elegida.</p>
+<p><strong>Valores recomendados.</strong> EBM en clasificación: <code class="docutils literal notranslate"><span class="pre">learning_rate</span></code> = 0,015; <code class="docutils literal notranslate"><span class="pre">max_leaves</span></code> = 2; <code class="docutils literal notranslate"><span class="pre">min_samples_leaf</span></code> = 4; <code class="docutils literal notranslate"><span class="pre">interactions</span></code> = «3x»; <code class="docutils literal notranslate"><span class="pre">max_bins</span></code> = 1.024; <code class="docutils literal notranslate"><span class="pre">outer_bags</span></code> = 14. Fuera del alcance de la búsqueda: <code class="docutils literal notranslate"><span class="pre">interactions</span></code> = «3x» (el espacio va de 0 a 20); <code class="docutils literal notranslate"><span class="pre">outer_bags</span></code> = 14 (no se busca; el modelo final usa 8). LightGBM en clasificación: <code class="docutils literal notranslate"><span class="pre">n_estimators</span></code> = 100; <code class="docutils literal notranslate"><span class="pre">num_leaves</span></code> = 31; <code class="docutils literal notranslate"><span class="pre">learning_rate</span></code> = 0,1; <code class="docutils literal notranslate"><span class="pre">subsample</span></code> = 1; <code class="docutils literal notranslate"><span class="pre">colsample_bytree</span></code> = 1; <code class="docutils literal notranslate"><span class="pre">reg_lambda</span></code> = 0; <code class="docutils literal notranslate"><span class="pre">min_child_samples</span></code> = 20. Fuera del alcance de la búsqueda: <code class="docutils literal notranslate"><span class="pre">reg_lambda</span></code> = 0 (el espacio va de 0,01 a 10). EBM en regresión: <code class="docutils literal notranslate"><span class="pre">learning_rate</span></code> = 0,04; <code class="docutils literal notranslate"><span class="pre">max_leaves</span></code> = 2; <code class="docutils literal notranslate"><span class="pre">min_samples_leaf</span></code> = 4; <code class="docutils literal notranslate"><span class="pre">interactions</span></code> = «5x»; <code class="docutils literal notranslate"><span class="pre">max_bins</span></code> = 1.024; <code class="docutils literal notranslate"><span class="pre">outer_bags</span></code> = 14. Fuera del alcance de la búsqueda: <code class="docutils literal notranslate"><span class="pre">interactions</span></code> = «5x» (el espacio va de 0 a 20); <code class="docutils literal notranslate"><span class="pre">outer_bags</span></code> = 14 (no se busca; el modelo final usa 8). LightGBM en regresión: <code class="docutils literal notranslate"><span class="pre">n_estimators</span></code> = 100; <code class="docutils literal notranslate"><span class="pre">num_leaves</span></code> = 31; <code class="docutils literal notranslate"><span class="pre">learning_rate</span></code> = 0,1; <code class="docutils literal notranslate"><span class="pre">subsample</span></code> = 1; <code class="docutils literal notranslate"><span class="pre">colsample_bytree</span></code> = 1; <code class="docutils literal notranslate"><span class="pre">reg_lambda</span></code> = 0; <code class="docutils literal notranslate"><span class="pre">min_child_samples</span></code> = 20. Fuera del alcance de la búsqueda: <code class="docutils literal notranslate"><span class="pre">reg_lambda</span></code> = 0 (el espacio va de 0,01 a 10).</p>
+<p><strong>Lectura.</strong> En los pliegues externos la versión ajustada mejora a la recomendada en 4 de los 4 casos; en prueba, en 4 de 4. El ajuste no dejó a ningún benchmark reciente por debajo de su punto de partida.</p>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./ProyectoFinal"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="02_datos.html"
+       title="página anterior">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">anterior</p>
+        <p class="prev-next-title">2. Datos: ETL, EDA y auditoría de fuga</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="04_literatura.html"
+       title="siguiente página">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">siguiente</p>
+        <p class="prev-next-title">4. Revisión de literatura y novedad</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contenido
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#los-nueve-benchmarks">3.1. Los nueve benchmarks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#presupuesto-de-ajuste">3.2. Presupuesto de ajuste</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dos-fidelidades-y-por-que-no-es-successive-halving">3.3. Dos fidelidades, y por qué no es Successive Halving</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#seleccion-de-la-mejor-combinacion-y-serializacion">3.4. Selección de la mejor combinación y serialización</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resultados-de-los-benchmarks">3.5. Resultados de los benchmarks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#los-metodos-recientes-con-sus-hiperparametros-recomendados">3.6. Los métodos recientes con sus hiperparámetros recomendados</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+Por Martínez Pulido Valerie · Basto Martínez Abrahan · Esguerra Fernández Rubén
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

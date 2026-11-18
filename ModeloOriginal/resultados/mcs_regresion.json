@@ -1,0 +1,41 @@
+{
+ "alfa": 0.1,
+ "replicas": 1000,
+ "diez": {
+  "bloque": 2,
+  "incluidos": [
+   "bdl"
+  ],
+  "p_mcs": {
+   "bdl": 1.0,
+   "xgboost": 0.098,
+   "lightgbm": 0.098,
+   "ebm": 0.024,
+   "random_forest": 0.001,
+   "knn": 0.0,
+   "svr": 0.0,
+   "arbol": 0.0,
+   "ridge": 0.0,
+   "lasso": 0.0
+  }
+ },
+ "benchmarks": {
+  "bloque": 2,
+  "incluidos": [
+   "ebm",
+   "lightgbm",
+   "xgboost"
+  ],
+  "p_mcs": {
+   "xgboost": 1.0,
+   "lightgbm": 0.859,
+   "ebm": 0.12,
+   "random_forest": 0.022,
+   "knn": 0.0,
+   "arbol": 0.0,
+   "lasso": 0.0,
+   "ridge": 0.0,
+   "svr": 0.0
+  }
+ }
+}

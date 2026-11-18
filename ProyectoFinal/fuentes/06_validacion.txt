@@ -1,0 +1,310 @@
+#%% md
+# 6. Protocolo y validación estadística
+
+#%% code
+# Preparación: acceso a los resultados versionados y a las funciones que generan las tablas y figuras del informe.
+import sys
+sys.path.insert(0, '../ModeloOriginal')
+from src import informe as inf
+
+#%% md
+## 6.1. El protocolo pre-registrado
+
+Antes de ejecutar los experimentos definitivos se congeló
+[`ModeloOriginal/experiments/protocolo.md`](https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech/blob/main/ModeloOriginal/experiments/protocolo.md)
+con la etiqueta de Git `protocolo-modelo-original-v1`. Fija las hipótesis, las métricas, las particiones, las
+repeticiones y semillas, las pruebas con su corrección por comparaciones múltiples, el presupuesto de ajuste y los
+conjuntos adicionales. El texto completo está en el [apéndice de código](codigo_modelo_original); la
+{ref}`Tabla 6.1 <tab-protocolo>` lo resume y la {ref}`Tabla 6.2 <tab-registro>` comprueba las fechas.
+
+(tab-protocolo)=
+**Tabla 6.1.** Resumen del protocolo pre-registrado.
+
+| Elemento | Lo que se fijó |
+|---|---|
+| Hipótesis confirmatorias | H1: el RMSE del original es menor que el del mejor benchmark. H2: su AUC es mayor |
+| Hipótesis secundarias | H3: conjuntos de predicción más cortos que los intervalos del mejor benchmark, con la cobertura nominal. H4: menor pérdida logarítmica que el mejor benchmark recalibrado |
+| Métrica principal | AUC en clasificación y RMSE en regresión, las de las entregas anteriores |
+| Particiones | Prueba del 20 % (semilla 42); validación anidada {cite}`cawley2010` de 3 × 5 pliegues externos y 3 internos (semillas 42, 43 y 44) |
+| Modelos | Diez por tarea: siete de clase, EBM, LightGBM y el original, con el mismo preprocesamiento |
+| Presupuesto | El de cada benchmark en el Entregable 3 (30 a 48 evaluaciones por búsqueda); el original, 30 |
+| Pruebas | P1 Friedman {cite}`friedman1937` con la corrección de Iman-Davenport {cite}`iman1980` y Wilcoxon {cite}`wilcoxon1945`; P2 *t* corregida de Nadeau-Bengio {cite}`nadeau2003`; P3 DeLong {cite}`delong1988` en clasificación y permutación pareada en regresión; P4 McNemar {cite}`mcnemar1947` en clasificación y bootstrap BCa {cite}`efron1987` en regresión |
+| Comparaciones múltiples | Holm {cite}`holm1979` dentro de cada prueba, nueve comparaciones; α = 0,05 |
+| Tamaño del efecto | δ de Cliff y *d* de Cohen entre los valores por pliegue; no despreciable si δ llega a 0,147 en valor absoluto {cite}`romano2006` o *d* a 0,2 |
+| Veredicto | Las cuatro condiciones de la guía (§6.4), por tarea |
+
+(tab-registro)=
+**Tabla 6.2.** Registro del protocolo: fecha de la etiqueta, primera corrida definitiva y cambios posteriores en el
+modelo y en el protocolo.
+
+#%% code
+# Tabla 6.2. Consulta a Git la fecha de la etiqueta y si original_model.py o protocolo.md cambiaron después de ella, y
+# lee de resultados/progreso.log cuándo terminó la primera corrida definitiva.
+inf.tabla('tabla_registro')
+
+#%% md
+**Iteraciones de diseño.** La guía pide informar cuántas se evaluaron. Fueron cinco ({ref}`Tabla 6.3 <tab-iteraciones>`),
+todas con la partición de entrenamiento (los cinco pliegues externos de la semilla 42) y sin búsqueda de
+hiperparámetros; ni la prueba, ni las repeticiones 2 y 3, ni los conjuntos adicionales intervinieron. Esos cinco
+pliegues son también cinco de los quince de la comparación confirmatoria: el diseño se eligió mirándolos, de modo que en
+ellos la comparación puede favorecer al original. Las cifras de la tabla son las que se anotaron durante el diseño; los
+pilotos no dejaron resultados versionados, y por eso es la única tabla del libro que no se regenera desde archivos.
+
+(tab-iteraciones)=
+**Tabla 6.3.** Iteraciones de diseño del modelo original, anteriores al registro del protocolo.
+
+| N.º | Idea | Resultado en los pliegues de entrenamiento | Decisión |
+|---|---|---|---|
+| 1 | Ordenar a los clientes con un regresor del puntaje (XGBoost) en lugar de un clasificador | AUC 0,8289, frente a 0,8314 del clasificador | Descartada: el error del índice cerca del umbral cuesta más de lo que aporta el puntaje |
+| 2 | Separar índice y escalón con componentes de XGBoost y escalón duro | AUC 0,812 con escalón duro; 0,831 suavizado | Descartada como estaba: el índice no era lo bastante preciso |
+| 3 | BDL: EM generalizado con paso de boosting y salida conforme empírica | RMSE 0,05888 (XGBoost ajustado: 0,05898); AUC 0,8314 (XGBoost: 0,8332) | Se conserva la regla de aprendizaje; la salida de clasificación queda por debajo |
+| 4 | Ingeniería: varios árboles por vuelta, calentamiento con parada temprana, mezcla inicial sobre el histograma, regla de parsimonia para $K$ | Mismo error; el ajuste baja de 31 s a 3–8 s y $K = 5$ en todas las configuraciones | Adoptada |
+| 5 | Salida de clasificación con la mezcla y dispersión robusta | AUC 0,8345 (techo en entrenamiento: 0,8348) | Adoptada |
+
+## 6.2. Desviaciones del protocolo
+
+Se declaran todas, también las que no cambian ningún resultado.
+
+1. **La etiqueta se publicó unas horas después de crearla.** La etiqueta se creó en el repositorio local a las 20:12 del
+   17 de noviembre, antes de lanzar la primera corrida definitiva, y se subió a GitHub a las 00:29 del 18, sin
+   resultados. La fecha de la etiqueta la escribe el equipo donde se crea ({ref}`Tabla 6.2 <tab-registro>`): es una
+   evidencia, no la certificación de un tercero. La única fecha que certifica un tercero es la de la subida, y para
+   entonces ya se habían ejecutado la repetición de la semilla 42 de LightGBM y del modelo original, la evaluación en
+   prueba, las pruebas de hipótesis con esa repetición, las diez semillas, la curva de aprendizaje con el estudio de
+   columnas y tres de los cuatro conjuntos adicionales (Seguros, Energía y Abulón). Terminaron después de la subida la
+   ablación, el cuarto conjunto (California), el cambio de distribución, el ruido y la sensibilidad, y se ejecutaron por
+   completo después las repeticiones 2 y 3 de la validación anidada y los análisis del punto 5.
+2. **Los guiones de análisis se escribieron después del registro.** El protocolo fija qué se calcula; los guiones `03` a
+   `08`, que lo calculan, son posteriores. Al ejecutarlos apareció un fallo en `03_prueba.py` (las predicciones del
+   Entregable 3 estaban guardadas en otro orden de filas); el guion se detenía antes de producir nada, y se corrigió
+   alineando las filas por su índice. También se añadió un candado a la tabla maestra (`src/registro.py`) para que dos
+   colas de experimentos pudieran escribir en ella a la vez; no cambia lo que se calcula.
+3. **Lectura más estricta de las condiciones 2 y 3.** El protocolo dice «rechazan la igualdad» y pone el umbral del
+   tamaño del efecto en valor absoluto. Al ver que en clasificación el efecto era negativo, se precisó que un rechazo
+   solo cuenta si la diferencia favorece al original y que el efecto debe tener ese mismo signo. La precisión solo puede
+   endurecer el veredicto, nunca favorecer al modelo propio.
+4. **El protocolo no decía cómo romper los empates de la campaña.** La prueba P4 de clasificación marca como positivo
+   el 25 % de clientes de mayor puntaje de cada modelo. El guion de las pruebas resuelve los empates del corte por
+   posición en la tabla, igual para todos los modelos; esa regla se escribió antes de ejecutar la prueba, pero después
+   del registro. El mejor benchmark casi no tiene empates en el corte; el árbol de decisión tiene muchos y el modelo
+   original, todavía más, y su captura depende de ellos. La {ref}`Tabla 6.11 <tab-empates>` repite P4 con 2.000
+   desempates al azar y dice cuánto depende de ellos su resultado.
+5. **Análisis añadidos después de ver los resultados.** Ninguno estaba en el protocolo. Se añadieron para explicar el
+   veredicto, como pide la guía cuando no hay superioridad, o para atender un requisito de la guía que el protocolo no
+   recogía; son exploratorios y no intervienen en el veredicto:
+   - la comparación del predictor óptimo con el mejor benchmark ({ref}`Tabla 6.10 <tab-optimo>`);
+   - la sensibilidad a los empates de la campaña ({ref}`Tabla 6.11 <tab-empates>`);
+   - la curva de aprendizaje del modelo sin la mezcla ({ref}`Tabla 7.8 <tab-muestra>`);
+   - las referencias homogéneas: el MAE del benchmark desplazado a la mediana, su conjunto de predicción por densidad
+     ({ref}`Tabla 7.12 <tab-incertidumbre>`) y, en la sensibilidad, el benchmark con sus hiperparámetros finales
+     ({ref}`Tabla 7.5 <tab-sensibilidad>`);
+   - el error del índice de cada modelo (sección 5.1) y el intervalo de confianza de la diferencia de AUC en prueba
+     (sección 6.7);
+   - el *Model Confidence Set* de la regresión ({ref}`Tabla 3.3 <tab-benchmarks>`), que la guía pide para la selección
+     de combinaciones;
+   - los métodos recientes con sus hiperparámetros recomendados ({ref}`Tabla 3.5 <tab-recomendados>`);
+   - la memoria de cada modelo y el tiempo de inferencia según el número de filas (sección 7.3 y sección 7.5), que son
+     medidas de cómputo;
+   - los desgloses descriptivos que acompañan a las tablas: qué pliegues eligieron la mezcla o el puntaje en los
+     conjuntos adicionales y la cobertura por número de productos activos.
+6. **Lo que no cambió.** El código del modelo y el texto del protocolo son los de la etiqueta
+   ({ref}`Tabla 6.2 <tab-registro>`). No se cambiaron hipótesis, métricas, particiones, semillas, pruebas, corrección
+   por comparaciones múltiples, presupuesto ni conjuntos adicionales, y no se repitió ninguna corrida para elegir la
+   mejor.
+
+## 6.3. Equidad de la comparación
+
+- **Mismas particiones y semilla.** Todos los modelos usan los mismos pliegues externos e internos en cada repetición
+  (`src/optimizacion.construir_cv`), el mismo preprocesamiento y las mismas 48 variables.
+- **Presupuesto.** Ningún benchmark recibió menos evaluaciones que el original (sección 3.2); el presupuesto y el tiempo
+  reales de cada uno están en la {ref}`Tabla 3.3 <tab-benchmarks>`.
+- **Benchmarks bien ajustados.** Cada benchmark entra con su mejor combinación de balanceo y optimizador entre las del
+  Entregable 3, y hay dos métodos recientes (EBM y LightGBM); la sección 3.6 los compara con sus hiperparámetros
+  recomendados.
+- **Lo que el original usa y los benchmarks no.** En clasificación, el original recibe el puntaje continuo de las filas
+  de entrenamiento además de la etiqueta. No es una ventaja oculta sino el mecanismo que se evalúa: la etiqueta es una
+  dicotomización de ese puntaje, y la hipótesis es que desecharlo cuesta precisión. La ablación «sin puntaje» mide cuánto
+  aporta (sección 5.9).
+- **Varianza por semilla.** Cada modelo final se reajustó con diez semillas (sección 7.3).
+
+## 6.4. El techo del problema
+
+Antes de comparar conviene saber cuánto margen hay. En COFINFAD se puede calcular: como el puntaje es un índice menos
+un escalón de 0,05 por producto activo, y esa variable no se puede predecir con las demás, la mejor predicción posible
+tiene forma cerrada (Proposición 5 y `experiments/04b_techo.py`). La {ref}`Tabla 6.4 <tab-techo>` compara ese límite
+con el mejor benchmark y con el modelo original.
+
+(tab-techo)=
+**Tabla 6.4.** Límite teórico de cada métrica en prueba, valor del mejor benchmark y del modelo original, y parte de la
+distancia al límite que cierra el original.
+
+#%% code
+# Tabla 6.4. Lee resultados/techo.json (el límite, calculado con la distribución de active_products en entrenamiento)
+# y resultados/metricas_prueba.csv (las métricas de los diez modelos en prueba).
+inf.tabla('tabla_techo')
+
+#%% md
+Los benchmarks ya están a milésimas del límite. Eso acota de antemano el tamaño de cualquier mejora, y es la razón por
+la que el veredicto de este capítulo depende de pruebas pareadas, que son las que pueden detectar diferencias pequeñas
+y sistemáticas.
+
+## 6.5. Resultados
+
+Las tablas {ref}`6.5 <tab-resumen-regresion>` y {ref}`6.6 <tab-resumen-clasificacion>` resumen los diez modelos de cada
+tarea: media ± desviación de la métrica principal en los pliegues externos, valor en prueba con su intervalo de
+confianza bootstrap, y costo de cómputo (tiempo de ajuste y de inferencia y tamaño del modelo, medidos al reajustar
+cada modelo final con diez semillas).
+
+(tab-resumen-regresion)=
+**Tabla 6.5.** Regresión: RMSE de los diez modelos en los pliegues externos y en prueba, con intervalo de confianza
+del 95 % (bootstrap BCa, 2.000 réplicas) y costo de cómputo.
+
+#%% code
+# Tabla 6.5. Une la métrica por pliegue externo (pliegues_regresion.csv), el RMSE en prueba con su intervalo BCa
+# (predicciones_prueba.parquet) y los tiempos y tamaños medidos con diez semillas (semillas.csv).
+inf.tabla('tabla_resumen_regresion')
+
+#%% md
+(tab-resumen-clasificacion)=
+**Tabla 6.6.** Clasificación: AUC de los diez modelos en los pliegues externos y en prueba, con intervalo de confianza
+del 95 % (bootstrap BCa, 2.000 réplicas) y costo de cómputo.
+
+#%% code
+# Tabla 6.6. Lo mismo para la clasificación (pliegues_clasificacion.csv).
+inf.tabla('tabla_resumen_clasificacion')
+
+#%% md
+**Cambio en el orden de los modelos.** La guía pide informar si la corrección cambia el orden de los modelos respecto
+del Entregable 3.
+
+#%% code
+# Orden de los modelos antes (tabla maestra del Entregable 3, semilla 42) y ahora (pliegues externos de las
+# repeticiones completas), por la métrica media externa de cada tarea.
+inf.texto('orden_modelos')
+
+#%% md
+## 6.6. Pruebas de hipótesis
+
+Las tablas {ref}`6.7 <tab-pruebas-regresion>` y {ref}`6.8 <tab-pruebas-clasificacion>` dan, para cada tarea, la prueba
+global y las cuatro pruebas del protocolo frente al mejor benchmark, seguidas de la comparación con cada uno de los
+nueve benchmarks. Las figuras {ref}`6.1 <fig-cd-regresion>` y {ref}`6.2 <fig-cd-clasificacion>` son los diagramas de
+diferencia crítica.
+
+(tab-pruebas-regresion)=
+**Tabla 6.7.** Regresión: pruebas de hipótesis del modelo original frente al mejor benchmark (prueba, hipótesis nula,
+supuestos verificados, estadístico, p-valor crudo, p-valor ajustado por Holm, tamaño del efecto y conclusión) y frente
+a cada benchmark.
+
+#%% code
+# Tabla 6.7. Lee resultados/veredicto.json y pruebas_hipotesis.csv (experiments/04_pruebas_hipotesis.py) y verifica
+# los supuestos con la matriz de pliegues: normalidad de las diferencias (Shapiro-Wilk) y su asimetría.
+inf.tabla('tabla_pruebas_regresion')
+
+#%% figura fig-cd-regresion 95%
+**Figura 6.1.** Diagrama de diferencia crítica de la regresión, con el modelo original incluido: rango medio de cada
+modelo en los pliegues externos (1 es el mejor). Las barras grises unen los modelos cuyos rangos medios no difieren
+según Nemenyi. **Interpretación:** el diagrama muestra el orden de los modelos, pero la diferencia crítica es mayor
+que la distancia entre los primeros puestos: con diez modelos, Nemenyi no separa a los mejores.
+---
+# Figura 6.1. Rangos medios y diferencia crítica de Nemenyi guardados en veredicto.json (prueba de Friedman sobre la
+# matriz de pliegues externos × diez modelos).
+inf.figura('cd_regresion')
+
+#%% md
+(tab-pruebas-clasificacion)=
+**Tabla 6.8.** Clasificación: pruebas de hipótesis del modelo original frente al mejor benchmark, con las mismas
+columnas, y frente a cada benchmark.
+
+#%% code
+# Tabla 6.8. Lo mismo para la clasificación: P3 es DeLong y P4 es McNemar con la campaña del 25 %, las dos en prueba.
+inf.tabla('tabla_pruebas_clasificacion')
+
+#%% figura fig-cd-clasificacion 95%
+**Figura 6.2.** Diagrama de diferencia crítica de la clasificación, con el modelo original incluido: rango medio de
+cada modelo en los pliegues externos. **Interpretación:** los modelos que comparten una barra gris tienen diferencias
+de rango menores que la diferencia crítica; los primeros puestos no se distinguen entre sí con esta prueba.
+---
+# Figura 6.2. Rangos medios y diferencia crítica de la clasificación (veredicto.json).
+inf.figura('cd_clasificacion')
+
+#%% md
+**Sobre los supuestos.** Los datos son de corte transversal (un cliente por fila), así que no se usan pruebas que
+supongan orden temporal. Los pliegues de una validación cruzada repetida comparten filas de entrenamiento: por eso la
+prueba de Wilcoxon se acompaña de la *t* corregida de {cite:t}`nadeau2003`, que infla la varianza para tenerlo en
+cuenta, y por eso dos de las cuatro pruebas (P3 y P4) se hacen sobre la partición de prueba, donde las filas sí son
+independientes. La prueba
+de Nemenyi tiene poca potencia con diez modelos {cite}`demsar2006`: la diferencia crítica es mayor que la distancia
+entre los primeros puestos, y los diagramas de las figuras {ref}`6.1 <fig-cd-regresion>` y
+{ref}`6.2 <fig-cd-clasificacion>` se presentan como descripción, no como la prueba que decide.
+
+## 6.7. Significancia práctica
+
+#%% code
+# Traduce las diferencias a unidades del problema con veredicto.json, metricas_prueba.csv, techo.json e
+# incertidumbre_prueba.csv: error relativo, clientes de una campaña del 25 % e intervalos de confianza.
+inf.texto('significancia_practica')
+
+#%% md
+## 6.8. Veredicto sobre R3
+
+Las condiciones 1 a 3 salen de este capítulo; la 4, de los conjuntos adicionales del capítulo 7. La
+{ref}`Tabla 6.9 <tab-veredicto>` las reúne.
+
+(tab-veredicto)=
+**Tabla 6.9.** Veredicto sobre la condición R3, por tarea: las cuatro condiciones de la guía (§6.4) y el resultado.
+
+#%% code
+# Tabla 6.9. Lee veredicto.json (condiciones 1 a 3) y condicion4.json (conjuntos adicionales). El veredicto se calcula:
+# es «superior» solo si las cuatro condiciones se cumplen.
+inf.tabla('tabla_veredicto')
+
+#%% code
+# Discusión del veredicto, con las cifras de los mismos archivos y el análisis de la causa cuando no hay superioridad.
+inf.texto('veredicto_texto')
+
+#%% md
+## 6.9. ¿Podía algún modelo cumplir R3?
+
+La guía pide analizar la causa cuando no hay superioridad. Una forma directa de hacerlo es someter a las mismas pruebas
+al **predictor óptimo**, el de la sección 6.4: el que conoce el índice real de cada cliente y aplica la regla de Bayes.
+Ningún modelo puede aprenderlo sin la variable excluida. Es el mejor predictor posible en esperanza; en una muestra
+finita un modelo puede quedar por delante de él por azar, así que lo que sigue no es una demostración de imposibilidad.
+La {ref}`Tabla 6.10 <tab-optimo>` lo somete a las cuatro pruebas del protocolo (P1 y P2 en los pliegues externos, P3 y
+P4 en el conjunto de prueba), con el mismo ajuste de Holm sobre nueve comparaciones, y pone al lado las del modelo
+original.
+
+Es un análisis posterior a los resultados y no forma parte del protocolo (sección 6.2): no cambia el veredicto, lo
+explica.
+
+(tab-optimo)=
+**Tabla 6.10.** Las cuatro pruebas del protocolo para el predictor óptimo frente al mejor benchmark, junto a las del
+modelo original.
+
+#%% code
+# Tabla 6.10. Lee resultados/optimo.json (experiments/04c_optimo.py). El predictor óptimo se construye con el índice real
+# de cada cliente (el puntaje más 0,05 por producto activo) y pasa por las mismas pruebas que el original: en los
+# pliegues externos de la validación anidada y en el conjunto de prueba.
+inf.tabla('tabla_optimo')
+
+#%% md
+La lectura es la de la sección 6.4, ahora en términos de las pruebas: los benchmarks están tan cerca del mejor
+predictor posible que la distancia que queda es difícil de detectar con este protocolo y estas muestras. La tabla
+separa dos causas. Lo que ni el predictor óptimo consigue se debe a los datos: ahí casi no queda nada por ganar en la
+métrica principal. Lo que él consigue y el original no se debe al modelo: es el error con que el original estima el
+índice.
+
+**Los empates en el corte de la campaña.** En clasificación hay una segunda razón, que afecta a la prueba P4. La
+campaña del 25 % contacta a los clientes de mayor probabilidad, y la probabilidad del modelo original, como la del
+predictor óptimo, es una función escalonada: miles de clientes comparten el valor del corte. El protocolo no decía cómo
+romper esos empates (sección 6.2). La {ref}`Tabla 6.11 <tab-empates>` mide cuánto dependen de esa decisión la captura
+de la campaña, la precisión media y el resultado de P4.
+
+(tab-empates)=
+**Tabla 6.11.** Empates en el corte de la campaña del 25 %: clientes empatados, captura según el desempate y precisión
+media según la convención, para el modelo original, el mejor benchmark, los demás modelos con empates y el predictor
+óptimo.
+
+#%% code
+# Tabla 6.11. Lee resultados/empates_campana.json (experiments/04d_empates_campana.py): empates de cada modelo en el
+# corte, captura esperada con un desempate al azar y la prueba P4 repetida con 2.000 desempates.
+inf.tabla('tabla_empates')

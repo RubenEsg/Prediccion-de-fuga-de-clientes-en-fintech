@@ -1,0 +1,164 @@
+#%% md
+# 4. Revisión de literatura y novedad
+
+La novedad no se declara: se documenta. Este capítulo describe la búsqueda (guía, §5.2), la matriz de novedad, los
+trabajos más cercanos y en qué se diferencia de cada uno el modelo propuesto. La búsqueda es **reproducible**:
+[`ModeloOriginal/experiments/00_busqueda_literatura.py`](https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech/blob/main/ModeloOriginal/experiments/00_busqueda_literatura.py)
+consulta las bases y guarda todo en `ModeloOriginal/resultados/literatura/`, con una copia por fecha.
+
+#%% code
+# Preparación: acceso a los resultados versionados y a las funciones que generan las tablas del informe.
+import sys
+sys.path.insert(0, '../ModeloOriginal')
+from src import informe as inf
+
+#%% md
+## 4.1. Protocolo de búsqueda
+
+- **Bases de datos (3).** OpenAlex, índice abierto de la literatura científica (revistas, congresos y
+  prepublicaciones); arXiv, prepublicaciones de aprendizaje automático y estadística; y Crossref, el registro de DOI de
+  las editoriales. Scopus, Web of Science y Google Scholar no ofrecen una consulta programática abierta; se eligieron
+  bases cuya consulta se puede repetir con el guion.
+- **Cadenas (13).** Combinan la familia del modelo (mezcla finita, clase latente, EM, boosting, efectos aleatorios,
+  modelo aditivo), el problema (fuga, deserción o abandono de clientes) y sinónimos en inglés y en español. La
+  {ref}`Tabla 4.4 <tab-cadenas>` las transcribe tal como se enviaron a cada base.
+- **Revisión.** De cada base y cadena se leen el título y el resumen de los 25 primeros resultados por relevancia (en
+  Crossref solo el título, porque no da resumen).
+- **Búsqueda por citación.** Hacia adelante: entre los trabajos que citan a quince antecedentes, cuántos mencionan la
+  fuga. Hacia atrás: entre las referencias de los siete trabajos más cercanos, cuántas combinan mezclas y fuga.
+- **Repositorios de código.** Seis consultas a GitHub y revisión de las librerías de la familia.
+- **Fechas.** La búsqueda se hizo dos veces. La primera consulta usó las cadenas C1 a C9. Una revisión independiente del
+  informe señaló familias vecinas que esas cadenas no nombraban; en la segunda consulta, que es la repetición que pide
+  la guía antes de la entrega, se añadieron las cadenas C10 a C13 y la búsqueda por citación desde los trabajos que
+  aparecieron con ellas. La matriz registra las dos fechas.
+
+## 4.2. Matriz de novedad
+
+(tab-matriz)=
+**Tabla 4.1.** Matriz de novedad: por base de datos y cadena de búsqueda, número de resultados, resultados revisados,
+resultados cercanos a la propuesta y observación.
+
+#%% code
+# Tabla 4.1. Lee resultados/literatura/busqueda.json (lo que devolvieron las tres bases en la última consulta), las
+# copias con fecha de las consultas anteriores y experiments/literatura_relevancia.csv (la lectura de títulos y
+# resúmenes, anotada a mano por base y cadena).
+inf.tabla('tabla_matriz')
+
+#%% md
+Los totales de Crossref no son comparables con los demás: cuentan cualquier registro que contenga alguno de los
+términos. La {ref}`Tabla 4.1 <tab-matriz>` deja tres grupos de trabajos cercanos:
+
+- **La misma familia de algoritmo, en otra aplicación** (cadenas C3, C4, C8, C10 y C11). La más cercana es la de los
+  algoritmos EM cuyo paso M se hace con boosting: {cite:t}`zhou2022`, {cite:t}`adam2022` y {cite:t}`hou2025`. BDL
+  pertenece a esa familia. Ninguno de esos trabajos trata la fuga de clientes, y ninguno de
+  los que los citan la menciona ({ref}`Tabla 4.2 <tab-citacion>`).
+- **El mismo problema, con otra familia** (cadenas C1, C2, C5, C6, C12 y C13). Hay modelos de clases latentes y de
+  abandono latente para la fuga, como el de {cite:t}`jamal2006`; son modelos paramétricos, sin boosting.
+- **Ninguno que combine las dos cosas.** Ninguna combinación de base y cadena devuelve un estudio que aplique a la fuga
+  de clientes un boosting con una mezcla latente, ni otro algoritmo de la familia de EM con boosting.
+
+La primera consulta no devolvió la familia de algoritmos más cercana, porque ninguna de sus cadenas la nombraba; apareció
+al ampliarlas. Es una advertencia sobre el alcance de cualquier búsqueda por palabras clave, incluida esta: se leyeron
+los 25 primeros resultados de cada base y cadena, no toda la literatura.
+
+## 4.3. Búsqueda por citación y repositorios
+
+(tab-citacion)=
+**Tabla 4.2.** Búsqueda por citación en los dos sentidos y revisión de repositorios: trabajos que citan a cada
+antecedente y mencionan la fuga, referencias de los trabajos más cercanos clasificadas por tema y resultados de las
+consultas a GitHub.
+
+#%% code
+# Tabla 4.2. De busqueda.json: citas recibidas por cada antecedente (OpenAlex) y cuántas mencionan «churn»; referencias
+# de los trabajos cercanos clasificadas por tema; y repositorios de GitHub que responden a cada consulta.
+inf.tabla('tabla_citacion')
+
+#%% md
+Los pocos trabajos que citan a los antecedentes clásicos y mencionan la fuga son híbridos y ensambles sobre la etiqueta;
+ninguno usa una mezcla o una clase latente en la respuesta. En el otro sentido, ninguna de las referencias de los
+trabajos más cercanos sobre mezclas trata de fuga, y ninguna de las referencias de los trabajos de fuga más cercanos
+trata de mezclas ({ref}`Tabla 4.2 <tab-citacion>`).
+
+**Repositorios.** Las consultas a GitHub no devuelven ningún repositorio que combine una mezcla en la respuesta con
+boosting para fuga de clientes. Las librerías de la familia son `flexmix` y `mixtools` (mezclas de regresiones por EM,
+en R), `gamboostLSS` (boosting de regresión distribucional, en R), `NGBoost` y `XGBoostLSS` (boosting probabilístico, en
+Python; la segunda admite desde 2023 densidades de mezcla cuyos parámetros dependen todos de los predictores), `merf` y
+`GPBoost` (árboles y boosting con efectos aleatorios de grupos observados), `interpret` (EBM) y `MAPIE` y `crepes`
+(predicción conforme). Ninguna ofrece un índice único por boosting con desplazamientos latentes compartidos; BDL no
+reutiliza código de ninguna.
+
+## 4.4. Trabajos más cercanos y diferencias
+
+La {ref}`Tabla 4.3 <tab-cercanos>` compara BDL con las familias de métodos más cercanas, de la más parecida a la menos.
+
+(tab-cercanos)=
+**Tabla 4.3.** Métodos afines: qué hace cada uno, qué conserva BDL, qué es distinto y por qué el método no resuelve la
+limitación identificada.
+
+| Método (familia) | Qué hace | Qué conserva BDL | Qué es distinto en BDL | Por qué no resuelve la limitación |
+|---|---|---|---|---|
+| EM con un paso de boosting para modelos con variable latente: EMTboost {cite}`zhou2022`, modelos de Markov con estados latentes {cite}`adam2022`, algoritmo *Expectation-Boosting* {cite}`hou2025` | Sustituyen el paso M del EM por pasos de boosting para estimar las funciones de cada componente de un modelo con exceso de ceros, de un modelo con estados latentes o de una mezcla | **La regla de aprendizaje**: un EM generalizado cuyo paso M es un paso de boosting | El modelo al que se aplica: un solo índice compartido por todas las clases, con desplazamientos y pesos constantes, de modo que el paso M es un único boosting contra el objetivo menos el desplazamiento esperado; y la regla de salida (excedencia y conjuntos conformes) | Estiman una función por componente: cuando las clases comparten el efecto de los predictores, eso multiplica los parámetros y reparte los datos. Ninguno deriva la probabilidad de superar un umbral ni se ha aplicado a fuga |
+| Boosting de una densidad de mezcla sin EM: {cite:t}`jobst2024`; XGBoostLSS con densidades de mezcla {cite}`marz2019` | Boosting por gradiente de la verosimilitud de una mezcla cuyos parámetros (localización, escala y pesos de cada componente) dependen de los predictores | Boosting sobre la verosimilitud de una mezcla | Un índice y desplazamientos latentes constantes; EM en lugar de gradiente directo; árboles propios | Un boosting por parámetro y por componente; no hay un efecto común de los predictores que las clases compartan |
+| Árboles y boosting con efectos aleatorios: MERT y MERF {cite}`hajjem2011,hajjem2014`, RE-EM {cite}`sela2012`, GPBoost {cite}`sigrist2022`; aplicado a la deserción estudiantil por {cite:t}`pellagatti2021` | Alternan entre estimar el efecto aleatorio de cada grupo **observado** y ajustar árboles a la respuesta sin ese efecto | Quitar un efecto de grupo de la respuesta antes de ajustar los árboles | El grupo no se observa: es una clase latente con sus pesos, y lo que se resta es el desplazamiento esperado según las responsabilidades del paso E | Necesitan saber a qué grupo pertenece cada fila; aquí la variable que define el grupo está excluida |
+| EM con aprendizaje automático en el paso M: {cite:t}`xue2024` | Mezcla semiparamétrica: cada componente tiene su función de regresión, ajustada con un método de aprendizaje automático | EM con un aprendiz flexible en el paso M | Un índice común y salida de excedencia y conforme | Estima $K$ funciones; con desplazamientos constantes eso multiplica los parámetros sin necesidad |
+| Mezclas de regresiones por EM: {cite:t}`desarbo1988`, FlexMix {cite}`grun2008` | Una regresión lineal (o un GLM) por clase latente | El EM y la idea de clase latente | Un solo índice no paramétrico y desplazamientos constantes, no una regresión por clase | Cada clase estima su propia regresión con una fracción de los datos; aquí las clases comparten el mismo efecto de los predictores |
+| Heterogeneidad no observada con puntos de masa: {cite:t}`heckman1984`, {cite:t}`aitkin1999` | Intercepto aleatorio con distribución discreta en modelos lineales generalizados | Es el mismo modelo estadístico del error | El predictor es un boosting de árboles; la mezcla se usa para predecir (excedencia y conjuntos), no solo para corregir coeficientes | Predictor lineal: no capta efectos no lineales; pensado para datos agrupados o de duración |
+| Clases latentes y abandono latente en fuga: {cite:t}`jamal2006`, {cite:t}`bachmann2021`, {cite:t}`dong2026`; agrupamiento de curvas de supervivencia de {cite:t}`buginga2024` | Modelan la fuga con clases latentes o efectos aleatorios, cada clase con su modelo de riesgo | La idea de que hay heterogeneidad no observada entre clientes | Predictor no paramétrico por boosting; la clase latente solo desplaza el puntaje y no tiene parámetros propios | Modelos paramétricos por clase, pensados para duraciones y para explicar; no usan boosting ni el puntaje continuo |
+| Mezcla de expertos: {cite:t}`jacobs1991`; con regresión distribucional, {cite:t}`rugamer2023`; anclada en un boosting, {cite:t}`su2025` | Una red de compuerta reparte cada caso entre expertos | La mezcla | No hay compuerta: la clase no depende de $x$; árboles en lugar de redes | Si la clase no depende de $x$ la compuerta solo añade varianza; además, las redes están excluidas por la guía |
+| Boosting distribucional: gamboostLSS {cite}`mayr2012`, NGBoost {cite}`duan2020`; aplicado a fuga por {cite:t}`ali2026` | Boosting de todos los parámetros de una distribución paramétrica | La idea de predecir una distribución | Ruido de mezcla en lugar de una familia unimodal | Con una familia unimodal el escalón sigue siendo ruido |
+| Regresión distribucional con clases latentes: {cite:t}`hepp2020`, {cite:t}`wattanawongwan2023` | Dos o más clases, cada una con su GAMLSS, por EM | Clase latente y modelo aditivo | $K$ desplazamientos que comparten un índice; boosting de árboles; predicción | Una regresión completa por clase; objetivo distinto (límites de referencia, exposición crediticia) |
+| Modelos aditivos por boosting: GA²M y EBM {cite}`lou2013,nori2019` | Boosting cíclico de un modelo aditivo con pérdida cuadrática o logística | La forma aditiva del índice con profundidad 1 | La regla de aprendizaje (EM) y la regla de salida | Pérdida cuadrática o logística: trata el escalón como ruido y solo ve la etiqueta |
+| Predicción conforme en fuga: {cite:t}`guo2024` | Usa intervalos conformes para mejorar un clasificador de fuga | La predicción conforme | La medida de conformidad es la densidad de la mezcla: conjuntos que son uniones de intervalos | No modela el puntaje continuo |
+| Método distribucional para respuestas dicotomizadas: {cite:t}`sauzet2016` | Estima proporciones sobre un umbral a partir de la media y la desviación de la respuesta continua | Usar la respuesta continua en lugar de la etiqueta | Predicción por cliente con una mezcla aprendida, no una comparación de grupos bajo normalidad | Supone una distribución paramétrica sin clases latentes |
+| Boosting e híbridos para fuga: {cite:t}`lemmens2006`, {cite:t}`decaigny2018`, {cite:t}`vakeel2022`, {cite:t}`adegboye2026` | Boosting o combinaciones de árboles y regresión logística sobre la etiqueta; cuando hay una mezcla, agrupa clientes fuera del modelo predictivo | — | Aprende del puntaje y de su estructura latente | Solo usan la etiqueta |
+
+La relación entre el EM y el boosting se señaló pronto {cite}`meek2002`: añadir componentes a una mezcla con un EM
+estructural se parece a un boosting. Los algoritmos de la primera fila van en la otra dirección y son el antecedente
+directo de BDL. El boosting de árboles también se ha usado para estimar modelos de cura de mezcla, que separan a los
+individuos en dos clases latentes {cite}`zheng2026`.
+
+## 4.5. Declaración de novedad
+
+Al mejor de nuestro conocimiento, y según la búsqueda descrita (tres bases de datos, trece cadenas, búsqueda por
+citación en los dos sentidos y revisión de repositorios, en las fechas que registra la matriz), **no se encontraron
+estudios que apliquen a la predicción de fuga de clientes un modelo de boosting con una mezcla latente de
+desplazamientos ajustado por EM generalizado**, ni otro algoritmo de la familia de EM con paso de boosting, ni que
+deriven de un modelo así la probabilidad de superar un umbral de riesgo.
+
+La novedad que se afirma es precisa y acotada:
+
+- **Qué no es nuevo.** Sustituir el paso M del EM por un paso de boosting ya se había hecho: en mezclas con exceso de
+  ceros {cite}`zhou2022`, en modelos con estados latentes {cite}`adam2022` y en mezclas para pérdidas de seguros, con
+  el nombre de *Expectation-Boosting* {cite}`hou2025`. BDL es un miembro de esa familia, no su origen.
+- **Qué es propio de BDL.** (i) El modelo: un índice único aprendido por boosting de árboles, con desplazamientos
+  latentes constantes y pesos que no dependen de los predictores. Es la contraparte con clase latente de los árboles
+  con efectos aleatorios, y un caso mucho más restringido que una mezcla de regresiones. (ii) La forma que toma el
+  paso M con ese modelo: un solo paso de boosting contra el objetivo al que se le resta el desplazamiento esperado,
+  en lugar de un boosting por componente. (iii) La regla de salida: la probabilidad de excedencia de la mezcla como
+  clasificador de una respuesta continua dicotomizada. (iv) La densidad de la mezcla como medida de conformidad de los
+  conjuntos de predicción. (v) La implementación, programada desde cero, y su aplicación a la fuga de clientes.
+- **Qué se reutiliza.** El algoritmo EM {cite}`dempster1977`, el boosting de gradiente {cite}`friedman2001`, las
+  mezclas finitas {cite}`mclachlan2000`, la predicción conforme por partición {cite}`vovk2005,lei2018` y el criterio
+  BIC {cite}`schwarz1978`. Ninguna de esas piezas es nuestra.
+- **Qué no se afirma.** No se afirma que el modelo estadístico del error sea nuevo (es el de los interceptos aleatorios
+  con puntos de masa), ni que la alternancia entre EM y boosting lo sea, ni que BDL sea mejor fuera de los problemas
+  con un desplazamiento latente: sin él se reduce a un boosting de mínimos cuadrados (capítulo 7).
+
+Los antecedentes algorítmicos más cercanos son el algoritmo *Expectation-Boosting* de {cite:t}`hou2025`, la regresión de
+mezcla con boosting de {cite:t}`jobst2024` y el EM con aprendizaje automático de {cite:t}`xue2024`; la
+{ref}`Tabla 4.3 <tab-cercanos>` precisa las diferencias. El mecanismo está formulado de manera general (capítulo 5):
+sirve para una regresión en la que una variable discreta que no está entre los predictores desplaza la respuesta, y
+para clasificar una respuesta continua dicotomizada. Tiene condiciones: el desplazamiento debe ser aditivo, no depender
+de los predictores y ser grande frente al error del índice. En los dos conjuntos adicionales construidos con una
+variable omitida esas condiciones no se dieron y el modelo no encontró clases latentes (sección 7.1).
+
+## 4.6. Cadenas de búsqueda
+
+(tab-cadenas)=
+**Tabla 4.4.** Cadenas de búsqueda, tal como se enviaron a cada base. La sintaxis cambia de una base a otra: OpenAlex
+admite operadores y frases, arXiv busca por campos y Crossref ordena por relevancia los registros que contienen los
+términos.
+
+#%% code
+# Tabla 4.4. De busqueda.json: la cadena literal de cada consulta, por base.
+inf.tabla('tabla_cadenas')

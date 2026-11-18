@@ -1,0 +1,14 @@
+2026-11-17 21:46 [a] 03 evaluación en prueba: FALLÓ (1) en 0.2 min
+2026-11-17 21:46 [a] 04b techo teórico: bien en 0.2 min
+2026-11-17 21:46 [a] 04 pruebas de hipótesis (con las repeticiones disponibles): bien en 0.2 min
+2026-11-17 22:07 [a] 03b estabilidad por semilla y cómputo: bien en 20.6 min
+2026-11-17 22:10 [a] 06m curva de aprendizaje y tiempos: bien en 3.5 min
+2026-11-17 21:47 [manual] 03 evaluación en prueba: bien, relanzada a mano tras alinear el índice de las predicciones del Entregable 3; 04 se repitió después
+2026-11-18 00:46 [b] 07 ablación: bien en 155.3 min
+2026-11-18 02:04 [b] 06 robustez (ciudades, ruido y sensibilidad): bien en 77.7 min
+2026-11-18 05:34 [a] 05 conjuntos de datos adicionales: bien en 444.0 min
+2026-11-18 09:33 [a] 02r repeticiones 2 y 3, regresión: bien en 238.7 min
+2026-11-18 09:33 [a] 04r pruebas de hipótesis (regresión completa): bien en 0.3 min
+2026-11-18 14:10 [a] 02c repeticiones 2 y 3, clasificación: bien en 276.4 min
+2026-11-18 14:10 [a] 04f pruebas de hipótesis (tres repeticiones): bien en 0.4 min
+2026-11-18 14:10 [a] 08 tablas y figuras del libro: bien en 0.3 min

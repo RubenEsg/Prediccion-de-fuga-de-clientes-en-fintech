@@ -1,0 +1,98 @@
+#%% md
+# Proyecto final: dashboard predictivo, modelo original y evaluación rigurosa
+
+**Predicción de fuga de clientes en una fintech colombiana (COFINFAD)**
+Valerie Martínez Pulido · Abrahan Basto Martínez · Rubén Esguerra Fernández
+Universidad del Norte · Pregrado en Ciencia de Datos · Machine Learning
+
+**Dashboard desplegado:** <https://fuga-de-clientes-dash.onrender.com> ·
+**Repositorio:** <https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech>
+
+## Resumen ejecutivo
+
+#%% code
+# Preparación. Las celdas de este libro no entrenan nada: leen los resultados versionados en ModeloOriginal/resultados
+# y vuelven a generar cada tabla, figura y cifra con las funciones de ModeloOriginal/src/informe.py.
+import sys
+sys.path.insert(0, '../ModeloOriginal')
+from src import informe as inf
+
+#%% code
+# El resumen cita las cifras de resultados/veredicto.json, metricas_prueba.csv, techo.json e incertidumbre_prueba.csv.
+inf.texto('resumen_ejecutivo')
+
+#%% md
+## El problema y su motivación
+
+Conseguir un cliente nuevo cuesta entre 5 y 25 veces más que retener uno, según el estudio y el sector
+{cite}`gallo2014`. Una fintech que no puede llamar a todos sus clientes necesita ordenarlos por riesgo de fuga y saber
+qué tan segura es esa ordenación. El proyecto trabaja con COFINFAD {cite}`munoz2025`, un conjunto público y sintético de
+48.723 clientes, y resuelve dos tareas sobre los mismos 48 predictores: **regresión** del puntaje de propensión a la
+fuga y **clasificación** de «riesgo alto» (el cuarto superior de ese puntaje).
+
+Las entregas anteriores dejaron tres hechos sobre los que se apoya esta:
+
+1. la variable `active_products` genera el puntaje y se excluye por fuga de información;
+2. sin ella, los mejores modelos (XGBoost, Random Forest, árbol de decisión, EBM) empatan entre sí;
+3. empatan porque están cerca de un techo: lo que queda sin explicar es el efecto de la variable excluida.
+
+Esta entrega parte de la retroalimentación del docente a su primera versión: el modelo que se presentaba como original
+(la EBM) proviene de una librería, y la recencia se calculaba con una fecha que incluía a los clientes de prueba. El
+capítulo 1 documenta cada corrección.
+
+## Contribuciones
+
+1. **Un modelo original, BDL (Boosting con Desplazamiento Latente)**, programado desde cero. Modela como una clase
+   latente el escalón que la variable excluida deja en el puntaje, y lo aprende con un EM generalizado cuyo paso M es un
+   paso de boosting (capítulo 5).
+2. **Sustento teórico**: cinco proposiciones demostradas y verificadas con pruebas unitarias (la verosimilitud no
+   decrece, la pérdida logística no sube, cobertura de los conjuntos de predicción, eficiencia frente a los mínimos
+   cuadrados y optimalidad de la probabilidad de excedencia).
+3. **Evidencia de novedad** con una búsqueda de literatura reproducible, repetida antes de la entrega, y una comparación
+   con las familias de métodos afines, que acota qué es propio del modelo y qué pertenece a una familia ya publicada
+   (capítulo 4).
+4. **Un protocolo experimental registrado antes de los experimentos**, con validación anidada repetida, cuatro pruebas
+   de hipótesis por tarea, corrección por comparaciones múltiples y tamaños del efecto (capítulo 6).
+5. **El techo teórico del problema**, calculado en forma cerrada, que explica por qué los benchmarks empatan y cuánto
+   se podía mejorar (sección 6.4).
+6. **Evaluación ampliada**: cuatro conjuntos de datos públicos, ablación, sensibilidad, ruido, tamaño de muestra, cambio
+   de distribución, calibración e incertidumbre (capítulo 7).
+7. **La corrección de la fuga de la recencia** y una auditoría que demuestra que no altera ningún resultado (capítulo 2).
+8. **El dashboard desplegado**, con el modelo original en vivo y su subsección (capítulo 8).
+
+## Objetivos
+
+- Corregir las observaciones del docente y documentar cada una.
+- Diseñar, programar y sustentar teóricamente un modelo que responda a una limitación concreta de los benchmarks.
+- Compararlo con ellos de forma justa y reportar el resultado con honestidad, sea cual sea.
+- Llevarlo a un producto interactivo y desplegado.
+
+## Mapa del libro
+
+La {ref}`Tabla 0.1 <tab-mapa>` resume qué contiene cada capítulo.
+
+(tab-mapa)=
+**Tabla 0.1.** Capítulos del informe y su contenido.
+
+| Capítulo | Contenido |
+|---|---|
+| 1. Trazabilidad de las correcciones | Cada observación del docente, la acción, la ubicación y la evidencia |
+| 2. Datos: ETL, EDA y auditoría de fuga | La declaración de los datos, el ETL, el EDA, el hallazgo que motiva el modelo y la auditoría |
+| 3. Modelos benchmark | Los nueve benchmarks, su presupuesto, sus resultados y los métodos recientes con sus hiperparámetros recomendados |
+| 4. Revisión de literatura y novedad | Matriz de búsqueda, trabajos cercanos y declaración de novedad |
+| 5. El modelo original | Motivación, formulación, algoritmo, demostraciones, complejidad, pruebas y ablación |
+| 6. Protocolo y validación estadística | Protocolo, techo teórico, pruebas de hipótesis y veredicto |
+| 7. Evaluación ampliada y robustez | Conjuntos adicionales y estudios de robustez |
+| 8. Dashboard y despliegue | Arquitectura, capturas, decisiones de diseño y guía de despliegue |
+| 9. Conclusiones y limitaciones | Hallazgos, veredicto sobre R1, R2 y R3, limitaciones y declaración de autoría |
+| 10. Reproducibilidad y bibliografía | Entorno, semillas, tabla maestra, lista de verificación y referencias |
+| Código del modelo original | El módulo completo, sus pruebas y el protocolo |
+
+**Cómo leer las celdas de código.** Cada tabla y cada figura que depende de un resultado sale de una celda como la de
+arriba. La celda llama a una función de
+[`ModeloOriginal/src/informe.py`](https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech/blob/main/ModeloOriginal/src/informe.py),
+que lee los resultados ya calculados y versionados (los experimentos tardan horas y no se repiten al compilar el libro)
+y vuelve a componer la tabla o a dibujar la figura. Los guiones que producen esos resultados están en
+`ModeloOriginal/experiments/` y el capítulo 10 dice cuál produce cada uno.
+
+Las partes siguientes del libro son las entregas anteriores, con sus cuadernos ejecutados y el código de cada una.

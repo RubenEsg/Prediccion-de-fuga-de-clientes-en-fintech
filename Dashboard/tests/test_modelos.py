@@ -2,8 +2,11 @@
 
     pytest -q
 
-Usan los clientes de prueba guardados en datos/ y los 16 artefactos de artifacts/. La comparación del motor de la EBM con su
-tubería de interpret se salta si interpret-core no está instalado (requirements-dev.txt lo instala).
+Usan los clientes de prueba guardados en datos/ y los artefactos de artifacts/: los 16 del Entregable 3 y los dos del modelo
+original (BDL), que entran en todas las pruebas parametrizadas porque V.modelos los incluye. Lo que solo tiene el original
+(su código, su probabilidad de excedencia, su conjunto de predicción y su veredicto) se prueba en tests/test_original.py. La
+comparación del motor de la EBM con su tubería de interpret se salta si interpret-core no está instalado
+(requirements-dev.txt lo instala).
 """
 from __future__ import annotations
 
@@ -32,8 +35,12 @@ def guardadas() -> dict:
             "regresion": pd.read_parquet(V.DATOS / "pronosticos_prueba.parquet")}
 
 
-def test_hay_ocho_modelos_por_tarea():
-    assert len(V.modelos("clasificacion")) == 8 and len(V.modelos("regresion")) == 8
+def test_estan_los_ocho_del_entregable_3_y_el_original():
+    """En vivo están los ocho modelos del Entregable 3 de cada tarea y, primero en la lista, el modelo original."""
+    for tarea in TAREAS:
+        vivos = V.modelos(tarea)
+        assert vivos[0] == V.ORIGINAL, "falta el modelo original: corra preparar_original.py"
+        assert len(vivos) == 9 and len(set(vivos)) == 9 and "ebm" in vivos
 
 
 @pytest.mark.parametrize("tarea,modelo", CASOS)
@@ -152,9 +159,13 @@ def test_vecinos_explican_la_prediccion_de_knn(prueba):
 
 @pytest.mark.parametrize("modelo", V.modelos("regresion"))
 def test_intervalo_conforme_cubre_lo_nominal(modelo):
+    """El intervalo conforme simétrico (pronóstico ± q) de cada benchmark cubre lo nominal en la prueba. El del modelo original
+    no tiene por qué: su error cae en niveles separados y el cuantil queda en el hueco entre dos de ellos. Lo que debe cubrir
+    lo nominal es su conjunto de predicción, la unión de tramos alrededor de cada nivel (la app lo dice así en la vista)."""
     c = V.conformal()["modelos"][modelo]
     for nivel, d in c.items():
-        assert abs(d["cobertura_prueba"] - float(nivel)) < 0.02, (modelo, nivel, d["cobertura_prueba"])
+        cobertura = d["conjunto"]["cobertura_prueba"] if modelo == V.ORIGINAL else d["cobertura_prueba"]
+        assert abs(cobertura - float(nivel)) < 0.02, (modelo, nivel, cobertura)
 
 
 @pytest.mark.parametrize("modelo", V.modelos("clasificacion"))

@@ -1,6 +1,8 @@
-"""Algoritmo y veredicto · ¿Qué es la EBM, por qué y supera a los demás?
+"""Algoritmo de la EBM · ¿Qué es la EBM y cómo queda frente a los modelos de clase?
 
-La subsección del modelo propuesto que pide la guía del Tercer Entregable (§7.3.3), sobre el dash: la limitación que
+La EBM por dentro y su análisis del Entregable 3. La EBM fue el «modelo nuevo» de esa entrega; como viene de la librería
+interpret, tras la corrección del proyecto es un benchmark reciente e interpretable, no el modelo original (que es BDL: su
+subsección está en secciones/original.py). Esta vista conserva lo que se preparó entonces para ella: la limitación que
 atiende, la formulación matemática (modelo aditivo, funciones escalonadas, identificabilidad, pérdidas, pesos de clase,
 boosting por variable, bolsas, regularización y supuestos), el pseudocódigo, una propiedad con su demostración, la
 complejidad contrastada con los tiempos medidos, qué es nuevo y qué se reutiliza con las diferencias frente a los métodos
@@ -84,7 +86,7 @@ TAREA = {
 }
 OPCIONES_TAREA = [{"label": D.NOMBRE_TAREA[t], "value": t} for t in TAREA]
 
-INFORME_MODELO = "Informe final: metodologia.tex, «Modelo propuesto»"
+INFORME_MODELO = "Informe final del Entregable 3: metodologia.tex, sección de la EBM"
 INFORME_ENTRENAMIENTO = "Informe final: metodologia.tex, «Entrenamiento y optimización»"
 INFORME_PROTOCOLO = "Informe final: metodologia.tex, «Protocolo de evaluación»; resultados.tex, «Resumen del montaje experimental»"
 FUENTES_EBM = [D.fuente(f"modelos/ebm_{t}.json") for t in TAREAS] + [D.fuente("metadatos.json")]
@@ -337,7 +339,7 @@ def _quien_supera(con_a=True):
     """«a los modelos lineales, a k-NN y a Naive Bayes» (o sin las «a») si las que supera son las de la base en las dos
     tareas; si no, la lista de cada tarea."""
     v = _veredictos()
-    base = all(set(v[t]["supera"]) == {m for m in D.pruebas(t)["modelo"] if D.ROL_MODELO[m] == "base"} for t in TAREAS)
+    base = all(set(v[t]["supera"]) == {m for m in D.pruebas(t)["modelo"] if D.ROL_VISTA_EBM[m] == "base"} for t in TAREAS)
     if base:
         return "a los modelos lineales, a k-NN y a Naive Bayes" if con_a else "los modelos lineales, k-NN y Naive Bayes"
     listas = [_tras("a", _lista(v[t]["supera"])) if con_a else _lista(v[t]["supera"]) for t in TAREAS]
@@ -346,8 +348,8 @@ def _quien_supera(con_a=True):
 
 def _con_quien_empata():
     v = _veredictos()
-    arboles = all(set(v[t]["empata"]) == {m for m in D.pruebas(t)["modelo"] if D.ROL_MODELO[m] == "rival"} for t in TAREAS)
-    return _lista([m for m in D.ORDEN_MODELOS["clasificacion"] if D.ROL_MODELO.get(m) == "rival"]) if arboles else \
+    arboles = all(set(v[t]["empata"]) == {m for m in D.pruebas(t)["modelo"] if D.ROL_VISTA_EBM[m] == "rival"} for t in TAREAS)
+    return _lista([m for m in D.pruebas("clasificacion")["modelo"] if D.ROL_VISTA_EBM.get(m) == "rival"]) if arboles else \
         _lista(v["clasificacion"]["empata"])
 
 
@@ -361,11 +363,12 @@ def _respuesta():
     else:
         reglas = " y ".join(f"cumple {CARDINAL[k]} de {CARDINAL[CONDICIONES]} en {D.NOMBRE_TAREA[t].lower()}" for t, k in cumplidas.items())
     superior = all(k == CONDICIONES for k in cumplidas.values())
-    return (f"{'Sí' if superior else 'No'}. Es un modelo aditivo de funciones de una variable aprendidas por boosting: empata con "
-            f"{_con_quien_empata()} (AUC de prueba {ui.num(clf.loc['ebm', 'auc_prueba'], 4)} frente a "
-            f"{ui.num(clf.loc[RIVAL, 'auc_prueba'], 4)} {_tras('de', D.en_frase(RIVAL))}; ninguna prueba encuentra diferencia tras Holm) y "
-            f"supera con significación {_quien_supera()}. Con la regla de superioridad de la guía {reglas}: el veredicto es de "
-            f"{'superioridad' if superior else 'no superioridad'}.")
+    return (f"Es un modelo aditivo de funciones de una variable aprendidas por boosting, de la librería interpret: un benchmark "
+            f"que se puede leer. Frente a los modelos de clase, empata con {_con_quien_empata()} (AUC de prueba "
+            f"{ui.num(clf.loc['ebm', 'auc_prueba'], 4)} frente a {ui.num(clf.loc[RIVAL, 'auc_prueba'], 4)} "
+            f"{_tras('de', D.en_frase(RIVAL))}; ninguna prueba encuentra diferencia tras Holm) y supera con significación "
+            f"{_quien_supera()}. Con la regla de superioridad de la guía, que el Entregable 3 le aplicó, {reglas}: "
+            f"{'es superior' if superior else 'no es superior'} a ellos.")
 
 
 # --- 1. Qué es y por qué -------------------------------------------------------------------------------------------------
@@ -389,7 +392,7 @@ def _seccion_motivacion():
                  nota=f"{F.entero(costo.loc[RIVAL, 'parametros'])} nodos que se combinan entre sí: explicar una predicción pide un "
                       "explicador aparte, como SHAP.", mini=True),
         ui.cifra(f"EBM: {F.entero(ebm['terminos'])} funciones de una variable", auc("ebm"), "de AUC de prueba",
-                 chip=ui.chip("Modelo propuesto", "acento"),
+                 chip=ui.chip("Benchmark interpretable"),
                  nota=f"{F.entero(costo.loc['ebm', 'parametros'])} valores en tablas. La predicción es la suma de lo que aporta cada "
                       "variable, y cada aporte se lee en su curva.", mini=True),
     ]
@@ -583,7 +586,7 @@ def _seccion_formulacion():
         ui.rejilla([_tarjeta_perdidas(), _tarjeta_aprendizaje()], "1-1"),
         _tarjeta_regularizacion(),
         _tarjeta_supuestos(),
-    ], subtitulo="La formulación del informe (sección «Modelo propuesto»), con los valores de los dos modelos finales.")
+    ], subtitulo="La formulación del informe del Entregable 3, con los valores de los dos modelos finales.")
 
 
 # --- 3. Pseudocódigo -----------------------------------------------------------------------------------------------------
@@ -780,7 +783,7 @@ def _grafico_tiempo():
     ns = [int(n) for n in t.columns]
     fig = go.Figure()
     for m, forma in MODELOS_TIEMPO[::-1]:                   # la EBM, al final: queda encima
-        fig.add_trace(go.Scatter(x=ns, y=t.loc[m], name=D.NOMBRE_MODELO[m], **ui.traza(D.ROL_MODELO[m], forma, marcadores=(m == "ebm")),
+        fig.add_trace(go.Scatter(x=ns, y=t.loc[m], name=D.NOMBRE_MODELO[m], **ui.traza(D.ROL_VISTA_EBM[m], forma, marcadores=(m == "ebm")),
                                  **ui.hover_texto([f"{D.NOMBRE_MODELO[m]} con {F.entero(n)} clientes: <b>{ui.num(v, 2 if v < 10 else 1)}</b> s"
                                                    for n, v in zip(ns, t.loc[m])])))
     lo, hi = float(t.loc[[m for m, _f in MODELOS_TIEMPO]].to_numpy().min()), float(t.loc[[m for m, _f in MODELOS_TIEMPO]].to_numpy().max())
@@ -855,7 +858,7 @@ def _tarjeta_inferencia():
             p=_tex(p), n=_tex(tc.loc["ebm", "n_train"]),
             B=_tex(_hp("clasificacion")["outer_bags"]), K=_tex(_hp("clasificacion")["interactions"])),
         ui.tabla(["Modelo", "Orden de una predicción", f"Los {F.entero(n_te)} de prueba (s)", "Por cliente (µs)"], filas, compacta=True,
-                 muestras=[D.ROL_MODELO[m] for m in modelos], num=[False, False, True, True]),
+                 muestras=[D.ROL_VISTA_EBM[m] for m in modelos], num=[False, False, True, True]),
     ], titulo="Las cotas y lo medido en inferencia",
         subtitulo="Tiempo de inferencia de cada modelo final de clasificación, mediana de cinco mediciones.",
         fuentes=FUENTES_COSTO + [f"artifacts/clasificacion/{m}/metadata.json" for m in ("xgboost", "random_forest", "arbol")] + [INFORME_MODELO])
@@ -968,7 +971,7 @@ def _grafico_aprendizaje():
     orden = [m for m in D.ORDEN_MODELOS["clasificacion"] if m in t.index]
     fig = go.Figure()
     for m in orden[::-1]:
-        fig.add_trace(go.Scatter(x=cats, y=t.loc[m], name=D.NOMBRE_MODELO[m], **ui.traza(D.ROL_MODELO[m], marcadores=(m == "ebm")),
+        fig.add_trace(go.Scatter(x=cats, y=t.loc[m], name=D.NOMBRE_MODELO[m], **ui.traza(D.ROL_VISTA_EBM[m], marcadores=(m == "ebm")),
                                  **ui.hover(D.NOMBRE_MODELO[m], t.loc[m], d=4)))
     lo = math.floor(t.to_numpy().min() / PASO_AUC) * PASO_AUC
     hi = math.ceil(t.to_numpy().max() / PASO_AUC) * PASO_AUC
@@ -1001,7 +1004,7 @@ def _grafico_convergencia():
     for m in (RIVAL, "ebm"):
         y = trazas[m]
         x = list(range(1, len(y) + 1))
-        estilo = ui.traza(D.ROL_MODELO[m], "linea")
+        estilo = ui.traza(D.ROL_VISTA_EBM[m], "linea")
         estilo["line"] = dict(estilo["line"], shape="hv")
         fig.add_trace(go.Scatter(x=x, y=y, name=D.NOMBRE_MODELO[m], **estilo,
                                  **ui.hover_texto([f"{D.NOMBRE_MODELO[m]} tras {k} evaluaciones: <b>{ui.num(v, 4)}</b>" for k, v in zip(x, y)])))
@@ -1100,7 +1103,7 @@ def _resultados_pruebas(tarea):
         for x in _contrastes(tarea, f):
             filas.append([nombre, x["prueba"].replace(" ", F.FIJO), x["estadistico"], _p(x["p"]), _p(x["p_holm"]), efectos[x["prueba"]],
                           _decision(x, ref)])
-            muestras.append(D.ROL_MODELO[ref])
+            muestras.append(D.ROL_VISTA_EBM[ref])
         if f["p_rope"] >= UMBRAL_EQUIVALENCIA:
             lectura = f"equivalencia práctica: pasa del {F.pct(UMBRAL_EQUIVALENCIA, 0)}"
         elif f["p_mejor"] >= UMBRAL_EQUIVALENCIA:
@@ -1111,7 +1114,7 @@ def _resultados_pruebas(tarea):
             lectura = f"sin conclusión al {F.pct(UMBRAL_EQUIVALENCIA, 0)}"
         filas.append([nombre, "bayesiana", _es("P(equivalente)", _prob(f['p_rope'])), RAYA, RAYA,
                       f"{_es('P(EBM mejor)', _prob(f['p_mejor']))}; {_es('P(peor)', _prob(f['p_peor']))}", lectura])
-        muestras.append(D.ROL_MODELO[ref])
+        muestras.append(D.ROL_VISTA_EBM[ref])
         if tarea == "regresion":
             p_ref, p_ebm = p_mcs[ref], p_mcs["ebm"]
             if en_mcs[ref]:
@@ -1120,7 +1123,7 @@ def _resultados_pruebas(tarea):
                 lectura = f"{D.NOMBRE_CORTO[ref]} sale del conjunto " + ("antes que la EBM" if p_ref < p_ebm else "después de la EBM")
             filas.append([nombre, f"MCS al {F.pct(NIVEL_MCS, 0)}", _es("p_MCS", _p(p_ref)), _p(p_ref), RAYA,
                           _es("la EBM: p_MCS", _p(p_ebm)), lectura])
-            muestras.append(D.ROL_MODELO[ref])
+            muestras.append(D.ROL_VISTA_EBM[ref])
     return ui.tabla(["Referencia", "Prueba", "Estadístico", "p sin corregir", "p ajustado (Holm)", "Tamaño del efecto", "Conclusión"],
                     filas, compacta=True, muestras=muestras, num=[False, False, True, True, True, False, False])
 
@@ -1144,7 +1147,7 @@ def _seccion_pruebas():
     v = _veredictos()
     n_sup = {t: len(v[t]["supera"]) for t in TAREAS}
     m = len(D.pruebas("clasificacion"))
-    rivales = {t: [x for x in D.pruebas(t)["modelo"] if D.ROL_MODELO[x] == "rival"] for t in TAREAS}
+    rivales = {t: [x for x in D.pruebas(t)["modelo"] if D.ROL_VISTA_EBM[x] == "rival"] for t in TAREAS}
     ninguna = all(set(rivales[t]) <= set(v[t]["empata"]) for t in TAREAS)
     sup = (f"a {CARDINAL[n_sup['clasificacion']]} de las {CARDINAL[m]} referencias en cada tarea" if len(set(n_sup.values())) == 1
            else " y ".join(f"a {CARDINAL[k]} en {D.NOMBRE_TAREA[t].lower()}" for t, k in n_sup.items()))
@@ -1215,7 +1218,7 @@ def _seccion_robustez():
     destinos = ui.destinos([ui.destino(app.ruta_vista(v), v, n, app.pregunta(v)) for v, n in (("robustez", "Robustez"), ("errores", "Errores"))])
     titulo = (f"La EBM es estable: la semilla mueve su AUC {ui.num(se.loc['ebm', 'auc_desv'], 5)} y los hiperparámetros lo dejan entre "
               f"{ui.num(sen['auc_media'].min(), 4)} y {ui.num(sen['auc_media'].max(), 4)}")
-    return ui.seccion(titulo, [ui.cifras(fichas, "cifras--3"), destinos],
+    return ui.seccion(titulo, [ui.cifras(fichas, "cifras--3"), ui.nota(D.nota_ece()), destinos],
                       subtitulo="Resumen de los estudios de robustez: semillas, sensibilidad, ablación, fidelidad, calibración y cobertura. "
                                 "El detalle está en «Robustez» y en «Errores».",
                       fuentes=FUENTES_ROBUSTEZ)
@@ -1320,7 +1323,7 @@ def _tarjeta_frente_a():
             filas.append([f"{D.NOMBRE_MODELO[ref]} ({D.NOMBRE_TAREA[tarea].lower()})", D.VEREDICTO_TEXTO[v],
                           "la EBM" if mejor_ext else D.NOMBRE_CORTO[ref], f"{F.entero(len(a_favor))} de {F.entero(len(contrastes))}",
                           ui.con_signo(f["delta_cliff"], 2), lectura])
-            muestras.append(D.ROL_MODELO[ref])
+            muestras.append(D.ROL_VISTA_EBM[ref])
     return ui.tarjeta([ui.tabla(["Referencia", "Veredicto", "Mejor externa", "Pruebas a favor", "δ de Cliff", "Lectura"], filas, compacta=True, muestras=muestras,
                                 num=[False, False, False, True, True, False]),
                        ui.nota(f"El veredicto es el del resto de la app: «supera» cuando la t corregida y {TAREA['clasificacion']['fijada']} "
@@ -1371,12 +1374,14 @@ def _seccion_veredicto():
                             f"Lo que sí sostiene la evidencia es la equivalencia con {_con_quien_empata()} y la ventaja sobre "
                             f"{_quien_supera(con_a=False)}, con un modelo que se lee sin explicador: la alcanza, no la supera."],
                            None, "Lo que dice y lo que no dice el veredicto")
-    return ui.seccion(f"Veredicto: {palabra}. La EBM cumple {valor} condiciones de la guía {cuanto}", [
+    return ui.seccion(f"La EBM frente a los modelos de clase: {palabra}. Cumple {valor} condiciones de la guía {cuanto}", [
         ui.rejilla([insight, _tarjeta_condiciones()], "1-2"),
         _tarjeta_frente_a(),
         lo_que_dice,
-        ui.destinos([ui.destino(app.ruta_vista("comparacion"), "comparacion", "Comparación estadística", app.pregunta("comparacion"))]),
-    ], subtitulo="El veredicto explícito de superioridad o no superioridad, condición por condición y con los valores reales.",
+        ui.destinos([ui.destino(app.ruta_vista(v), v, n, app.pregunta(v)) for v, n in (("original", "Modelo original"),
+                                                                                       ("comparacion", "Comparación estadística"))]),
+    ], subtitulo="La regla de superioridad de la guía aplicada a la EBM, como se hizo en el Entregable 3, condición por condición y "
+                 "con los valores reales. El veredicto del modelo original, BDL, está en su vista.",
         fuentes=FUENTES_PRUEBA + FUENTES_PRUEBAS)
 
 

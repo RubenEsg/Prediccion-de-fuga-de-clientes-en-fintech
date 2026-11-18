@@ -12,6 +12,8 @@ mensaje), de modo que el producto completo queda documentado aunque algo falle.
 from __future__ import annotations
 
 import json
+import time
+from contextlib import contextmanager
 import os
 from datetime import datetime
 from pathlib import Path
@@ -29,6 +31,66 @@ COLUMNAS_JSON: tuple[str, ...] = ('hiperparametros', 'metricas_ext', 'puntajes_e
 """Columnas con estructuras anidadas; se serializan a JSON al guardar."""
 
 ESTADOS: tuple[str, ...] = ('ok', 'no_aplica', 'error')
+
+COLUMNAS_RUTA: tuple[str, ...] = ('ruta_modelo', 'ruta_predicciones')
+"""Columnas que guardan dónde quedó un archivo de la corrida (el modelo final, las predicciones fuera de pliegue)."""
+
+RAIZ_REPO = Path(__file__).resolve().parent.parent.parent
+"""Raíz del repositorio: las rutas publicadas son relativas a ella."""
+
+
+def relativa(ruta) -> str:
+    """Ruta de un archivo de la corrida, relativa a la raíz del repositorio y con barras normales.
+
+    Parameters
+    ----------
+    ruta : str, Path or None
+        Ruta tal como la registró la corrida (absoluta, del equipo donde se ejecutó) o ya relativa.
+
+    Returns
+    -------
+    str
+        ``''`` si no hay ruta. Los modelos del Entregable 3, que se ajustaron en su carpeta de trabajo y no dentro del
+        repositorio, quedan bajo ``Entrega3/resultados``, que es donde el repositorio publica esa entrega.
+    """
+    if ruta is None or (not isinstance(ruta, (str, Path)) and pd.isna(ruta)) or str(ruta) == '':
+        return ''
+    p = Path(str(ruta))
+    if not p.is_absolute():
+        return p.as_posix()
+    try:
+        return p.relative_to(RAIZ_REPO).as_posix()
+    except ValueError:
+        partes = p.parts
+        ultima = lambda nombre: len(partes) - 1 - partes[::-1].index(nombre)             # noqa: E731
+        if RAIZ_REPO.joinpath('ModeloOriginal').name in partes:                           # el repositorio estaba en otra carpeta
+            return Path(*partes[ultima('ModeloOriginal'):]).as_posix()
+        if 'resultados' in partes:
+            return Path('Entrega3', *partes[ultima('resultados'):]).as_posix()
+        return p.name
+
+
+def resolver(ruta) -> Path:
+    """Ubicación en este equipo de un archivo guardado en la tabla, sea su ruta absoluta o relativa al repositorio.
+
+    Parameters
+    ----------
+    ruta : str or Path
+        Valor de ``ruta_modelo`` o ``ruta_predicciones``.
+
+    Returns
+    -------
+    Path
+        La primera ubicación que existe; si ninguna existe, la del repositorio. Los modelos del Entregable 3 no se
+        versionan: se buscan también en la carpeta de trabajo local que contiene al repositorio.
+    """
+    p = Path(str(ruta))
+    if p.is_absolute():
+        return p
+    candidatas = [RAIZ_REPO / p]
+    if p.parts[:1] == ('Entrega3',):
+        candidatas.append(RAIZ_REPO.parent.joinpath(*p.parts[1:]))
+    return next((c for c in candidatas if c.exists()), candidatas[0])
 
 
 def ruta_cerrojo(ruta: Path) -> Path:
@@ -62,6 +124,48 @@ def dueno_del_cerrojo(ruta: Path) -> int | None:
         return pid if psutil.pid_exists(pid) else None
     except ImportError:
         return pid
+
+
+@contextmanager
+def _candado(ruta: Path, espera_s: float = 300.0, caduca_s: float = 900.0):
+    """Exclusión mutua entre procesos mientras se lee, se modifica y se reescribe la tabla.
+
+    Parameters
+    ----------
+    ruta : Path
+        Ruta de la tabla maestra; el candado es ``<tabla>.candado``.
+    espera_s : float
+        Tiempo máximo de espera si otro proceso lo tiene.
+    caduca_s : float
+        Un candado más viejo que esto se considera abandonado (el proceso murió) y se retira.
+
+    Notes
+    -----
+    La corrección corre dos colas de experimentos a la vez sobre la misma tabla. Crear el archivo con ``O_EXCL`` es
+    atómico: solo un proceso lo consigue; los demás esperan y reintentan.
+    """
+    candado = ruta.with_name(ruta.name + '.candado')
+    inicio = time.time()
+    while True:
+        try:
+            descriptor = os.open(candado, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            os.write(descriptor, str(os.getpid()).encode())
+            os.close(descriptor)
+            break
+        except FileExistsError:
+            try:
+                if time.time() - candado.stat().st_mtime > caduca_s:
+                    candado.unlink(missing_ok=True)
+                    continue
+            except OSError:
+                continue
+            if time.time() - inicio > espera_s:
+                raise RuntimeError(f'no se pudo tomar {candado.name} en {espera_s:.0f} s')
+            time.sleep(0.5)
+    try:
+        yield
+    finally:
+        candado.unlink(missing_ok=True)
 
 
 def _json_default(o):
@@ -224,13 +328,40 @@ class Registro:
         fila = dict(fila)
         fila.setdefault('estado', 'ok' if fila.get('aplica', True) else 'no_aplica')
         clave = {k: fila[k] for k in CLAVE}
-        if self.existe(**clave):
-            if not sobrescribir:
-                raise ValueError(f'la corrida {clave} ya está registrada')
-            self._df = self._df[~self._mascara(clave)]
-        nueva = pd.DataFrame([self._serializar(fila)])
-        self._df = pd.concat([self._df, nueva], ignore_index=True) if not self._df.empty else nueva
-        self._escribir()
+        with _candado(self.ruta):
+            self._df = self._leer()                  # otro proceso pudo añadir filas desde que se cargó
+            if self.existe(**clave):
+                if not sobrescribir:
+                    raise ValueError(f'la corrida {clave} ya está registrada')
+                self._df = self._df[~self._mascara(clave)]
+            nueva = pd.DataFrame([self._serializar(fila)])
+            self._df = pd.concat([self._df, nueva], ignore_index=True) if not self._df.empty else nueva
+            self._escribir()
+
+    def rutas_relativas(self) -> int:
+        """Convierte en relativas a la raíz del repositorio las rutas que guardó cada corrida.
+
+        Returns
+        -------
+        int
+            Celdas que cambiaron (0 si ya eran relativas).
+
+        Notes
+        -----
+        Se hace una sola vez, antes de publicar los resultados: la tabla no debe llevar rutas del equipo donde se
+        ejecutaron los experimentos. Quien lee una ruta usa :func:`resolver`, que acepta las dos formas.
+        """
+        with _candado(self.ruta):
+            self._df = self._leer()
+            cambiadas = 0
+            for c in COLUMNAS_RUTA:
+                if c in self._df.columns:
+                    nuevas = self._df[c].map(relativa)
+                    cambiadas += int((nuevas != self._df[c].fillna('').astype(str)).sum())
+                    self._df[c] = nuevas
+            if cambiadas:
+                self._escribir()
+        return cambiadas
 
     def cargar(self, decodificar: bool = True) -> pd.DataFrame:
         """Devuelve la tabla completa.
@@ -244,6 +375,7 @@ class Registro:
         -------
         DataFrame
         """
+        self._df = self._leer()                      # siempre lo que hay en disco
         df = self._df.copy()
         if decodificar:
             for c in COLUMNAS_JSON:

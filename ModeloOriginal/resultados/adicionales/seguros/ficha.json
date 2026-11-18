@@ -1,0 +1,14 @@
+{
+  "fuente": "https://raw.githubusercontent.com/stedy/Machine-Learning-with-R-datasets/master/insurance.csv",
+  "sha256": "505c1cbc2e63d0363bac59501563df2530aadf4cdb9cfee226f4ef32f5468281",
+  "omitida": "smoker",
+  "objetivo": "charges (dólares)",
+  "nombre": "Seguros médicos",
+  "n": 1338,
+  "p": 5,
+  "n_train": 1070,
+  "n_test": 268,
+  "umbral": 16746.6574,
+  "prevalencia_train": 0.2504672897196262,
+  "prevalencia_test": 0.2462686567164179
+}

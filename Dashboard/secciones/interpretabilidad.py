@@ -9,10 +9,13 @@ no calcula SHAP al cargar esta vista ni necesita la librería shap):
     un solo tono (del gris claro al casi negro: los tokens «contexto» y «real») según el valor de la variable;
   · qué es un valor SHAP, en qué escala está cada modelo (logit, margen, probabilidad o pronóstico: entre modelos solo se
     comparan orden y signo), cómo se calculó (exacto o estimado) y cómo se verificó (indice.json, «verificacion»);
-  · la comparación con la EBM (con XGBoost, el mejor modelo de referencia en la prueba, cuando el elegido es la EBM): el
+  · la comparación con el modelo original, BDL (con el mejor benchmark de la tarea, cuando el elegido es el original): el
     puesto de cada variable en los dos, cuántas de las primeras comparten y la correlación de rangos de las importancias.
+    Es lo que pide la guía: comparar la interpretabilidad del modelo original con la de los demás.
 
-La dirección puede pedir la tarea y el modelo: /modelos/interpretabilidad?tarea=regresion&modelo=lasso.
+La vista nace con el modelo original. Sus aportes son exactos y salen de su propio código (RegresorBDL.contribuciones, sin
+la librería shap); en clasificación reparten el índice F(x), no la probabilidad. La dirección puede pedir la tarea y el
+modelo: /modelos/interpretabilidad?tarea=regresion&modelo=lasso.
 """
 from functools import lru_cache
 from html import escape
@@ -24,6 +27,7 @@ from dash import Input, Output, State, callback, dcc, html, no_update
 
 import app
 import datos_app as D
+import explicacion as E
 import formato as F
 import modelos_vivos as V
 import motor as M
@@ -33,7 +37,8 @@ VISTA = "interpretabilidad"
 PRE = "ip"
 PANTALLA = "errores"                  # el icono de la cabecera (la lupa, como la vista en app.VISTAS)
 TAREAS = ("clasificacion", "regresion")
-INICIAL = "ebm"
+INICIAL = D.ORIGINAL                   # el modelo con que nace la vista: el original
+RESPALDO = "ebm"                       # y, si la corrección todavía no lo dejó en la tarea, la EBM
 
 TOP_BARRAS = 10                        # variables con barra propia; las demás van agrupadas
 TOP_ENJAMBRE = 8                       # variables del resumen tipo enjambre
@@ -64,9 +69,13 @@ ESCALA = {
                                                 "dos clases: no es una probabilidad",
     "probabilidad de riesgo alto": "la probabilidad de riesgo alto que da el modelo, sin recalibrar",
     "churn_probability predicha": "el pronóstico del puntaje de propensión (churn_probability), en sus mismas unidades",
+    E.ESCALA_INDICE: "el índice del puntaje, F(x): lo que suman los árboles del modelo antes de añadir el escalón latente. No es "
+                     "una probabilidad: la probabilidad de riesgo alto sale de comparar con el umbral cada nivel del cliente (el "
+                     "índice más un desplazamiento), como muestra la vista Predicción",
 }
 EJE = {"logit del riesgo alto": "aporte al logit del riesgo alto", "margen del SVM (distancia al hiperplano)": "aporte al margen del SVM",
-       "probabilidad de riesgo alto": "aporte a la probabilidad de riesgo alto", "churn_probability predicha": "aporte al pronóstico"}
+       "probabilidad de riesgo alto": "aporte a la probabilidad de riesgo alto", "churn_probability predicha": "aporte al pronóstico",
+       E.ESCALA_INDICE: "aporte al índice del puntaje"}
 # Cómo se calculó, por método (explicacion.py y preparar_artefactos.py)
 METODO = {
     "lineal": "Exacto. En un modelo lineal el aporte de una variable es su coeficiente por la distancia entre su valor y el "
@@ -81,6 +90,10 @@ METODO = {
                "Por su costo se explica a menos clientes.",
     "ebm": "Exacto. La EBM es una suma de una función por variable: el aporte de cada variable es el valor de su término, sin "
            "explicador auxiliar.",
+    "bdl": "Exacto, con el código del propio modelo (RegresorBDL.contribuciones) y sin explicador auxiliar. Con árboles de "
+           "profundidad uno el índice es una suma de una curva por variable, y el aporte de una variable es su curva menos la "
+           "media de esa curva en las filas de ajuste; con árboles más profundos, cada árbol se reparte con valores de Shapley "
+           "exactos.",
 }
 FRENTE_A = {"frente_a_shap_TreeExplainer": "Frente a TreeExplainer de la librería shap",
             "frente_a_shap_LinearExplainer": "Frente a LinearExplainer de la librería shap",
@@ -147,8 +160,9 @@ def _tarea(t):
 
 
 def _modelo(tarea, m):
+    """El modelo pedido si es uno de los de la tarea; si no, el original (o la EBM, si el original todavía no está)."""
     ms = V.modelos(tarea)
-    return m if m in ms else (INICIAL if INICIAL in ms else ms[0])
+    return m if m in ms else next((x for x in (INICIAL, RESPALDO) if x in ms), ms[0])
 
 
 def _de_la_direccion(tarea, modelo):
@@ -163,7 +177,7 @@ def _de_la_direccion(tarea, modelo):
 
 
 def _opciones(tarea):
-    """Los ocho modelos de la tarea, con su nombre como texto (ver secciones/diagnostico.py::_opciones)."""
+    """Los modelos en vivo de la tarea, con su nombre como texto (ver secciones/diagnostico.py::_opciones)."""
     return [{"label": D.NOMBRE_MODELO[m], "value": m} for m in V.modelos(tarea)]
 
 
@@ -175,7 +189,7 @@ def _rotulo_modelo(modelo):
 
 def _selector_modelo(tarea, modelo, persistir):
     """El selector nace con los modelos de las dos tareas (ver secciones/diagnostico.py: si el valor recordado no estuviera
-    entre las opciones al recargar, el desplegable lo borraría) y con alto para los ocho."""
+    entre las opciones al recargar, el desplegable lo borraría) y con alto para todos."""
     propias = _opciones(tarea)
     valores = {o["value"] for o in propias}
     otras = [o for t in TAREAS if t != tarea for o in _opciones(t) if o["value"] not in valores]
@@ -185,11 +199,17 @@ def _selector_modelo(tarea, modelo, persistir):
 
 
 def _referente(tarea, modelo):
-    """Con quién se compara: la EBM; si el elegido es la EBM, el mejor modelo de referencia en la prueba (el primero de la
-    tabla del informe que no es la EBM)."""
-    if modelo != "ebm":
-        return "ebm"
-    return next(m for m in D.prueba(tarea)["modelo"] if m != "ebm")
+    """Con quién se compara un modelo: con el original. El original, con el mejor benchmark de la tarea (el de
+    veredicto.json; si todavía no existe o no se sirve en vivo, el primero de la tabla del informe). Mientras el original
+    no esté en la tarea, la referencia es la EBM, y la EBM se compara con el primero de la tabla que no es ella."""
+    vivos = V.modelos(tarea)
+    foco = INICIAL if INICIAL in vivos else RESPALDO
+    if modelo != foco:
+        return foco
+    r = D.veredicto_original(tarea) if foco == INICIAL else None
+    if r is not None and r["mejor_benchmark"] in vivos:
+        return r["mejor_benchmark"]
+    return next(m for m in D.prueba(tarea)["modelo"] if m != foco and m in vivos)
 
 
 # --- Datos (con caché; no modificar lo que devuelven) -------------------------------------------------------------------
@@ -423,7 +443,7 @@ def _enjambre(tarea, modelo):
     return {"figura": fig, "titulo": titulo, "sub": sub, "leyenda": leyenda, "tabla": tabla, "nota": nota, "etiqueta": etiqueta}
 
 
-# --- 3. Frente a la EBM (o, si el elegido es la EBM, frente al mejor modelo de referencia) ---------------------------------
+# --- 3. Frente al modelo original (o, si el elegido es el original, frente al mejor benchmark) ----------------------------
 def _comparacion(tarea, modelo):
     ref = _referente(tarea, modelo)
     a, b = _resumen(tarea, modelo), _resumen(tarea, ref)
@@ -463,8 +483,14 @@ def _comparacion(tarea, modelo):
                               f"{F.entero(_resumen(tarea, 'ebm')['n'])} clientes de prueba ({F.pct(cuota_ebm[primera])}): son dos medidas "
                               "parecidas, no la misma."))
         fuentes.append(FUENTE_TERMINOS)
-    titulo_seccion = ("Frente a la EBM" if modelo != "ebm" else
-                      f"Frente a {D.NOMBRE_MODELO[ref]}, el mejor modelo de referencia en la prueba")
+    if ref == INICIAL:
+        titulo_seccion = "Frente al modelo original, BDL"
+    elif modelo == INICIAL:
+        titulo_seccion = f"El modelo original frente a {D.NOMBRE_MODELO[ref]}, el mejor benchmark de la tarea"
+    elif ref == RESPALDO:
+        titulo_seccion = "Frente a la EBM"
+    else:
+        titulo_seccion = f"Frente a {D.NOMBRE_MODELO[ref]}, el mejor modelo de referencia en la prueba"
     return titulo_seccion, titulo, cuerpo, fuentes
 
 
@@ -493,7 +519,9 @@ def _metodo(tarea, modelo):
 
 
 def _enlaces(tarea, modelo):
-    return [ui.boton("Ver cómo decide la EBM", href=app.ruta_vista("decide"), icono="modelo"),
+    primero = (ui.boton("Ver el modelo original por dentro", href=app.ruta_vista("original") + f"?tarea={tarea}", icono="modelo")
+               if modelo == INICIAL else ui.boton("Ver cómo decide la EBM", href=app.ruta_vista("decide"), icono="modelo"))
+    return [primero,
             ui.boton("Ver la explicación de un cliente", href=app.ruta_vista("prediccion") + f"?tarea={tarea}&modelo={modelo}", icono="equipo"),
             ui.boton("Ver el diagnóstico", href=app.ruta_vista("diagnostico") + f"?tarea={tarea}&modelo={modelo}", icono="grafico")]
 
@@ -537,15 +565,16 @@ def layout(tarea=None, modelo=None, **_):
             ui.aviso("Un valor SHAP describe cómo el modelo reparte su salida entre las variables de un cliente. No dice qué pasaría "
                      "si el cliente cambiara una variable ni por qué un cliente se va: los datos son sintéticos y el objetivo es un "
                      "puntaje de propensión, no la fuga observada.", None, "Describe al modelo, no al cliente"),
-        ], subtitulo="La guía pide comparar la interpretabilidad del modelo propuesto con la de los demás: aquí, el orden de las "
-                     "variables según cada uno. La EBM, además, se lee directamente en sus curvas de forma (vista «Cómo decide»)."),
+        ], subtitulo="La guía pide comparar la interpretabilidad del modelo original con la de los demás: aquí, el orden de las "
+                     "variables según cada uno. El índice de BDL, además, se lee en sus curvas por variable (vista «Modelo "
+                     "original»), y la EBM, en sus curvas de forma (vista «Cómo decide»)."),
     ])
 
 
 @callback(Output(f"{PRE}-modelo", "options"), Output(f"{PRE}-modelo", "value"), Input(f"{PRE}-tarea", "value"),
           State(f"{PRE}-modelo", "value"))
 def _por_tarea(tarea, modelo):
-    """Deja en el selector los ocho modelos de la tarea; si el elegido no es de ella, pasa al propuesto."""
+    """Deja en el selector los modelos de la tarea; si el elegido no es de ella, pasa al original."""
     t = _tarea(tarea)
     valido = _modelo(t, modelo)
     return _opciones(t), (no_update if valido == modelo else valido)
@@ -574,4 +603,4 @@ def _dibujar(tarea, modelo):
                          "Falló la lectura")
         vacio = ui.figura_vacia("Sin datos")
         grafico = [vacio, "Sin datos", "", None, None, None, "Sin datos"]
-        return ("", "Sin datos", "", falla, None, None, *grafico, "Frente a la EBM", "Sin datos", None, None, _enlaces(t, m), _rotulo_modelo(m))
+        return ("", "Sin datos", "", falla, None, None, *grafico, "Comparación", "Sin datos", None, None, _enlaces(t, m), _rotulo_modelo(m))

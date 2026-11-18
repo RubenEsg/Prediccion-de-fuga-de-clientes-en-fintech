@@ -6,6 +6,11 @@ Sin navegador: arma cada pantalla, ejecuta sus callbacks con los valores con que
 también con «regresión») y junta todo el texto que saldría en pantalla. Aparte, lee cada cifra directamente de su archivo
 de datos/ con pandas, la escribe con el formato del informe y la busca en ese texto. Termina con código 1 si falta alguna.
 
+Las cifras del modelo original (BDL) y de LightGBM se leen de datos/original/, que arma preparar_original.py con los
+resultados de la corrección: veredicto.json, lideres_<tarea>.csv, techo.json, modelo_regresion.json y auditoria_fuga.json,
+además de datos/cd.json y datos/conformal.json. Si esos archivos todavía no existen, esas comprobaciones se omiten y se
+dice; las del Entregable 3 se hacen siempre.
+
 No sustituye a mirar la pantalla: comprueba que la cifra está, no dónde ni cómo se lee.
 """
 from __future__ import annotations
@@ -164,8 +169,6 @@ random_ = abl[(abl["tarea"] == "clasificacion") & abl["variante"].str.contains("
 ESPERADO = {
     "inicio": [
         ("AUC de prueba de la EBM", F.num(ebm_c["auc_prueba"], 4)), ("AUC de prueba de XGBoost", F.num(xgb_c["auc_prueba"], 4)),
-        ("intervalo del AUC de la EBM", F.intervalo(ebm_c["auc_bca_inf"], ebm_c["auc_bca_sup"], 4)),
-        ("diferencia con XGBoost", F.con_signo(fila(pr_c, modelo="xgboost")["delta_auc"], 4)),
         ("equivalencia práctica con XGBoost", F.prob(fila(pr_c, modelo="xgboost")["p_rope"])),
         ("AUC de la entrega anterior", F.num(e2_antes["metrica"], 4)), ("AUC de la EBM con la etiqueta de la mediana", F.num(e2_ebm["metrica"], 4)),
         ("parte del techo de información", F.pct((e2_ebm["metrica"] - 0.5) / (techo["auc_mediana"] - 0.5), 0)),
@@ -223,6 +226,128 @@ ESPERADO = {
         ("corridas", F.entero(len(corridas))), ("semilla", str(meta["semilla"])), ("clientes de entrenamiento", F.entero(meta["n_entrenamiento"])),
     ],
 }
+
+# ============================================================================ la corrección: el modelo original y LightGBM
+ORIGINAL = DATOS / "original"
+MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
+NIVEL = "0.90"                    # el nivel de la incertidumbre que citan las pantallas
+
+
+def json_original(nombre: str):
+    ruta = ORIGINAL / nombre
+    return json.loads(ruta.read_text(encoding="utf-8")) if ruta.is_file() else None
+
+
+def fecha_larga(iso: str) -> str:
+    a, m, d = (int(x) for x in str(iso)[:10].split("-"))
+    return f"{d} de {MESES[m - 1]} de {a}"
+
+
+def p_holm(p: float) -> str:
+    """Un p ajustado como lo escriben las tablas de las pruebas del modelo original: «0,037» o «< 0,001»."""
+    return F.num(p, 3) if p >= 0.001 else f"<{chr(160)}0,001"
+
+
+ver = json_original("veredicto.json")
+hay_original = ver is not None and all((ORIGINAL / f"lideres_{t}.csv").is_file() for t in ("clasificacion", "regresion"))
+if hay_original:
+    lid_c, lid_r = csv("original/lideres_clasificacion.csv"), csv("original/lideres_regresion.csv")
+    bdl_c, bdl_r, lgb_c = fila(lid_c, modelo="bdl"), fila(lid_r, modelo="bdl"), fila(lid_c, modelo="lightgbm")
+    vc, vr = ver["clasificacion"], ver["regresion"]
+    mejor_c, mejor_r = vc["mejor_benchmark"], vr["mejor_benchmark"]
+    cd = json.loads((DATOS / "cd.json").read_text(encoding="utf-8"))
+    conforme = json.loads((DATOS / "conformal.json").read_text(encoding="utf-8"))["modelos"]
+    conjunto = conforme["bdl"][NIVEL]["conjunto"]
+    techo_o, modelo_r, auditoria = json_original("techo.json"), json_original("modelo_regresion.json"), json_original("auditoria_fuga.json")
+    comunes = [
+        ("AUC externo de BDL", F.num(vc["medias"]["bdl"], 4)), ("AUC externo del mejor benchmark", F.num(vc["medias"][mejor_c], 4)),
+        ("RMSE externo de BDL", F.num(vr["medias"]["bdl"], 5)), ("RMSE externo del mejor benchmark", F.num(vr["medias"][mejor_r], 5)),
+    ]
+    ESPERADO["inicio"] += comunes + [
+        ("AUC de prueba de BDL", F.num(bdl_c["auc_prueba"], 4)),
+        ("intervalo del AUC de BDL", F.intervalo(bdl_c["auc_bca_inf"], bdl_c["auc_bca_sup"], 4)),
+        ("ventaja de BDL en AUC externo", F.con_signo(vc["ventaja_sobre_el_mejor"], 5)),
+        ("RMSE de prueba de BDL", F.num(bdl_r["rmse_prueba"], 5)),
+        ("ventaja de BDL en RMSE externo", F.con_signo(vr["ventaja_sobre_el_mejor"], 6)),
+        ("largo del conjunto de predicción de BDL", F.num(conjunto["largo"], 4)),
+        ("cobertura del conjunto de predicción de BDL", F.pct(conjunto["cobertura_prueba"], 1)),
+    ]
+    if techo_o is not None:
+        ESPERADO["inicio"] += [("límite teórico del AUC en la prueba", F.num(techo_o["prueba"]["auc_maximo"], 4)),
+                               ("límite teórico del RMSE en la prueba", F.num(techo_o["prueba"]["rmse_minimo"], 5))]
+    if auditoria is not None:
+        ESPERADO["inicio"].append(("fecha de corte de la recencia, solo con el entrenamiento",
+                                   fecha_larga(auditoria["fecha_de_corte"]["correccion_solo_entrenamiento"])))
+    ESPERADO["original"] = comunes + [
+        ("ventaja de BDL en AUC externo", F.con_signo(vc["ventaja_sobre_el_mejor"], 5)),
+        ("ventaja de BDL en RMSE externo", F.con_signo(vr["ventaja_sobre_el_mejor"], 6)),
+        ("δ de Cliff en regresión", F.con_signo(vr["frente_al_mejor"]["cliff"], 2)),
+        ("δ de Cliff en clasificación", F.con_signo(vc["frente_al_mejor"]["cliff"], 2)),
+        ("F de Iman-Davenport en regresión", F.num(vr["friedman"]["F_iman_davenport"], 1)),
+        ("cobertura del conjunto de predicción de BDL", F.pct(conjunto["cobertura_prueba"], 1)),
+        ("largo del conjunto de predicción de BDL", F.num(conjunto["largo"], 4)),
+    ] + [(f"p ajustado de {k} en regresión", p_holm(vr["frente_al_mejor"][k]["p_holm"])) for k in ("P1", "P2", "P3", "P4")
+         if k in vr["frente_al_mejor"]]
+    if techo_o is not None:
+        ESPERADO["original"] += [("límite teórico del AUC en la prueba", F.num(techo_o["prueba"]["auc_maximo"], 4)),
+                                 ("límite teórico del RMSE en la prueba", F.num(techo_o["prueba"]["rmse_minimo"], 5))]
+    if modelo_r is not None and modelo_r.get("K"):
+        ESPERADO["original"] += [("árboles del modelo final de regresión", F.entero(modelo_r["n_arboles"])),
+                                 ("separación media entre desplazamientos", F.num(modelo_r["separacion_media"], 4))]
+    optimo = json_original("optimo.json")
+    if optimo is not None and all(optimo[t]["mejor_benchmark"] == ver[t]["mejor_benchmark"] for t in ("clasificacion", "regresion")):
+        ESPERADO["original"] += [(f"p ajustado del predictor óptimo en {k} de {t}", p_holm(optimo[t]["optimo"][k]["p_holm"]))
+                                 for t in ("clasificacion", "regresion") for k in ("P3", "P4")]
+    if (ORIGINAL / "ablacion.csv").is_file():
+        sin_mezcla = fila(csv("original/ablacion.csv"), tarea="regresion", variante="bdl_sin_mezcla")
+        ESPERADO["original"] += [("aporte de la mezcla al RMSE externo (ablación)", F.con_signo(sin_mezcla["aporte_cv"], 6)),
+                                 ("p ajustado de ese aporte", p_holm(sin_mezcla["p_t_corregida_holm"]))]
+    if (ORIGINAL / "robustez" / "ciudades.csv").is_file():
+        ciudades = csv("original/robustez/ciudades.csv")
+        medias = ciudades[ciudades["tarea"] == "regresion"].pivot(index="ciudad", columns="modelo", values="metrica").dropna().mean()
+        ESPERADO["original"] += [("RMSE medio de BDL al dejar fuera una ciudad", F.num(medias["bdl"], 5)),
+                                 ("RMSE medio de XGBoost al dejar fuera una ciudad", F.num(medias["xgboost"], 5))]
+    ESPERADO["lideres"] = [
+        ("AUC externo de BDL", F.num(vc["medias"]["bdl"], 4)), ("RMSE externo de BDL", F.num(vr["medias"]["bdl"], 5)),
+        ("AUC de prueba de BDL con su intervalo", f"{F.num(bdl_c['auc_prueba'], 4)} {F.intervalo(bdl_c['auc_bca_inf'], bdl_c['auc_bca_sup'], 4)}"),
+        ("RMSE de prueba de BDL con su intervalo", f"{F.num(bdl_r['rmse_prueba'], 5)} {F.intervalo(bdl_r['rmse_bca_inf'], bdl_r['rmse_bca_sup'], 5)}"),
+        ("AUC de prueba de LightGBM con su intervalo", f"{F.num(lgb_c['auc_prueba'], 4)} {F.intervalo(lgb_c['auc_bca_inf'], lgb_c['auc_bca_sup'], 4)}"),
+        ("rango medio de BDL en clasificación", f"rango {F.num(cd['clasificacion']['rango_medio']['bdl'], 1)}"),
+        ("rango medio de BDL en regresión", f"rango {F.num(cd['regresion']['rango_medio']['bdl'], 1)}"),
+        ("diferencia crítica de Nemenyi", F.num(cd["clasificacion"]["diferencia_critica"], 2)),
+    ]
+    ESPERADO["comparacion"] += comunes + [
+        ("ventaja de BDL en AUC externo", F.con_signo(vc["ventaja_sobre_el_mejor"], 5)),
+        ("ventaja de BDL en RMSE externo", F.con_signo(vr["ventaja_sobre_el_mejor"], 6)),
+        ("AUC de prueba de BDL", F.num(bdl_c["auc_prueba"], 4)), ("RMSE de prueba de BDL", F.num(bdl_r["rmse_prueba"], 5)),
+        ("diferencia crítica de Nemenyi", F.num(cd["regresion"]["diferencia_critica"], 2)),
+        ("δ de Cliff en regresión", F.con_signo(vr["frente_al_mejor"]["cliff"], 2)),
+    ]
+    ESPERADO["ficha"] = [
+        ("AUC de prueba de BDL", F.num(bdl_c["auc_prueba"], 4)), ("RMSE de prueba de BDL", F.num(bdl_r["rmse_prueba"], 5)),
+        ("captura de BDL con el 25 %", F.pct(bdl_c["recall_op"], 1)), ("precisión de BDL con el 25 %", F.pct(bdl_c["precision_op"], 1)),
+        ("AUC externo de BDL", F.num(vc["medias"]["bdl"], 4)), ("largo del conjunto de predicción de BDL", F.num(conjunto["largo"], 4)),
+    ]
+    # Los empates en el corte de la campaña: las notas de las vistas salen de empates_campana.json
+    empates = json_original("empates_campana.json")
+    if empates is not None and empates.get("modelos", {}).get("bdl", {}).get("empatados", 0) > 1:
+        eo, p4 = empates["modelos"]["bdl"], empates.get("p4") or {}
+        notas = [("clientes de BDL empatados en el corte de la campaña", F.entero(eo["empatados"])),
+                 ("empatados de BDL que entran en la campaña", F.entero(eo["cupos"])),
+                 ("captura esperada de BDL con un desempate al azar", F.pct(eo["captura_esperada"]))]
+        ESPERADO["original"] += notas + [("captura de BDL con el desempate del protocolo", F.pct(eo["captura_protocolo"])),
+                                         ("AUC-PR de BDL con los empates rotos al azar", F.num(eo["precision_media_azar"], 4))]
+        if p4.get("mejor_benchmark") == mejor_c:
+            a_favor = F.pct(p4["rechaza_a_favor"], 0 if p4["rechaza_a_favor"] == 0 else 2)
+            ESPERADO["original"] += [("mediana del p crudo de P4 con desempates al azar", p_holm(p4["p_crudo"]["mediana"])),
+                                     ("desempates en que P4 rechaza a favor de BDL", a_favor)]
+            ESPERADO["comparacion"].append(("desempates en que P4 rechaza a favor de BDL", a_favor))
+        ESPERADO["ficha"] += notas + [("AUC-PR de BDL con los empates rotos al azar", F.num(eo["precision_media_azar"], 3))]
+        ESPERADO["diagnostico"] = notas + [("AUC-PR de BDL con los empates rotos al azar", F.num(eo["precision_media_azar"], 3))]
+        ESPERADO["campana"] += notas[:2]
+        ESPERADO["inicio"].append(("clientes que BDL alcanzaría con un desempate al azar", F.entero(eo["captura_esperada"] * empates["positivos"])))
+else:
+    print("datos/original/ todavía no tiene veredicto.json o lideres_<tarea>.csv: se omiten las cifras del modelo original.")
 
 # ============================================================================ la comparación
 fallas, total = [], 0

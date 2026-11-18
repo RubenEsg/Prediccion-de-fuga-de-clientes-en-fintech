@@ -1,0 +1,616 @@
+{
+ "fecha_de_consulta": "2026-11-18",
+ "consultas": [
+  {
+   "fecha": "2026-11-17",
+   "cadenas": [
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6",
+    "C7",
+    "C8",
+    "C9"
+   ]
+  },
+  {
+   "fecha": "2026-11-18",
+   "cadenas": [
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6",
+    "C7",
+    "C8",
+    "C9",
+    "C10",
+    "C11",
+    "C12",
+    "C13"
+   ]
+  }
+ ],
+ "comparacion": {
+  "celdas": 26,
+  "entradas_nuevas": 4
+ },
+ "revisados_por_cadena": 25,
+ "bases": [
+  "OpenAlex",
+  "arXiv",
+  "Crossref"
+ ],
+ "cadenas": 13,
+ "matriz": [
+  {
+   "base": "OpenAlex",
+   "cadena": "C1",
+   "tema": "Mezcla o clase latente + boosting + fuga de clientes",
+   "consulta": "\"customer churn\" AND (\"latent class\" OR \"finite mixture\" OR \"mixture of regressions\") AND boosting",
+   "resultados": 108,
+   "revisados": 25,
+   "relevantes": 1,
+   "observacion": "Lemmens y Croux (2006) y comparaciones posteriores: boosting aplicado a fuga, siempre sobre la etiqueta; ninguno con clase latente en la respuesta"
+  },
+  {
+   "base": "arXiv",
+   "cadena": "C1",
+   "tema": "Mezcla o clase latente + boosting + fuga de clientes",
+   "consulta": "all:\"customer churn\" AND (all:mixture OR all:\"latent class\")",
+   "resultados": 3,
+   "revisados": 3,
+   "relevantes": 1,
+   "observacion": "Buginga y de Souza e Silva (2024): mezcla de expertos no paramétricos para agrupar curvas de supervivencia; menciona la fuga como campo de uso, agrupa clientes y no modela un desplazamiento"
+  },
+  {
+   "base": "Crossref",
+   "cadena": "C1",
+   "tema": "Mezcla o clase latente + boosting + fuga de clientes",
+   "consulta": "churn mixture boosting",
+   "resultados": 176228,
+   "revisados": 25,
+   "relevantes": 1,
+   "observacion": "Vakeel y otros (2022): boosting para predecir la fuga y mezcla gaussiana para agrupar a los clientes que se fueron; la mezcla no entra en el modelo predictivo"
+  },
+  {
+   "base": "OpenAlex",
+   "cadena": "C2",
+   "tema": "Heterogeneidad no observada + boosting + fuga de clientes",
+   "consulta": "\"customer churn\" AND (\"unobserved heterogeneity\" OR \"latent variable\") AND \"gradient boosting\"",
+   "resultados": 90,
+   "revisados": 25,
+   "relevantes": 1,
+   "observacion": "Dong y otros (2026): heterogeneidad no observada con efectos aleatorios compartidos entre costo y fuga; modelo paramétrico, sin boosting"
+  },
+  {
+   "base": "arXiv",
+   "cadena": "C2",
+   "tema": "Heterogeneidad no observada + boosting + fuga de clientes",
+   "consulta": "all:churn AND all:\"latent variable\" AND all:boosting",
+   "resultados": 0,
+   "revisados": 0,
+   "relevantes": 0,
+   "observacion": "Sin resultados"
+  },
+  {
+   "base": "Crossref",
+   "cadena": "C2",
+   "tema": "Heterogeneidad no observada + boosting + fuga de clientes",
+   "consulta": "churn latent boosting",
+   "resultados": 133770,
+   "revisados": 25,
+   "relevantes": 1,
+   "observacion": "Un modelo de riesgos competitivos con asignación latente de Dirichlet para los motivos de la fuga (2021); el resto, comparaciones de boosting sobre la etiqueta"
+  },
+  {
+   "base": "OpenAlex",
+   "cadena": "C3",
+   "tema": "Mezcla de regresiones ajustada con boosting y EM (familia del algoritmo, cualquier aplicación)",
+   "consulta": "(\"mixture of regressions\" OR \"finite mixture regression\" OR \"latent class regression\") AND (\"gradient boosting\" OR \"boosted trees\") AND (\"expectation-maximization\" OR \"EM algorithm\")",
+   "resultados": 33,
+   "revisados": 25,
+   "relevantes": 3,
+   "observacion": "Misma familia en otras aplicaciones: Hepp y otros (2020), Rügamer y otros (2023) y una mezcla de regresiones logísticas con LASSO (2026); ninguno en fuga ni con un índice compartido"
+  },
+  {
+   "base": "arXiv",
+   "cadena": "C3",
+   "tema": "Mezcla de regresiones ajustada con boosting y EM (familia del algoritmo, cualquier aplicación)",
+   "consulta": "(all:\"mixture of regressions\" OR all:\"mixture regression\") AND all:boosting",
+   "resultados": 2,
+   "revisados": 2,
+   "relevantes": 1,
+   "observacion": "Jobst (2024): regresión de mezcla ajustada con boosting para pronóstico meteorológico"
+  },
+  {
+   "base": "Crossref",
+   "cadena": "C3",
+   "tema": "Mezcla de regresiones ajustada con boosting y EM (familia del algoritmo, cualquier aplicación)",
+   "consulta": "mixture regression boosting EM",
+   "resultados": 1432973,
+   "revisados": 25,
+   "relevantes": 1,
+   "observacion": "Xue, Yao y Xiang (2024): EM con métodos de aprendizaje automático en el paso M para mezclas semiparamétricas de regresiones"
+  },
+  {
+   "base": "OpenAlex",
+   "cadena": "C4",
+   "tema": "Boosting con ruido multimodal o de mezcla",
+   "consulta": "\"gradient boosting\" AND (\"mixture noise\" OR \"multimodal noise\" OR \"mixture of Gaussians noise\") AND regression",
+   "resultados": 16,
+   "revisados": 16,
+   "relevantes": 0,
+   "observacion": "Pérdidas robustas y mezclas de expertos para diagnóstico de fallas; sin relación con el mecanismo"
+  },
+  {
+   "base": "arXiv",
+   "cadena": "C4",
+   "tema": "Boosting con ruido multimodal o de mezcla",
+   "consulta": "all:\"gradient boosting\" AND all:\"mixture density\"",
+   "resultados": 2,
+   "revisados": 2,
+   "relevantes": 1,
+   "observacion": "Su y Qu (2025): Anchor-MoE, media por boosting y mezcla de expertos neuronales para la densidad"
+  },
+  {
+   "base": "Crossref",
+   "cadena": "C4",
+   "tema": "Boosting con ruido multimodal o de mezcla",
+   "consulta": "boosting mixture density regression",
+   "resultados": 837602,
+   "revisados": 25,
+   "relevantes": 0,
+   "observacion": "Redes de densidad de mezcla, regresión cuantílica por boosting y boosting de regresión distribucional por etapas (2024)"
+  },
+  {
+   "base": "OpenAlex",
+   "cadena": "C5",
+   "tema": "Predicción conforme + fuga de clientes",
+   "consulta": "(\"customer churn\" OR \"customer attrition\") AND (\"conformal prediction\" OR \"prediction sets\")",
+   "resultados": 70,
+   "revisados": 25,
+   "relevantes": 1,
+   "observacion": "Guo y vanden Broucke (2024): intervalos conformes para reforzar un clasificador de fuga; el resto evalúa la calibración o la incertidumbre de clasificadores de fuga sin modelar el puntaje. La consulta del 17 de noviembre a esta base falló y no devolvió resultados"
+  },
+  {
+   "base": "arXiv",
+   "cadena": "C5",
+   "tema": "Predicción conforme + fuga de clientes",
+   "consulta": "all:churn AND all:\"conformal prediction\"",
+   "resultados": 1,
+   "revisados": 1,
+   "relevantes": 0,
+   "observacion": "Aprendizaje por transferencia bayesiano; menciona fuga como caso de uso"
+  },
+  {
+   "base": "Crossref",
+   "cadena": "C5",
+   "tema": "Predicción conforme + fuga de clientes",
+   "consulta": "churn conformal prediction",
+   "resultados": 788366,
+   "revisados": 25,
+   "relevantes": 1,
+   "observacion": "Guo y vanden Broucke (2024), ya contado en OpenAlex"
+  },
+  {
+   "base": "OpenAlex",
+   "cadena": "C6",
+   "tema": "Regresión distribucional o probabilística + fuga de clientes",
+   "consulta": "(\"customer churn\" OR \"customer attrition\") AND (\"distributional regression\" OR \"probabilistic regression\" OR NGBoost OR \"GAMLSS\")",
+   "resultados": 36,
+   "revisados": 25,
+   "relevantes": 1,
+   "observacion": "Ali y otros (2026): NGBoost como clasificador probabilístico de fuga; distribución unimodal"
+  },
+  {
+   "base": "arXiv",
+   "cadena": "C6",
+   "tema": "Regresión distribucional o probabilística + fuga de clientes",
+   "consulta": "all:churn AND (all:\"distributional regression\" OR all:NGBoost OR all:\"probabilistic regression\")",
+   "resultados": 0,
+   "revisados": 0,
+   "relevantes": 0,
+   "observacion": "Sin resultados"
+  },
+  {
+   "base": "Crossref",
+   "cadena": "C6",
+   "tema": "Regresión distribucional o probabilística + fuga de clientes",
+   "consulta": "churn distributional regression",
+   "resultados": 215445,
+   "revisados": 25,
+   "relevantes": 0,
+   "observacion": "Textos generales de regresión distribucional; regresión simbólica para fuga (2026)"
+  },
+  {
+   "base": "OpenAlex",
+   "cadena": "C7",
+   "tema": "Clasificar una respuesta continua dicotomizada usando la respuesta continua",
+   "consulta": "(\"dichotomized\" OR \"dichotomised\") AND \"continuous outcome\" AND (\"exceedance probability\" OR \"distributional approach\") AND classification",
+   "resultados": 20,
+   "revisados": 20,
+   "relevantes": 2,
+   "observacion": "Método distribucional de dicotomización (Sauzet y Kleine, 2016; distdichoR, 2018): inferencia sobre proporciones, no predicción por cliente"
+  },
+  {
+   "base": "arXiv",
+   "cadena": "C7",
+   "tema": "Clasificar una respuesta continua dicotomizada usando la respuesta continua",
+   "consulta": "all:dichotomized AND all:\"continuous outcome\"",
+   "resultados": 8,
+   "revisados": 8,
+   "relevantes": 2,
+   "observacion": "Respuestas binarias dicotomizadas de una continua en ensayos clínicos; ganancia de eficiencia con datos externos dicotomizados (2025)"
+  },
+  {
+   "base": "Crossref",
+   "cadena": "C7",
+   "tema": "Clasificar una respuesta continua dicotomizada usando la respuesta continua",
+   "consulta": "dichotomized continuous outcome classification",
+   "resultados": 1278944,
+   "revisados": 25,
+   "relevantes": 2,
+   "observacion": "Sauzet y Kleine (2016) y análisis de respuestas dicotomizadas en ensayos clínicos"
+  },
+  {
+   "base": "OpenAlex",
+   "cadena": "C8",
+   "tema": "Modelo aditivo (GAM, EBM) con clases latentes o mezcla",
+   "consulta": "(\"generalized additive model\" OR \"explainable boosting machine\") AND (\"finite mixture\" OR \"latent class\") AND boosting",
+   "resultados": 231,
+   "revisados": 25,
+   "relevantes": 3,
+   "observacion": "Hepp y otros (2020); Wattanawongwan y otros (2023), mezcla en GAMLSS para exposición crediticia; boosting de regresión distribucional aditiva (2023)"
+  },
+  {
+   "base": "arXiv",
+   "cadena": "C8",
+   "tema": "Modelo aditivo (GAM, EBM) con clases latentes o mezcla",
+   "consulta": "all:\"additive model\" AND all:\"finite mixture\"",
+   "resultados": 0,
+   "revisados": 0,
+   "relevantes": 0,
+   "observacion": "Sin resultados"
+  },
+  {
+   "base": "Crossref",
+   "cadena": "C8",
+   "tema": "Modelo aditivo (GAM, EBM) con clases latentes o mezcla",
+   "consulta": "additive model finite mixture boosting",
+   "resultados": 3790598,
+   "revisados": 25,
+   "relevantes": 0,
+   "observacion": "Textos generales de mezclas finitas; híbrido de XGBoost y mezcla gaussiana para caudales (2021)"
+  },
+  {
+   "base": "OpenAlex",
+   "cadena": "C9",
+   "tema": "En español: fuga o deserción de clientes + clase latente, mezcla o boosting",
+   "consulta": "(\"fuga de clientes\" OR \"deserción de clientes\" OR \"abandono de clientes\") AND (\"clase latente\" OR \"mezcla finita\" OR boosting)",
+   "resultados": 40,
+   "revisados": 25,
+   "relevantes": 0,
+   "observacion": "Estudios en español con regresión logística, AdaBoost, árboles o TabNet sobre la etiqueta"
+  },
+  {
+   "base": "arXiv",
+   "cadena": "C9",
+   "tema": "En español: fuga o deserción de clientes + clase latente, mezcla o boosting",
+   "consulta": "all:\"fuga de clientes\" OR all:\"abandono de clientes\"",
+   "resultados": 0,
+   "revisados": 0,
+   "relevantes": 0,
+   "observacion": "Sin resultados"
+  },
+  {
+   "base": "Crossref",
+   "cadena": "C9",
+   "tema": "En español: fuga o deserción de clientes + clase latente, mezcla o boosting",
+   "consulta": "fuga de clientes",
+   "resultados": 10404868,
+   "revisados": 25,
+   "relevantes": 0,
+   "observacion": "Tesis y artículos en español con árboles, AdaBoost y regresión logística"
+  },
+  {
+   "base": "OpenAlex",
+   "cadena": "C10",
+   "tema": "EM con un paso de boosting para modelos de mezcla (regla de aprendizaje, cualquier aplicación)",
+   "consulta": "(\"finite mixture\" OR \"mixture model\") AND (\"gradient boosting\" OR \"boosted trees\" OR \"tree boosting\") AND (\"EM algorithm\" OR \"expectation-maximization\" OR \"expectation-boosting\")",
+   "resultados": 1188,
+   "revisados": 25,
+   "relevantes": 7,
+   "observacion": "Los antecedentes algorítmicos más cercanos. Hou, Li y Gao (2025): algoritmo Expectation-Boosting, que sustituye el paso M del EM por boosting de árboles en mezclas para pérdidas de seguros. Zhou, Qian y Yang (2022): EMTboost. Adam, Mayr y Kneib (2022): boosting en modelos de Markov con estados latentes. Meek, Thiesson y Heckerman (2002). Hepp y otros (2020). Dos marcos de EM con aprendizaje automático (2024 y 2025). Ninguno trata la fuga ni comparte un índice entre clases"
+  },
+  {
+   "base": "arXiv",
+   "cadena": "C10",
+   "tema": "EM con un paso de boosting para modelos de mezcla (regla de aprendizaje, cualquier aplicación)",
+   "consulta": "all:mixture AND all:boosting AND (all:\"EM algorithm\" OR all:\"expectation-maximization\" OR all:\"expectation-boosting\")",
+   "resultados": 7,
+   "revisados": 7,
+   "relevantes": 2,
+   "observacion": "Meek, Thiesson y Heckerman (2002) y Adam, Mayr y Kneib (2022), ya contados en OpenAlex"
+  },
+  {
+   "base": "Crossref",
+   "cadena": "C10",
+   "tema": "EM con un paso de boosting para modelos de mezcla (regla de aprendizaje, cualquier aplicación)",
+   "consulta": "expectation boosting mixture model gradient tree boosting EM",
+   "resultados": 4762607,
+   "revisados": 25,
+   "relevantes": 2,
+   "observacion": "Zheng, Li y Peng (2026): modelo de cura de mezcla estimado con boosting de árboles; híbrido de XGBoost y mezcla gaussiana para caudales (2021). Otro modelo y otra aplicación"
+  },
+  {
+   "base": "OpenAlex",
+   "cadena": "C11",
+   "tema": "Árboles o boosting con efectos aleatorios estimados por EM (grupos observados)",
+   "consulta": "(\"mixed effects\" OR \"random effects\") AND (\"random forest\" OR \"gradient boosting\" OR \"regression tree\") AND (\"EM algorithm\" OR \"expectation-maximization\")",
+   "resultados": 942,
+   "revisados": 25,
+   "relevantes": 12,
+   "observacion": "La familia de árboles y bosques con efectos aleatorios estimados por EM: Hajjem, Bellavance y Larocque (2011, 2014), Sela y Simonoff (2012) y sus extensiones. Pellagatti y otros (2021) la aplican a la deserción de estudiantes universitarios. Los grupos son observados, no latentes, y ninguno trata la fuga de clientes"
+  },
+  {
+   "base": "arXiv",
+   "cadena": "C11",
+   "tema": "Árboles o boosting con efectos aleatorios estimados por EM (grupos observados)",
+   "consulta": "(all:\"mixed effects\" OR all:\"random effects\") AND (all:boosting OR all:\"random forest\") AND (all:\"EM algorithm\" OR all:\"expectation-maximization\")",
+   "resultados": 1,
+   "revisados": 1,
+   "relevantes": 1,
+   "observacion": "Aplicación de esos algoritmos a datos de salud mental (2023); misma familia"
+  },
+  {
+   "base": "Crossref",
+   "cadena": "C11",
+   "tema": "Árboles o boosting con efectos aleatorios estimados por EM (grupos observados)",
+   "consulta": "mixed effects random forest boosting EM algorithm clustered data",
+   "resultados": 8652432,
+   "revisados": 25,
+   "relevantes": 5,
+   "observacion": "Hajjem, Bellavance y Larocque (2014) y aplicaciones del bosque de efectos mixtos; un boosting para elegir los efectos aleatorios de un modelo lineal mixto (2024)"
+  },
+  {
+   "base": "OpenAlex",
+   "cadena": "C12",
+   "tema": "Modelos de abandono latente o de mezcla aplicados a fuga de clientes (sin boosting)",
+   "consulta": "(\"customer churn\" OR \"customer attrition\" OR \"latent attrition\") AND (\"finite mixture\" OR \"latent class\" OR \"mixture model\")",
+   "resultados": 546,
+   "revisados": 25,
+   "relevantes": 9,
+   "observacion": "Modelos de mezcla o de abandono latente aplicados a fuga, sin boosting: Jamal y Bucklin (2006), riesgo de Weibull con clases latentes; Bachmann, Meierer y Näf (2021), abandono latente con covariables; modelos de tasa de curación y de mezcla finita para la retención (2001, 2008). Es el antecedente de aplicación más cercano: clases latentes para predecir la fuga, con un modelo paramétrico por clase"
+  },
+  {
+   "base": "arXiv",
+   "cadena": "C12",
+   "tema": "Modelos de abandono latente o de mezcla aplicados a fuga de clientes (sin boosting)",
+   "consulta": "all:churn AND (all:\"finite mixture\" OR all:\"latent class\" OR all:\"mixture model\" OR all:\"latent attrition\")",
+   "resultados": 3,
+   "revisados": 3,
+   "relevantes": 1,
+   "observacion": "Un modelo conjunto de datos longitudinales y duraciones con clases latentes (2023), que menciona la fuga entre sus usos; sin boosting. Los otros dos resultados son de astronomía"
+  },
+  {
+   "base": "Crossref",
+   "cadena": "C12",
+   "tema": "Modelos de abandono latente o de mezcla aplicados a fuga de clientes (sin boosting)",
+   "consulta": "latent attrition finite mixture latent class customer churn",
+   "resultados": 1196345,
+   "revisados": 25,
+   "relevantes": 1,
+   "observacion": "Textos generales de clases latentes y mezclas finitas; un modelo de abandono latente para varias actividades (2013)"
+  },
+  {
+   "base": "OpenAlex",
+   "cadena": "C13",
+   "tema": "Boosting con efectos aleatorios o con densidad de mezcla aplicado a fuga de clientes",
+   "consulta": "(\"customer churn\" OR \"customer attrition\") AND (\"mixed effects\" OR \"random effects\" OR \"mixture density\" OR XGBoostLSS OR GPBoost) AND boosting",
+   "resultados": 99,
+   "revisados": 25,
+   "relevantes": 2,
+   "observacion": "Dong y otros (2026), ya contado en C2, y un modelo jerárquico bayesiano de supervivencia para ciclos de renovación (2026). Ningún boosting con efectos aleatorios o con densidad de mezcla aplicado a fuga"
+  },
+  {
+   "base": "arXiv",
+   "cadena": "C13",
+   "tema": "Boosting con efectos aleatorios o con densidad de mezcla aplicado a fuga de clientes",
+   "consulta": "all:churn AND all:boosting AND (all:\"mixed effects\" OR all:\"random effects\" OR all:\"mixture density\")",
+   "resultados": 0,
+   "revisados": 0,
+   "relevantes": 0,
+   "observacion": "Sin resultados"
+  },
+  {
+   "base": "Crossref",
+   "cadena": "C13",
+   "tema": "Boosting con efectos aleatorios o con densidad de mezcla aplicado a fuga de clientes",
+   "consulta": "customer churn mixed effects boosting mixture density",
+   "resultados": 3991974,
+   "revisados": 25,
+   "relevantes": 1,
+   "observacion": "Vakeel y otros (2022), ya contado en C1; el resto, comparaciones de boosting sobre la etiqueta"
+  }
+ ],
+ "citacion_adelante": [
+  {
+   "antecedente": "DeSarbo y Cron (1988), regresión por conglomerados con máxima verosimilitud",
+   "citado_por": 599,
+   "sobre_fuga": 0,
+   "desde": "2026-11-17"
+  },
+  {
+   "antecedente": "Jacobs y otros (1991), mezcla de expertos",
+   "citado_por": 7767,
+   "sobre_fuga": 6,
+   "desde": "2026-11-17"
+  },
+  {
+   "antecedente": "Grün y Leisch (2008), FlexMix versión 2",
+   "citado_por": 532,
+   "sobre_fuga": 0,
+   "desde": "2026-11-17"
+  },
+  {
+   "antecedente": "Mayr y otros (2012), gamboostLSS",
+   "citado_por": 202,
+   "sobre_fuga": 1,
+   "desde": "2026-11-17"
+  },
+  {
+   "antecedente": "Duan y otros (2020), NGBoost",
+   "citado_por": 346,
+   "sobre_fuga": 1,
+   "desde": "2026-11-17"
+  },
+  {
+   "antecedente": "Lou y otros (2013), GA2M",
+   "citado_por": 902,
+   "sobre_fuga": 2,
+   "desde": "2026-11-17"
+  },
+  {
+   "antecedente": "Vovk y otros (2019), distribuciones predictivas conformes",
+   "citado_por": 91,
+   "sobre_fuga": 0,
+   "desde": "2026-11-17"
+  },
+  {
+   "antecedente": "Hou, Li y Gao (2025), algoritmo Expectation-Boosting para mezclas",
+   "citado_por": 1,
+   "sobre_fuga": 0,
+   "desde": "2026-11-18"
+  },
+  {
+   "antecedente": "Zhou, Qian y Yang (2022), EMTboost",
+   "citado_por": 61,
+   "sobre_fuga": 0,
+   "desde": "2026-11-18"
+  },
+  {
+   "antecedente": "Xue, Yao y Xiang (2024), EM con aprendizaje automático",
+   "citado_por": 6,
+   "sobre_fuga": 0,
+   "desde": "2026-11-18"
+  },
+  {
+   "antecedente": "Jobst (2024), regresión de mezcla con boosting",
+   "citado_por": 1,
+   "sobre_fuga": 0,
+   "desde": "2026-11-18"
+  },
+  {
+   "antecedente": "März (2019), XGBoostLSS",
+   "citado_por": 46,
+   "sobre_fuga": 0,
+   "desde": "2026-11-18"
+  },
+  {
+   "antecedente": "Hajjem, Bellavance y Larocque (2014), bosque aleatorio de efectos mixtos",
+   "citado_por": 333,
+   "sobre_fuga": 0,
+   "desde": "2026-11-18"
+  },
+  {
+   "antecedente": "Sela y Simonoff (2012), árboles RE-EM",
+   "citado_por": 323,
+   "sobre_fuga": 0,
+   "desde": "2026-11-18"
+  },
+  {
+   "antecedente": "Sigrist (2022), GPBoost",
+   "citado_por": 71,
+   "sobre_fuga": 0,
+   "desde": "2026-11-18"
+  }
+ ],
+ "citacion_atras": [
+  {
+   "trabajo": "Xue, Yao y Xiang (2024), EM con aprendizaje automático para mezclas de regresiones",
+   "referencias": 19,
+   "sobre_mezclas": 15,
+   "sobre_fuga": 0,
+   "mezcla_y_fuga": 0,
+   "desde": "2026-11-17"
+  },
+  {
+   "trabajo": "Hepp y otros (2020), regresión distribucional con clases latentes",
+   "referencias": 38,
+   "sobre_mezclas": 11,
+   "sobre_fuga": 0,
+   "mezcla_y_fuga": 0,
+   "desde": "2026-11-17"
+  },
+  {
+   "trabajo": "Rügamer y otros (2023), mezcla de expertos con regresión distribucional",
+   "referencias": 40,
+   "sobre_mezclas": 11,
+   "sobre_fuga": 0,
+   "mezcla_y_fuga": 0,
+   "desde": "2026-11-17"
+  },
+  {
+   "trabajo": "De Caigny, Coussement y De Bock (2018), híbrido de árboles y logística para fuga",
+   "referencias": 81,
+   "sobre_mezclas": 4,
+   "sobre_fuga": 18,
+   "mezcla_y_fuga": 0,
+   "desde": "2026-11-17"
+  },
+  {
+   "trabajo": "Guo y vanden Broucke (2024), predicción conforme para fuga",
+   "referencias": 53,
+   "sobre_mezclas": 0,
+   "sobre_fuga": 18,
+   "mezcla_y_fuga": 0,
+   "desde": "2026-11-17"
+  },
+  {
+   "trabajo": "Hou, Li y Gao (2025), algoritmo Expectation-Boosting para mezclas",
+   "referencias": 35,
+   "sobre_mezclas": 20,
+   "sobre_fuga": 0,
+   "mezcla_y_fuga": 0,
+   "desde": "2026-11-18"
+  },
+  {
+   "trabajo": "Jobst (2024), regresión de mezcla con boosting",
+   "referencias": 79,
+   "sobre_mezclas": 10,
+   "sobre_fuga": 0,
+   "mezcla_y_fuga": 0,
+   "desde": "2026-11-18"
+  }
+ ],
+ "repositorios": [
+  {
+   "consulta": "mixture regression boosting",
+   "total": 6
+  },
+  {
+   "consulta": "latent class gradient boosting",
+   "total": 1
+  },
+  {
+   "consulta": "finite mixture boosting EM",
+   "total": 0
+  },
+  {
+   "consulta": "churn mixture model boosting",
+   "total": 0
+  },
+  {
+   "consulta": "expectation boosting mixture",
+   "total": 2
+  },
+  {
+   "consulta": "mixed effects boosting churn",
+   "total": 0
+  }
+ ]
+}

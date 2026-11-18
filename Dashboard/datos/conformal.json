@@ -136,6 +136,67 @@
     "cobertura_prueba": 0.9489994869163674,
     "ancho": 0.2508158437813521
    }
+  },
+  "bdl": {
+   "0.80": {
+    "semiancho": 0.0550441121761458,
+    "cobertura_prueba": 0.8437147255002565,
+    "ancho": 0.1100882243522916,
+    "central": {
+     "cobertura_prueba": 0.8051308363263212,
+     "largo_medio": 0.1500334249892239
+    },
+    "conjunto": {
+     "cobertura_prueba": 0.7979476654694715,
+     "largo": 0.004005145108523858,
+     "tramos": 3
+    }
+   },
+   "0.90": {
+    "semiancho": 0.09515884720105322,
+    "cobertura_prueba": 0.8473063109286814,
+    "ancho": 0.19031769440210644,
+    "central": {
+     "cobertura_prueba": 0.8992303745510518,
+     "largo_medio": 0.15024123375848217
+    },
+    "conjunto": {
+     "cobertura_prueba": 0.8988199076449461,
+     "largo": 0.006226007562065511,
+     "tramos": 4
+    }
+   },
+   "0.95": {
+    "semiancho": 0.1156655385780474,
+    "cobertura_prueba": 0.9504361210877373,
+    "ancho": 0.2313310771560948,
+    "central": {
+     "cobertura_prueba": 0.9541303232426885,
+     "largo_medio": 0.20008918416695828
+    },
+    "conjunto": {
+     "cobertura_prueba": 0.9500256541816317,
+     "largo": 0.009908463254262784,
+     "tramos": 5
+    }
+   }
+  },
+  "lightgbm": {
+   "0.80": {
+    "semiancho": 0.0583270996425328,
+    "cobertura_prueba": 0.8009235505387378,
+    "ancho": 0.1166541992850656
+   },
+   "0.90": {
+    "semiancho": 0.09529509802222375,
+    "cobertura_prueba": 0.9014879425346332,
+    "ancho": 0.1905901960444475
+   },
+   "0.95": {
+    "semiancho": 0.12508536227139339,
+    "cobertura_prueba": 0.9505387378142637,
+    "ancho": 0.25017072454278677
+   }
   }
  }
 }

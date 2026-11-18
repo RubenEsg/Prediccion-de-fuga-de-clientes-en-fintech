@@ -28,19 +28,31 @@ garantizada.
 | Ruta | Qué es |
 |---|---|
 | `src/original_model.py` | El modelo: `RegresorBDL`, `ClasificadorBDL` y el alias `ModeloOriginal` |
-| `src/` (resto) | Marco de experimentos del Entregable 3 con la recencia corregida, LightGBM y el modelo original en el catálogo |
-| `tests/` | Pruebas unitarias (`pytest`): solución conocida, semilla, entradas inválidas, `clone`, `Pipeline` y las propiedades teóricas |
+| `src/` (resto) | Marco de experimentos del Entregable 3 con la recencia corregida (`datos.py`), LightGBM y el modelo original en el catálogo (`modelos.py`), el plan de la comparación (`plan.py`), las pruebas de hipótesis (`pruebas.py`, `estadistica.py`), las variantes de la ablación (`variantes.py`), los conjuntos adicionales (`conjuntos.py`) y el generador de tablas, figuras y textos del libro (`informe.py`) |
+| `tests/` | Pruebas unitarias (`pytest`): solución conocida, semilla, entradas inválidas, `clone`, `Pipeline` y las propiedades teóricas del modelo; el marco, las pruebas de hipótesis y los formatos del informe |
 | `experiments/protocolo.md` | Protocolo experimental pre-registrado (etiqueta `protocolo-modelo-original-v1`) |
-| `experiments/` | Guiones que reproducen cada tabla |
-| `resultados/` | Tabla maestra, auditoría de fuga y resultados de las pruebas |
+| `experiments/` | Guiones numerados que producen cada resultado (tabla siguiente) y `correr_todo.py`, que los ejecuta en orden |
+| `resultados/` | Tabla maestra `experimentos.parquet`, auditoría de fuga, predicciones y métricas de prueba, pruebas de hipótesis, veredicto, techo teórico, estabilidad por semilla, ablación, robustez, búsqueda de literatura y conjuntos adicionales |
+
+| Guion | Qué produce |
+|---|---|
+| `00_busqueda_literatura.py` | Matriz de novedad: consulta OpenAlex, arXiv y Crossref y guarda lo que devuelven |
+| `01_auditoria_fuga.py` | Auditoría de fuga: compara el flujo del Entregable 3 con el corregido |
+| `02_validacion_anidada.py` | Validación anidada de 5 × 3 de los diez modelos, por semilla |
+| `03_prueba.py`, `03b_semillas.py`, `03c_memoria.py`, `03d_recomendados.py` | Evaluación en prueba, calibración e incertidumbre; estabilidad con diez semillas y costo de cómputo; memoria de cada modelo e inferencia según las filas; EBM y LightGBM con los hiperparámetros recomendados por su librería |
+| `04_pruebas_hipotesis.py`, `04b_techo.py`, `04c_optimo.py`, `04d_empates_campana.py`, `04e_referencias_homogeneas.py` | Las cuatro pruebas del protocolo con el ajuste de Holm y el veredicto; el techo teórico del conjunto; las mismas pruebas para el predictor óptimo; la sensibilidad de la campaña del 25 % a los empates; las referencias homogéneas del benchmark (MAE con la mediana y conjunto de predicción por densidad) |
+| `05_conjuntos_adicionales.py` | El mismo procedimiento en cuatro conjuntos públicos |
+| `06_robustez.py`, `07_ablacion.py` | Sensibilidad, ruido, tamaño de muestra (con y sin la mezcla) y cambio de distribución; ablación |
+| `08_tablas_libro.py`, `09_rutas_relativas.py` | Tablas, figuras y textos del libro, a partir de los resultados; rutas de las tablas maestras relativas al repositorio |
 
 ## Uso
 
-Desde esta carpeta, con el entorno del Entregable 3 (`../Entrega3/requirements.txt`):
+Desde esta carpeta, con las dependencias de `requirements-dev.txt`:
 
     python -m pytest -q                                  # pruebas unitarias
     python experiments/01_auditoria_fuga.py              # auditoría de fuga
-    python experiments/02_validacion_anidada.py          # validación anidada (semilla 42)
+    python experiments/correr_todo.py                    # todos los experimentos, en orden; salta lo ya hecho
+    python experiments/correr_todo.py --cola b           # ablación y robustez, en otra terminal
 
 ```python
 from src.original_model import ClasificadorBDL, RegresorBDL

@@ -1,0 +1,748 @@
+
+<!DOCTYPE html>
+
+
+<html lang="es" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>8. Dashboard y despliegue &#8212; Predicción de fuga de clientes en una fintech colombiana</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=33c23bfc" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../_static/documentation_options.js?v=78d55cf8"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Haz clic para mostrar';</script>
+    <script>let toggleHintHide = 'Haz clic para ocultar';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../_static/translations.js?v=d190bf04"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ProyectoFinal/08_dashboard';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Índice" href="../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../search.html" />
+    <link rel="next" title="9. Conclusiones y limitaciones" href="09_conclusiones.html" />
+    <link rel="prev" title="7. Evaluación ampliada y robustez" href="07_evaluacion_ampliada.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="es"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Saltar al contenido principal</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Volver arriba</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Advertencia de versión"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Navegación del sitio">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="En esta página">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Predicción de fuga de clientes en una fintech colombiana</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Proyecto final · Dashboard, modelo original y evaluación rigurosa</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_introduccion.html">Proyecto final: dashboard predictivo, modelo original y evaluación rigurosa</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_correcciones.html">1. Trazabilidad de las correcciones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_datos.html">2. Datos: ETL, EDA y auditoría de fuga</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_benchmarks.html">3. Modelos benchmark</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_literatura.html">4. Revisión de literatura y novedad</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_modelo_original.html">5. El modelo original: Boosting con Desplazamiento Latente (BDL)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_validacion.html">6. Protocolo y validación estadística</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_evaluacion_ampliada.html">7. Evaluación ampliada y robustez</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">8. Dashboard y despliegue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_conclusiones.html">9. Conclusiones y limitaciones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_reproducibilidad.html">10. Reproducibilidad y bibliografía</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codigo_modelo_original.html">Código del modelo original</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 1 · EDA</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega1/eda_bancario.html">Caracterización y auditoría de calidad de datos para predecir la fuga (<em>churn</em>) y el valor del cliente (<em>CLV</em>) en una <em>fintech</em> colombiana</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 2 · Modelos base</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega2/entrega2_modelo.html">Entrega 2 — Procesamiento de datos y modelo base</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Introducción</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/00_introduccion.html">Fuga de clientes en una <em>fintech</em> colombiana: modelos, optimización y evaluación</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/01_datos.html">Datos, análisis exploratorio y construcción de la etiqueta</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Metodología</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/02_metodologia.html">Metodología</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Modelos y Resultados</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/03_corridas.html">Las 140 corridas del pipeline combinatorio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/04_optimizadores.html">Comparación de los métodos de optimización</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/05_computo.html">Optimización computacional</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/06_evaluacion.html">Evaluación en prueba, calibración, residuos y robustez</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/07_interpretabilidad.html">Interpretabilidad: SHAP, LIME y las funciones de forma de la EBM</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · El modelo nuevo</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/08_modelo_nuevo.html">El modelo nuevo frente a la Entrega 2</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Comparación estadística y conclusiones</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/09_estadistica.html">Comparación estadística de los modelos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/10_conclusiones.html">Conclusiones</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Código fuente</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../codigo/indice.html">Código fuente</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src___init__.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/__init__.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_analisis.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/analisis.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_balanceo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/balanceo.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_comparacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/comparacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_config.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/config.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_datos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/datos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_estadistica.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/estadistica.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_evaluacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/evaluacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_experimento.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/experimento.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_formato.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/formato.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_graficos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/graficos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_modelos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/modelos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_optimizacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/optimizacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_preprocesamiento.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/preprocesamiento.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_registro.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/registro.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/correr_140.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/correr_140.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/comparar_entrega2.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/comparar_entrega2.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/computo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/computo.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/complementos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/complementos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/medir_tiempos_finales.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/medir_tiempos_finales.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/notebook_construir.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/notebook/construir.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/notebook_exportar_pdf.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/notebook/exportar_pdf.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/articulo_generar_material.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/articulo/generar_material.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/articulo_compilar.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/articulo/compilar.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_analisis.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_analisis.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_bloque0.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_bloque0.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_estadistica.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_estadistica.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_modelo_nuevo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_modelo_nuevo.py</span></code></a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Descarga esta pagina">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/ProyectoFinal/08_dashboard.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Descargar archivo fuente"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Imprimir en PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Modo de pantalla completa"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Tema" data-bs-title="Tema"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Claro"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Oscuro"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="Sistema"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>8. Dashboard y despliegue</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contenido </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#arquitectura">8.1. Arquitectura</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#las-tres-secciones">8.2. Las tres secciones</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decisiones-de-diseno">8.3. Decisiones de diseño</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ficha-del-modelo-y-declaracion-de-los-datos">8.4. Ficha del modelo y declaración de los datos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#guia-de-despliegue">8.5. Guía de despliegue</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="dashboard-y-despliegue">
+<h1>8. Dashboard y despliegue<a class="headerlink" href="#dashboard-y-despliegue" title="Link to this heading">#</a></h1>
+<p><strong>URL pública:</strong> <a class="reference external" href="https://fuga-de-clientes-dash.onrender.com">https://fuga-de-clientes-dash.onrender.com</a> (Render, plan gratuito: si estuvo inactivo, la primera
+carga tarda cerca de un minuto). El código está en
+<a class="reference external" href="https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech/tree/main/Dashboard"><code class="docutils literal notranslate"><span class="pre">Dashboard/</span></code></a> y su guía de
+uso en <code class="docutils literal notranslate"><span class="pre">Dashboard/README.md</span></code>.</p>
+<section id="arquitectura">
+<h2>8.1. Arquitectura<a class="headerlink" href="#arquitectura" title="Link to this heading">#</a></h2>
+<p>Aplicación Dash multipágina (<code class="docutils literal notranslate"><span class="pre">use_pages=True</span></code>), con una página por sección y la interfaz, la lógica de datos y los
+artefactos separados (<a class="reference internal" href="#tab-arquitectura"><span class="std std-ref">Tabla 8.1</span></a>).</p>
+<p id="tab-arquitectura"><strong>Tabla 8.1.</strong> Arquitectura del dashboard: piezas, archivos y función de cada una.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Pieza</p></th>
+<th class="head"><p>Archivo</p></th>
+<th class="head"><p>Qué hace</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Punto de entrada</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">app.py</span></code></p></td>
+<td><p>Crea la aplicación, expone <code class="docutils literal notranslate"><span class="pre">server</span></code> para gunicorn y define la navegación</p></td>
+</tr>
+<tr class="row-odd"><td><p>Páginas</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">paginas/contexto.py</span></code>, <code class="docutils literal notranslate"><span class="pre">paginas/eda.py</span></code>, <code class="docutils literal notranslate"><span class="pre">paginas/modelos.py</span></code></p></td>
+<td><p>Las tres secciones de la guía</p></td>
+</tr>
+<tr class="row-even"><td><p>Vistas de Modelos</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">secciones/</span></code></p></td>
+<td><p>Tabla de líderes, predicción en vivo, diagnóstico, interpretabilidad, comparación estadística, modelo original, ficha del modelo y las vistas de la EBM</p></td>
+</tr>
+<tr class="row-odd"><td><p>Modelo original</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">src/original_model.py</span></code></p></td>
+<td><p>Copia exacta de <code class="docutils literal notranslate"><span class="pre">ModeloOriginal/src/original_model.py</span></code>; una prueba comprueba que son idénticos</p></td>
+</tr>
+<tr class="row-even"><td><p>Modelos en vivo</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">modelos_vivos.py</span></code>, <code class="docutils literal notranslate"><span class="pre">explicacion.py</span></code></p></td>
+<td><p>Carga los artefactos una sola vez, predice, calcula la incertidumbre y la explicación local</p></td>
+</tr>
+<tr class="row-odd"><td><p>Datos</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">datos_app.py</span></code>, <code class="docutils literal notranslate"><span class="pre">datos/</span></code></p></td>
+<td><p>Tablas ya calculadas; el dashboard nunca entrena ni optimiza. <code class="docutils literal notranslate"><span class="pre">datos/original/</span></code> es copia de los resultados de <code class="docutils literal notranslate"><span class="pre">ModeloOriginal/resultados</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Artefactos</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">artifacts/&lt;tarea&gt;/&lt;modelo&gt;/</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">modelo.joblib</span></code> y <code class="docutils literal notranslate"><span class="pre">metadata.json</span></code> de cada modelo final, con la prueba de ida y vuelta</p></td>
+</tr>
+<tr class="row-odd"><td><p>Preparación</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">preparar_datos.py</span></code>, <code class="docutils literal notranslate"><span class="pre">preparar_artefactos.py</span></code>, <code class="docutils literal notranslate"><span class="pre">preparar_original.py</span></code></p></td>
+<td><p>Arman los datos y los artefactos a partir de los resultados; el último añade el modelo original y se relanza cuando hay resultados nuevos</p></td>
+</tr>
+<tr class="row-even"><td><p>Sistema visual</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ui.py</span></code>, <code class="docutils literal notranslate"><span class="pre">tokens.py</span></code>, <code class="docutils literal notranslate"><span class="pre">assets/</span></code></p></td>
+<td><p>Componentes, paleta y tipografía únicos</p></td>
+</tr>
+<tr class="row-odd"><td><p>Pruebas</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tests/</span></code>, <code class="docutils literal notranslate"><span class="pre">probar_app.py</span></code>, <code class="docutils literal notranslate"><span class="pre">verificar_cifras.py</span></code>, <code class="docutils literal notranslate"><span class="pre">verificar_estilo.py</span></code></p></td>
+<td><p>Corren en cada <em>push</em> con GitHub Actions</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="las-tres-secciones">
+<h2>8.2. Las tres secciones<a class="headerlink" href="#las-tres-secciones" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Contexto:</strong> el problema con una cifra citada <span class="bibtex-citation" id="id1">[<a class="reference internal" href="10_reproducibilidad.html#id20" title="Amy Gallo. The value of keeping the right customers. Harvard Business Review, October 2014. URL: https://hbr.org/2014/10/the-value-of-keeping-the-right-customers.">Gallo, 2014</a>]</span>, por qué importa, la pregunta y los objetivos, la
+formulación, los datos con su diccionario, el diagrama del flujo de datos y modelos, la búsqueda con dos fidelidades, las
+limitaciones y los sesgos, las conclusiones, los autores, la versión y la fecha.</p></li>
+<li><p><strong>EDA:</strong> filtros globales que actualizan todas las figuras, el objetivo y su balance, distribuciones, explorador
+bivariado, correlaciones, faltantes y atípicos, y la escalera de <code class="docutils literal notranslate"><span class="pre">active_products</span></code>; cada figura con su interpretación.</p></li>
+<li><p><strong>Modelos:</strong> tabla de líderes ordenable y filtrable, predicción en vivo con validación de entradas, probabilidad o
+intervalo, incertidumbre con su cobertura y explicación local; diagnóstico; interpretabilidad global; comparación
+estadística con el modelo original incluido; <strong>la subsección del modelo original</strong> (descripción, formulación,
+pseudocódigo, proposiciones, diferencias con la literatura, curva de convergencia, techo del problema, pruebas de
+hipótesis con p ajustados y tamaño del efecto, robustez y veredicto); y la ficha del modelo. Las vistas de la EBM se
+conservan en un grupo aparte, rotuladas como benchmark.</p></li>
+</ul>
+<p>La sección Modelos tiene trece vistas en tres grupos: cinco para los diez modelos, dos para el modelo original y seis
+para la EBM. Las tres capturas que siguen muestran las que más importan para esta corrección: la subsección del modelo
+original (<a class="reference internal" href="#fig-dash-original"><span class="std std-ref">Figura 8.1</span></a>), la predicción en vivo (<a class="reference internal" href="#fig-dash-prediccion"><span class="std std-ref">Figura 8.2</span></a>) y la
+tabla de líderes (<a class="reference internal" href="#fig-dash-lideres"><span class="std std-ref">Figura 8.3</span></a>). Se toman con <code class="docutils literal notranslate"><span class="pre">ProyectoFinal/capturar_dash.py</span></code> del dashboard en
+ejecución, con los mismos datos del libro.</p>
+<figure class="align-default" id="fig-dash-original">
+<a class="reference internal image-reference" href="../_images/dash_original.png"><img alt="../_images/dash_original.png" src="../_images/dash_original.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figura 13 </span><span class="caption-text"><strong>Figura 8.1.</strong> Subsección del modelo original en el dashboard (Modelos › Modelo original). <strong>Interpretación:</strong> la
+página abre con la respuesta a las tres preguntas de la guía (qué es el modelo, cómo aprende y si supera o no a los
+benchmarks) y con el veredicto calculado a partir de los archivos de resultados; debajo siguen la formulación, el
+pseudocódigo, las proposiciones, las pruebas de hipótesis y la robustez.</span><a class="headerlink" href="#fig-dash-original" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-dash-prediccion">
+<a class="reference internal image-reference" href="../_images/dash_prediccion.png"><img alt="../_images/dash_prediccion.png" src="../_images/dash_prediccion.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figura 14 </span><span class="caption-text"><strong>Figura 8.2.</strong> Predicción en vivo con el modelo original para un cliente de prueba: pronóstico del puntaje, conjunto de
+predicción e intervalo simétrico, con su cobertura medida en prueba. <strong>Interpretación:</strong> el conjunto de predicción no es
+un intervalo, sino una unión de tramos cortos, uno por nivel del escalón; el intervalo simétrico del mismo cliente, que
+es lo que pueden dar los demás modelos, es mucho más ancho.</span><a class="headerlink" href="#fig-dash-prediccion" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-dash-lideres">
+<a class="reference internal image-reference" href="../_images/dash_lideres.png"><img alt="../_images/dash_lideres.png" src="../_images/dash_lideres.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figura 15 </span><span class="caption-text"><strong>Figura 8.3.</strong> Tabla de líderes de la regresión con los diez modelos: combinación, métrica en los pliegues externos,
+pertenencia a los finalistas de Nemenyi, métrica en prueba con su intervalo de confianza, costo y motivo de la
+combinación. <strong>Interpretación:</strong> la tabla se puede ordenar y filtrar por cualquier columna; la de finalistas dice qué
+modelos no se distinguen del mejor rango medio con la prueba de Nemenyi, es decir, entre cuáles las diferencias son
+demasiado pequeñas para separarlos con esa prueba.</span><a class="headerlink" href="#fig-dash-lideres" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="decisiones-de-diseno">
+<h2>8.3. Decisiones de diseño<a class="headerlink" href="#decisiones-de-diseno" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>El dashboard no entrena.</strong> Carga tuberías ya ajustadas y las evalúa; cada artefacto guarda sus versiones, su
+semilla, sus hiperparámetros, el esquema de entrada y sus métricas, y pasó la prueba de ida y vuelta (las
+predicciones del modelo cargado son idénticas a las del modelo en memoria).</p></li>
+<li><p><strong>Toda cifra sale de un archivo</strong> y cada tarjeta dice de cuál. Ninguna se escribe a mano.</p></li>
+<li><p><strong>El veredicto se calcula, no se redacta.</strong> La subsección del modelo original lee las condiciones de la guía del
+archivo de resultados y dice «superior» o «no superior» según se cumplan.</p></li>
+<li><p><strong>Memoria y tiempo.</strong> El servidor gratuito tiene 512 MB y una fracción de CPU: los modelos se cargan una vez al
+arrancar y se guardan en caché; el modelo original solo necesita <code class="docutils literal notranslate"><span class="pre">numpy</span></code>, <code class="docutils literal notranslate"><span class="pre">scipy</span></code> y <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code>, y con profundidad 1
+predice consultando una tabla por variable.</p></li>
+<li><p><strong>Accesibilidad y diseño.</strong> Una paleta limitada, contraste suficiente, nada depende solo del color, navegación fija
+y diseño adaptable a teléfono y tableta.</p></li>
+<li><p><strong>Sistema visual propio en lugar de <code class="docutils literal notranslate"><span class="pre">dash-bootstrap-components</span></code>.</strong> La guía (§7.4) propone esa librería para lograr un
+diseño coherente. El dashboard ya tenía, desde el Entregable 3, un sistema propio que cumple lo mismo que la guía
+busca con ella: <code class="docutils literal notranslate"><span class="pre">assets/estilos.css</span></code> define la paleta (cinco colores para las series de las figuras), la tipografía,
+el espaciado y la rejilla adaptable; <code class="docutils literal notranslate"><span class="pre">tokens.py</span></code> los lee, para que el código no repita ningún color; <code class="docutils literal notranslate"><span class="pre">ui.py</span></code> reúne los
+componentes (tarjetas, avisos, controles, tablas y los estilos comunes de las figuras de Plotly); y la parte estática
+de <code class="docutils literal notranslate"><span class="pre">verificar_estilo.py</span></code>, que corre con las pruebas en cada <em>push</em>, comprueba que las páginas no usen colores ni
+estilos fuera de ese sistema. Los mensajes de error y de validación usan el componente de aviso propio en lugar de
+<code class="docutils literal notranslate"><span class="pre">dbc.Alert</span></code>. Cambiar de librería a estas alturas habría obligado a rehacer las trece vistas sin ganar nada de lo que
+pide el criterio.</p></li>
+<li><p><strong>Cifras que el dashboard vuelve a calcular.</strong> Las métricas de cada modelo salen de los mismos archivos que las del
+libro. Los intervalos de confianza en prueba de la tabla de líderes los calcula la preparación del dashboard con su
+propio remuestreo, y el costo de los ocho modelos del Entregable 3 es el que quedó guardado con sus artefactos: por
+eso pueden diferir en la última cifra de los de las tablas <a class="reference internal" href="06_validacion.html#tab-resumen-regresion"><span class="std std-ref">6.5</span></a> y
+<a class="reference internal" href="06_validacion.html#tab-resumen-clasificacion"><span class="std std-ref">6.6</span></a>, que se midieron de nuevo para los diez modelos. El desempate de la campaña
+también es distinto, y se explica en la <a class="reference internal" href="06_validacion.html#tab-empates"><span class="std std-ref">Tabla 6.11</span></a>.</p></li>
+</ul>
+</section>
+<section id="ficha-del-modelo-y-declaracion-de-los-datos">
+<h2>8.4. Ficha del modelo y declaración de los datos<a class="headerlink" href="#ficha-del-modelo-y-declaracion-de-los-datos" title="Link to this heading">#</a></h2>
+<p><a class="reference external" href="https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech/blob/main/Dashboard/MODEL_CARD.md"><code class="docutils literal notranslate"><span class="pre">Dashboard/MODEL_CARD.md</span></code></a>
+(uso previsto, datos de entrenamiento, métricas, limitaciones, riesgos y usos no recomendados), accesible desde la
+propia aplicación, y
+<a class="reference external" href="https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech/blob/main/Dashboard/DATA_STATEMENT.md"><code class="docutils literal notranslate"><span class="pre">Dashboard/DATA_STATEMENT.md</span></code></a>.</p>
+</section>
+<section id="guia-de-despliegue">
+<h2>8.5. Guía de despliegue<a class="headerlink" href="#guia-de-despliegue" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>El repositorio trae <code class="docutils literal notranslate"><span class="pre">render.yaml</span></code> en la raíz, con <code class="docutils literal notranslate"><span class="pre">rootDir:</span> <span class="pre">Dashboard</span></code>, <code class="docutils literal notranslate"><span class="pre">buildCommand:</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span></code>,
+<code class="docutils literal notranslate"><span class="pre">startCommand:</span> <span class="pre">gunicorn</span> <span class="pre">app:server</span></code> y la versión de Python fijada.</p></li>
+<li><p>En Render: <em>New → Blueprint</em>, elegir el repositorio y confirmar. Cada <em>push</em> a <code class="docutils literal notranslate"><span class="pre">main</span></code> que cambie <code class="docutils literal notranslate"><span class="pre">Dashboard/</span></code> vuelve a
+desplegar.</p></li>
+<li><p>Para ejecutarlo en local: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">Dashboard/requirements.txt</span></code> y <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">Dashboard/app.py</span></code>
+(<a class="reference external" href="http://127.0.0.1:8060">http://127.0.0.1:8060</a>).</p></li>
+<li><p>Integración continua: <code class="docutils literal notranslate"><span class="pre">.github/workflows/dashboard.yml</span></code> y <code class="docutils literal notranslate"><span class="pre">.github/workflows/modelo_original.yml</span></code> instalan las
+dependencias exactas y ejecutan <code class="docutils literal notranslate"><span class="pre">pytest</span></code> en cada <em>push</em>.</p></li>
+</ol>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./ProyectoFinal"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="07_evaluacion_ampliada.html"
+       title="página anterior">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">anterior</p>
+        <p class="prev-next-title">7. Evaluación ampliada y robustez</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="09_conclusiones.html"
+       title="siguiente página">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">siguiente</p>
+        <p class="prev-next-title">9. Conclusiones y limitaciones</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contenido
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#arquitectura">8.1. Arquitectura</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#las-tres-secciones">8.2. Las tres secciones</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decisiones-de-diseno">8.3. Decisiones de diseño</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ficha-del-modelo-y-declaracion-de-los-datos">8.4. Ficha del modelo y declaración de los datos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#guia-de-despliegue">8.5. Guía de despliegue</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+Por Martínez Pulido Valerie · Basto Martínez Abrahan · Esguerra Fernández Rubén
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

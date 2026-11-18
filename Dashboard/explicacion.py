@@ -19,10 +19,17 @@ cada llamada). El método depende de la familia del modelo:
              un fondo de clientes de entrenamiento; la eficiencia se cumple igual (cada permutación reparte exactamente
              f(x) - media del fondo) y se informa el error de Monte Carlo de cada aporte.
     ebm      la EBM se explica con su descomposición aditiva exacta (motor.py), no con este módulo.
+    bdl      el modelo original (Boosting con Desplazamiento Latente, src/original_model.py). Exacto, con el método del
+             propio modelo (RegresorBDL.contribuciones): con árboles de un corte el índice F(x) es aditivo y el aporte de
+             una columna es su curva menos la media de esa curva en las filas de ajuste; con árboles más profundos, cada
+             árbol se reparte enumerando los subconjuntos de sus variables. En regresión se descompone el pronóstico
+             (la media, F(x) + Σ π_k c_k); en clasificación, el índice F(x), que es lo único que depende del cliente: la
+             probabilidad sale después de la mezcla (modelos_vivos.excedencia muestra esa conversión).
 
 La escala que se descompone es la natural de cada modelo (ESCALA): el logit en la logística, XGBoost y Naive Bayes, el
-margen en el SVM lineal, la probabilidad en el árbol, Random Forest y k-NN de clasificación y la churn_probability
-predicha en regresión. Por eso los aportes de dos modelos distintos no se comparan en magnitud, solo en orden y signo.
+margen en el SVM lineal, la probabilidad en el árbol, Random Forest y k-NN de clasificación, el índice del puntaje en el
+modelo original de clasificación y la churn_probability predicha en regresión. Por eso los aportes de dos modelos distintos
+no se comparan en magnitud, solo en orden y signo.
 """
 from __future__ import annotations
 
@@ -35,6 +42,8 @@ ARBOLES = {"DecisionTreeClassifier", "DecisionTreeRegressor", "RandomForestClass
 XGB = {"XGBClassifier", "XGBRegressor"}
 VECINOS = {"KNeighborsClassifier", "KNeighborsRegressor"}
 BAYES = {"GaussianNB"}
+BDL = {"RegresorBDL", "ClasificadorBDL"}             # el modelo original (src/original_model.py)
+ESCALA_INDICE = "índice F(x) del puntaje, sin el escalón latente"
 
 # Muestreo en vivo (permutaciones antitéticas, filas del fondo): k-NN es caro de evaluar; el árbol y Random Forest, no
 MUESTREO = {"vecinos": (4, 3), "arbol": (6, 8)}
@@ -57,6 +66,8 @@ def metodo(est) -> str:
         return "vecinos"
     if "ExplainableBoosting" in n or n == "EBMConPesos":
         return "ebm"
+    if n in BDL:
+        return "bdl"
     raise ValueError(f"no hay método de explicación para {n}")
 
 
@@ -65,6 +76,8 @@ def escala(est, tarea: str) -> str:
     if tarea == "regresion":
         return "churn_probability predicha"
     n = type(est).__name__
+    if n == "ClasificadorBDL":
+        return ESCALA_INDICE if getattr(est, "modo_", None) == "excedencia" else "logit del riesgo alto"
     if n == "LinearSVC":
         return "margen del SVM (distancia al hiperplano)"
     if n in {"LogisticRegression", "GaussianNB"} or n in XGB:
@@ -94,6 +107,8 @@ def _salida_z(est, z: np.ndarray, tarea: str) -> np.ndarray:
         return np.asarray(jll[:, 1] - jll[:, 0], dtype=float)
     if n in XGB:
         return np.asarray(est.get_booster().predict(_dmatriz(est, z), output_margin=True), dtype=float)
+    if n == "ClasificadorBDL":          # el índice F(x) (modo excedencia) o el logit (modo directo): lo que suman sus árboles
+        return np.asarray(regresor_bdl(est).indice(z) if est.modo_ == "excedencia" else est.decision_function(z), dtype=float)
     return np.asarray(est.predict_proba(z)[:, 1], dtype=float)
 
 
@@ -148,6 +163,8 @@ def explicar(pipe, X: pd.DataFrame, fondo: pd.DataFrame, tarea: str, semilla: in
     variables = list(X.columns)
     cols = columnas_por_variable(pre)
     m = metodo(est)
+    if m == "bdl":
+        return explicar_bdl(pipe, X, tarea)
     z = _denso(pre.transform(X))
     error = None
     if m == "lineal":
@@ -184,6 +201,45 @@ def explicar(pipe, X: pd.DataFrame, fondo: pd.DataFrame, tarea: str, semilla: in
         raise ValueError("la EBM se explica con motor.py")
     aportes = pd.DataFrame(_agrupar(phi, cols, variables), columns=variables, index=X.index)
     return _resultado(aportes, base, _salida_z(est, z, tarea), m, escala(est, tarea), None, exacto=True)
+
+
+def regresor_bdl(est):
+    """El RegresorBDL que hay detrás de un estimador del modelo original: él mismo, o el que guarda un ClasificadorBDL en
+    modo excedencia (None en modo directo, que no tiene mezcla)."""
+    if type(est).__name__ == "RegresorBDL":
+        return est
+    return est.regresor_ if getattr(est, "modo_", None) == "excedencia" else None
+
+
+def explicar_bdl(pipe, X: pd.DataFrame, tarea: str) -> dict:
+    """Aportes exactos del modelo original por variable original, con el mismo formato que explicar().
+
+    Regresión: base + suma de aportes = pronóstico (la media, F(x) + Σ π_k c_k). Clasificación en modo excedencia: base +
+    suma de aportes = el índice F(x); la probabilidad es Σ π_k Φ((F(x) + c_k − τ)/σ) y no se reparte entre variables
+    porque la mezcla no depende del cliente. Clasificación en modo directo (sin puntaje): se descompone el logit, con
+    los valores de Shapley exactos de cada árbol."""
+    pre, est = pipe.named_steps["preprocesado"], pipe.named_steps["modelo"]
+    variables = list(X.columns)
+    cols = columnas_por_variable(pre)
+    z = _denso(pre.transform(X))
+    reg = regresor_bdl(est)
+    if reg is not None:
+        phi, base = reg.contribuciones(z)
+        if tarea == "clasificacion":
+            base, y = float(base) - float(reg.desplazamiento_medio_), np.asarray(reg.indice(z), dtype=float)
+        else:
+            y = np.asarray(reg.predict(z), dtype=float)
+    else:                                              # modo directo: los árboles suman el logit
+        import importlib
+        modulo = importlib.import_module(type(est).__module__)
+        C = modulo.codificar(z, est.cortes_)
+        phi = np.zeros(C.shape, dtype=float)
+        base = float(est.intercepto_)
+        for arbol in zip(est.arboles_variable_, est.arboles_corte_, est.arboles_valor_, est.arboles_cobertura_):
+            base += modulo._aportes_arbol(*arbol, C, phi)
+        y = np.asarray(est.decision_function(z), dtype=float)
+    aportes = pd.DataFrame(_agrupar(np.asarray(phi, dtype=float), cols, variables), columns=variables, index=X.index)
+    return _resultado(aportes, np.full(len(X), float(base)), y, "bdl", escala(est, tarea), None, exacto=True)
 
 
 def _resultado(aportes, base, y, m, esc, error, exacto) -> dict:

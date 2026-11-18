@@ -1,20 +1,26 @@
 """Tabla de líderes · ¿Cuál es la mejor combinación de cada modelo?
 
-La primera vista de Modelos. Para cada uno de los ocho modelos de la tarea, la combinación (balanceo, solo en clasificación,
-y optimizador) que eligió la métrica media del bucle externo de la validación anidada, en una tabla interactiva
-(dash_table.DataTable, que se ordena y se filtra): la métrica externa como media ± desviación de los pliegues externos, la
-de prueba con su intervalo BCa, el costo (inferencia, ajuste final y tamaño) y si el modelo queda entre los finalistas de la
-comparación estadística (clasificación: a menos de la diferencia crítica de Nemenyi del mejor rango medio, datos/cd.json;
-regresión: dentro del Model Confidence Set, columnas p_mcs y en_mcs de datos/resultados/regresion_prueba.csv). Debajo, la
-mejor combinación global y, para el modelo elegido (al pulsar una fila o con el selector), todas sus combinaciones con el
-motivo de la elección, lo que quedó en el modelo final y los enlaces a su predicción en vivo y a su diagnóstico.
+La primera vista de Modelos. Para cada uno de los diez modelos de la tarea (el modelo original, BDL; los dos benchmarks
+recientes, la EBM y LightGBM; y los siete modelos de clase), la combinación (balanceo, solo en clasificación, y optimizador)
+con que compite, en una tabla interactiva (dash_table.DataTable, que se ordena y se filtra): la métrica externa como media ±
+desviación de los pliegues externos, la de prueba con su intervalo BCa, el costo (inferencia, ajuste final y tamaño) y si
+el modelo queda entre los finalistas de la comparación estadística (a menos de la diferencia crítica de Nemenyi del mejor
+rango medio de los pliegues externos, datos/cd.json, en las dos tareas). Debajo, la mejor combinación global, dónde queda
+el modelo original con su veredicto y, para el modelo elegido (al pulsar una fila o con el selector), cómo se eligió su
+combinación, lo que quedó en el modelo final y los enlaces a su predicción en vivo y a su diagnóstico.
 
-La regla de elección es la del proyecto (Entregable 3, src/analisis.py::mejores_por_modelo): entre las corridas «ok» de cada
-modelo, la de mayor media_ext (en regresión es el RMSE con el signo cambiado); con un empate exacto, la primera de la tabla.
-La vista la vuelve a aplicar sobre datos/entrega3/corridas.csv y avisa si no da la combinación del artefacto o si los
-archivos no cuadran. Ninguna cifra se escribe a mano: todas salen de datos/ o de artifacts/.
+Las filas tienen dos orígenes, y la tabla lo dice:
+  · Los ocho modelos del Entregable 3 traen la mejor de sus combinaciones con la regla del proyecto (Entregable 3,
+    src/analisis.py::mejores_por_modelo): entre las corridas «ok» de cada modelo, la de mayor media_ext (en regresión es el
+    RMSE con el signo cambiado); con un empate exacto, la primera de la tabla. La vista la vuelve a aplicar sobre
+    datos/entrega3/corridas.csv y avisa si no da la combinación del artefacto o si los archivos no cuadran.
+  · BDL y LightGBM vienen de la corrección (datos/original/, que arma preparar_original.py), con una sola combinación,
+    fijada en el protocolo pre-registrado antes de ejecutar. LightGBM no tiene artefacto: está en la tabla, no en vivo.
+La métrica externa de todos sale de los mismos pliegues (D.lideres: datos/original/pliegues_<tarea>.csv cuando existe), los
+que usa el veredicto del modelo original. Ninguna cifra se escribe a mano: todas salen de datos/ o de artifacts/, y el
+veredicto, de D.frase_veredicto (veredicto.json y condicion4.json).
 
-    /modelos/lideres?tarea=regresion&modelo=ebm      abre con esa tarea y ese modelo en «Cómo se eligió cada fila»
+    /modelos/lideres?tarea=regresion&modelo=bdl      abre con esa tarea y ese modelo en «Cómo se eligió cada fila»
 """
 import json
 import math
@@ -32,15 +38,15 @@ import ui
 VISTA = "lideres"
 PRE = "ld"
 PANTALLA = "comparacion"            # la pantalla cuyo icono lleva la cabecera (la balanza de la tabla de líderes)
-NIVEL_MCS = 0.90                    # nivel del Model Confidence Set del informe (resultados.tex: «al 90 %»); el mismo de
-                                    # secciones/comparacion.py, porque datos/resultados/resumen.json no lo guarda
+O = D.ORIGINAL
+E3 = "Entregable 3"                 # el valor de «origen» de las ocho filas del informe en D.lideres
 TOLERANCIA = 1e-9                   # dos copias de la misma métrica (csv y metadata.json) pueden diferir en el redondeo del csv
 
 CORRIDAS = "entrega3/corridas.csv"
 COSTO = "resultados/costo.csv"
 CD = "cd.json"
-RESUMEN = "resultados/resumen.json"
 METADATA = "artifacts/{tarea}/{modelo}/metadata.json"
+PROTOCOLO = "ModeloOriginal/experiments/protocolo.md (protocolo pre-registrado: modelos y presupuesto de ajuste)"
 
 # Lo que cambia entre las dos tareas: columnas de datos/resultados, decimales del informe y nombres
 TAREA = {
@@ -56,10 +62,13 @@ TAREA = {
 # (Como el informe, «el AUC» va en masculino: «el AUC externo», «el mayor AUC medio».)
 D_INFERENCIA, D_AJUSTE, D_TAMANO, D_CORRIDA, D_RANGO = 3, 2, 3, 1, 1     # decimales de la tabla de costo del informe
 CIFRAS_HIPERPARAMETRO = 4           # cifras significativas de un hiperparámetro real (0,02361 · 621)
-CARDINAL = {1: "un", 2: "dos", 3: "tres", 4: "cuatro", 5: "cinco", 6: "seis", 7: "siete", 8: "ocho", 12: "doce", 16: "dieciséis"}
-ORDINAL_F = {1: "primera", 2: "segunda", 3: "tercera", 4: "cuarta", 5: "quinta", 6: "sexta", 7: "séptima", 8: "octava"}
-FUENTES_TABLA = ([D.fuente(f"resultados/{t}_prueba.csv") for t in TAREA]
-                 + [D.fuente(COSTO), D.fuente(CD), D.fuente(CORRIDAS), METADATA, D.fuente(RESUMEN)])
+CARDINAL = {1: "un", 2: "dos", 3: "tres", 4: "cuatro", 5: "cinco", 6: "seis", 7: "siete", 8: "ocho", 9: "nueve", 10: "diez",
+            12: "doce", 15: "quince", 16: "dieciséis"}
+ORDINAL_M = {1: "primero", 2: "segundo", 3: "tercero", 4: "cuarto", 5: "quinto", 6: "sexto", 7: "séptimo", 8: "octavo", 9: "noveno",
+             10: "décimo"}
+FUENTES_TABLA = ([D.fuente(f"resultados/{t}_prueba.csv") for t in TAREA] + [D.fuente_original("lideres_<tarea>.csv"),
+                 D.fuente_original("pliegues_<tarea>.csv"), D.fuente(COSTO), D.fuente_original("costo.csv"), D.fuente(CD),
+                 D.fuente(CORRIDAS), METADATA])
 
 
 # --- Textos ---------------------------------------------------------------------------------------------------------------
@@ -122,7 +131,15 @@ def _valor_hiperparametro(v):
         d = max(0, CIFRAS_HIPERPARAMETRO - 1 - math.floor(math.log10(abs(v))))
         texto = ui.num(v, d)
         return texto.rstrip("0").rstrip(",") if "," in texto else texto
-    return str(v)
+    return "automático (BIC)" if v == "auto" else str(v)
+
+
+def _pliegues_externos(n, externos):
+    """«los cinco pliegues externos» o, con varias repeticiones, «los quince pliegues externos (tres repeticiones de cinco)»."""
+    texto = f"los {_cardinal(n)} pliegues externos"
+    if n > externos and n % externos == 0:
+        texto += f" ({_cardinal(n // externos)} repeticiones de {_cardinal(externos)})"
+    return texto
 
 
 # --- Números para la tabla interactiva ------------------------------------------------------------------------------------
@@ -154,10 +171,13 @@ def _corridas(tarea, modelo):
 
 
 def _eleccion(tarea, modelo):
-    """Cómo se eligió la combinación de un modelo entre sus corridas, con la regla del proyecto: la de mayor media_ext entre
-    las «ok» (idxmax: con un empate exacto, la primera de la tabla). Devuelve la elegida, la segunda, el margen entre las dos,
-    cuántas empatan con la elegida, cuántas quedan a menos de una desviación de ella y las que no se aplican."""
+    """Cómo se eligió la combinación de un modelo del Entregable 3 entre sus corridas, con la regla del proyecto: la de mayor
+    media_ext entre las «ok» (idxmax: con un empate exacto, la primera de la tabla). Devuelve la elegida, la segunda, el
+    margen entre las dos, cuántas empatan con la elegida, cuántas quedan a menos de una desviación de ella y las que no se
+    aplican. None para BDL y LightGBM, que tienen una sola combinación, la del protocolo de la corrección."""
     todas = _corridas(tarea, modelo)
+    if todas.empty:
+        return None
     ok = todas[todas["estado"] == "ok"]
     elegida = ok.loc[ok["media_ext"].idxmax()]
     resto = ok.drop(index=elegida.name)
@@ -170,76 +190,90 @@ def _eleccion(tarea, modelo):
 
 
 def _finalistas(tarea):
-    """Los finalistas de la comparación estadística. Clasificación: los modelos a menos de la diferencia crítica de Nemenyi
-    del mejor rango medio (datos/cd.json; dos modelos difieren si sus rangos medios se separan al menos esa diferencia).
-    Regresión: los que quedan en el Model Confidence Set (columna en_mcs). `valor` es el rango medio o el p del MCS."""
-    if tarea == "clasificacion":
-        n = D.json(CD)[tarea]
-        rangos = pd.Series(n["rango_medio"], dtype=float)
-        mejor = float(rangos.min())
-        return {"dentro": [m for m in rangos.index if rangos[m] - mejor < n["diferencia_critica"]], "valor": rangos.to_dict(),
-                "mejor": mejor, "dc": float(n["diferencia_critica"]), "cd": n}
-    t = D.prueba(tarea).set_index("modelo")
-    dentro = [m for m in t.index if bool(t.loc[m, "en_mcs"])]
-    fuera = t[~t["en_mcs"].astype(bool)].sort_values("p_mcs", ascending=False)
-    return {"dentro": dentro, "valor": t["p_mcs"].astype(float).to_dict(),
-            "ultima": fuera.index[0] if not fuera.empty else None}
+    """Los finalistas de la comparación estadística, en las dos tareas: los modelos a menos de la diferencia crítica de
+    Nemenyi del mejor rango medio en los pliegues externos (datos/cd.json, con todos los modelos de la tabla cuando la
+    corrección ya los dejó; dos modelos difieren si sus rangos medios se separan al menos esa diferencia). `valor` es el
+    rango medio de cada modelo."""
+    n = D.json(CD)[tarea]
+    rangos = pd.Series(n["rango_medio"], dtype=float)
+    mejor = float(rangos.min())
+    return {"dentro": [m for m in rangos.index if rangos[m] - mejor < n["diferencia_critica"]], "valor": rangos.to_dict(),
+            "mejor": mejor, "dc": float(n["diferencia_critica"]), "cd": n}
 
 
 def _lideres(tarea):
-    """Una fila por modelo con su mejor combinación, en el orden del bucle externo (puesto 1 = la mejor métrica externa), y
-    la lista de lo que no cuadra entre los archivos (vacía si todo coincide)."""
+    """Una fila por modelo con su combinación, en el orden del bucle externo (puesto 1 = la mejor métrica externa), y la
+    lista de lo que no cuadra entre los archivos (vacía si todo coincide)."""
     c = TAREA[tarea]
-    t = D.prueba(tarea)
+    t = D.lideres(tarea)
     costo = D.tabla(COSTO)
     costo = costo[costo["tarea"] == tarea].set_index("modelo")
     fin = _finalistas(tarea)
+    en_vivo = set(V.modelos(tarea))
+    externos, _internos = _pliegues(tarea)
     filas, problemas = [], []
     for _, f in t.iterrows():
         m = f["modelo"]
-        meta = V.metadata(tarea, m)
-        e = _eleccion(tarea, m)
-        balanceo = str(f["balanceo"]) if "balanceo" in f.index else str(meta["balanceo"])
+        nombre = D.NOMBRE_MODELO[m]
+        meta = V.metadata(tarea, m) if m in en_vivo else None
+        balanceo = str(f["balanceo"]) if "balanceo" in f.index else (str(meta["balanceo"]) if meta else "ninguno")
         optimizador = str(f["optimizador"])
-        elegida = (str(e["elegida"]["balanceo"]), str(e["elegida"]["optimizador"]))
-        if not (elegida == (balanceo, optimizador) == (meta["balanceo"], meta["optimizador"])):
-            problemas.append(f"{D.NOMBRE_MODELO[m]}: la regla de elección da {_rotulo_combinacion(tarea, *elegida)}, la tabla de resultados "
-                             f"{_rotulo_combinacion(tarea, balanceo, optimizador)} y el artefacto "
-                             f"{_rotulo_combinacion(tarea, meta['balanceo'], meta['optimizador'])}.")
-        externa = meta["metricas_bucle_externo"]
-        if (abs(externa["media"] - f[c["externa"]]) > TOLERANCIA or abs(externa["desviacion"] - f[c["externa_desv"]]) > TOLERANCIA
-                or abs(e["elegida"]["metrica_externa"] - f[c["externa"]]) > TOLERANCIA):
-            problemas.append(f"{D.NOMBRE_MODELO[m]}: la métrica externa no coincide entre {D.fuente(f'resultados/{tarea}_prueba.csv')}, "
-                             f"{D.fuente(CORRIDAS)} y su metadata.json.")
-        if m not in costo.index:
-            problemas.append(f"{D.NOMBRE_MODELO[m]}: no está en {D.fuente(COSTO)}.")
+        e = _eleccion(tarea, m) if f["origen"] == E3 else None
+        if f["origen"] == E3:
+            elegida = (str(e["elegida"]["balanceo"]), str(e["elegida"]["optimizador"]))
+            if not (elegida == (balanceo, optimizador) == (meta["balanceo"], meta["optimizador"])):
+                problemas.append(f"{nombre}: la regla de elección da {_rotulo_combinacion(tarea, *elegida)}, la tabla de resultados "
+                                 f"{_rotulo_combinacion(tarea, balanceo, optimizador)} y el artefacto "
+                                 f"{_rotulo_combinacion(tarea, meta['balanceo'], meta['optimizador'])}.")
+            if abs(e["elegida"]["metrica_externa"] - f[c["externa"]]) > TOLERANCIA:
+                problemas.append(f"{nombre}: la métrica externa no coincide entre {D.fuente(f'resultados/{tarea}_prueba.csv')} y "
+                                 f"{D.fuente(CORRIDAS)}.")
+            k = costo.loc[m] if m in costo.index else None
+        else:
+            if meta is not None and (balanceo, optimizador) != (meta["balanceo"], meta["optimizador"]):
+                problemas.append(f"{nombre}: la tabla de la corrección da {_rotulo_combinacion(tarea, balanceo, optimizador)} y el "
+                                 f"artefacto {_rotulo_combinacion(tarea, meta['balanceo'], meta['optimizador'])}.")
+            k = D.costo_original(tarea, m)
+        if meta is not None:
+            externa = meta["metricas_bucle_externo"]
+            if (abs(externa["media"] - f[c["externa"]]) > TOLERANCIA or abs(externa["desviacion"] - f[c["externa_desv"]]) > TOLERANCIA):
+                problemas.append(f"{nombre}: la métrica externa de la tabla de resultados no coincide con la de su metadata.json.")
+        if int(f["externa_pliegues"]) == externos and abs(f["externa_media"] - f[c["externa"]]) > TOLERANCIA:
+            problemas.append(f"{nombre}: la métrica externa de {D.fuente_original(f'pliegues_{tarea}.csv')} no coincide con la de la "
+                             "tabla de resultados.")
+        if k is None:
+            problemas.append(f"{nombre}: no está en {D.fuente(COSTO) if f['origen'] == E3 else D.fuente_original('costo.csv')}.")
             continue
-        k = costo.loc[m]
-        filas.append({"modelo": m, "balanceo": balanceo, "optimizador": optimizador, "externa": float(f[c["externa"]]),
-                      "desv": float(f[c["externa_desv"]]), "prueba": float(f[c["prueba"]]), "inf": float(f[c["inf"]]),
-                      "sup": float(f[c["sup"]]), "inferencia": float(k["inferencia_s"]), "ajuste": float(k["ajuste_s"]),
-                      "tamano": float(k["tamano_mb"]), "parametros": int(k["parametros"]), "corrida": float(k["corrida_min"]),
-                      "n_ok": len(e["ok"]), "n_todas": len(e["todas"]), "empates": e["empates"], "margen": e["margen"],
-                      "finalista": m in fin["dentro"], "criterio": float(fin["valor"][m])})
+        filas.append({"modelo": m, "origen": f["origen"], "en_vivo": m in en_vivo, "balanceo": balanceo, "optimizador": optimizador,
+                      "externa": float(f["externa_media"]), "desv": float(f["externa_desv"]), "pliegues": int(f["externa_pliegues"]),
+                      "prueba": float(f[c["prueba"]]), "inf": float(f[c["inf"]]), "sup": float(f[c["sup"]]),
+                      "inferencia": float(k["inferencia_s"]), "ajuste": float(k["ajuste_s"]), "tamano": float(k["tamano_mb"]),
+                      "parametros": None if pd.isna(k["parametros"]) else int(k["parametros"]), "corrida": float(k["corrida_min"]),
+                      "n_ok": len(e["ok"]) if e else 1, "n_todas": len(e["todas"]) if e else 1, "empates": e["empates"] if e else 1,
+                      "margen": e["margen"] if e else None,
+                      "finalista": (m in fin["dentro"]) if m in fin["valor"] else None,
+                      "criterio": float(fin["valor"][m]) if m in fin["valor"] else None})
     L = pd.DataFrame(filas).sort_values("externa", ascending=not c["mayor_es_mejor"], kind="stable").reset_index(drop=True)
     L["puesto"] = L["externa"].rank(ascending=not c["mayor_es_mejor"], method="min").astype(int)
     return L, problemas
 
 
 def _motivo(tarea, f):
-    """Por qué esa fila, en pocas palabras: la mejor de cuántas combinaciones y con qué margen sobre la segunda."""
+    """Por qué esa fila, en pocas palabras: la mejor de cuántas combinaciones y con qué margen sobre la segunda; para BDL y
+    LightGBM, la única, fijada en el protocolo."""
     d = TAREA[tarea]["d"] + 1
+    if f["origen"] != E3:
+        return "Única, fijada en el protocolo"
     if f["empates"] > 1:
         return f"Empate exacto de {f['empates']}; la primera"
     margen = "" if pd.isna(f["margen"]) else f"; margen {ui.num(f['margen'], d)}"
     return f"Mejor de {f['n_ok']}{margen}"
 
 
-def _finalista_texto(tarea, f):
-    estado = "sí" if f["finalista"] else "no"
-    if tarea == "clasificacion":
-        return f"{estado} (rango {ui.num(f['criterio'], D_RANGO)})"
-    return f"{estado} ({_p(f['criterio'])})"
+def _finalista_texto(f):
+    if f["finalista"] is None or pd.isna(f["criterio"]):
+        return F.RAYA
+    return f"{'sí' if f['finalista'] else 'no'} (rango {ui.num(f['criterio'], D_RANGO)})"
 
 
 def _columnas(tarea):
@@ -249,10 +283,9 @@ def _columnas(tarea):
     if tarea == "clasificacion":
         cols.append(_texto("balanceo", "Balanceo"))
     cols += [_texto("optimizador", "Optimizador"), _num("externa", c["externa_nombre"], c["d"]), _num("desv", "± desv.", c["d"]),
-             _texto("finalista", "Finalista (Nemenyi)" if tarea == "clasificacion" else f"Finalista (MCS al {F.pct(NIVEL_MCS, 0)})"),
-             _texto("prueba", f"{c['metrica']} de prueba [IC 95 %]"), _num("inferencia", "Inferencia (s)", D_INFERENCIA),
-             _num("ajuste", "Ajuste (s)", D_AJUSTE), _num("tamano", "Tamaño (MB)", D_TAMANO),
-             _texto("motivo", "Por qué esta combinación")]
+             _texto("finalista", "Finalista (Nemenyi)"), _texto("prueba", f"{c['metrica']} de prueba [IC 95 %]"),
+             _num("inferencia", "Inferencia (s)", D_INFERENCIA), _num("ajuste", "Ajuste (s)", D_AJUSTE),
+             _num("tamano", "Tamaño (MB)", D_TAMANO), _texto("motivo", "Por qué esta combinación")]
     return cols
 
 
@@ -265,7 +298,7 @@ def _datos(tarea, L):
         filas.append({"id": f["modelo"], "puesto_num": int(f["puesto"]), "modelo": D.NOMBRE_MODELO[f["modelo"]],
                       "balanceo": D.NOMBRE_BALANCEO.get(f["balanceo"], f["balanceo"]),
                       "optimizador": D.NOMBRE_OPTIMIZADOR[f["optimizador"]], "externa_num": _redondo(f["externa"], d),
-                      "desv_num": _redondo(f["desv"], d), "motivo": _motivo(tarea, f), "finalista": _finalista_texto(tarea, f),
+                      "desv_num": _redondo(f["desv"], d), "motivo": _motivo(tarea, f), "finalista": _finalista_texto(f),
                       # la métrica y su intervalo en un solo texto: con el mismo formato, ordenarlo como texto es ordenarlo por valor
                       "prueba": f"{ui.num(f['prueba'], d)} {F.intervalo(f['inf'], f['sup'], d)}",
                       "inferencia_num": _redondo(f["inferencia"], D_INFERENCIA), "ajuste_num": _redondo(f["ajuste"], D_AJUSTE),
@@ -278,42 +311,39 @@ def _opciones(L):
 
 
 def _pliegues(tarea):
-    """Pliegues externos e internos de la validación anidada (los mismos en los 16 artefactos)."""
+    """Pliegues externos e internos de cada repetición de la validación anidada (los mismos en todos los artefactos)."""
     externa = V.metadata(tarea, "ebm")["metricas_bucle_externo"]
     return int(externa["pliegues_externos"]), int(externa["pliegues_internos"])
 
 
+def _foco(L):
+    """El modelo cuya posición cuenta el encabezado: el original si ya está en la tarea; si no, la EBM."""
+    return O if O in set(L["modelo"]) else "ebm"
+
+
 # --- El encabezado y la tabla ---------------------------------------------------------------------------------------------
+def _veredicto(tarea):
+    return f"Con la regla de superioridad de la guía, el veredicto de BDL es: {D.frase_veredicto(tarea)}."
+
+
 def _respuesta(tarea):
-    """El subtítulo de la pantalla: la mejor combinación global, si es finalista, y dónde queda la EBM."""
+    """El subtítulo de la pantalla: la mejor combinación global, si es finalista, y dónde queda el modelo original."""
     c = TAREA[tarea]
     L, _ = _lideres(tarea)
-    fin = _finalistas(tarea)
     g, s = L.iloc[0], L.iloc[1]
     externa = f"{c['externa_nombre']} de {ui.num(g['externa'], c['d'])} ± {ui.num(g['desv'], c['d'])}"
-    if tarea == "clasificacion":
-        estado = "está entre los finalistas de Nemenyi" if g["finalista"] else "no está entre los finalistas de Nemenyi"
-    elif g["finalista"]:
-        estado = (f"es el único modelo del Model Confidence Set al {F.pct(NIVEL_MCS, 0)}" if len(fin["dentro"]) == 1
-                  else f"está en el Model Confidence Set al {F.pct(NIVEL_MCS, 0)}")
-    else:
-        estado = f"no está en el Model Confidence Set al {F.pct(NIVEL_MCS, 0)}"
+    estado = "está entre los finalistas de Nemenyi" if g["finalista"] else "no está entre los finalistas de Nemenyi"
     texto = (f"En {c['que']}, la mejor combinación global es {D.en_frase(g['modelo'])} {_combinacion(tarea, g['balanceo'], g['optimizador'])} "
              f"({externa}), {ui.num(abs(g['externa'] - s['externa']), c['d'] + 1)} por delante {_tras('de', D.en_frase(s['modelo']))}, "
              f"y {estado}.")
-    if g["modelo"] == "ebm":
-        return texto
-    e = L[L["modelo"] == "ebm"].iloc[0]
-    if tarea == "clasificacion":
-        ebm = "también es finalista" if e["finalista"] and g["finalista"] else ("es finalista" if e["finalista"] else "no es finalista")
-    elif e["finalista"]:
-        ebm = "también está en el conjunto"
-    elif fin["ultima"] == "ebm":
-        ebm = f"es la última en salir del conjunto ({_p(e['criterio'])})"
-    else:
-        ebm = f"queda fuera del conjunto ({_p(e['criterio'])})"
-    return (texto + f" La EBM, {_combinacion(tarea, e['balanceo'], e['optimizador'])}, queda {ORDINAL_F[int(e['puesto'])]} "
-            f"({ui.num(e['externa'], c['d'])} ± {ui.num(e['desv'], c['d'])}) y {ebm}.")
+    if O not in set(L["modelo"]):
+        return texto + " El modelo original, BDL, todavía no tiene resultados en esta tarea."
+    if g["modelo"] == O:
+        return f"{texto} Es el modelo original del proyecto. {_veredicto(tarea)}"
+    e = L[L["modelo"] == O].iloc[0]
+    finalista = "también es finalista" if e["finalista"] and g["finalista"] else ("es finalista" if e["finalista"] else "no es finalista")
+    return (f"{texto} El modelo original, BDL, queda {ORDINAL_M.get(int(e['puesto']), F.entero(e['puesto']))} "
+            f"({ui.num(e['externa'], c['d'])} ± {ui.num(e['desv'], c['d'])}) y {finalista}. {_veredicto(tarea)}")
 
 
 def _textos_tabla(tarea):
@@ -323,37 +353,35 @@ def _textos_tabla(tarea):
     fin = _finalistas(tarea)
     g = L.iloc[0]
     externos, internos = _pliegues(tarea)
-    n_fin = len(fin["dentro"])
-    encabeza = f"{D.NOMBRE_MODELO[g['modelo']]} encabeza el bucle externo con {ui.num(g['externa'], c['d'])} de {c['metrica']}"
-    if tarea == "clasificacion":
-        titulo = (f"{encabeza}; {_cardinal(n_fin)} de los {_cardinal(len(L))} modelos quedan a menos de la diferencia crítica de "
-                  "Nemenyi del mejor rango medio")
-    elif g["finalista"]:
-        titulo = (f"{encabeza} y es {'el único modelo' if n_fin == 1 else 'uno de los modelos'} del Model Confidence Set al "
-                  f"{F.pct(NIVEL_MCS, 0)}")
-    else:
-        titulo = f"{encabeza}, pero no queda en el Model Confidence Set al {F.pct(NIVEL_MCS, 0)}"
+    n_fin = int(sum(bool(x) for x in L["finalista"]))
+    titulo = (f"{D.NOMBRE_MODELO[g['modelo']]} encabeza el bucle externo con {ui.num(g['externa'], c['d'])} de {c['metrica']}; "
+              f"{_cardinal(n_fin)} de los {_cardinal(len(L))} modelos quedan a menos de la diferencia crítica de Nemenyi del mejor rango "
+              "medio")
     combinaciones = (f"{len(D.ORDEN_BALANCEOS)} balanceos × {len(D.ORDEN_OPTIMIZADORES)} optimizadores" if tarea == "clasificacion"
                      else f"{len(D.ORDEN_OPTIMIZADORES)} optimizadores; en regresión no hay balanceo")
-    sub = (f"Una fila por modelo, con la combinación ({combinaciones}) de {c['mejor']} en los {_cardinal(externos)} "
-           f"pliegues externos de la validación anidada {externos} × {internos}. Así se eligió, sin mirar la prueba; la prueba se "
-           "midió una sola vez, con el modelo final.")
-    ejemplo = (math.floor(L.loc[L["modelo"] == "ebm", "externa"].iloc[0] * 100) / 100 if c["mayor_es_mejor"]
-               else math.ceil(L.loc[L["modelo"] == "ebm", "externa"].iloc[0] * 100) / 100)
+    nuevos = list(L.loc[L["origen"] != E3, "modelo"])
+    sub = (f"Una fila por modelo, con la combinación con que compite. Los {_cardinal(len(L) - len(nuevos))} modelos del Entregable 3 "
+           f"traen la mejor de las suyas ({combinaciones}), la de {c['mejor']} en los {_cardinal(externos)} pliegues externos de la "
+           f"validación anidada {externos} × {internos}"
+           + (f"; {_lista(nuevos)}, la única que fijó el protocolo de la corrección" if nuevos else "")
+           + ". Así se eligió, sin mirar la prueba; la prueba se midió una sola vez, con el modelo final.")
+    foco = L.loc[L["modelo"] == _foco(L), "externa"].iloc[0]
+    ejemplo = math.floor(foco * 100) / 100 if c["mayor_es_mejor"] else math.ceil(foco * 100) / 100
     texto_ejemplo = D.NOMBRE_OPTIMIZADOR["genetica"]
+    n_pliegues = int(L["pliegues"].iloc[0])
+    costos = ("Los dos tiempos y el tamaño de los modelos del Entregable 3 son los de la tabla de costo computacional del informe; los de "
+              f"{_lista(nuevos)} los midió la corrección ({D.fuente_original('costo.csv')}), en el mismo equipo." if nuevos else
+              "Los dos tiempos y el tamaño son los de la tabla de costo computacional del informe, en el equipo de referencia.")
     notas = [ui.nota(f"Ordene con la flecha de cada encabezado y filtre escribiendo en la fila de debajo: un texto («{texto_ejemplo}», "
                      f"«sí») o, en las columnas numéricas, una condición con punto decimal («{c['filtro']} {ejemplo:.2f}»). Pulse una fila "
                      "para ver más abajo cómo se eligió, con los enlaces a su predicción en vivo y a su diagnóstico."),
-             ui.nota(f"{c['externa_nombre']} y ± desv.: media y desviación de los {_cardinal(externos)} pliegues externos. Finalista: "
-                     + (f"a menos de la diferencia crítica de Nemenyi ({ui.num(fin['dc'], 2)} rangos) del mejor rango medio de los "
-                        f"pliegues ({ui.num(fin['mejor'], D_RANGO)}); entre paréntesis, el rango medio del modelo."
-                        if tarea == "clasificacion" else
-                        f"dentro del Model Confidence Set al {F.pct(NIVEL_MCS, 0)}, calculado sobre la prueba; entre paréntesis, el p "
-                        "del modelo.")
-                     + f" {c['metrica']} de prueba con su intervalo bootstrap BCa del 95 %. Inferencia: puntuar los "
-                       f"{F.entero(D.resumen()['n_prueba'])} clientes de prueba; ajuste: entrenar el modelo final. Los dos tiempos y el "
-                       "tamaño son los de la tabla de costo computacional del informe, en el equipo de referencia. Por qué esta "
-                       "combinación: entre cuántas se eligió y su margen sobre la segunda."),
+             ui.nota(f"{c['externa_nombre']} y ± desv.: media y desviación de {_pliegues_externos(n_pliegues, externos)}, los mismos para "
+                     f"todos los modelos. Finalista: a menos de la diferencia crítica de Nemenyi ({ui.num(fin['dc'], 2)} rangos) del mejor "
+                     f"rango medio de los pliegues ({ui.num(fin['mejor'], D_RANGO)}); entre paréntesis, el rango medio del modelo. "
+                     f"{c['metrica']} de prueba con su intervalo bootstrap BCa del 95 %. Inferencia: puntuar los "
+                     f"{F.entero(D.resumen()['n_prueba'])} clientes de prueba; ajuste: entrenar el modelo final. {costos} Por qué esta "
+                     "combinación: entre cuántas se eligió y su margen sobre la segunda."
+                     + (" LightGBM no se sirve en vivo: no tiene artefacto en la app." if "lightgbm" in set(L["modelo"]) else "")),
              html.Div(ui.boton("Ir a cómo se eligió cada fila", href=f"#{PRE}-eleccion", icono="flecha-abajo", pequeno=True),
                       className="botonera")]
     return titulo, sub, notas
@@ -368,7 +396,7 @@ def _avisos(problemas):
 # --- La mejor combinación global y los finalistas -------------------------------------------------------------------------
 def _global(tarea):
     """Dos tarjetas: la mejor combinación global (con su margen sobre la segunda y si es finalista) y los finalistas, con la
-    lectura de lo que significa serlo."""
+    lectura de lo que significa serlo y el veredicto del modelo original."""
     c = TAREA[tarea]
     L, _ = _lideres(tarea)
     fin = _finalistas(tarea)
@@ -384,79 +412,51 @@ def _global(tarea):
              if margen < g["desv"] else None)
     externa = ui.cifra(c["externa_nombre"], ui.num(g["externa"], d), f"± {ui.num(g['desv'], d)}", variacion=lugar, nota=debil, mini=True)
     estado = ui.chip("finalista", "bien") if g["finalista"] else ui.chip("no es finalista")
-    if tarea == "clasificacion":
-        r = fin["valor"][g["modelo"]]
-        iguales = [m for m, x in fin["valor"].items() if x == fin["mejor"] and m != g["modelo"]]
-        if r == fin["mejor"]:
-            lugar_rango = "Es el mejor rango medio" + (f", empatado con {_lista(iguales)}" if iguales else "")
-        else:
-            lugar_rango = f"A {ui.num(r - fin['mejor'], D_RANGO)} del mejor rango medio"
-        segunda = ui.cifra("Rango medio en los pliegues", ui.num(r, D_RANGO), chip=estado, mini=True,
-                           variacion=f"{lugar_rango}; la diferencia crítica de Nemenyi es {ui.num(fin['dc'], 2)}.")
+    r = fin["valor"][g["modelo"]]
+    iguales = [m for m, x in fin["valor"].items() if x == fin["mejor"] and m != g["modelo"]]
+    if r == fin["mejor"]:
+        lugar_rango = "Es el mejor rango medio" + (f", empatado con {_lista(iguales)}" if iguales else "")
     else:
-        segunda = ui.cifra(f"p en el Model Confidence Set al {F.pct(NIVEL_MCS, 0)}", ui.num(fin["valor"][g["modelo"]], 3), chip=estado,
-                           mini=True, variacion=f"Quedan en el conjunto los modelos con p mayor que {ui.num(1 - NIVEL_MCS, 2)}.")
+        lugar_rango = f"A {ui.num(r - fin['mejor'], D_RANGO)} del mejor rango medio"
+    segunda = ui.cifra("Rango medio en los pliegues", ui.num(r, D_RANGO), chip=estado, mini=True,
+                       variacion=f"{lugar_rango}; la diferencia crítica de Nemenyi es {ui.num(fin['dc'], 2)}.")
     prueba = ui.nota(f"La métrica externa eligió sin mirar la prueba. En la prueba, {D.en_frase(g['modelo'])} obtiene "
                      f"{ui.num(g['prueba'], d)} de {c['metrica']}, con intervalo BCa del 95 % {F.intervalo(g['inf'], g['sup'], d)}.")
     titulo_a = (f"La mejor combinación global, {D.en_frase(g['modelo'])} {_combinacion(tarea, g['balanceo'], g['optimizador'])}, "
                 f"{'está' if g['finalista'] else 'no está'} entre los finalistas")
-    fuentes_a = [D.fuente(f"resultados/{tarea}_prueba.csv"), D.fuente(CD if tarea == "clasificacion" else RESUMEN)]
-    tarjeta_a = ui.tarjeta([ui.cifras([externa, segunda]), prueba], titulo=titulo_a, fuentes=fuentes_a)
+    fuente_fila = D.fuente(f"resultados/{tarea}_prueba.csv") if g["origen"] == E3 else D.fuente_original(f"lideres_{tarea}.csv")
+    tarjeta_a = ui.tarjeta([ui.cifras([externa, segunda]), prueba], titulo=titulo_a, fuentes=[fuente_fila, D.fuente(CD)])
 
     dentro = [m for m in L["modelo"] if m in fin["dentro"]]
     fuera = [m for m in L["modelo"] if m not in fin["dentro"]]
-    v = D.veredictos(tarea)
-    empates = [m for m in v.index if v[m] == "empata"]
-    superadas = [m for m in v.index if v[m] == "supera"]
-    if tarea == "clasificacion":
-        pr = D.pruebas(tarea)
-        mcnemar = all(D.fila(pr, modelo=m)["p_mcnemar_holm"] >= D.ALFA for m in empates)
-        quien = "ninguna prueba separa" if mcnemar else "ni la t corregida ni DeLong separan"
-    else:
-        quien = "ni la t corregida ni Diebold-Mariano separan"
-    pares = []
-    if empates:
-        pares.append(f"{quien} a la EBM {_tras('de', _lista(empates))}")
-    if superadas:
-        pares.append(f"la EBM supera con significación {_tras('a', _lista(superadas))}")
-    pares = ["tras la corrección de Holm, " + ", y ".join(pares)] if pares else []
-    if tarea == "clasificacion":
-        n = fin["cd"]
-        titulo_b = (f"{_mayuscula(_cardinal(len(dentro)))} de los {_cardinal(len(L))} modelos quedan entre los finalistas de Nemenyi"
-                    + (", la EBM entre ellos" if "ebm" in dentro else "; la EBM no"))
-        lectura = (f"Finalista es el modelo que queda a menos de la diferencia crítica ({ui.num(fin['dc'], 2)} rangos) del mejor rango "
-                   f"medio ({ui.num(fin['mejor'], D_RANGO)}). Friedman rechaza que los {_cardinal(int(n['modelos']))} modelos rindan igual "
-                   f"en los pliegues ({_p(n['p_friedman'])}), pero con {_cardinal(int(n['pliegues']))} pliegues esa diferencia es grande"
-                   + (f": solo {_lista(fuera)} quedan fuera." if fuera else ": ningún modelo queda fuera.")
-                   + " Ser finalista es un filtro débil. Lo que dice el informe sale de las pruebas por pares: "
-                   + "; ".join(pares) + ".")
-        fuentes_b = [D.fuente(CD), D.fuente("resultados/pruebas_clasificacion.csv")]
-    else:
-        resumen = D.resumen()
-        if len(dentro) == 1:
-            titulo_b = f"Solo {D.en_frase(dentro[0])} queda en el Model Confidence Set al {F.pct(NIVEL_MCS, 0)}"
-        else:
-            titulo_b = f"{_mayuscula(_cardinal(len(dentro)))} modelos quedan en el Model Confidence Set al {F.pct(NIVEL_MCS, 0)}"
-        if "ebm" not in dentro:
-            titulo_b += ("; la EBM es la última en salir" if fin["ultima"] == "ebm" else "; la EBM queda fuera")
-        lectura = (f"El conjunto reúne a los modelos que no se distinguen del mejor: quedan los de p mayor que {ui.num(1 - NIVEL_MCS, 2)}. "
-                   f"Se calcula con las {F.entero(resumen['n_prueba'])} pérdidas cuadráticas de la prueba (bootstrap estacionario, "
-                   f"bloques de {_cardinal(int(resumen['mcs_bloque']))}) y es más exigente que las pruebas por pares: "
-                   + "; ".join(pares) + ".")
-        fuentes_b = [D.fuente("resultados/regresion_prueba.csv"), D.fuente(RESUMEN), D.fuente("resultados/pruebas_regresion.csv")]
+    n = fin["cd"]
+    hay_original = O in set(L["modelo"])
+    titulo_b = f"{_mayuscula(_cardinal(len(dentro)))} de los {_cardinal(len(L))} modelos quedan entre los finalistas de Nemenyi"
+    if hay_original:
+        titulo_b += ", BDL entre ellos" if O in dentro else "; BDL no"
+    rechaza = n["p_friedman"] < D.ALFA
+    lectura = [f"Finalista es el modelo que queda a menos de la diferencia crítica ({ui.num(fin['dc'], 2)} rangos) del mejor rango medio "
+               f"({ui.num(fin['mejor'], D_RANGO)}). Friedman {'rechaza' if rechaza else 'no rechaza'} que los "
+               f"{_cardinal(int(n['modelos']))} modelos rindan igual en los pliegues ({_p(n['p_friedman'])}), pero con "
+               f"{_cardinal(int(n['pliegues']))} pliegues esa diferencia es grande"
+               + (f": solo {_lista(fuera)} {'quedan' if len(fuera) > 1 else 'queda'} fuera." if fuera else ": ningún modelo queda fuera.")
+               + " Ser finalista es un filtro débil."]
+    if hay_original:
+        lectura.append("Lo que decide si el modelo original supera a los benchmarks es la regla de superioridad de la guía, con las "
+                       f"pruebas por pares frente al mejor benchmark. Con ella, el veredicto de BDL es: {D.frase_veredicto(tarea)}.")
     chips = html.Div([ui.chip(D.NOMBRE_CORTO[m], "bien") for m in dentro], className="chips")
-    ir = html.Div(ui.boton("Ver la comparación estadística", href=app.ruta_vista("comparacion") + f"?tarea={tarea}", icono="balanza"),
-                  className="botonera")
-    tarjeta_b = ui.tarjeta([chips, ui.parrafo(lectura), ir], titulo=titulo_b, fuentes=fuentes_b)
+    botones = [ui.boton("Ver la comparación estadística", href=app.ruta_vista("comparacion") + f"?tarea={tarea}", icono="balanza")]
+    if hay_original:
+        botones.append(ui.boton("Ver el modelo original", href=app.ruta_vista("original") + f"?tarea={tarea}", icono="modelo"))
+    fuentes_b = [D.fuente(CD)] + ([D.fuente_original("veredicto.json"), D.fuente_original("condicion4.json")] if hay_original else [])
+    tarjeta_b = ui.tarjeta([chips] + [ui.parrafo(x) for x in lectura] + [html.Div(botones, className="botonera")],
+                           titulo=titulo_b, fuentes=fuentes_b)
     return ui.rejilla([tarjeta_a, tarjeta_b], "1-1")
 
 
 def _sub_global(tarea):
-    if tarea == "clasificacion":
-        return ("La mejor combinación global es la primera fila de la tabla. Los finalistas son los modelos que la prueba de Friedman "
-                "y el post hoc de Nemenyi, sobre los rangos de cada pliegue externo, no separan del mejor.")
-    return ("La mejor combinación global es la primera fila de la tabla. Los finalistas son los modelos que quedan en el Model "
-            "Confidence Set, que se fijó antes de evaluar la prueba.")
+    return ("La mejor combinación global es la primera fila de la tabla. Los finalistas son los modelos que la prueba de Friedman y el "
+            "post hoc de Nemenyi, sobre los rangos de cada pliegue externo, no separan del mejor.")
 
 
 # --- Cómo se eligió cada fila ---------------------------------------------------------------------------------------------
@@ -504,23 +504,34 @@ def _fidelidad(e):
                    "configuraciones con un factor de reducción).")
 
 
-def _detalle(tarea, modelo):
-    """Para un modelo: todas sus combinaciones con la elegida marcada y el motivo, lo que quedó en el modelo final y los
-    enlaces a su predicción en vivo y a su diagnóstico."""
+def _enlaces(tarea, modelo, en_vivo):
+    """A las otras vistas de ese modelo, con la tarea y el modelo en la dirección. Un modelo sin artefacto no tiene
+    predicción en vivo; el original lleva, además, a su vista."""
+    c = TAREA[tarea]
+    consulta = f"?tarea={tarea}&modelo={modelo}"
+    icono = {v: i for v, _n, _p, _g, _m, i in app.VISTAS}
+    nombre_vista = {v: n_ for v, n_, *_ in app.VISTAS}
+    frase = D.en_frase(modelo)
+    botones = []
+    if en_vivo:
+        botones.append(ui.boton(f"{nombre_vista['prediccion']} con {frase}", href=app.ruta_vista("prediccion") + consulta, tipo="primario",
+                                icono=icono["prediccion"], titulo=f"Abre la vista de predicción en {c['que']}, con este modelo ya elegido"))
+    botones.append(ui.boton(f"{nombre_vista['diagnostico']} {_tras('de', frase)}", href=app.ruta_vista("diagnostico") + consulta,
+                            icono=icono["diagnostico"], titulo=f"Abre el diagnóstico de este modelo en la prueba, en {c['que']}"))
+    if modelo == O:
+        botones.append(ui.boton(nombre_vista["original"], href=app.ruta_vista("original") + f"?tarea={tarea}", icono=icono["original"],
+                                titulo="Abre la vista del modelo original: qué es, cómo aprende y su veredicto"))
+    return html.Div(botones, className="botonera")
+
+
+def _eleccion_entregable3(tarea, f, e):
+    """Título, tabla y frases de cómo se eligió la combinación de un modelo del Entregable 3 entre sus corridas."""
     c = TAREA[tarea]
     d = c["d"]
-    L, _ = _lideres(tarea)
-    if modelo not in set(L["modelo"]):
-        modelo = L.iloc[0]["modelo"]
-    f = L[L["modelo"] == modelo].iloc[0]
-    e = _eleccion(tarea, modelo)
-    meta = V.metadata(tarea, modelo)
-    nombre = D.NOMBRE_MODELO[modelo]
+    nombre = D.NOMBRE_MODELO[f["modelo"]]
     el = e["elegida"]
     combinacion = _rotulo_combinacion(tarea, el["balanceo"], el["optimizador"])
     externos, internos = _pliegues(tarea)
-
-    # --- el motivo, en el título y en el texto
     n_ok = len(e["ok"])
     if e["empates"] > 1:
         titulo = (f"{nombre}: {_cardinal(e['empates'])} combinaciones empatan en {ui.num(el['metrica_externa'], d)} de "
@@ -561,51 +572,119 @@ def _detalle(tarea, modelo):
         balanceos = sorted({D.NOMBRE_BALANCEO[b] for b in e["no_aplica"]["balanceo"]})
         frases.append(f"Las {len(e['no_aplica'])} corridas con {F.enumerar(balanceos)} no se aplican"
                       + (f" (motivo registrado: «{'; '.join(motivos)}»)." if motivos else "."))
-    # a las otras vistas de ese modelo, con la tarea y el modelo en la dirección
-    consulta = f"?tarea={tarea}&modelo={modelo}"
-    icono = {v: i for v, _n, _p, _g, _m, i in app.VISTAS}
-    nombre_vista = {v: n_ for v, n_, *_ in app.VISTAS}
-    frase = D.en_frase(modelo)
-    enlaces = html.Div([
-        ui.boton(f"{nombre_vista['prediccion']} con {frase}", href=app.ruta_vista("prediccion") + consulta, tipo="primario",
-                 icono=icono["prediccion"], titulo=f"Abre la vista de predicción en {c['que']}, con este modelo ya elegido"),
-        ui.boton(f"{nombre_vista['diagnostico']} {_tras('de', frase)}", href=app.ruta_vista("diagnostico") + consulta,
-                 icono=icono["diagnostico"], titulo=f"Abre el diagnóstico de este modelo en la prueba, en {c['que']}"),
-    ], className="botonera")
-    chip_fin = ui.chip("finalista", "bien") if f["finalista"] else ui.chip("no es finalista")
-    izquierda = ui.tarjeta([html.Div([chip_fin, ui.chip_valor("Puesto en la tabla:", F.entero(f["puesto"]))], className="chips"),
-                            _rejilla_combinaciones(tarea, e), ui.parrafo(" ".join(frases)), enlaces],
-                           titulo=titulo, fuentes=[D.fuente(CORRIDAS), METADATA.format(tarea=tarea, modelo=modelo)])
+    if f["pliegues"] > externos:
+        frases.append(f"La tabla de líderes promedia {_pliegues_externos(int(f['pliegues']), externos)}; la combinación se eligió con la "
+                      f"repetición de la semilla {F.entero(V.metadata(tarea, f['modelo'])['semilla'])}.")
+    return titulo, _rejilla_combinaciones(tarea, e), frases, [D.fuente(CORRIDAS), METADATA.format(tarea=tarea, modelo=f["modelo"])]
+
+
+def _eleccion_correccion(tarea, f):
+    """Lo mismo para BDL y LightGBM: una sola combinación, fijada en el protocolo pre-registrado antes de ejecutar."""
+    c = TAREA[tarea]
+    d = c["d"]
+    m = f["modelo"]
+    nombre = D.NOMBRE_MODELO[m]
+    combinacion = _rotulo_combinacion(tarea, f["balanceo"], f["optimizador"])
+    externos, internos = _pliegues(tarea)
+    k = D.costo_original(tarea, m)
+    corrida = D.corrida_original(tarea, m)
+    titulo = f"{nombre}: {combinacion}, la única combinación, fijada en el protocolo antes de ejecutar"
+    fila = [combinacion if tarea == "regresion" else _mayuscula(combinacion), ui.num(f["externa"], d), ui.num(f["desv"], d),
+            F.entero(k["presupuesto"]), F.entero(k["evaluaciones"]), ui.num(f["corrida"], D_CORRIDA)]
+    # Encabezados cortos: los de una tabla no parten línea y con los largos la última columna no cabía en la tarjeta
+    tabla = ui.tabla(["Combinación", c["externa_nombre"], "Desviación", "Configuraciones", "Evaluaciones", "Corrida (min)"], [fila],
+                     compacta=True, ocultar_movil=(4,))
+    otros = len(D.tabla(f"resultados/{tarea}_prueba.csv"))
+    frases = [f"La corrección fijó en su protocolo pre-registrado, antes de ejecutar, una sola combinación para {D.en_frase(m)}: "
+              f"{_combinacion(tarea, f['balanceo'], f['optimizador']).removeprefix('con ')}, con {F.entero(k['presupuesto'])} "
+              "configuraciones en cada búsqueda"
+              + (" (el mínimo que recibió un benchmark: el original no tuvo más presupuesto que ninguno)." if m == O else ".")
+              + f" Los {_cardinal(otros)} modelos del Entregable 3 compiten con la mejor de sus combinaciones. En la tabla, "
+              "«Configuraciones» son las que prueba cada búsqueda y «Evaluaciones», las de toda la corrida.",
+              f"La métrica es {c['media']} de {_pliegues_externos(int(f['pliegues']), externos)} de la validación anidada "
+              f"{externos} × {internos}, sin mirar la prueba."]
+    if m == O and corrida is not None and corrida.get("params_por_pliegue"):
+        sin = sum(1 for p in corrida["params_por_pliegue"] if p.get("modelo__usar_puntaje", True) is False)
+        if sin:
+            frases.append(f"En {F.entero(sin)} de los {F.entero(len(corrida['params_por_pliegue']))} pliegues externos de la semilla "
+                          f"{F.entero(corrida['semilla'])}, la búsqueda interna eligió la variante que no usa el puntaje continuo "
+                          "(usar_puntaje = no): la vista del modelo original mide cuánto pesa eso en el resultado.")
+    if not f["en_vivo"]:
+        frases.append(f"{nombre} no se sirve en vivo: no tiene artefacto en la app, para no añadir una dependencia al servidor. Sus "
+                      "cifras salen de las predicciones que guardó la corrección.")
+    fuentes = [D.fuente_original(f"lideres_{tarea}.csv"), D.fuente_original("experimentos.csv"), D.fuente_original("costo.csv"), PROTOCOLO]
+    return titulo, tabla, frases, fuentes
+
+
+def _detalle(tarea, modelo):
+    """Para un modelo: cómo se eligió su combinación, lo que quedó en el modelo final y los enlaces a su predicción en vivo y
+    a su diagnóstico."""
+    L, _ = _lideres(tarea)
+    if modelo not in set(L["modelo"]):
+        modelo = L.iloc[0]["modelo"]
+    f = L[L["modelo"] == modelo].iloc[0]
+    e = _eleccion(tarea, modelo) if f["origen"] == E3 else None
+    meta = V.metadata(tarea, modelo) if f["en_vivo"] else None
+    combinacion = _rotulo_combinacion(tarea, f["balanceo"], f["optimizador"])
+    titulo, tabla, frases, fuentes = _eleccion_entregable3(tarea, f, e) if e is not None else _eleccion_correccion(tarea, f)
+    if f["finalista"] is None:
+        chip_fin = ui.chip("sin rango en la comparación")
+    else:
+        chip_fin = ui.chip("finalista", "bien") if f["finalista"] else ui.chip("no es finalista")
+    chips = [chip_fin, ui.chip_valor("Puesto en la tabla:", F.entero(f["puesto"]))]
+    if modelo == O:
+        chips.append(ui.chip("modelo original", "acento"))
+    izquierda = ui.tarjeta([html.Div(chips, className="chips"), tabla, ui.parrafo(" ".join(frases)),
+                            _enlaces(tarea, modelo, bool(f["en_vivo"]))], titulo=titulo, fuentes=fuentes)
 
     # --- lo que quedó en el modelo final
     n = F.entero(D.resumen()["n_prueba"])
-    pares = [("Combinación", combinacion), ("Estimador", str(meta["estimador"]).rsplit(".", 1)[-1])]
-    pares += [(k.split("__", 1)[-1], _valor_hiperparametro(v)) for k, v in meta["hiperparametros"].items()]
-    pares += [("Semilla", str(meta["semilla"])), ("Ajuste del modelo final", f"{ui.num(f['ajuste'], D_AJUSTE)} s"),
+    corrida = None if e is not None else D.corrida_original(tarea, modelo)
+    hiperparametros = meta["hiperparametros"] if meta is not None else ((corrida["hiperparametros"] or {}) if corrida is not None else {})
+    estimador = str(meta["estimador"]).rsplit(".", 1)[-1] if meta is not None else f"{D.NOMBRE_MODELO[modelo]} (sin artefacto en la app)"
+    semilla = meta["semilla"] if meta is not None else (corrida["semilla"] if corrida is not None else None)
+    pares = [("Combinación", combinacion), ("Estimador", estimador)]
+    pares += [(k.split("__", 1)[-1], _valor_hiperparametro(v)) for k, v in hiperparametros.items()]
+    pares += ([("Semilla", str(int(semilla)))] if semilla is not None else [])
+    pares += [("Ajuste del modelo final", f"{ui.num(f['ajuste'], D_AJUSTE)} s"),
               (f"Inferencia de {n} clientes", f"{ui.num(f['inferencia'], D_INFERENCIA)} s"),
               ("Corrida anidada completa", f"{ui.num(f['corrida'], D_CORRIDA)} min"),
-              ("Tamaño serializado", f"{ui.num(f['tamano'], D_TAMANO)} MB"), ("Parámetros almacenados", F.entero(f["parametros"]))]
+              ("Tamaño serializado", f"{ui.num(f['tamano'], D_TAMANO)} MB")]
+    hay_parametros = f["parametros"] is not None and not pd.isna(f["parametros"])
+    if hay_parametros:
+        pares.append(("Parámetros almacenados", F.entero(f["parametros"])))
     final_cuerpo = [ui.ficha(pares)]
-    fidelidad = _fidelidad(e)
+    fidelidad = _fidelidad(e) if e is not None else None
     if fidelidad is not None:
         final_cuerpo.append(fidelidad)
-    final_cuerpo.append(ui.nota("Los nombres de los hiperparámetros son los de la librería; los tiempos, el tamaño y los parámetros son "
-                                  "los de la tabla de costo computacional del informe."))
-    final = ui.tarjeta(final_cuerpo, titulo=(f"El modelo final guarda {F.entero(f['parametros'])} parámetros y puntúa los {n} clientes "
-                                                 f"de prueba en {ui.num(f['inferencia'], D_INFERENCIA)} s"),
-                         fuentes=[METADATA.format(tarea=tarea, modelo=modelo), D.fuente(COSTO)])
+    if e is not None:
+        final_cuerpo.append(ui.nota("Los nombres de los hiperparámetros son los de la librería; los tiempos, el tamaño y los parámetros "
+                                    "son los de la tabla de costo computacional del informe."))
+        fuentes_final = [METADATA.format(tarea=tarea, modelo=modelo), D.fuente(COSTO)]
+    else:
+        k = D.costo_original(tarea, modelo)
+        final_cuerpo.append(ui.nota(("Los hiperparámetros son los del código del modelo (src/original_model.py)" if modelo == O
+                                     else "Los nombres de los hiperparámetros son los de la librería")
+                                    + f"; los tiempos y el tamaño los midió la corrección: {k['de']}."))
+        fuentes_final = ([METADATA.format(tarea=tarea, modelo=modelo)] if meta is not None else [D.fuente_original("experimentos.csv")]) \
+            + [D.fuente_original("costo.csv")]
+    guarda = (f"El modelo final guarda {F.entero(f['parametros'])} parámetros" if hay_parametros
+              else f"El modelo final ocupa {ui.num(f['tamano'], D_TAMANO)} MB")
+    final = ui.tarjeta(final_cuerpo, titulo=f"{guarda} y puntúa los {n} clientes de prueba en {ui.num(f['inferencia'], D_INFERENCIA)} s",
+                       fuentes=fuentes_final)
     return ui.rejilla([izquierda, final], "2-1")
 
 
 def _sub_eleccion(tarea):
     externos, _internos = _pliegues(tarea)
-    return (f"Elija un modelo (o pulse su fila en la tabla). Cada combinación es una corrida de la validación anidada, con "
-            f"{TAREA[tarea]['media']} de los {_cardinal(externos)} pliegues externos; gana la mejor, con la regla del proyecto.")
+    return (f"Elija un modelo (o pulse su fila en la tabla). En los modelos del Entregable 3, cada combinación es una corrida de la "
+            f"validación anidada, con {TAREA[tarea]['media']} de los {_cardinal(externos)} pliegues externos, y gana la mejor, con la regla "
+            "del proyecto; BDL y LightGBM tienen una sola, la del protocolo de la corrección.")
 
 
 # --- La pantalla ----------------------------------------------------------------------------------------------------------
 def layout(tarea=None, modelo=None, **_):
-    """`/modelos/lideres?tarea=regresion&modelo=ebm` abre con esa tarea y ese modelo (un valor desconocido cae en
+    """`/modelos/lideres?tarea=regresion&modelo=bdl` abre con esa tarea y ese modelo (un valor desconocido cae en
     clasificación y en la mejor combinación global). Cuando la dirección pide una tarea, el control no repone el valor
     recordado en la sesión: manda la dirección."""
     pedida = tarea in TAREA
@@ -627,8 +706,8 @@ def layout(tarea=None, modelo=None, **_):
             ui.tarjeta([html.Div(tabla, className="tabla-datos"), html.Div(notas, id=f"{PRE}-tabla-nota")],
                        titulo=html.Span(titulo, id=f"{PRE}-tabla-titulo"), subtitulo=html.Span(sub, id=f"{PRE}-tabla-sub"),
                        fuentes=FUENTES_TABLA),
-        ], subtitulo=f"La mejor combinación de cada uno de los {_cardinal(len(L))} modelos de la tarea, con su costo y su lugar en la "
-                     "comparación estadística."),
+        ], subtitulo=f"La combinación de cada uno de los {_cardinal(len(L))} modelos de la tarea (el modelo original, los dos benchmarks "
+                     "recientes y los siete de clase), con su costo y su lugar en la comparación estadística."),
         ui.seccion("La mejor combinación global y los finalistas", [html.Div(_global(inicial), id=f"{PRE}-global")],
                    subtitulo=html.Span(_sub_global(inicial), id=f"{PRE}-s2-sub")),
         ui.seccion("Cómo se eligió cada fila", [html.Div(_detalle(inicial, elegido), id=f"{PRE}-detalle")],

@@ -1,20 +1,28 @@
 """Predicción en vivo · ¿Qué predice cada modelo para un cliente?
 
-La vista de la guía (§7.3.3) para los ocho modelos de cada tarea. El formulario se genera del esquema de entrada de los
+La vista de la guía (§7.3.3) para los modelos en vivo de cada tarea: el modelo original (BDL) y los ocho del Entregable 3
+(LightGBM no se sirve en vivo: solo está en las tablas). El formulario se genera del esquema de entrada de los
 artefactos (modelos_vivos.esquema(): las variables con su tipo, su rango de entrenamiento o sus categorías), agrupado por
 temas y con las cuatro variables que concentran la señal siempre a la vista; se llena con un cliente de prueba (los casos
 del informe, uno al azar o una fila), con la mediana del entrenamiento (la moda en las categóricas y en las de sí o no) o a
 mano. Para el modelo elegido se muestran el puntaje, la probabilidad recalibrada y el conjunto conforme (clasificación) o
 el pronóstico y el intervalo conforme (regresión), con su cobertura nominal y la medida en prueba; su explicación local
-SHAP en una cascada (y, en k-NN, sus vecinos); y las predicciones de los ocho modelos para el mismo cliente.
+SHAP en una cascada (y, en k-NN, sus vecinos); y las predicciones de todos los modelos en vivo para el mismo cliente.
+
+Con el modelo original se muestra además lo que solo él tiene (el bloque «pr-original»): en regresión, el conjunto de
+predicción del modelo, que es una unión de tramos alrededor de los niveles del escalón, con su cobertura nominal y la
+medida en prueba, junto al intervalo central y al intervalo simétrico que usan los demás; en clasificación, cómo sale la
+probabilidad del índice F(x): cada clase latente aporta su peso si su nivel queda por encima del umbral. Su explicación
+local es exacta (RegresorBDL.contribuciones): en regresión descompone el pronóstico y en clasificación, el índice.
 
 Cada entrada se valida con modelos_vivos.validar antes de predecir: un valor vacío, que no es un número o que se sale del
 rango del entrenamiento da un aviso con la lista, nunca un error. Los campos numéricos son de texto (se escriben en es-CO o
 con punto decimal) y muestran el valor redondeado, pero un campo que nadie tocó se evalúa con el valor exacto del cliente
 cargado (la tienda «pr-base»): así la predicción de un cliente de prueba es exactamente la guardada por el proyecto.
 
-Callbacks: _opciones_modelo (los ocho modelos de la tarea), _cargar (llena el formulario: caso, fila, al azar, mediana o
-recalcular las variables atadas), _predecir (validación, la predicción del modelo elegido, la de los ocho y el estado de
+Callbacks: _opciones_modelo (los modelos de la tarea), _cargar (llena el formulario: caso, fila, al azar, mediana o
+recalcular las variables atadas), _predecir (validación, la predicción del modelo elegido, lo propio del modelo original,
+la de todos los modelos y el estado de
 las variables atadas) y _explicar (la cascada SHAP y los vecinos de k-NN; va aparte, con su indicador de cálculo, porque
 k-NN tarda). Uno más, en el navegador, hace que la dirección siga a la tarea, al modelo, al nivel y al cliente
 (?tarea=…&modelo=…&nivel=…&fila=…), que es como enlaza aquí la Tabla de líderes. Predicciones y explicaciones se guardan
@@ -45,7 +53,9 @@ PANTALLA = "cliente"                 # el icono de la cabecera (el de las vistas
 REGISTRO = logging.getLogger(__name__)
 
 TAREA_OMISION = "clasificacion"
-MODELO_OMISION = "ebm"
+O = D.ORIGINAL                       # el modelo original (BDL): con él nace la vista, si ya tiene artefacto en la tarea
+MODELO_OMISION = O
+MODELO_RESPALDO = "ebm"              # si el original todavía no está en una tarea
 NIVEL_OMISION = "0.90"
 CASO_OMISION = "riesgo bajo con mayor puntaje"
 # Los tres casos del informe (claves de M.meta()["ejemplos"]), con los nombres cortos de la vista «Un cliente»
@@ -53,7 +63,8 @@ CASOS = {"riesgo bajo con mayor puntaje": "Falsa alarma", "riesgo alto con menor
          "mayor error de regresión": "Mayor error"}
 # Si el modelo pedido no existe en la otra tarea, su análogo (el SVM lineal y el SVR lineal; la logística y Lasso)
 ANALOGO = {"logistica": "lasso", "svm": "svr", "naive_bayes": "ebm", "lasso": "logistica", "ridge": "logistica", "svr": "svm"}
-CARDINAL = {0: "ninguno", 1: "uno", 2: "dos", 3: "tres", 4: "cuatro", 5: "cinco", 6: "seis", 7: "siete", 8: "ocho"}
+CARDINAL = {0: "ninguno", 1: "uno", 2: "dos", 3: "tres", 4: "cuatro", 5: "cinco", 6: "seis", 7: "siete", 8: "ocho", 9: "nueve",
+            10: "diez"}
 NUMERICOS = ("entera", "real")
 
 N_SENAL = 4                    # las variables que concentran la señal (informe, introducción): siempre a la vista
@@ -75,7 +86,14 @@ GROSOR_BARRA = 0.55            # grosor de una barra de la cascada, en filas
 AIRE_FILA = 0.6                # aire arriba de la primera fila y debajo de la última, en filas
 ROTULO_EJE = 28                # caracteres de un rótulo del eje de la cascada (a 400 px no caben más)
 AIRE_EJE = 0.08                # aire a cada lado del recorrido de la cascada (fracción del recorrido)
-AIRE_MODELOS = 0.08            # lo mismo en el gráfico de los ocho modelos
+AIRE_MODELOS = 0.08            # lo mismo en el gráfico de todos los modelos
+AIRE_NIVELES = 0.15            # aire a cada lado de los niveles en el gráfico del modelo original (fracción del recorrido)
+ANCHO_NIVEL = 0.012            # grosor de la barra de un nivel, como fracción del recorrido del eje
+ALTO_TRAMO = 0.5               # alto de la banda de un tramo del conjunto de predicción, como fracción del eje
+PASO_PESO = 10                 # marcas del eje del peso de cada nivel, en puntos porcentuales
+AIRE_MARCAS = 0.06             # aire bajo el cero de ese eje, como fracción de su tope
+DEC_NIVEL = 4                  # decimales de un nivel, de un tramo o del índice
+TOLERANCIA_COBERTURA = 0.02    # una cobertura medida que se aparta más que esto de la nominal se señala
 PASO_PORCENTAJE = 50           # una marca cada tantos puntos porcentuales en el eje de la probabilidad (a 400 px no caben más)
 MARCAS_EJE = 4                 # marcas que se buscan en el eje de la cascada
 TOLERANCIA = 1e-9              # dos valores de una variable atada son el mismo si difieren menos que esto
@@ -91,6 +109,8 @@ FORMA_LEYENDA = {"modelo": "punto", "rival": "punto", "base": "barra"}
 BASE_TAREA = {"clasificacion": "Lineales, k-NN y Naive Bayes", "regresion": "Lineales y k-NN"}
 # Cómo se calcula la explicación exacta de cada familia (explicacion.py) y qué es su punto de partida
 METODO_EXACTO = {
+    "bdl": "exacta, con el método del propio modelo (RegresorBDL.contribuciones): el aporte de cada variable es su curva menos la "
+           "media de esa curva en las filas de ajuste",
     "ebm": "exacta: la EBM es una suma de funciones de forma y el aporte de cada variable es su término",
     "lineal": "exacta: en un modelo lineal, el aporte de una variable es su coeficiente por su distancia a la media del fondo",
     "bayes": "exacta: el logit de Naive Bayes es una suma de un término por variable",
@@ -105,7 +125,9 @@ FUENTES_PREDICCION = ["artifacts/<tarea>/<modelo>/modelo.joblib", "artifacts/<ta
 FUENTES_MODELOS = ["artifacts/<tarea>/<modelo>/modelo.joblib", D.fuente("calibracion_modelos.json"), D.fuente("conformal.json"),
                    D.fuente("puntajes_prueba.parquet"), D.fuente("metadatos.json")]
 FUENTES_CASCADA = ["artifacts/<tarea>/<modelo>/modelo.joblib", D.fuente("fondo.parquet"), D.fuente("modelos/ebm_clasificacion.json"),
-                   D.fuente("modelos/ebm_regresion.json"), "explicacion.py"]
+                   D.fuente("modelos/ebm_regresion.json"), "explicacion.py", "src/original_model.py"]
+FUENTES_ORIGINAL = [f"artifacts/<tarea>/{O}/modelo.joblib", "src/original_model.py", D.fuente("conformal.json"),
+                    D.fuente("calibracion_modelos.json"), D.fuente("metadatos.json")]
 FUENTES_VECINOS = ["artifacts/<tarea>/knn/modelo.joblib", D.fuente("eda/entrenamiento.parquet")]
 FUENTES_LECTURA = [D.fuente("calibracion_modelos.json"), D.fuente("conformal.json"), D.fuente("puntajes_prueba.parquet"),
                    D.fuente("metadatos.json"), D.fuente("variables.csv"), "artifacts/indice.json"]
@@ -400,7 +422,9 @@ def _modelo_de(tarea, modelo):
     modelos = V.modelos(tarea)
     if modelo in modelos:
         return modelo
-    return ANALOGO.get(modelo) if ANALOGO.get(modelo) in modelos else MODELO_OMISION
+    if ANALOGO.get(modelo) in modelos:
+        return ANALOGO[modelo]
+    return next((m for m in (MODELO_OMISION, MODELO_RESPALDO) if m in modelos), modelos[0])
 
 
 def _nivel(nivel):
@@ -502,7 +526,7 @@ def _puntaje(tarea, modelo, clave):
 
 
 def _puntajes(tarea, clave):
-    """({modelo: puntaje}, {modelo: error}) de los ocho modelos de la tarea; uno que falle no tumba a los demás."""
+    """({modelo: puntaje}, {modelo: error}) de los modelos en vivo de la tarea; uno que falle no tumba a los demás."""
     puntajes, errores = {}, {}
     for m in V.modelos(tarea):
         try:
@@ -537,6 +561,23 @@ def _vecinos(tarea, clave):
             "filas": tuple(tuple(_python(x) for x in f) for f in filas[columnas].itertuples(index=False)), "columnas": tuple(columnas)}
 
 
+@lru_cache(maxsize=EN_CACHE_EXPLICACIONES)
+def _distribucion(clave, nivel):
+    """V.distribucion para el cliente: lo que el modelo original predice en regresión además de la media."""
+    return V.distribucion(V.a_tabla(dict(clave)), nivel)
+
+
+@lru_cache(maxsize=EN_CACHE_EXPLICACIONES)
+def _excedencia(clave):
+    """V.excedencia para el cliente, con números de Python: cómo sale la probabilidad del modelo original de su índice."""
+    e = V.excedencia(V.a_tabla(dict(clave)))
+    if e is None:
+        return None
+    return {"indice": float(e["indice"][0]), "umbral": e["umbral"], "pesos": [float(x) for x in e["pesos"]],
+            "niveles": [float(x) for x in e["niveles"][0]], "aporte": [float(x) for x in e["aporte"][0]],
+            "probabilidad": float(e["probabilidad"][0]), "sigma": e["sigma"], "piso": e["piso"], "techo": e["techo"]}
+
+
 @lru_cache(maxsize=None)
 def _ordenados(modelo):
     return np.sort(D.puntajes()[modelo].to_numpy(dtype=float))
@@ -555,6 +596,30 @@ def _corte(modelo):
     return float(s[M.punto_operacion(s) == 1].min())
 
 
+@lru_cache(maxsize=None)
+def _empate_del_corte(modelo):
+    """(clientes de prueba con el puntaje del corte de la campaña, cuántos de ellos entran), con el orden de ese modelo. La
+    igualdad es exacta, como en el orden de la campaña y en el análisis de la corrección (empates_campana.json)."""
+    s = D.puntajes()[modelo].to_numpy(dtype=float)
+    iguales = s == _corte(modelo)
+    return int(iguales.sum()), int((iguales & (M.punto_operacion(s) == 1)).sum())
+
+
+def _en_campana(modelo, s):
+    """«entra», «queda fuera» o, si el puntaje es exactamente el del corte y varios clientes de prueba lo comparten, cuántos
+    de ellos entran: en un modelo de puntaje escalonado eso lo decide el desempate, no el modelo. La igualdad es exacta, como
+    en el orden de la campaña (el puntaje de BDL calculado en vivo es idéntico al guardado). En un modelo sin empate, el
+    último contactado entra aunque su puntaje recalculado difiera en el último decimal (la tolerancia de explicacion.py)."""
+    corte = _corte(modelo)
+    empatados, entran = _empate_del_corte(modelo)
+    if s == corte and empatados > 1:
+        return (f"empata en el corte: de los {F.entero(empatados)} clientes de prueba con ese puntaje entran {F.entero(entran)}, "
+                "según el desempate")
+    if empatados <= 1 and abs(s - corte) <= E.TOLERANCIA * max(1.0, abs(corte)):
+        return "entra"
+    return "entra" if s > corte else "queda fuera"
+
+
 def _probabilidad(modelo, s):
     return float(np.asarray(V.probabilidad(modelo, s)))
 
@@ -568,8 +633,11 @@ def _pct(p):
 
 
 def _ruta_artefacto(tarea, modelo):
-    """De dónde sale la predicción: el artefacto (la EBM se evalúa con sus tablas exportadas, idénticas al artefacto)."""
+    """De dónde sale la predicción: el artefacto (la EBM se evalúa con sus tablas exportadas, idénticas al artefacto; el
+    modelo original, con su código de src/original_model.py)."""
     ruta = f"artifacts/{tarea}/{modelo}/modelo.joblib"
+    if modelo == O:
+        return f"{ruta}, con el código de src/original_model.py"
     return f"{ruta}, evaluado con sus tablas de {D.fuente(f'modelos/ebm_{tarea}.json')}" if modelo == "ebm" else ruta
 
 
@@ -592,7 +660,7 @@ def _ficha_guardada(tarea, modelo, fila_real, s):
     return pares
 
 
-def _prediccion_clasificacion(modelo, s, nivel, fila_real):
+def _prediccion_clasificacion(modelo, s, nivel, fila_real, clave=None):
     p = _probabilidad(modelo, s)
     conj = V.conjunto(modelo, p, nivel)
     cal = V.calibracion()["modelos"][modelo]
@@ -600,6 +668,8 @@ def _prediccion_clasificacion(modelo, s, nivel, fila_real):
     n = len(D.puntajes())
     es_margen = "decision_function" in str(V.metadata("clasificacion", modelo).get("salida", ""))
     margen = "su margen, con decision_function" if es_margen else "predict_proba, sin recalibrar"
+    if modelo == O:
+        margen = "predict_proba: la probabilidad de excedencia de la mezcla, sin recalibrar"
     clases = conj["clases"]
     if len(clases) == 2:
         lectura = "Con esa cobertura el modelo no descarta ninguna de las dos clases."
@@ -615,10 +685,14 @@ def _prediccion_clasificacion(modelo, s, nivel, fila_real):
     if es_margen:
         notas.append("El puntaje del SVM lineal es su margen (la distancia al hiperplano): solo la recalibración lo vuelve una "
                      "probabilidad.")
+    if modelo == O:
+        notas.append("El puntaje de BDL ya es una probabilidad que sale del modelo (la de superar el umbral, según la mezcla de "
+                     "niveles): el bloque de abajo muestra cómo se arma. Se recalibra igual que los demás para compararlos.")
     conjunto = {2: "Las dos clases", 1: f"Solo {clases[0]}" if clases else ""}.get(len(clases), "Ninguna clase")
     cifras = ui.cifras([
         ui.cifra("Probabilidad recalibrada de riesgo alto", _pct(p), clase="cifra--llana", id=_i("probabilidad")),
-        ui.cifra("Puntaje del modelo", ui.num(s, DEC_PUNTAJE), "margen" if es_margen else "sin recalibrar",
+        ui.cifra("Puntaje del modelo", ui.num(s, DEC_PUNTAJE),
+                 "margen" if es_margen else ("probabilidad de excedencia" if modelo == O else "sin recalibrar"),
                  mini=True, clase="cifra--llana", id=_i("puntaje")),
         ui.cifra(f"Conjunto conforme al {F.pct(float(nivel), 0)}", conjunto, mini=True, clase="cifra--llana", id=_i("conjunto"),
                  nota=f"Cobertura nominal {F.pct(float(nivel), 0)}; medida en los {F.entero(n)} clientes de prueba, "
@@ -627,7 +701,7 @@ def _prediccion_clasificacion(modelo, s, nivel, fila_real):
     puesto = _puesto(modelo, s)
     fraccion = M.meta()["punto_operacion"]["fraccion"]
     pares = [("Puesto en el orden de este modelo", f"{F.entero(puesto)} de {F.entero(n)}"),
-             (f"Campaña con capacidad para el {F.pct(fraccion, 0)}", "entra" if s >= _corte(modelo) else "queda fuera"),
+             (f"Campaña con capacidad para el {F.pct(fraccion, 0)}", _en_campana(modelo, s)),
              ("Error de calibración en prueba (ECE)",
               (f"{ui.num(cal['ece_prueba_sin_recalibrar'], DEC_ECE)} sin recalibrar; " if cal.get("ece_prueba_sin_recalibrar") is not None
                else "") + f"{ui.num(cal['ece_prueba_recalibrada'], DEC_ECE)} recalibrada")]
@@ -641,7 +715,77 @@ def _prediccion_clasificacion(modelo, s, nivel, fila_real):
     return titulo, cuerpo, detalles
 
 
-def _prediccion_regresion(modelo, yhat, nivel, fila_real):
+def _a_tramo(x):
+    """La distancia de un puntaje al tramo más cercano, con los decimales de un nivel o, si con esos se leería cero, con los
+    que hagan falta: un puntaje real puede quedar fuera de un tramo por menos de una diezmilésima, y con el redondeo
+    parecería que está dentro."""
+    return ui.num(x, max(DEC_NIVEL, math.ceil(-math.log10(x))) if x > 0 else DEC_NIVEL)
+
+
+def _prediccion_regresion_original(yhat, nivel, fila_real, clave):
+    """La predicción del modelo original en regresión: el pronóstico (la media), el conjunto de predicción del modelo (una
+    unión de tramos, con su cobertura nominal y la medida en prueba) y, al lado, el intervalo simétrico de los demás."""
+    d = _distribucion(clave, nivel)
+    iv = V.intervalo(O, yhat, nivel)
+    umbral = M.meta()["etiqueta"]["umbral"]
+    n = F.entero(len(D.pronosticos()))
+    pct_nivel = F.pct(float(nivel), 0)
+    tramos = d["tramos"]
+    sobre = sum(a > umbral for a, _b in tramos)
+    if sobre == len(tramos):
+        lectura = "Todos los tramos del conjunto quedan por encima del umbral de riesgo alto."
+    elif sobre == 0:
+        lectura = "Todos los tramos del conjunto quedan por debajo del umbral de riesgo alto."
+    else:
+        lectura = (f"{_tantos(sobre, 'tramo queda', 'tramos quedan').capitalize()} por encima del umbral de riesgo alto y "
+                   f"{_cuantos(len(tramos) - sobre, 'queda', 'quedan')} por debajo: con esa cobertura no se puede decir de qué lado queda.")
+    medida = (f"medida en los {n} clientes de prueba, {F.pct(d['cobertura_conjunto'])}" if d["cobertura_conjunto"] is not None
+              else "sin medida en prueba todavía")
+    cifras = ui.cifras([
+        ui.cifra("Pronóstico de churn_probability", ui.num(yhat, DEC_PUNTAJE), clase="cifra--llana", id=_i("pronostico"),
+                 nota=f"Es la media: el índice del cliente, {ui.num(d['indice'], DEC_NIVEL)}, más el desplazamiento medio."),
+        ui.cifra(f"Conjunto de predicción del modelo al {pct_nivel}", _tantos(len(tramos), "tramo", "tramos").capitalize(),
+                 f"que suman {ui.num(d['largo'], DEC_NIVEL)}", mini=True, clase="cifra--llana", id=_i("conjunto-original"),
+                 nota=f"Cobertura nominal {pct_nivel}; {medida}."),
+        ui.cifra(f"Intervalo conforme al {pct_nivel}", F.intervalo(iv["desde"], iv["hasta"], DEC_PUNTAJE), mini=True,
+                 clase="cifra--llana", id=_i("intervalo"),
+                 nota=f"El pronóstico ± {ui.num(iv['semiancho'], DEC_PUNTAJE)}, como en los demás modelos. Cobertura medida: "
+                      f"{F.pct(iv['cobertura_prueba'])}."),
+    ], clase="cifras--3")
+    pares = [("Tramos", "; ".join(F.intervalo(a, b, DEC_NIVEL) for a, b in tramos)),
+             ("Mediana predictiva", ui.num(d["mediana"], DEC_PUNTAJE)),
+             ("Intervalo central del modelo", F.intervalo(*d["central"], DEC_PUNTAJE)
+              + (f"; cobertura medida {F.pct(d['cobertura_central'])}" if d["cobertura_central"] is not None else "")),
+             (f"Umbral de riesgo alto (percentil {ui.num(100 * M.meta()['etiqueta']['q'])} del entrenamiento)", ui.num(umbral, DEC_PUNTAJE))]
+    pares += _ficha_guardada("regresion", O, fila_real, yhat)
+    if fila_real is not None:
+        y = float(M.clientes().loc[fila_real, "churn_probability"])
+        if any(a <= y <= b for a, b in tramos):
+            lugar = "dentro del conjunto de predicción"
+        else:
+            lugar = f"fuera del conjunto de predicción, a {_a_tramo(min(max(a - y, y - b) for a, b in tramos))} del tramo más cercano"
+        pares.append(("Puntaje real del cliente", f"{ui.num(y, DEC_PUNTAJE)}, {lugar}"))
+    notas = [f"{lectura} El conjunto de predicción no es un intervalo: son los tramos alrededor de los niveles en que el modelo sitúa "
+             "al cliente. La cobertura nominal es la fracción de clientes cuyo puntaje real debería caer dentro; la medida es la que se "
+             "observó en la prueba."]
+    if abs(iv["cobertura_prueba"] - float(nivel)) > TOLERANCIA_COBERTURA:
+        notas.append(f"Con BDL el intervalo simétrico no cumple su cobertura nominal ({F.pct(iv['cobertura_prueba'])} frente a "
+                     f"{pct_nivel}): su error cae en niveles separados y el cuantil queda en el hueco entre dos de ellos. La "
+                     "incertidumbre de este modelo se lee en su conjunto de predicción.")
+    titulo = (f"{D.NOMBRE_MODELO[O]}: pronóstico de {ui.num(yhat, DEC_PUNTAJE)} y un conjunto de predicción de "
+              f"{_tantos(len(tramos), 'tramo', 'tramos')} que suman {ui.num(d['largo'], DEC_NIVEL)}")
+    detalles = [ui.ficha([("Pronóstico", f"{_ruta_artefacto('regresion', O)} (predict)"),
+                          ("Conjunto de predicción", "RegresorBDL.conjunto_residual: la densidad de la mezcla como medida de conformidad, "
+                                                     f"calibrada con las filas de calibración del modelo; cobertura en prueba de {D.fuente('conformal.json')}"),
+                          ("Intervalo central", "RegresorBDL.intervalo: cuantiles de los residuos de calibración"),
+                          ("Intervalo conforme", f"pronóstico ± el semiancho de {D.fuente('conformal.json')}"),
+                          ("Mejor combinación", _combinacion("regresion", O))])]
+    return titulo, [cifras, ui.rejilla([html.Div([ui.nota(t) for t in notas], className="rejilla"), ui.ficha(pares)], "1-1")], detalles
+
+
+def _prediccion_regresion(modelo, yhat, nivel, fila_real, clave=None):
+    if modelo == O and clave is not None:
+        return _prediccion_regresion_original(yhat, nivel, fila_real, clave)
     iv = V.intervalo(modelo, yhat, nivel)
     umbral = M.meta()["etiqueta"]["umbral"]
     n = len(D.pronosticos())
@@ -685,7 +829,111 @@ def _combinacion(tarea, modelo):
     return texto
 
 
-# --- Los ocho modelos ante el mismo cliente -------------------------------------------------------------------------------
+# --- Lo que solo tiene el modelo original: los niveles del escalón --------------------------------------------------------
+def _tantos(n, singular, plural):
+    """«un tramo», «cuatro tramos» (el número delante de un nombre masculino)."""
+    return f"un {singular}" if n == 1 else f"{CARDINAL.get(n, F.entero(n))} {plural}"
+
+
+def _figura_niveles(niveles, pesos, dentro, umbral, puntos=(), franja=None):
+    """Barras de los niveles en que el modelo original sitúa al cliente (x = el nivel del puntaje, y = el peso de su clase
+    latente): sólidas las de `dentro` y rayadas las demás; la línea vertical es el umbral de riesgo alto. `puntos` son
+    marcas sobre el eje, (x, rol, texto), y `franja`, un intervalo (desde, hasta) que se dibuja detrás."""
+    xs = list(niveles) + [umbral] + [p[0] for p in puntos] + (list(franja) if franja else [])
+    lo, hi = min(xs), max(xs)
+    aire = (hi - lo) * AIRE_NIVELES or AIRE_NIVELES
+    lo, hi = lo - aire, hi + aire
+    ancho = (hi - lo) * ANCHO_NIVEL
+    fig = go.Figure()
+    for forma, cuales in (("rayada", [k for k in range(len(niveles)) if not dentro[k]]), ("barra", [k for k in range(len(niveles)) if dentro[k]])):
+        if cuales:
+            textos = [f"Nivel {ui.num(niveles[k], DEC_NIVEL)}: peso <b>{F.pct(pesos[k])}</b>" for k in cuales]
+            fig.add_trace(go.Bar(x=[niveles[k] for k in cuales], y=[100 * pesos[k] for k in cuales],
+                                 **ui.traza("modelo", forma, ancho=ancho), **ui.hover_texto(textos)))
+    for x, rol, texto in puntos:
+        fig.add_trace(go.Scatter(x=[x], y=[0], cliponaxis=False, **ui.traza(rol, "punto"), **ui.hover_texto([texto])))
+    if franja:
+        ui.franja(fig, *franja)
+    ui.referencia(fig, x=umbral)                 # sin rótulo: en el teléfono choca con la unidad del eje; lo nombra la leyenda
+    tope = math.ceil(100 * max(pesos) / PASO_PESO) * PASO_PESO
+    valores, textos_eje = ui.marcas(0, tope, PASO_PESO)
+    ui.unidad_eje(fig, "peso de cada nivel")
+    fig.update_layout(hovermode="closest", bargap=0)
+    # algo de aire bajo el cero para que las marcas del pronóstico y del puntaje real se vean enteras sobre el eje
+    fig.update_yaxes(range=[-tope * AIRE_MARCAS if puntos else 0, tope], tickvals=valores, ticktext=[f"{t}{F.FIJO}%" for t in textos_eje])
+    fig.update_xaxes(range=[lo, hi])
+    ui.formato_eje(fig, "x", DEC_MEDIO)
+    return fig
+
+
+def _bloque_original(tarea, clave, nivel, fila_real, yhat):
+    """El gráfico de lo que solo tiene el modelo original para el cliente del formulario: en clasificación, cómo sale la
+    probabilidad del índice; en regresión, el conjunto de predicción frente al intervalo simétrico."""
+    umbral_etiqueta = M.meta()["etiqueta"]["umbral"]
+    real = None if fila_real is None else float(M.clientes().loc[fila_real, "churn_probability"])
+    puntos = [] if real is None else [(real, "real", f"Puntaje real del cliente: <b>{ui.num(real, DEC_PUNTAJE)}</b>")]
+    if tarea == "clasificacion":
+        e = _excedencia(clave)
+        if e is None:
+            return ui.aviso("El clasificador final de BDL aprendió de la etiqueta (modo directo): no hay niveles ni mezcla que mostrar; "
+                            "su probabilidad es la logística de la suma de sus árboles.", None, "Modo directo")
+        niveles, pesos, k = e["niveles"], e["pesos"], len(e["pesos"])
+        sobre = [x > e["umbral"] for x in niveles]
+        n_sobre = sum(sobre)
+        fig = _figura_niveles(niveles, pesos, sobre, e["umbral"], puntos)
+        superan = "ninguno supera" if n_sobre == 0 else ("uno supera" if n_sobre == 1 else f"{CARDINAL.get(n_sobre, n_sobre)} superan")
+        titulo = (f"El índice del cliente vale {ui.num(e['indice'], DEC_NIVEL)}: de sus {CARDINAL.get(k, k)} niveles, {superan} el umbral, "
+                  f"y la probabilidad de riesgo alto es {_pct(e['probabilidad'])}")
+        sub = (f"BDL sitúa el puntaje del cliente en uno de {CARDINAL.get(k, k)} niveles: su índice más el desplazamiento de cada clase "
+               f"latente. Cada nivel aporta su peso si queda por encima del umbral ({ui.num(e['umbral'], DEC_NIVEL)}): la probabilidad es "
+               "la suma de los pesos de las barras sólidas.")
+        filas = [[F.entero(i + 1), ui.num(niveles[j], DEC_NIVEL), F.pct(pesos[j]), "sí" if sobre[j] else "no", _pct(e["aporte"][j])]
+                 for i, j in enumerate(sorted(range(k), key=lambda j: -niveles[j]))]
+        tabla = (["Clase latente", "Nivel: índice más desplazamiento", "Peso", "Supera el umbral", "Aporta a la probabilidad"], filas)
+        nota = (f"La transición en el umbral se suaviza con la dispersión robusta del índice ({ui.num(e['sigma'], 5)}); la probabilidad "
+                f"nunca baja de {_pct(e['piso'])} ni pasa de {_pct(e['techo'])}, lo que permite comprobar la muestra de calibración. La "
+                "cascada de abajo explica el índice: qué variables lo suben o lo bajan.")
+        leyenda = [("Nivel sobre el umbral: aporta su peso", "modelo", "barra"), ("Nivel bajo el umbral", "modelo", "rayada"),
+                   ("Umbral de riesgo alto", "referencia", "linea")]
+        etiqueta = f"{titulo}. " + "; ".join(f"nivel {f[1]}, peso {f[2]}, {'sobre' if f[3] == 'sí' else 'bajo'} el umbral" for f in filas) + "."
+    else:
+        d = _distribucion(clave, nivel)
+        iv = V.intervalo(O, yhat, nivel)
+        niveles, pesos, k, tramos = d["niveles"], d["pesos"], len(d["pesos"]), d["tramos"]
+        en_conjunto = [any(a <= x <= b for a, b in tramos) for x in niveles]
+        pct_nivel = F.pct(float(nivel), 0)
+        puntos = [(yhat, "modelo", f"Pronóstico (la media): <b>{ui.num(yhat, DEC_PUNTAJE)}</b>")] + puntos
+        fig = _figura_niveles(niveles, pesos, en_conjunto, umbral_etiqueta, puntos, (iv["desde"], iv["hasta"]))
+        titulo = (f"BDL sitúa al cliente en {CARDINAL.get(k, k)} niveles: al {pct_nivel}, su conjunto de predicción son "
+                  f"{_tantos(len(tramos), 'tramo', 'tramos')} que suman {ui.num(d['largo'], DEC_NIVEL)}, frente a un intervalo simétrico "
+                  f"de {ui.num(iv['ancho'] if 'ancho' in iv else 2 * iv['semiancho'], DEC_NIVEL)}")
+        medida = "" if d["cobertura_conjunto"] is None else (
+            f" En los {F.entero(len(D.pronosticos()))} clientes de prueba el conjunto cubrió el {F.pct(d['cobertura_conjunto'])} y el "
+            f"intervalo simétrico, el {F.pct(iv['cobertura_prueba'])}.")
+        sub = (f"Cada barra es un nivel posible del puntaje (el índice del cliente más el desplazamiento de una clase latente) con su "
+               f"peso. Las sólidas forman el conjunto de predicción al {pct_nivel}; la franja es el intervalo simétrico que usan los "
+               f"demás modelos (pronóstico ± {ui.num(iv['semiancho'], DEC_PUNTAJE)}).{medida}")
+        filas = []
+        for i, j in enumerate(sorted(range(k), key=lambda j: -niveles[j])):
+            tramo = next((F.intervalo(a, b, DEC_NIVEL) for a, b in tramos if a <= niveles[j] <= b), F.RAYA)
+            filas.append([F.entero(i + 1), ui.num(niveles[j], DEC_NIVEL), F.pct(pesos[j]), "sí" if en_conjunto[j] else "no", tramo])
+        tabla = (["Clase latente", "Nivel: índice más desplazamiento", "Peso", f"En el conjunto al {pct_nivel}", "Tramo"], filas)
+        ancho = max(b - a for a, b in tramos)
+        nota = ("El pronóstico es la media de los niveles y suele caer entre dos de ellos, donde el modelo no espera al cliente: por eso "
+                "un intervalo alrededor de la media es ancho y el conjunto de predicción, corto. El tramo más ancho mide "
+                f"{ui.num(ancho, DEC_NIVEL)}"
+                + (f": {ui.num(ancho / d['sigma'], 1)} veces la dispersión dentro de cada nivel ({ui.num(d['sigma'], 5)})." if d["sigma"] > 0 else "."))
+        leyenda = [("Nivel dentro del conjunto de predicción", "modelo", "barra"), ("Nivel fuera del conjunto", "modelo", "rayada"),
+                   ("Pronóstico (la media)", "modelo", "punto"), ("Umbral de riesgo alto", "referencia", "linea"),
+                   ("Intervalo simétrico (pronóstico ± q)", "franja", "barra")]
+        etiqueta = f"{titulo}. " + "; ".join(f"nivel {f[1]}, peso {f[2]}" for f in filas) + "."
+    if real is not None:
+        leyenda.append(("Puntaje real del cliente", "real", "punto"))
+    return ui.grafico(fig, titulo, sub, etiqueta, tabla=tabla, leyenda=leyenda, nota=nota, alto="bajo", id=_i("niveles"),
+                      fuentes=FUENTES_ORIGINAL)
+
+
+# --- Todos los modelos en vivo ante el mismo cliente ----------------------------------------------------------------------
 def _marca(rol):
     estilo = ui.traza(rol, "punto")
     estilo["marker"] = dict(estilo["marker"], symbol=SIMBOLO[rol])
@@ -716,12 +964,13 @@ def _cuantos(n, singular, plural):
 
 
 def _leyenda_modelos(tarea):
-    return [(D.NOMBRE_MODELO["ebm"], "modelo", FORMA_LEYENDA["modelo"]), ("Modelos de árboles", "rival", FORMA_LEYENDA["rival"]),
-            (BASE_TAREA[tarea], "base", FORMA_LEYENDA["base"])]
+    """La leyenda del gráfico de todos los modelos: el original (si está en la tarea), los rivales y la base."""
+    original = [(D.NOMBRE_MODELO[O], "modelo", FORMA_LEYENDA["modelo"])] if V.hay_original(tarea) else []
+    return original + [("EBM y modelos de árboles", "rival", FORMA_LEYENDA["rival"]), (BASE_TAREA[tarea], "base", FORMA_LEYENDA["base"])]
 
 
 def _modelos(tarea, modelo, puntajes, errores, nivel):
-    """Figura, título, subtítulo, leyenda, tabla, nota y etiqueta del gráfico de los ocho modelos."""
+    """Figura, título, subtítulo, leyenda, tabla, nota y etiqueta del gráfico de todos los modelos en vivo de la tarea."""
     orden = [m for m in V.modelos(tarea) if m in puntajes]
     nombres = [D.NOMBRE_CORTO[m] + (" · elegido" if m == modelo else "") for m in orden]
     nombre_de = dict(zip(orden, nombres))
@@ -799,7 +1048,9 @@ def _modelos(tarea, modelo, puntajes, errores, nivel):
         etiqueta_valores = [f"{D.NOMBRE_MODELO[m]}: {ui.num(puntajes[m], DEC_PUNTAJE)}" for m in orden]
     titulo = titulo[0].upper() + titulo[1:]
     tabla = ui.tabla(encabezados, filas, compacta=True, muestras=[D.ROL_MODELO[m] for m in orden], num=num, ocultar_movil=ocultar)
-    nota = "Los ocho se calculan en el momento con sus artefactos; la explicación local de arriba es solo la del modelo elegido."
+    nota = (f"Los {CARDINAL.get(len(orden), F.entero(len(orden)))} se calculan en el momento con sus artefactos; la explicación local "
+            "de arriba es solo la del modelo elegido. LightGBM, el otro benchmark reciente, no se sirve en vivo: está en la tabla de "
+            "líderes y en la comparación estadística.")
     if errores:
         nota += " No se pudo calcular: " + "; ".join(f"{D.NOMBRE_MODELO[m]} ({t[:80]})" for m, t in errores.items()) + "."
     etiqueta = f"{titulo}. " + "; ".join(etiqueta_valores) + "."
@@ -811,8 +1062,10 @@ ESCALA_REGRESION = "churn_probability predicha"
 ESCALA_LOGIT = "logit del puntaje del modelo"
 ESCALA_MARGEN = "margen del SVM lineal (no es una probabilidad)"
 ESCALA_PUNTAJE = "puntaje del modelo (probabilidad sin recalibrar)"
-# Lo que dice la unidad del eje de la cascada (corta: a 400 px va junto a los rótulos)
-UNIDAD_ESCALA = {ESCALA_REGRESION: "churn_probability predicha", ESCALA_LOGIT: "Logit del puntaje", ESCALA_MARGEN: "Margen del SVM",
+ESCALA_INDICE = "índice del puntaje, sin el escalón latente"
+# Lo que dice la unidad del eje de la cascada (corta: a 400 px va junto a los rótulos y una más larga se corta en el borde)
+UNIDAD_ESCALA = {ESCALA_REGRESION: "Puntaje predicho", ESCALA_LOGIT: "Logit del puntaje", ESCALA_MARGEN: "Margen del SVM",
+                 ESCALA_INDICE: "Índice del puntaje",
                  ESCALA_PUNTAJE: "Puntaje sin recalibrar"}
 
 
@@ -820,6 +1073,8 @@ def _escala(tarea, escala):
     """(nombre de la escala para el texto, es logit, decimales). El puntaje crudo nunca se llama probabilidad."""
     if tarea == "regresion":
         return ESCALA_REGRESION, False, DEC_PROBABILIDAD
+    if escala == E.ESCALA_INDICE:                 # el modelo original: lo que suman sus árboles es el índice, no una probabilidad
+        return ESCALA_INDICE, False, DEC_PROBABILIDAD
     if escala.startswith("logit"):
         return ESCALA_LOGIT, True, DEC_LOGIT
     if escala.startswith("margen"):
@@ -852,6 +1107,8 @@ def _texto_metodo(exp):
 def _texto_partida(exp):
     if exp["metodo"] == "ebm":
         return "el intercepto de la EBM"
+    if exp["metodo"] == "bdl":
+        return "la salida media del modelo en sus filas de ajuste"
     if exp["metodo"] == "xgboost":
         return "el valor esperado del modelo según sus árboles"
     if exp["exacto"]:
@@ -912,9 +1169,13 @@ def _cascada(tarea, modelo, fila, exp, s):
 
     principales = [f"{_nombre(v)} ({ui.con_signo(a[v], d)})" for v in propias[:2]]
     titulo = (f"De {ui.num(inicio, d)} a {ui.num(final, d)} en la escala del modelo; lo que más aporta: {F.enumerar(principales)}")
-    salida_txt = (f"La salida, {ui.num(final, d)}, es el logit de su puntaje, {ui.num(s, DEC_PUNTAJE)}; bajo cada marca del eje, el "
-                  "puntaje de ese logit." if es_logit
-                  else f"La salida es el {'pronóstico' if tarea == 'regresion' else 'puntaje'}, {ui.num(final, DEC_PUNTAJE)}.")
+    if escala == ESCALA_INDICE:
+        salida_txt = (f"La salida es el índice del cliente, {ui.num(final, DEC_PUNTAJE)}: la probabilidad, {ui.num(s, DEC_PUNTAJE)}, sale "
+                      "de comparar con el umbral cada nivel (el índice más un desplazamiento), como muestra el gráfico de arriba.")
+    else:
+        salida_txt = (f"La salida, {ui.num(final, d)}, es el logit de su puntaje, {ui.num(s, DEC_PUNTAJE)}; bajo cada marca del eje, el "
+                      "puntaje de ese logit." if es_logit
+                      else f"La salida es el {'pronóstico' if tarea == 'regresion' else 'puntaje'}, {ui.num(final, DEC_PUNTAJE)}.")
     sub = (f"Explicación local de {D.en_frase(modelo)}, {_texto_metodo(exp)}. Punto de partida: {_texto_partida(exp)}; cada variable suma "
            f"o resta su aporte, en {escala}. {salida_txt}")
     leyenda = ui.leyenda([("Punto de partida y salida", rol, "punto"), ("Aporte de cada variable", rol, "rayada")])
@@ -992,9 +1253,11 @@ def _controles(tarea, modelo, nivel):
 
 
 def _subtitulo():
+    original = (" El modelo original, BDL, muestra además su conjunto de predicción y cómo llega a su probabilidad."
+                if any(V.hay_original(t) for t in V.TAREAS) else "")
     return (f"Los {F.entero(len(V.indice()['artefactos']))} modelos finales, cargados de artifacts/, predicen en el momento para el "
             f"cliente del formulario, con su incertidumbre medida en los {F.entero(M.meta()['n_prueba'])} clientes de prueba y su "
-            "explicación local.")
+            f"explicación local.{original}")
 
 
 def _campo(variable, base):
@@ -1098,7 +1361,7 @@ def _sin_prefijo(texto, prefijo):
 
 
 # Los modelos de cada familia de explicacion.py (la EBM se explica con motor.py)
-FAMILIAS = {"ebm": ("ebm",), "lineal": ("logistica", "svm", "lasso", "ridge", "svr"), "bayes": ("naive_bayes",),
+FAMILIAS = {"bdl": (O,), "ebm": ("ebm",), "lineal": ("logistica", "svm", "lasso", "ridge", "svr"), "bayes": ("naive_bayes",),
             "xgboost": ("xgboost",), "arbol": ("arbol", "random_forest"), "vecinos": ("knn",)}
 
 
@@ -1132,7 +1395,7 @@ def _que_mide():
                    f"va de {ui.num(min(ece_sin), DEC_ECE)} a {ui.num(max(ece_sin), DEC_ECE)} sin recalibrar"
                    + (f" (sin {F.enumerar([D.en_frase(m) for m in cal if m not in con_ece])}, cuyo margen no es una probabilidad)"
                       if len(con_ece) < len(cal) else "")
-                   + f" y de {ui.num(min(ece_rec), DEC_ECE)} a {ui.num(max(ece_rec), DEC_ECE)} recalibrada."),
+                   + f" y de {ui.num(min(ece_rec), DEC_ECE)} a {ui.num(max(ece_rec), DEC_ECE)} recalibrada. {D.nota_ece()}"),
         ui.parrafo("Conjunto conforme (clasificación): las clases que el modelo no puede descartar con la cobertura elegida. Una clase entra "
                    "si su probabilidad recalibrada es al menos 1 menos un umbral calibrado con las predicciones fuera de pliegue del "
                    "entrenamiento. La cobertura nominal es la fracción de clientes cuyo conjunto debería contener su clase real; la medida "
@@ -1140,6 +1403,11 @@ def _que_mide():
                    f"de la nominal: en la EBM, al {F.pct(float(NIVEL_OMISION), 0)} se midió el {F.pct(ebm['cobertura_prueba'])}."),
         ui.parrafo(f"Intervalo conforme (regresión), {_sin_prefijo(V.conformal()['metodo'], 'intervalo conforme ')}. La cobertura medida es la "
                    "fracción de clientes de prueba cuyo puntaje real cayó dentro de su intervalo."),
+        *([ui.parrafo("Modelo original (BDL): en regresión, además del intervalo conforme común, da su conjunto de predicción, una unión "
+                      "de tramos alrededor de los niveles en que sitúa al cliente, calibrado con filas que no entraron en sus árboles; en "
+                      "clasificación, su puntaje es la probabilidad de superar el umbral según la mezcla de niveles. Las dos salidas se "
+                      "muestran en el gráfico que aparece debajo de la predicción cuando el modelo elegido es BDL.")]
+          if any(V.hay_original(t) for t in V.TAREAS) else []),
         ui.parrafo("Explicación local (valores SHAP): el punto de partida más el aporte de cada variable da exactamente la salida del "
                    "modelo, en la escala en que el modelo suma (logit, margen, probabilidad sin recalibrar o pronóstico). "
                    f"{_texto_familias()} Dice qué mueve la salida para este cliente, no qué pasaría si el cliente cambiara."),
@@ -1165,10 +1433,11 @@ def layout(tarea=None, modelo=None, fila=None, nivel=None, **_):
     tarea, modelo, nivel, fila, avisos = _resolver(tarea, modelo, fila, nivel)
     base = _base_prueba(fila)
     cascada = ui.grafico(_i("cascada"), alto="alto", fuentes=FUENTES_CASCADA, resumen_tabla="Ver los datos (el aporte de cada variable)")
-    modelos = ui.grafico(_i("modelos"), fuentes=FUENTES_MODELOS, resumen_tabla="Ver los datos (los ocho modelos)")
+    modelos = ui.grafico(_i("modelos"), fuentes=FUENTES_MODELOS, resumen_tabla="Ver los datos (todos los modelos en vivo)")
     resultados = html.Div([
         html.Div(id=_i("validacion")),
         _tarjeta_prediccion(),
+        html.Div(id=_i("original")),
         _cargando(cascada),
         html.Div(id=_i("vecinos")),
         modelos,
@@ -1204,7 +1473,7 @@ def _grafico_vacio(texto):
 @callback(Output(_i("modelo"), "options"), Output(_i("modelo"), "value"), Input(_i("tarea"), "value"), State(_i("modelo"), "value"),
           prevent_initial_call=True)
 def _opciones_modelo(tarea, modelo):
-    """Los ocho modelos de la tarea; si el elegido no es de ella, su análogo."""
+    """Los modelos en vivo de la tarea; si el elegido no es de ella, su análogo."""
     tarea = tarea if tarea in V.TAREAS else TAREA_OMISION
     return _opciones(tarea), _modelo_de(tarea, modelo)
 
@@ -1258,9 +1527,11 @@ def _cargar(caso, ir, _clic_azar, _clic_mediana, _clic_atar, *resto):
 @callback(Output(_i("validacion"), "children"), Output(_i("prediccion-titulo"), "children"), Output(_i("prediccion-sub"), "children"),
           Output(_i("prediccion-cuerpo"), "children"), Output(_i("prediccion-detalles"), "children"), *_salidas_grafico(_i("modelos")),
           Output(_i("atadas"), "children"), Output(_i("origen"), "children"), Output(_i("a-cliente"), "href"),
+          Output(_i("original"), "children"),
           Input(_i("tarea"), "value"), Input(_i("modelo"), "value"), Input(_i("nivel"), "value"), *CAMPOS_ENTRADA, Input(_i("base"), "data"))
 def _predecir(tarea, modelo, nivel, *resto):
-    """Valida el formulario y, si es válido, da la predicción del modelo elegido y la de los ocho modelos de la tarea."""
+    """Valida el formulario y, si es válido, da la predicción del modelo elegido, lo propio del modelo original (si es el
+    elegido) y la de todos los modelos en vivo de la tarea."""
     *campos, base = resto
     tarea = tarea if tarea in V.TAREAS else TAREA_OMISION
     modelo = _modelo_de(tarea, modelo)
@@ -1273,19 +1544,22 @@ def _predecir(tarea, modelo, nivel, *resto):
         if problemas:
             vacio = "Sin predicción: hay valores que corregir"
             return ([_aviso_problemas(problemas), vacio, origen, ui.nota("Corrija los valores del aviso para ver la predicción."), None]
-                    + _grafico_vacio(vacio) + [atadas, origen, enlace])
+                    + _grafico_vacio(vacio) + [atadas, origen, enlace, None])
         clave = _clave(fila)
         puntajes, errores = _puntajes(tarea, clave)
         if modelo not in puntajes:
             raise RuntimeError(f"{D.NOMBRE_MODELO[modelo]} no se pudo evaluar: {errores.get(modelo, '')}")
         hacer = _prediccion_clasificacion if tarea == "clasificacion" else _prediccion_regresion
-        titulo, cuerpo, detalles = hacer(modelo, puntajes[modelo], nivel, _real(base, cambiadas))
-        return [None, titulo, origen, cuerpo, detalles] + list(_modelos(tarea, modelo, puntajes, errores, nivel)) + [atadas, origen, enlace]
+        real = _real(base, cambiadas)
+        titulo, cuerpo, detalles = hacer(modelo, puntajes[modelo], nivel, real, clave)
+        propio = _bloque_original(tarea, clave, nivel, real, puntajes[modelo]) if modelo == O else None
+        return ([None, titulo, origen, cuerpo, detalles] + list(_modelos(tarea, modelo, puntajes, errores, nivel))
+                + [atadas, origen, enlace, propio])
     except Exception as e:  # noqa: BLE001  (una entrada nunca detiene la vista)
         REGISTRO.exception("no se pudo predecir")
         vacio = "Sin predicción: no se pudo calcular"
         return ([_aviso_error("No se pudo calcular la predicción", e), vacio, None, None, None] + _grafico_vacio(vacio)
-                + [no_update, no_update, no_update])
+                + [no_update, no_update, no_update, None])
 
 
 @callback(*_salidas_grafico(_i("cascada")), Output(_i("vecinos"), "children"),

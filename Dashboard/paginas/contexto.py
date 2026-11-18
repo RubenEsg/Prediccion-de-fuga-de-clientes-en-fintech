@@ -7,13 +7,19 @@ cada paso), la búsqueda con dos fidelidades (y por qué no es Successive Halvin
 las conclusiones, los autores y el recorrido de la sustentación.
 
 Toda cifra sale de datos/, de artifacts/, del motor o de CITATION.cff, y cada tarjeta dice de qué archivo; la única
-excepción es la del costo de retener frente a conseguir un cliente, citada de Gallo (2014). Los textos
-siguen el informe final (introducción, metodología, resultados y conclusiones) con su tono: la EBM alcanza a los modelos
-de árboles, no los supera. Reutiliza el héroe de secciones/inicio.py y los enlaces de secciones/limites.py.
+excepción es la del costo de retener frente a conseguir un cliente, citada de Gallo (2014). El relato es el del proyecto
+final corregido: el modelo original es BDL (Boosting con Desplazamiento Latente), programado desde cero, y la EBM, que
+viene de una librería, es un benchmark reciente. El veredicto de superioridad del original no se escribe aquí: sale de
+datos/original/veredicto.json y condicion4.json (D.estado_veredicto y D.frase_veredicto) y la página dice lo que digan,
+sea cual sea. La corrección de la recencia se lee de datos/original/auditoria_fuga.json. Las conclusiones sobre la EBM
+siguen el informe del Entregable 3 con su tono: alcanza a los modelos de árboles, no los supera. Reutiliza el héroe del
+Entregable 3 de secciones/inicio.py (solo si el original todavía no está), los enlaces de secciones/limites.py y las
+frases del veredicto de secciones/original.py.
 """
 import json
 import math
 import re
+import unicodedata
 from functools import lru_cache
 
 import dash
@@ -27,10 +33,13 @@ import modelos_vivos as V
 import motor as M
 import ui
 from secciones import inicio, limites
+from secciones import original as OG
 
 dash.register_page(__name__, path="/", name="Contexto", title=f"Contexto · {app.MARCA}")
 
 PRE = "cx"
+O = D.ORIGINAL                    # el modelo original (BDL)
+TAREAS = tuple(inicio.TAREA)      # clasificación y regresión, en el orden del control de tarea
 RIVAL = "xgboost"                 # el modelo de árboles con que se compara siempre a la EBM
 LINEAL = "logistica"              # la referencia lineal de la campaña
 NIVEL_MCS = inicio.NIVEL_MCS      # nivel del Model Confidence Set del informe
@@ -40,12 +49,21 @@ CAPACIDAD_ALTA = 0.50             # la otra capacidad de campaña que citan las 
 VARIABLES_CON_SENAL = 4           # las cuatro variables con señal del análisis exploratorio
 NIVEL_CONFORME = "0.90"           # nivel del intervalo conforme que se cita (clave de datos/conformal.json)
 LARGO_LISTA = 40                  # caracteres: una lista de categorías más larga no se escribe en el rango del diccionario
+LARGO_HUELLA = 16                 # caracteres de la huella sha256 del código del modelo original que se muestran
 UNION = "⁠"                  # une sin espacio: «29–30» no se parte en la raya en el teléfono
 CITACION = app.AQUI / "CITATION.cff"
 LICENCIA_MIT = "https://opensource.org/license/mit"
 LICENCIA_CC_BY = "https://creativecommons.org/licenses/by/4.0/deed.es"
 CARDINAL = {2: "dos", 3: "tres", 4: "cuatro", 5: "cinco", 6: "seis", 7: "siete", 8: "ocho", 9: "nueve", 10: "diez",
             11: "once", 12: "doce"}
+ORDINAL_M = {1: "primero", 2: "segundo", 3: "tercero", 4: "cuarto", 5: "quinto", 6: "sexto", 7: "séptimo", 8: "octavo", 9: "noveno",
+             10: "décimo"}
+# Cómo se dice el veredicto del modelo original en un título (la palabra sale de D.estado_veredicto)
+TITULO_VEREDICTO = {"superior": "el modelo original supera a los benchmarks",
+                    "no superior": "no se demuestra que el modelo original supere a los benchmarks",
+                    "pendiente": "el veredicto del modelo original queda pendiente de la cuarta condición",
+                    None: "el veredicto del modelo original está pendiente de las pruebas de hipótesis"}
+PROTOCOLO = "ModeloOriginal/experiments/protocolo.md (protocolo pre-registrado)"
 
 # Referencias que cita la página: las del informe (referencias.bib), y las de Successive Halving y la cifra del costo de
 # retener, que no están en él (`motivo` dice por qué se citan; `url`, dónde leerla).
@@ -85,6 +103,38 @@ REFERENCIAS = {
            "titulo": "Hyperband: A novel bandit-based approach to hyperparameter optimization",
            "fuente": "Journal of Machine Learning Research", "informe": False,
            "motivo": "para precisar la búsqueda con dos fidelidades"},
+    "dempster": {"corto": "Dempster, Laird y Rubin", "autores": "Dempster, A. P., Laird, N. M. y Rubin, D. B.", "anio": 1977,
+                 "titulo": "Maximum likelihood from incomplete data via the EM algorithm",
+                 "fuente": "Journal of the Royal Statistical Society: Series B", "informe": False, "libro": True,
+                 "motivo": "por el algoritmo EM con que aprende el modelo original"},
+    "friedman": {"corto": "Friedman", "autores": "Friedman, J. H.", "anio": 2001,
+                 "titulo": "Greedy function approximation: A gradient boosting machine", "fuente": "The Annals of Statistics",
+                 "informe": False, "libro": True, "motivo": "por el boosting de árboles del índice del modelo original"},
+    "desarbo": {"corto": "DeSarbo y Cron", "autores": "DeSarbo, W. S. y Cron, W. L.", "anio": 1988,
+                "titulo": "A maximum likelihood methodology for clusterwise linear regression", "fuente": "Journal of Classification",
+                "informe": False, "libro": True,
+                "motivo": "por las mezclas de regresiones por EM, una de las familias de métodos afines al modelo original"},
+    "hou": {"corto": "Hou, Li y Gao", "autores": "Hou, Y., Li, J. y Gao, G.", "anio": 2025,
+            "titulo": "Insurance loss modeling with gradient tree-boosted mixture models",
+            "fuente": "Insurance: Mathematics and Economics", "informe": False, "libro": True,
+            "motivo": "como uno de los antecedentes algorítmicos más cercanos al modelo original: el algoritmo Expectation-Boosting, "
+                      "un EM cuyo paso M es un paso de boosting"},
+    "vovk": {"corto": "Vovk, Gammerman y Shafer", "autores": "Vovk, V., Gammerman, A. y Shafer, G.", "anio": 2005,
+             "titulo": "Algorithmic learning in a random world", "fuente": "Springer", "informe": False, "libro": True,
+             "motivo": "por la predicción conforme de los conjuntos de predicción"},
+    "ke": {"corto": "Ke et al.", "autores": "Ke, G., Meng, Q., Finley, T., Wang, T., Chen, W., Ma, W., Ye, Q. y Liu, T.-Y.", "anio": 2017,
+           "titulo": "LightGBM: A highly efficient gradient boosting decision tree",
+           "fuente": "Advances in Neural Information Processing Systems", "informe": False, "libro": True,
+           "motivo": "por LightGBM, el segundo benchmark reciente"},
+    "demsar": {"corto": "Demšar", "autores": "Demšar, J.", "anio": 2006,
+               "titulo": "Statistical comparisons of classifiers over multiple data sets", "fuente": "Journal of Machine Learning Research",
+               "informe": False, "libro": True, "motivo": "por las pruebas de Friedman y Nemenyi con todos los modelos"},
+    "nadeau": {"corto": "Nadeau y Bengio", "autores": "Nadeau, C. y Bengio, Y.", "anio": 2003,
+               "titulo": "Inference for the generalization error", "fuente": "Machine Learning", "informe": False, "libro": True,
+               "motivo": "por la t corregida de las pruebas del modelo original"},
+    "holm": {"corto": "Holm", "autores": "Holm, S.", "anio": 1979, "titulo": "A simple sequentially rejective multiple test procedure",
+             "fuente": "Scandinavian Journal of Statistics", "informe": False, "libro": True,
+             "motivo": "por la corrección de los valores p por comparaciones múltiples"},
     "gallo": {"corto": "Gallo", "autores": "Gallo, A.", "anio": 2014, "titulo": "The value of keeping the right customers",
               "fuente": "Harvard Business Review, 29 de octubre", "informe": False,
               "motivo": "para la cifra del costo de retener frente a conseguir un cliente",
@@ -245,29 +295,122 @@ def _particion():
 
 
 # --- 1. El héroe ------------------------------------------------------------------------------------------------------
+def _veredictos():
+    """El veredicto del modelo original en las dos tareas, en una frase, con lo que digan veredicto.json y condicion4.json."""
+    estados = {t: D.estado_veredicto(t) for t in TAREAS}
+    if all(e is None for e in estados.values()):
+        return "pendiente: las pruebas de hipótesis todavía no han llegado"
+    palabras = {t: D.frase_veredicto(t, detalle=False) for t in TAREAS}
+    if len(set(palabras.values())) == 1:
+        texto = f"{palabras[TAREAS[0]]} en las dos tareas"
+    else:
+        texto = " y ".join(f"{p} en {D.NOMBRE_TAREA[t].lower()}" for t, p in palabras.items())
+    if any(e is not None and e["provisional"] for e in estados.values()):
+        texto += " (resultado provisional: faltan repeticiones de la validación anidada)"
+    return texto
+
+
+def _titulo_respuesta():
+    """El título de la sección de la cifra principal: lo que diga el veredicto de los archivos."""
+    palabras = {t: (D.estado_veredicto(t) or {}).get("palabra") for t in TAREAS}
+    if len(set(palabras.values())) == 1:
+        return f"La respuesta en una cifra: {TITULO_VEREDICTO[palabras[TAREAS[0]]]}, en las dos tareas"
+    return "La respuesta en una cifra: " + "; ".join(f"en {D.NOMBRE_TAREA[t].lower()}, {TITULO_VEREDICTO[p]}" for t, p in palabras.items())
+
+
+def _benchmarks():
+    """Cuántos benchmarks acompañan al modelo original en la tabla de líderes."""
+    t = D.lideres(TAREAS[0])
+    return len(t) - int(O in set(t["modelo"]))
+
+
 def _subtitulo():
     h = _hechos()
-    return (f"Una fintech quiere ordenar a sus clientes por riesgo de fuga para concentrar en ellos una campaña de retención que no "
-            f"alcanza para todos. Con los {F.entero(h['etl']['n_clientes'])} clientes del conjunto público COFINFAD, que es sintético, "
-            f"el proyecto compara {_cardinal(h['n_modelos'])} modelos y propone uno que se puede leer, la EBM: empata con los mejores "
-            "modelos de árboles y supera a los lineales, a k-NN y a Naive Bayes.")
+    inicio_ = (f"Una fintech quiere ordenar a sus clientes por riesgo de fuga para concentrar en ellos una campaña de retención que no "
+               f"alcanza para todos. Con los {F.entero(h['etl']['n_clientes'])} clientes del conjunto público COFINFAD, que es sintético, ")
+    if not any(D.hay_modelo_original(t) for t in TAREAS):
+        return (inicio_ + f"el proyecto compara {_cardinal(h['n_modelos'])} modelos, entre ellos uno que se puede leer, la EBM: empata con "
+                "los mejores modelos de árboles y supera a los lineales, a k-NN y a Naive Bayes. El modelo original, BDL, todavía no "
+                "tiene resultados en esta app.")
+    return (inicio_ + f"el proyecto propone un modelo original programado desde cero, BDL ({D.NOMBRE_LARGO_ORIGINAL}), y lo compara con "
+            f"{_cardinal(_benchmarks())} benchmarks. Con la regla de superioridad de la guía, su veredicto es: {_veredictos()}.")
+
+
+def _heroe_original(tarea):
+    """La cifra principal: el modelo original en la prueba, con lo que la acota (su ventaja sobre el mejor benchmark en la
+    validación anidada, que es la que decide, y lo que faltaba para el límite teórico del conjunto) y el veredicto de los
+    archivos. Si la corrección todavía no dejó al original en la tarea, el héroe del Entregable 3 (la EBM)."""
+    c = inicio.TAREA[tarea]
+    t = D.lideres(tarea)
+    r, e_v = D.veredicto_original(tarea), D.estado_veredicto(tarea)
+    if O not in set(t["modelo"]) or r is None:
+        return inicio._heroe(tarea)
+    d, mejor, dm = c["d"], r["mejor_benchmark"], r["frente_al_mejor"]
+    e, b = D.fila(t, modelo=O), D.fila(t, modelo=mejor)
+    puesto_prueba = list(t.sort_values(c["prueba"], ascending=not c["mayor_es_mejor"], kind="stable")["modelo"]).index(O) + 1
+    puesto_cv = sorted(r["medias"], key=r["medias"].get, reverse=c["mayor_es_mejor"]).index(O) + 1
+    rechazos = r["rechazos_frente_al_mejor"]
+    n_rech = sum(bool(v) for v in rechazos.values())
+    lectura = (f"En la prueba queda {ORDINAL_M.get(puesto_prueba, F.entero(puesto_prueba))} de los {_cardinal(len(t))} modelos "
+               f"({D.NOMBRE_MODELO[mejor]}, el mejor benchmark de la validación anidada, obtiene {ui.num(b[c['prueba']], d)}). En la "
+               f"validación anidada, que es la que decide, queda {ORDINAL_M.get(puesto_cv, F.entero(puesto_cv))}: "
+               f"{ui.num(r['medias'][O], d)} frente a {ui.num(r['medias'][mejor], d)} de {D.NOMBRE_MODELO[mejor]}. Con la regla de "
+               f"superioridad de la guía, su veredicto es: {D.frase_veredicto(tarea)}.")
+    ventaja = ui.saldo(f"Ventaja sobre {D.en_frase(mejor)} en la validación anidada", r["ventaja_sobre_el_mejor"],
+                       f"A favor de BDL en {F.entero(dm['pliegues_a_favor'])} de {F.entero(r['pliegues'])} pliegues externos. "
+                       f"{_mayuscula(OG._rechazan(n_rech, len(rechazos)))} la igualdad a su favor tras la corrección de Holm; la regla "
+                       f"pide {OG.CARDINAL[OG.PRUEBAS_MINIMAS]}.",
+                       unidad=f"de {c['metrica']} externo", d=d + 1, palabras=("a favor de BDL", "en contra de BDL"))
+    te = D.original_json("techo.json")
+    if te is not None:
+        limite = float(te["prueba"]["auc_maximo" if tarea == "clasificacion" else "rmse_minimo"])
+        falta, falta_b = abs(limite - e[c["prueba"]]), abs(limite - b[c["prueba"]])
+        segundo = ui.saldo("Distancia al límite teórico del conjunto, en la prueba", falta,
+                           f"El límite es {ui.num(limite, d)}: lo mejor que puede lograr un modelo sin la variable excluida. "
+                           f"{_mayuscula(D.en_frase(mejor))} queda a {ui.num(falta_b, d + 1)}: el margen de mejora era mínimo.",
+                           unidad=f"de {c['metrica']}", d=d + 1, extremo="lo que faltaba")
+    else:
+        diferencia = (e[c["prueba"]] - b[c["prueba"]]) * (1 if c["mayor_es_mejor"] else -1)
+        segundo = ui.saldo(f"Diferencia con {D.en_frase(mejor)} en la prueba", diferencia,
+                           f"{D.NOMBRE_MODELO[mejor]} obtiene {ui.num(b[c['prueba']], d)} "
+                           f"{F.intervalo(b[c['inf']], b[c['sup']], d)}: los dos intervalos se solapan.",
+                           unidad=f"de {c['metrica']}", d=d + 1, palabras=("a favor de BDL", "en contra de BDL"))
+    lado = [ui.cifra("Condiciones de la regla que cumple", f"{F.entero(e_v['cumplidas'])} de {F.entero(e_v['evaluadas'])}", mini=True,
+                     nota="De las que ya se pueden evaluar. La cuarta, los conjuntos de datos adicionales, está "
+                          + {"cumple": "cumplida", "no cumple": "incumplida", "provisional": "en curso", "pendiente": "pendiente"}[e_v["c4"]]
+                          + "."),
+            ui.cifra("Pruebas que rechazan a su favor", f"{F.entero(n_rech)} de {F.entero(len(rechazos))}", mini=True,
+                     nota="Frente al mejor benchmark, con los p ajustados por Holm."
+                          + (" Resultado provisional: faltan repeticiones de la validación anidada." if e_v["provisional"] else ""))]
+    return ui.heroe(f"{c['metrica']} de prueba de BDL, el modelo original, en los {F.entero(M.meta()['n_prueba'])} clientes que no vio",
+                    ui.num(e[c["prueba"]], d), f"intervalo del 95 %: {F.intervalo(e[c['inf']], e[c['sup']], d)}", lectura,
+                    [ventaja, segundo], lado=lado,
+                    pie=ui.boton(f"Ver las {OG.CARDINAL[OG.CONDICIONES]} condiciones",
+                                 href=app.ruta_vista("comparacion") + ("?tarea=regresion" if tarea == "regresion" else ""), icono="balanza"))
 
 
 # --- 2. Por qué importa -------------------------------------------------------------------------------------------------
 def _importa():
     meta, h = M.meta(), _hechos()
-    t = D.prueba("clasificacion")
-    e, lin = D.fila(t, modelo="ebm"), D.fila(t, modelo=LINEAL)
+    t = D.lideres("clasificacion")
+    foco = O if O in set(t["modelo"]) else "ebm"
+    e, lin = D.fila(t, modelo=foco), D.fila(t, modelo=LINEAL)
+    aditivos = [m.get("aditivo") for m in (D.modelo_original(x) for x in TAREAS) if m is not None]
+    indice = (" El índice del modelo original, BDL, también lo es: sus modelos finales usan árboles de profundidad uno, una curva "
+              "por variable." if aditivos and all(aditivos) else "")
     op = meta["punto_operacion"]
     d = _citacion()["datos"]
+    empate = D.frase_empate_corta(foco, clientes=True)          # el corte de la campaña cae en un empate del modelo en foco
     campana = ui.tarjeta([
         ui.cifra(f"Caben en una campaña del {F.pct(op['fraccion'], 0)}", F.entero(op["contactados"]),
                  f"de {F.entero(meta['n_prueba'])} clientes", mini=True,
                  nota=f"Entre los {F.entero(meta['n_prueba'])} clientes de prueba hay {F.entero(meta['positivos_prueba'])} de riesgo alto "
                       f"({F.pct(meta['prevalencia_prueba'])})."),
-        ui.parrafo(f"Contactando a los de mayor puntaje, la EBM alcanza a {F.entero(e['vp_op'])} de ellos y "
+        ui.parrafo(f"Contactando a los de mayor puntaje, {D.en_frase(foco)} alcanza a {F.entero(e['vp_op'])} de ellos y "
                    f"{D.en_frase(LINEAL)} a {F.entero(lin['vp_op'])}: el orden del modelo decide quién recibe la llamada."),
-    ], titulo="La campaña no alcanza para todos", fuentes=[F_META, F_CLF])
+        *([ui.nota(f"La cifra de {D.en_frase(foco)} es la de {empate}.")] if empate else []),
+    ], titulo="La campaña no alcanza para todos", fuentes=[F_META, F_CLF, D.fuente_original("lideres_clasificacion.csv")]
+        + ([D.fuente_original("empates_campana.json")] if empate else []))
     huella = ui.tarjeta([
         ui.parrafo("En una fintech casi toda la relación con el cliente deja huella digital: uso de la aplicación, tenencia de productos, "
                    "satisfacción declarada y actividad transaccional."),
@@ -279,8 +422,9 @@ def _importa():
     explicar = ui.tarjeta([
         ui.parrafo(f"Los ensambles de árboles como Random Forest ({_cita('breiman')}) y XGBoost ({_cita('chen')}) ordenan bien, pero "
                    f"necesitan un explicador como SHAP ({_cita('lundberg')}) para decir por qué marcan a un cliente."),
-        ui.parrafo(f"La EBM ({_cita('lou2012')}; {_cita('nori')}) es una suma de curvas que se pueden graficar y auditar: la "
-                   "explicación es el propio modelo, y en un contexto financiero la explicación forma parte del producto."),
+        ui.parrafo(f"La EBM ({_cita('lou2012')}; {_cita('nori')}) es una suma de curvas que se pueden graficar y auditar.{indice} "
+                   "En esos modelos la explicación es el propio modelo, y en un contexto financiero la explicación forma parte del "
+                   "producto."),
     ], titulo="En finanzas hay que poder explicar la decisión")
     g = REFERENCIAS["gallo"]
     costo = ui.tarjeta([ui.rejilla([
@@ -301,36 +445,89 @@ def _importa():
 
 # --- 3. Pregunta y objetivos ----------------------------------------------------------------------------------------------
 def _pregunta():
-    refs = len(D.pruebas("clasificacion"))
-    ablacion = ["interacciones", "balanceo", "fidelidad de la búsqueda", "optimizador", "semilla"]
     pregunta = ui.tarjeta([
-        ui.parrafo(html.Strong("¿Alcanza un modelo aditivo legible la precisión de los ensambles de árboles en estos datos, y a qué "
-                               "costo?")),
-        ui.parrafo([html.Strong("Hipótesis. "), "Sí, porque la señal está en pocas variables con efectos no lineales y casi "
-                    "independientes, que es exactamente lo que un modelo aditivo representa."]),
-        ui.parrafo([html.Strong("Respuesta. "), "La alcanza, no la supera: es equivalente en precisión, más lenta de ajustar, igual de "
-                    "rápida al predecir y legible por construcción (", html.A("Conclusiones", href=f"#{PRE}-conclusiones"), ")."]),
-    ], titulo="La pregunta de investigación")
+        ui.parrafo(html.Strong("¿Supera a los benchmarks un modelo que trata como una clase latente el escalón que la variable "
+                               "excluida deja en el puntaje, en lugar de tratarlo como ruido?")),
+        ui.parrafo([html.Strong("Hipótesis. "), "En regresión, el RMSE del modelo original es menor que el del mejor benchmark; en "
+                    "clasificación, su AUC es mayor. Se fijaron en un protocolo, antes de ejecutar los experimentos, junto con la regla "
+                    "de superioridad de la guía."]),
+        ui.parrafo([html.Strong("Respuesta. "), f"Con esa regla, el veredicto del modelo original es: {_veredictos()}. La app dice lo "
+                    "que dicen los archivos de resultados, sea cual sea (", html.A("Conclusiones", href=f"#{PRE}-conclusiones"), ")."]),
+    ], titulo="La pregunta de investigación",
+        fuentes=[D.fuente_original("veredicto.json"), D.fuente_original("condicion4.json"), PROTOCOLO])
 
     def objetivo(titulo, texto, enlaces):
         partes = [html.Strong(f"{titulo}. "), texto, " "]
         for i, (rotulo, href) in enumerate(enlaces):
-            partes += ([" · "] if i else []) + [dcc.Link(rotulo, href=href)]
+            enlace = html.A(rotulo, href=href) if href.startswith("#") else dcc.Link(rotulo, href=href)
+            partes += ([" · "] if i else []) + [enlace]
         return ui.parrafo(partes)
 
     objetivos = ui.tarjeta([
-        objetivo("Adaptar la EBM al problema", "Formularla, escribir su pseudocódigo y justificar cada componente, con ponderación de "
-                 "clases por observación y una búsqueda de hiperparámetros con dos fidelidades.",
-                 [("Algoritmo y veredicto", app.ruta_vista("propuesto"))]),
-        objetivo("Compararla con rigor", f"Frente a las {_cardinal(refs)} referencias de cada tarea, con un protocolo fijado de antemano: "
-                 "pruebas pareadas, corrección de Holm, regiones de equivalencia práctica y tamaños de efecto.",
-                 [("Comparación estadística", app.ruta_vista("comparacion"))]),
-        objetivo("Medir qué sostiene el resultado", f"Una ablación de {_cardinal(len(ablacion))} componentes ({F.enumerar(ablacion)}), "
-                 "la sensibilidad a los hiperparámetros y el costo computacional.", [("Robustez", app.ruta_vista("robustez"))]),
-        objetivo("Interpretar el modelo y sus errores", "Leer sus curvas y localizar dónde falla y por qué.",
-                 [("Cómo decide", app.ruta_vista("decide")), ("Errores", app.ruta_vista("errores"))]),
+        objetivo("Corregir las observaciones del docente", "La EBM viene de una librería y deja de presentarse como modelo original; "
+                 "la recencia se calcula solo con los clientes de entrenamiento.", [("Las correcciones", f"#{PRE}-correcciones")]),
+        objetivo("Diseñar, programar y sustentar un modelo original", f"BDL ({D.NOMBRE_LARGO_ORIGINAL}): su formulación, su "
+                 "pseudocódigo, sus proposiciones demostradas y su código, escrito desde cero.",
+                 [("Modelo original", app.ruta_vista("original")), ("Ficha del modelo", app.ruta_vista("ficha"))]),
+        objetivo("Compararlo con los benchmarks de forma justa", f"Frente a {_cardinal(_benchmarks())} benchmarks, con el protocolo "
+                 "registrado: validación anidada repetida, cuatro pruebas de hipótesis por tarea, corrección de Holm y tamaños del "
+                 "efecto. El resultado se reporta sea cual sea.",
+                 [("Tabla de líderes", app.ruta_vista("lideres")), ("Comparación estadística", app.ruta_vista("comparacion"))]),
+        objetivo("Medir qué sostiene el resultado", "El techo teórico del problema, la ablación, la estabilidad por semilla, la "
+                 "sensibilidad, el ruido, el tamaño de muestra, otros conjuntos de datos y la incertidumbre.",
+                 [("Modelo original", app.ruta_vista("original"))]),
+        objetivo("Llevarlo a un producto en vivo", "Los modelos finales predicen en el momento, con su incertidumbre y su explicación; "
+                 "el modelo original muestra, además, su conjunto de predicción.", [("Predicción en vivo", app.ruta_vista("prediccion"))]),
     ], titulo="Los objetivos")
     return ui.rejilla([pregunta, objetivos], "1-2")
+
+
+# --- Las correcciones tras la evaluación del proyecto final -----------------------------------------------------------------
+def _correcciones():
+    """Las dos correcciones del proyecto final: el modelo original ya no es una librería y la recencia se calcula solo con el
+    entrenamiento (datos/original/auditoria_fuga.json, que copia la auditoría de la corrección)."""
+    estado = D.estado_original()
+    codigo = (estado.get("codigo") or {})
+    pares = [("Modelo original", f"BDL ({D.NOMBRE_LARGO_ORIGINAL})"), ("Código", "src/original_model.py, con numpy y scipy"),
+             ("Benchmarks recientes", "EBM (librería interpret) y LightGBM")]
+    if codigo.get("sha256"):
+        pares.append(("Huella del código", f"sha256 {codigo['sha256'][:LARGO_HUELLA]}… (la misma que en ModeloOriginal/)"))
+    propio = ui.tarjeta([
+        ui.parrafo("La primera versión del proyecto final presentaba como modelo original a la EBM, que se usa a través de una "
+                   "librería: para la guía eso es un import. El modelo original es ahora BDL, programado desde cero: discretización, "
+                   "árboles, el algoritmo EM de la mezcla y la salida conforme. La EBM queda como benchmark reciente e "
+                   "interpretable, y se añade LightGBM como segundo benchmark reciente."),
+        ui.ficha(pares),
+        html.Div(ui.boton("Ver el modelo original", href=app.ruta_vista("original"), icono="modelo"), className="botonera"),
+    ], titulo="El modelo original ya no viene de una librería", fuentes=[D.fuente_original("estado.json"), "src/original_model.py"])
+
+    a = D.original_json("auditoria_fuga.json")
+    if a is None:
+        recencia = OG._pendiente("La auditoría de la corrección de la recencia", "auditoria_fuga.json", "la escribe 01_auditoria_fuga.py")
+    else:
+        f, p, pl = a["fecha_de_corte"], a["particion"], a.get("pliegues", {})
+        igual = bool(f["coinciden"]) and bool(f["predictores_identicos"])
+        titulo = ("La fecha de corte de la recencia es la misma con todo el detalle y solo con el entrenamiento: no cambia ningún "
+                  "predictor" if igual else
+                  f"La corrección de la recencia cambia {F.entero(f['celdas_de_recencia_que_cambian'])} celdas de los predictores")
+        ficha = [("Fecha de corte con todo el detalle (Entregable 3)", _fecha(f["entregable_3_todo_el_detalle"])),
+                 ("Fecha de corte solo con el entrenamiento (corrección)", _fecha(f["correccion_solo_entrenamiento"])),
+                 ("Celdas de la recencia que cambian", F.entero(f["celdas_de_recencia_que_cambian"])),
+                 ("Predictores de entrenamiento y de prueba", "idénticos antes y después (misma huella)" if f["predictores_identicos"]
+                  else "distintos"),
+                 ("Clientes que están en las dos particiones", F.entero(p["clientes_en_ambas"]))]
+        if pl:
+            ficha.append(("Pliegues con otra fecha de corte", f"{F.entero(pl['pliegues_con_otra_fecha_de_corte'])} de "
+                                                              f"{F.entero(pl['pliegues_revisados'])} revisados"))
+        consecuencia = ("Por eso las corridas del Entregable 3 siguen siendo válidas y se reutilizan tal cual."
+                        if igual else "Los resultados que dependen de la recencia se recalcularon con el flujo corregido.")
+        recencia = ui.tarjeta([
+            ui.parrafo("La recencia se calculaba con la fecha máxima de todo el detalle de transacciones, que incluye a los clientes "
+                       "de prueba. Ahora la partición se hace antes de derivar variables y la fecha de corte sale solo de los "
+                       f"clientes de entrenamiento. La auditoría compara las dos versiones. {consecuencia}"),
+            ui.ficha(ficha),
+        ], titulo=titulo, fuentes=[D.fuente_original("auditoria_fuga.json")])
+    return [ui.rejilla([propio, recencia], "1-1")]
 
 
 # --- 4. La formulación ----------------------------------------------------------------------------------------------------
@@ -578,6 +775,30 @@ def _paso(i, href, titulo, texto, pantalla="datos", vista=None):
     return ui.destino(href, pantalla, f"{i}. {titulo}", texto, icono=ICONO_VISTA.get(vista) if vista else None)
 
 
+def _texto_incertidumbre(cal, conf):
+    """El paso de calibración e incertidumbre del pipeline: con el modelo original, su conjunto de predicción frente al
+    intervalo conforme del mejor benchmark; si todavía no está, lo del Entregable 3 (la EBM)."""
+    nivel = F.pct(float(NIVEL_CONFORME), 0)
+    c = V.conformal()["modelos"]
+    propio = (c.get(O, {}).get(NIVEL_CONFORME) or {}).get("conjunto")
+    r = D.veredicto_original("regresion")
+    mejor = r["mejor_benchmark"] if r is not None and r["mejor_benchmark"] in c else RIVAL
+    if propio is None:
+        return (f"La isotónica baja el ECE de la EBM de {ui.num(cal['ece_prueba_sin_recalibrar'], 3)} a "
+                f"{ui.num(cal['ece_prueba_recalibrada'], 3)}; el intervalo conforme del {nivel} cubre el "
+                f"{F.pct(conf['cobertura_prueba'])} de la prueba en regresión.")
+    return (f"En regresión, el conjunto de predicción de BDL al {nivel} cubre el {F.pct(propio['cobertura_prueba'])} de la prueba con "
+            f"un largo de {ui.num(propio['largo'], 4)}; el intervalo conforme {_tras_de(mejor)} mide "
+            f"{ui.num(c[mejor][NIVEL_CONFORME]['ancho'], 4)}. La isotónica baja el ECE de la EBM de "
+            f"{ui.num(cal['ece_prueba_sin_recalibrar'], 3)} a {ui.num(cal['ece_prueba_recalibrada'], 3)}.")
+
+
+def _tras_de(modelo):
+    """«de XGBoost», «del árbol de decisión», «de la EBM»."""
+    frase = D.en_frase(modelo)
+    return "del" + frase[2:] if frase.startswith("el ") else f"de {frase}"
+
+
 def _pipeline():
     h, meta = _hechos(), M.meta()
     refs = len(D.pruebas("clasificacion"))
@@ -588,29 +809,31 @@ def _pipeline():
          f"derivadas, {F.entero(h['n_elim'])} columnas eliminadas y {F.entero(h['n_pred'])} predictores.", "datos", None),
         ("/eda", "Partición y EDA solo con el entrenamiento", f"{_particion()} con semilla {meta['semilla']}: {F.entero(meta['n_entrenamiento'])} "
          f"clientes para explorar y entrenar; los {F.entero(meta['n_prueba'])} de prueba no se miran hasta el final.", "datos", None),
-        (app.ruta_vista("lideres"), f"{_mayuscula(_cardinal(h['n_modelos']))} modelos × balanceos × optimizadores",
+        (app.ruta_vista("lideres"), f"{_mayuscula(_cardinal(h['n_modelos']))} modelos × balanceos × optimizadores, más BDL y LightGBM",
          f"Clasificación: {h['n_modelos']} × {h['n_balanceos']} × {h['n_optimizadores']} = {F.entero(h['corridas_clf'])} corridas "
          f"({_cardinal(h['no_aplican'])} no aplican: k-NN con ponderación). Regresión: {h['n_modelos']} × {h['n_optimizadores']} = "
          f"{F.entero(h['corridas_reg'])}. En total {F.entero(h['corridas'])}: {F.entero(h['corridas_guia'])} de la guía y "
-         f"{F.entero(h['corridas_ebm'])} de la EBM.", "comparacion", "lideres"),
+         f"{F.entero(h['corridas_ebm'])} de la EBM. El modelo original y LightGBM compiten con una sola combinación, fijada en el "
+         "protocolo.", "comparacion", "lideres"),
         (app.ruta_vista("comparacion"), f"Validación anidada {h['k_ext']} × {h['k_int']}",
          f"Los pliegues externos miden y los internos eligen los hiperparámetros; {ui.num(h['horas'], 1)} horas de cómputo en un solo "
          "equipo.", "comparacion", "comparacion"),
         (app.ruta_vista("lideres"), "La mejor combinación de cada modelo", "Se elige por la métrica externa, sin mirar la prueba, y se "
          "reajusta con todo el entrenamiento: es el modelo final, que toca la prueba una sola vez.", "comparacion", "lideres"),
-        (app.ruta_vista("comparacion"), "Comparación estadística", f"La EBM frente a las {_cardinal(refs)} referencias de cada tarea: "
-         "DeLong o Diebold-Mariano, t corregida, McNemar, bayesiana con equivalencia práctica, Holm y Model Confidence Set.",
+        (app.ruta_vista("original"), "El modelo original: BDL", "Un boosting de árboles propios que modela como una clase latente el "
+         "escalón del puntaje y lo aprende con un algoritmo EM generalizado; con su pseudocódigo, sus proposiciones y su convergencia.",
+         "modelo", "original"),
+        (app.ruta_vista("comparacion"), "Comparación estadística", f"El modelo original frente a los {_cardinal(_benchmarks())} "
+         "benchmarks, con el protocolo registrado: Friedman y Nemenyi, Wilcoxon, t corregida, DeLong o permutación pareada, McNemar o "
+         f"bootstrap pareado, Holm y tamaños del efecto. Aparte, la EBM frente a sus {_cardinal(refs)} referencias del Entregable 3.",
          "comparacion", "comparacion"),
-        (app.ruta_vista("propuesto"), "El modelo propuesto: la EBM", "Modelo aditivo aprendido por boosting cíclico, con pesos de clase y "
-         "búsqueda con dos fidelidades; veredicto explícito de no superioridad.", "modelo", "propuesto"),
-        (app.ruta_vista("robustez"), "Robustez", "Ablación, semillas, sensibilidad a los hiperparámetros, curva de aprendizaje y costo.",
-         "robustez", "robustez"),
-        (app.ruta_vista("diagnostico"), "Calibración e incertidumbre", f"La isotónica baja el ECE de la EBM de "
-         f"{ui.num(cal['ece_prueba_sin_recalibrar'], 3)} a {ui.num(cal['ece_prueba_recalibrada'], 3)}; el intervalo conforme del "
-         f"{F.pct(float(NIVEL_CONFORME), 0)} cubre el {F.pct(conf['cobertura_prueba'])} de la prueba en regresión.", "comparacion",
-         "diagnostico"),
-        (app.ruta_vista("prediccion"), "El dashboard", f"Los {F.entero(len(V.indice()['artefactos']))} modelos finales guardados, en vivo y "
-         "sin reentrenar: predicción, incertidumbre y explicación de cada cliente.", "cliente", "prediccion"),
+        (app.ruta_vista("original"), "Robustez y veredicto", "Ablación, semillas, sensibilidad, ruido, tamaño de muestra, otros "
+         "conjuntos de datos e incertidumbre del modelo original, y su veredicto con las cuatro condiciones de la guía. La robustez "
+         "de la EBM está en su vista.", "robustez", "robustez"),
+        (app.ruta_vista("diagnostico"), "Calibración e incertidumbre", _texto_incertidumbre(cal, conf), "comparacion", "diagnostico"),
+        (app.ruta_vista("prediccion"), "El dashboard", f"Los {F.entero(len(V.indice()['artefactos']))} modelos finales guardados (los de las "
+         "dos tareas, menos LightGBM, que solo aparece en las tablas), en vivo y sin reentrenar: predicción, incertidumbre y explicación "
+         "de cada cliente.", "cliente", "prediccion"),
     ]
     return [ui.destinos([_paso(i, *p) for i, p in enumerate(pasos, 1)])]
 
@@ -712,8 +935,12 @@ def _no_permite():
     separa = [D.NOMBRE_MODELO[m] for m in clf.loc[clf["p_mcnemar_holm"] < D.ALFA, "modelo"]]
     xgb = D.NOMBRE_MODELO[RIVAL]
     puntos = [
-        ("Que se repita en otra fintech", "Hay un solo conjunto de datos, sintético. Nada garantiza que el empate o el orden de las "
-         "variables se repitan con clientes reales."),
+        ("Que se repita en otra fintech", "COFINFAD es sintético. El escalón que el modelo original aprovecha existe porque el "
+         "generador del conjunto resta una cantidad fija por producto activo; en datos reales un efecto así sería menos limpio. Nada "
+         "garantiza que el empate entre modelos o el orden de las variables se repitan con clientes reales."),
+        ("Que el modelo original supere a los benchmarks", f"Con la regla de superioridad de la guía, su veredicto es: {_veredictos()}."
+         + (" Los mejores benchmarks ya estaban a milésimas del límite teórico del conjunto: ningún modelo puede ofrecer una mejora "
+            "grande en la métrica principal." if D.original_json("techo.json") is not None else "")),
         ("Que prediga fuga real", "«Riesgo alto» es el cuarto superior de un puntaje de propensión que trae el conjunto; el AUC dice qué "
          "tan bien el modelo ordena según ese puntaje, no cuántos clientes se van."),
         (f"Que la EBM sea mejor que {xgb}", f"En clasificación la probabilidad de equivalencia práctica con {xgb} es {F.prob(rope_x)}; en "
@@ -816,6 +1043,19 @@ def _sesgo(segmento):
     return titulo, [tabla, ui.nota(nota)]
 
 
+def _edad_en_el_original():
+    """La misma advertencia para el modelo original, con su importancia SHAP: la tabla de la izquierda se calculó con la EBM."""
+    info = V.shap_indice()["modelos"].get(f"clasificacion__{O}")
+    if info is None:
+        return []
+    imp = pd.Series(info["importancia_media_abs"], dtype=float)
+    primera = imp.idxmax()
+    return [ui.parrafo(f"La tabla se calculó con la EBM, el benchmark que se lee sin explicador. En el modelo original, BDL, "
+                       + ("la edad también es la variable de más peso" if primera == "age" else
+                          f"la variable de más peso es {M.nombre(primera).lower()}")
+                       + f" ({F.pct(imp['age'] / imp.sum())} de su importancia SHAP): la advertencia vale igual para él.")]
+
+
 def _sesgos_lado():
     imp = M.importancia()
     cohorte = _por_grupo("cohorte")
@@ -830,11 +1070,86 @@ def _sesgos_lado():
         ui.parrafo(f"El género y la ciudad también son entradas del modelo, aunque pesan poco ({F.pct(imp['gender'])} y "
                    f"{F.pct(imp['location'])} de la importancia). En datos sintéticos esto describe las reglas del generador; con datos "
                    "reales habría que auditar si el trato distinto por grupo se justifica."),
+        *_edad_en_el_original(),
     ], titulo="Qué grupos trata distinto", fuentes=[D.fuente("modelos/ebm_clasificacion.json"), D.fuente("clientes_prueba.parquet"),
                                                    D.fuente("resultados/errores_segmentos.csv")])
 
 
 # --- 9. Conclusiones ----------------------------------------------------------------------------------------------------------
+def _conclusiones_original():
+    """Lo que sostienen los resultados del modelo original, con lo que dicen los archivos de la corrección: el veredicto por
+    tarea con su causa, la estructura que recupera, la incertidumbre y el margen que dejaba el límite teórico. Cada tarjeta
+    falta si su archivo todavía no ha llegado."""
+    if all(D.veredicto_original(t) is None for t in TAREAS):
+        return [OG._pendiente("Las conclusiones sobre el modelo original", "veredicto.json", "lo calcula 04_pruebas_hipotesis.py")]
+    estados = {t: D.estado_veredicto(t) for t in TAREAS}
+    hay = [t for t in TAREAS if estados[t] is not None]
+    parrafos = []
+    for t in hay:
+        parrafos.append(ui.parrafo(" ".join(x for x in (OG._por_que(t), OG._en_prueba(t)) if x)))
+        causa = OG._causa(t)
+        if causa:
+            parrafos.append(ui.parrafo(causa))
+    veredicto = ui.tarjeta(parrafos, titulo=_mayuscula(_titulo_respuesta().split(": ", 1)[-1]),
+                           fuentes=[D.fuente_original("veredicto.json"), D.fuente_original("condicion4.json"),
+                                    D.fuente_original("techo.json"), D.fuente_original("experimentos.csv")])
+    provisional = any(estados[t]["provisional"] for t in hay)
+    valor = " y ".join(f"{F.entero(estados[t]['cumplidas'])} de {F.entero(estados[t]['evaluadas'])}" for t in hay)
+    lectura = ui.tarjeta_insight(valor, "condiciones de la regla de superioridad que cumple el modelo original, de las evaluadas, en "
+                                 + " y en ".join(D.NOMBRE_TAREA[t].lower() for t in hay),
+                                 f"Veredicto{' provisional' if provisional else ''}: {_veredictos().split(' (')[0]}.", chip_="Veredicto")
+    tarjetas = []
+    m, te = D.modelo_original("regresion"), D.original_json("techo.json")
+    if m is not None and m.get("K") and te is not None:
+        reales, aprendidos = sorted(te["pesos"].values()), sorted(m["pesos"])
+        iguales = len(reales) == len(aprendidos)
+        pesos = (f"sus pesos difieren de la distribución real de active_products en menos de "
+                 f"{ui.num(max(abs(a - b) for a, b in zip(aprendidos, reales)), 3)}" if iguales
+                 else f"la variable excluida tiene {_cardinal(len(reales))} niveles")
+        tarjetas.append(ui.tarjeta([ui.parrafo(
+            f"El modelo no ve active_products, la variable excluida por fuga de información. Aun así, el criterio BIC elige "
+            f"{_cardinal(int(m['K']))} clases latentes; {pesos}, y la separación media entre sus desplazamientos es "
+            f"{ui.num(m['separacion_media'], 4)} (la del generador es {ui.num(te['delta'], 2)}). Los benchmarks tratan ese escalón como "
+            "ruido.")], titulo="Recupera la estructura del puntaje sin ver la variable que la causa",
+            fuentes=[D.fuente_original("modelo_regresion.json"), D.fuente_original("techo.json")]))
+    c = V.conformal()["modelos"]
+    propio = (c.get(O, {}).get(NIVEL_CONFORME) or {}).get("conjunto")
+    r = D.veredicto_original("regresion")
+    if propio is not None and r is not None and r["mejor_benchmark"] in c:
+        mejor = r["mejor_benchmark"]
+        ancho = c[mejor][NIVEL_CONFORME]["ancho"]
+        tarjetas.append(ui.tarjeta([ui.parrafo(
+            f"Con cobertura nominal del {F.pct(float(NIVEL_CONFORME), 0)}, el conjunto de predicción del modelo original mide "
+            f"{ui.num(propio['largo'], 4)} (la unión de {F.entero(propio['tramos'])} tramos) y cubre el "
+            f"{F.pct(propio['cobertura_prueba'])} de la prueba; el intervalo conforme {_tras_de(mejor)} mide {ui.num(ancho, 4)}, unas "
+            f"{F.entero(ancho / propio['largo'])} veces más. En lugar de un intervalo ancho, el modelo dice en cuál de los niveles "
+            "puede estar el puntaje.")], titulo="La incertidumbre es donde el modelo cambia el resultado",
+            fuentes=[D.fuente("conformal.json")]))
+    if te is not None:
+        reg, clf = D.lideres("regresion").set_index("modelo"), D.lideres("clasificacion").set_index("modelo")
+        rr, rc = D.veredicto_original("regresion"), D.veredicto_original("clasificacion")
+        if rr is not None and rc is not None and rr["mejor_benchmark"] in reg.index and rc["mejor_benchmark"] in clf.index:
+            falta_r = abs(reg.loc[rr["mejor_benchmark"], "rmse_prueba"] - te["prueba"]["rmse_minimo"])
+            falta_c = abs(te["prueba"]["auc_maximo"] - clf.loc[rc["mejor_benchmark"], "auc_prueba"])
+            tarjetas.append(ui.tarjeta([ui.parrafo(
+                f"Con la estructura del escalón se puede calcular el límite del problema: en la prueba, un RMSE de "
+                f"{ui.num(te['prueba']['rmse_minimo'], 5)} y un AUC de {ui.num(te['prueba']['auc_maximo'], 4)}. Los mejores benchmarks "
+                f"ya estaban a {ui.num(falta_r, 5)} y a {ui.num(falta_c, 4)} de ese límite: los modelos flexibles empatan porque están "
+                "cerca del techo, y lo que el modelo original puede añadir es estructura e incertidumbre mejor descrita, no precisión "
+                "puntual.")], titulo="El margen de mejora era mínimo",
+                fuentes=[D.fuente_original("techo.json"), D.fuente_original("lideres_regresion.csv"), F_CLF]))
+    a = D.original_json("auditoria_fuga.json")
+    if a is not None and a["fecha_de_corte"]["predictores_identicos"]:
+        tarjetas.append(ui.tarjeta([ui.parrafo(
+            f"Calculada solo con los clientes de entrenamiento, la fecha de corte de la recencia es la misma "
+            f"({_fecha(a['fecha_de_corte']['correccion_solo_entrenamiento'])}) y cambian "
+            f"{F.entero(a['fecha_de_corte']['celdas_de_recencia_que_cambian'])} celdas: los resultados de las entregas anteriores "
+            "siguen siendo válidos.")], titulo="La corrección de la recencia no cambia ningún dato",
+            fuentes=[D.fuente_original("auditoria_fuga.json")]))
+    filas = [ui.rejilla(tarjetas[i:i + 2], "1-1") if len(tarjetas[i:i + 2]) > 1 else tarjetas[i] for i in range(0, len(tarjetas), 2)]
+    return [ui.rejilla([veredicto, lectura], "2-1")] + filas
+
+
 def _conclusiones():
     t, r = D.prueba("clasificacion"), D.prueba("regresion")
     pc, pr = D.pruebas("clasificacion"), D.pruebas("regresion")
@@ -850,7 +1165,7 @@ def _conclusiones():
               else f"{sup_c} de {len(vc)} en clasificación y {sup_r} de {len(vr)} en regresión")
     dentro = [m for m, esta in zip(r["modelo"], r["en_mcs"]) if esta]
     alcanza = ui.tarjeta([ui.parrafo(
-        f"La EBM tiene el mayor AUC de prueba de los {_cardinal(len(t))} clasificadores ({ui.num(e['auc_prueba'], 4)}, frente a "
+        f"La EBM tiene el mayor AUC de prueba de los {_cardinal(len(t))} clasificadores del Entregable 3 ({ui.num(e['auc_prueba'], 4)}, frente a "
         f"{ui.num(x['auc_prueba'], 4)} de {D.NOMBRE_MODELO[RIVAL]}) y el segundo RMSE de regresión ({ui.num(er['rmse_prueba'], 5)}, a "
         f"{ui.num(er['rmse_prueba'] - xr['rmse_prueba'], 5)} de {D.NOMBRE_MODELO[RIVAL]}). Supera con significación tras la corrección de "
         f"Holm a {supera}: los lineales, k-NN y Naive Bayes. Frente a {_lista_frase(empates_c)} {pruebas} (equivalencia práctica de "
@@ -858,7 +1173,7 @@ def _conclusiones():
         f"regresión). En regresión, el Model Confidence Set al {F.pct(NIVEL_MCS, 0)} deja dentro solo a "
         f"{F.enumerar(D.NOMBRE_MODELO[m] for m in dentro)}: detecta una ventaja de "
         f"{ui.num(er['rmse_prueba'] - xr['rmse_prueba'], 5)} de RMSE que las pruebas por pares no confirman.")],
-        titulo="La alcanza, no la supera", fuentes=FUENTES_PRUEBAS)
+        titulo="La EBM alcanza a los modelos de árboles, no los supera", fuentes=FUENTES_PRUEBAS)
 
     e2, techo = D.tabla("resultados/entrega2.csv"), D.techo()
     a_c, d_c = D.fila(e2, tarea="clasificacion", modelo="logistica_e2"), D.fila(e2, tarea="clasificacion", modelo="ebm")
@@ -916,10 +1231,9 @@ def _conclusiones():
     ], titulo="Es estable, y se sabe dónde falla", fuentes=[D.fuente("resultados/semillas.csv"),
                                                             D.fuente("resultados/concordancia_validacion_prueba.csv"),
                                                             D.fuente("resultados/errores_segmentos.csv")])
-    lectura = ui.tarjeta_insight("La alcanza, no la supera", "Un modelo aditivo que se puede leer llega a la precisión de los modelos de "
-                                 "árboles en estos datos.", "Es más lento de ajustar, igual de rápido al predecir y cada variable aporta "
-                                 "una curva que se puede graficar y auditar.", chip_="Conclusión del informe")
-    return [ui.rejilla([alcanza, lectura], "2-1"), ui.rejilla([datos, practica, legible, robusta], "1-1"), limites._futuro()]
+    return (_conclusiones_original()
+            + [html.H3("La EBM, el benchmark interpretable: lo que sostiene el informe del Entregable 3"),
+               alcanza, ui.rejilla([datos, practica, legible, robusta], "1-1"), limites._futuro()])
 
 
 def _lista_frase(modelos):
@@ -928,15 +1242,22 @@ def _lista_frase(modelos):
 
 
 # --- 10. Autores, versión y documentos ---------------------------------------------------------------------------------------
+def _orden_alfabetico(texto):
+    """Clave para ordenar apellidos sin que cuenten las mayúsculas ni los signos: Dempster, Demšar, DeSarbo."""
+    return unicodedata.normalize("NFKD", texto).encode("ascii", "ignore").decode("ascii").casefold()
+
+
 def _autores():
     c, o = _citacion(), _origen()
+    original = V.indice().get("original") or {}
+    bdl = f"; los de BDL, el {_fecha(original['generado'])}" if original.get("generado") else ""
     equipo = ui.tarjeta([ui.ficha([
         ("Autores", _autores_prosa(c["autores"])),
         ("Curso", "Machine Learning · Pregrado en Ciencia de Datos"),
         ("Universidad", "Universidad del Norte, Barranquilla"),
         ("Versión del dashboard", f"{c['version']}, del {_fecha(c['fecha'])}"),
         ("Datos de la app", f"generados el {_fecha(o['datos'])}"),
-        ("Modelos guardados (artifacts/)", f"generados el {_fecha(o['artefactos'])}"),
+        ("Modelos guardados (artifacts/)", f"generados el {_fecha(o['artefactos'])}{bdl}"),
         ("Licencia del código", html.A(c["licencia"] or "MIT", href=LICENCIA_MIT, target="_blank", rel="noopener")),
         ("Licencia de los datos", html.A(c["datos"]["licencia"], href=LICENCIA_CC_BY, target="_blank", rel="noopener")),
         ("Repositorio", html.A(c["repositorio"].replace("https://", ""), href=c["repositorio"], target="_blank", rel="noopener")),
@@ -945,17 +1266,20 @@ def _autores():
     d = c["datos"]
     refs = [ui.nota([f"{_autores_cita(d['autores'])} ({d['anio']}). {d['titulo']}. {d['editor']}, versión {d['version']}. ",
                      html.A(f"doi:{d['doi']}", href=f"https://doi.org/{d['doi']}", target="_blank", rel="noopener"), "."])]
-    for r in sorted(REFERENCIAS.values(), key=lambda r: r["autores"]):
+    for r in sorted(REFERENCIAS.values(), key=lambda r: _orden_alfabetico(r["autores"])):
         texto = [f"{r['autores']} ({r['anio']}). {r['titulo']}. {r['fuente']}."]
         if r.get("url"):
             texto += [" ", html.A(r["url"].replace("https://", ""), href=r["url"], target="_blank", rel="noopener"), "."]
-        if not r["informe"]:
+        if r.get("libro"):
+            texto.append(f" Del libro del proyecto final: se cita {r['motivo']}.")
+        elif not r["informe"]:
             texto.append(f" No está en el informe: se cita {r['motivo']}.")
         refs.append(ui.nota(texto))
-    referencias = ui.tarjeta(refs, titulo="Referencias citadas en esta página",
-                             subtitulo="Las del informe final, más las dos de Successive Halving y Hyperband y la de la cifra del "
-                                       "costo de retener.")
-    return [ui.rejilla([equipo, referencias], "1-1"), ui.destinos(limites._destinos())]
+    referencias = ui.tarjeta(refs, titulo="Referencias de esta página y del modelo original",
+                             subtitulo="Las del informe del Entregable 3, las principales del modelo original (el libro del proyecto "
+                                       "final trae la lista completa), las dos de Successive Halving y Hyperband y la de la cifra "
+                                       "del costo de retener.")
+    return [equipo, referencias, ui.destinos(limites._destinos())]
 
 
 # --- 11. Cómo recorrer el dashboard en la sustentación -----------------------------------------------------------------------
@@ -980,14 +1304,16 @@ def _recorrido():
                                                                               ("Formulación", "formulacion"), ("Datos", "datos"),
                                                                               ("Diccionario", "diccionario")))],
         ["Análisis exploratorio", vistas("/eda")],
-        ["Fundamentos teóricos del modelo", html.Span(["Modelos › ", vistas("propuesto", "decide")])],
-        ["Implementación y diseño experimental", html.Span(["Contexto › "] + aqui(("Metodología", "metodologia"),
+        ["Fundamentos teóricos del modelo original", html.Span(["Modelos › ", vistas("original")])],
+        ["Implementación y diseño experimental", html.Span(["Contexto › "] + aqui(("Correcciones", "correcciones"),
+                                                                                  ("Metodología", "metodologia"),
                                                                                   ("Dos fidelidades", "fidelidad"))
-                                                           + [" · Modelos › ", vistas("lideres", "robustez")])],
-        ["Resultados", html.Span(["Modelos › ", vistas("lideres", "comparacion", "diagnostico", "prediccion", "interpretabilidad")])],
+                                                           + [" · Modelos › ", vistas("lideres", "original")])],
+        ["Resultados", html.Span(["Modelos › ", vistas("lideres", "comparacion", "prediccion", "diagnostico", "interpretabilidad")])],
         ["Conclusiones y limitaciones", html.Span(["Contexto › "] + aqui(("Conclusiones", "conclusiones"), ("Limitaciones", "limites"),
                                                                          ("Sesgos", "sesgos"))
-                                                  + [" · Modelos › ", vistas("errores", "ficha")])],
+                                                  + [" · Modelos › ", vistas("ficha")])],
+        ["La EBM, benchmark interpretable (Entregable 3)", html.Span(["Modelos › ", vistas("propuesto", "decide", "errores")])],
     ]
     return ui.tarjeta([ui.tabla(["Criterio de la rúbrica", "Dónde se muestra"], filas, num=[False, False]),
                        ui.nota("El pie de cada vista lleva a la siguiente del recorrido; la barra de arriba vuelve a las tres secciones.")],
@@ -1002,23 +1328,31 @@ def layout(**_):
                                                "clasificacion"))
     grupo = ui.control("Mostrar:", ui.segmentado(f"{PRE}-dicc-grupo", [{"label": v, "value": k} for k, v in GRUPOS_DICC.items()], "todas"))
     segmento = ui.control("Grupo:", ui.segmentado(f"{PRE}-segmento", [{"label": v[0], "value": k} for k, v in SEGMENTOS.items()], "cohorte"))
+    correccion = D.estado_original().get("generado")          # cuándo se trajeron por última vez los resultados de la corrección
     respuesta = html.Div([
         html.Div([ui.chip("Datos sintéticos", "atencion"), ui.chip_valor("Versión", c["version"] or "—"),
-                  ui.chip_valor("Datos del", _fecha(_origen()["datos"]))], className="chips"),
+                  ui.chip_valor("Datos del", _fecha(_origen()["datos"]))]
+                 + ([ui.chip_valor("BDL, resultados del", _fecha(correccion))] if correccion else []), className="chips"),
         html.Div(ui.boton("Cómo recorrer el dashboard", href=f"#{PRE}-recorrido", icono="flecha-abajo"), className="botonera"),
     ])
     fid = _fidelidades()
     sesgo_titulo, sesgo_cuerpo = _sesgo("cohorte")
     return ui.pantalla([
         ui.encabezado(app.SECCIONES[0][3], _subtitulo(), respuesta=[respuesta], pantalla="inicio"),
-        ui.seccion("La respuesta en una cifra: la EBM alcanza a los modelos de árboles, no los supera", [html.Div(id=f"{PRE}-heroe")],
-                   subtitulo="La cifra principal va con lo que la acota: la diferencia con el mejor modelo de árboles y con el mejor "
-                             "lineal. Cambie la tarea para ver la regresión.", controles=[tarea], fuentes=FUENTES_PRUEBAS,
+        ui.seccion(_titulo_respuesta(), [html.Div(id=f"{PRE}-heroe")],
+                   subtitulo="La cifra principal va con lo que la acota: la ventaja del modelo original sobre el mejor benchmark en la "
+                             "validación anidada y lo que faltaba para el límite teórico. Cambie la tarea para ver la regresión.",
+                   controles=[tarea],
+                   fuentes=FUENTES_PRUEBAS[:2] + [D.fuente_original("lideres_<tarea>.csv"), D.fuente_original("veredicto.json"),
+                                                  D.fuente_original("condicion4.json"), D.fuente_original("techo.json")],
                    id=f"{PRE}-respuesta"),
         ui.seccion("Por qué importa: retener cuesta menos que conseguir, la campaña no alcanza para todos y la decisión debe poder "
                    "explicarse", _importa(), id=f"{PRE}-importa"),
-        ui.seccion("La pregunta: ¿alcanza un modelo legible la precisión de los ensambles de árboles, y a qué costo?", [_pregunta()],
-                   id=f"{PRE}-pregunta"),
+        ui.seccion("La pregunta: ¿supera a los benchmarks un modelo que trata el escalón del puntaje como una clase latente?",
+                   [_pregunta()], id=f"{PRE}-pregunta"),
+        ui.seccion("Las correcciones: el modelo original es propio y la recencia se calcula solo con el entrenamiento", _correcciones(),
+                   subtitulo="Las dos observaciones a la primera versión del proyecto final y lo que se hizo con cada una.",
+                   id=f"{PRE}-correcciones"),
         ui.seccion(f"La formulación: una clasificación y una regresión sobre los mismos {F.entero(h['n_pred'])} predictores",
                    [_formulacion()], subtitulo="Aprendizaje supervisado. Cada cliente es un vector de predictores y un puntaje de "
                                                "propensión; las dos tareas comparten partición, preprocesamiento y validación.",
@@ -1037,15 +1371,17 @@ def layout(**_):
                               if "ebm" in fid and "random_forest" in fid else None), id=f"{PRE}-fidelidad"),
         ui.seccion("Limitaciones: el carácter sintético de los datos limita la utilidad práctica de las conclusiones", [
             ui.aviso("Como señaló la evaluación del Entregable 3, las conclusiones describen las reglas con que se generó COFINFAD, no el "
-                     "comportamiento de los clientes de una fintech real: que la EBM empate aquí con XGBoost no garantiza que empate con "
-                     "otros datos, y ningún resultado de esta app sirve para decidir sobre personas reales sin validarlo antes con fuga "
-                     "observada.", "atencion", "Datos sintéticos, utilidad práctica limitada"),
+                     "comportamiento de los clientes de una fintech real: que los modelos empaten aquí, o que el modelo original recupere "
+                     "el escalón del puntaje, no garantiza que ocurra con otros datos, y ningún resultado de esta app sirve para decidir "
+                     "sobre personas reales sin validarlo antes con fuga observada.", "atencion",
+                     "Datos sintéticos, utilidad práctica limitada"),
             ui.rejilla([_trampa(), _usos()], "1-1"),
             html.H3("Lo que este trabajo no permite afirmar"),
             _no_permite(),
         ], subtitulo="Lo que declara el informe, con su consecuencia, y los usos que no corresponden.", id=f"{PRE}-limites",
-            fuentes=[D.fuente("resultados/pruebas_clasificacion.csv"), D.fuente("resultados/regresion_prueba.csv"), F_CORRIDAS]),
-        ui.seccion("Sesgos posibles: el modelo acierta y contacta distinto según la cohorte de edad", [
+            fuentes=[D.fuente("resultados/pruebas_clasificacion.csv"), D.fuente("resultados/regresion_prueba.csv"), F_CORRIDAS,
+                     D.fuente_original("veredicto.json"), D.fuente_original("condicion4.json")]),
+        ui.seccion("Sesgos posibles: la EBM acierta y contacta distinto según la cohorte de edad", [
             ui.rejilla([
                 ui.tarjeta([html.Div(sesgo_cuerpo, id=f"{PRE}-sesgo-cuerpo")], titulo=html.Span(sesgo_titulo, id=f"{PRE}-sesgo-titulo"),
                            subtitulo=f"En los {F.entero(M.meta()['n_prueba'])} clientes de prueba: AUC dentro del grupo y qué parte de "
@@ -1055,7 +1391,8 @@ def layout(**_):
             ], "2-1"),
         ], controles=[segmento], id=f"{PRE}-sesgos"),
         ui.seccion("Conclusiones: lo que sostienen los resultados", _conclusiones(),
-                   subtitulo="Tomadas de las conclusiones del informe final; cada cifra sale de los resultados guardados.",
+                   subtitulo="Primero, el modelo original, con lo que dicen los archivos de la corrección; después, la EBM, con las "
+                             "conclusiones del informe del Entregable 3. Cada cifra sale de los resultados guardados.",
                    id=f"{PRE}-conclusiones"),
         ui.seccion("Quién lo hizo y dónde está el resto", _autores(),
                    subtitulo="El informe y sus dos secciones, el repositorio, el libro y los datos se abren en otra pestaña.",
@@ -1064,6 +1401,7 @@ def layout(**_):
                    subtitulo="El recorrido sigue los criterios de la rúbrica, de arriba abajo.", id=f"{PRE}-recorrido"),
         ui.pie([ui.nota(f"Datos: «{c['datos']['titulo']}» ({_cita_datos()}; {c['datos']['editor']}, licencia {c['datos']['licencia']}). "
                         "«Riesgo alto» es el cuarto superior del puntaje de propensión del conjunto de datos, no fuga observada."),
+                ui.nota(D.nota_ece()),
                 ui.nota(f"Proyecto final de Machine Learning · Pregrado en Ciencia de Datos, Universidad del Norte · "
                         f"{_autores_prosa(c['autores'])}.")]),
     ])
@@ -1072,7 +1410,7 @@ def layout(**_):
 # --- Callbacks ---------------------------------------------------------------------------------------------------------------
 @callback(Output(f"{PRE}-heroe", "children"), Input(f"{PRE}-tarea", "value"))
 def _heroe(tarea):
-    return inicio._heroe(tarea if tarea in inicio.TAREA else "clasificacion")
+    return _heroe_original(tarea if tarea in inicio.TAREA else "clasificacion")
 
 
 @callback(Output(f"{PRE}-dicc", "data"), Output(f"{PRE}-dicc-cuenta", "children"), Input(f"{PRE}-dicc-grupo", "value"))

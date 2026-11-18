@@ -1,6 +1,6 @@
 # Declaración de los datos: COFINFAD
 
-Declaración de los datos (en la línea de Bender y Friedman, 2018, y Gebru et al., 2021) del conjunto que usa el proyecto «Fuga de clientes · Laboratorio del modelo: dashboard predictivo del riesgo de fuga en una fintech». La genera `generar_fichas.py` desde `datos/`: ninguna cifra se escribe a mano.
+Declaración de los datos (en la línea de Bender y Friedman, 2018, y Gebru et al., 2021) del conjunto que usa el proyecto «Predicción de fuga de clientes en una fintech colombiana: dashboard predictivo, modelo original (Boosting con Desplazamiento Latente) y evaluación rigurosa». La genera `generar_fichas.py` desde `datos/`: ninguna cifra se escribe a mano.
 
 ## Resumen
 
@@ -64,8 +64,9 @@ Fuentes: datos/eda/cohortes.csv · datos/eda/asociacion.csv · datos/eda/faltant
 - 17 columnas eliminadas (identificador, la variable que generó el puntaje, el segundo objetivo, duplicados, fechas sin señal, una colineal y textos con faltantes).
 - El uso del cupo se imputa con 0 cuando no hay tarjeta; las categóricas se codifican con indicadoras y las numéricas se estandarizan dentro de cada pliegue de cada validación cruzada.
 - Partición aleatoria por índices, 80/20, con semilla 42, sin estratificar: 38.978 clientes de entrenamiento y 9.745 de prueba. El umbral de la etiqueta y todo el análisis exploratorio usan solo el entrenamiento.
+- La recencia se mide hasta una fecha de corte que sale solo de los clientes de entrenamiento (29 de diciembre de 2023); antes salía de todo el detalle de transacciones. La auditoría de la corrección comprueba que cambian 0 celdas y que los predictores de entrenamiento y de prueba son idénticos antes y después.
 
-Fuentes: datos/eda/etl.json · datos/metadatos.json
+Fuentes: datos/eda/etl.json · datos/metadatos.json · datos/original/auditoria_fuga.json
 
 ## Usos adecuados e inadecuados
 

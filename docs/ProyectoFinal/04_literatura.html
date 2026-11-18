@@ -1,0 +1,1390 @@
+
+<!DOCTYPE html>
+
+
+<html lang="es" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>4. Revisión de literatura y novedad &#8212; Predicción de fuga de clientes en una fintech colombiana</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=33c23bfc" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../_static/documentation_options.js?v=78d55cf8"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Haz clic para mostrar';</script>
+    <script>let toggleHintHide = 'Haz clic para ocultar';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../_static/translations.js?v=d190bf04"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ProyectoFinal/04_literatura';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Índice" href="../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../search.html" />
+    <link rel="next" title="5. El modelo original: Boosting con Desplazamiento Latente (BDL)" href="05_modelo_original.html" />
+    <link rel="prev" title="3. Modelos benchmark" href="03_benchmarks.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="es"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Saltar al contenido principal</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Volver arriba</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Advertencia de versión"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Navegación del sitio">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="En esta página">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Predicción de fuga de clientes en una fintech colombiana</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Proyecto final · Dashboard, modelo original y evaluación rigurosa</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_introduccion.html">Proyecto final: dashboard predictivo, modelo original y evaluación rigurosa</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_correcciones.html">1. Trazabilidad de las correcciones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_datos.html">2. Datos: ETL, EDA y auditoría de fuga</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_benchmarks.html">3. Modelos benchmark</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">4. Revisión de literatura y novedad</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_modelo_original.html">5. El modelo original: Boosting con Desplazamiento Latente (BDL)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_validacion.html">6. Protocolo y validación estadística</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_evaluacion_ampliada.html">7. Evaluación ampliada y robustez</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_dashboard.html">8. Dashboard y despliegue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_conclusiones.html">9. Conclusiones y limitaciones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_reproducibilidad.html">10. Reproducibilidad y bibliografía</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codigo_modelo_original.html">Código del modelo original</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 1 · EDA</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega1/eda_bancario.html">Caracterización y auditoría de calidad de datos para predecir la fuga (<em>churn</em>) y el valor del cliente (<em>CLV</em>) en una <em>fintech</em> colombiana</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 2 · Modelos base</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega2/entrega2_modelo.html">Entrega 2 — Procesamiento de datos y modelo base</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Introducción</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/00_introduccion.html">Fuga de clientes en una <em>fintech</em> colombiana: modelos, optimización y evaluación</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/01_datos.html">Datos, análisis exploratorio y construcción de la etiqueta</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Metodología</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/02_metodologia.html">Metodología</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Modelos y Resultados</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/03_corridas.html">Las 140 corridas del pipeline combinatorio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/04_optimizadores.html">Comparación de los métodos de optimización</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/05_computo.html">Optimización computacional</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/06_evaluacion.html">Evaluación en prueba, calibración, residuos y robustez</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/07_interpretabilidad.html">Interpretabilidad: SHAP, LIME y las funciones de forma de la EBM</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · El modelo nuevo</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/08_modelo_nuevo.html">El modelo nuevo frente a la Entrega 2</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Comparación estadística y conclusiones</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/09_estadistica.html">Comparación estadística de los modelos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/10_conclusiones.html">Conclusiones</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Código fuente</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../codigo/indice.html">Código fuente</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src___init__.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/__init__.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_analisis.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/analisis.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_balanceo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/balanceo.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_comparacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/comparacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_config.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/config.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_datos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/datos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_estadistica.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/estadistica.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_evaluacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/evaluacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_experimento.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/experimento.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_formato.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/formato.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_graficos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/graficos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_modelos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/modelos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_optimizacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/optimizacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_preprocesamiento.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/preprocesamiento.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_registro.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/registro.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/correr_140.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/correr_140.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/comparar_entrega2.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/comparar_entrega2.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/computo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/computo.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/complementos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/complementos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/medir_tiempos_finales.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/medir_tiempos_finales.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/notebook_construir.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/notebook/construir.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/notebook_exportar_pdf.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/notebook/exportar_pdf.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/articulo_generar_material.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/articulo/generar_material.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/articulo_compilar.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/articulo/compilar.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_analisis.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_analisis.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_bloque0.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_bloque0.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_estadistica.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_estadistica.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_modelo_nuevo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_modelo_nuevo.py</span></code></a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Descarga esta pagina">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/ProyectoFinal/04_literatura.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Descargar archivo fuente"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Imprimir en PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Modo de pantalla completa"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Tema" data-bs-title="Tema"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Claro"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Oscuro"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="Sistema"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>4. Revisión de literatura y novedad</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contenido </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#protocolo-de-busqueda">4.1. Protocolo de búsqueda</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#matriz-de-novedad">4.2. Matriz de novedad</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#busqueda-por-citacion-y-repositorios">4.3. Búsqueda por citación y repositorios</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trabajos-mas-cercanos-y-diferencias">4.4. Trabajos más cercanos y diferencias</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#declaracion-de-novedad">4.5. Declaración de novedad</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cadenas-de-busqueda">4.6. Cadenas de búsqueda</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="revision-de-literatura-y-novedad">
+<h1>4. Revisión de literatura y novedad<a class="headerlink" href="#revision-de-literatura-y-novedad" title="Link to this heading">#</a></h1>
+<p>La novedad no se declara: se documenta. Este capítulo describe la búsqueda (guía, §5.2), la matriz de novedad, los
+trabajos más cercanos y en qué se diferencia de cada uno el modelo propuesto. La búsqueda es <strong>reproducible</strong>:
+<a class="reference external" href="https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech/blob/main/ModeloOriginal/experiments/00_busqueda_literatura.py"><code class="docutils literal notranslate"><span class="pre">ModeloOriginal/experiments/00_busqueda_literatura.py</span></code></a>
+consulta las bases y guarda todo en <code class="docutils literal notranslate"><span class="pre">ModeloOriginal/resultados/literatura/</span></code>, con una copia por fecha.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Preparación: acceso a los resultados versionados y a las funciones que generan las</span>
+<span class="c1"># tablas del informe.</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">'../ModeloOriginal'</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src</span><span class="w"> </span><span class="kn">import</span> <span class="n">informe</span> <span class="k">as</span> <span class="n">inf</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="protocolo-de-busqueda">
+<h2>4.1. Protocolo de búsqueda<a class="headerlink" href="#protocolo-de-busqueda" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Bases de datos (3).</strong> OpenAlex, índice abierto de la literatura científica (revistas, congresos y
+prepublicaciones); arXiv, prepublicaciones de aprendizaje automático y estadística; y Crossref, el registro de DOI de
+las editoriales. Scopus, Web of Science y Google Scholar no ofrecen una consulta programática abierta; se eligieron
+bases cuya consulta se puede repetir con el guion.</p></li>
+<li><p><strong>Cadenas (13).</strong> Combinan la familia del modelo (mezcla finita, clase latente, EM, boosting, efectos aleatorios,
+modelo aditivo), el problema (fuga, deserción o abandono de clientes) y sinónimos en inglés y en español. La
+<a class="reference internal" href="#tab-cadenas"><span class="std std-ref">Tabla 4.4</span></a> las transcribe tal como se enviaron a cada base.</p></li>
+<li><p><strong>Revisión.</strong> De cada base y cadena se leen el título y el resumen de los 25 primeros resultados por relevancia (en
+Crossref solo el título, porque no da resumen).</p></li>
+<li><p><strong>Búsqueda por citación.</strong> Hacia adelante: entre los trabajos que citan a quince antecedentes, cuántos mencionan la
+fuga. Hacia atrás: entre las referencias de los siete trabajos más cercanos, cuántas combinan mezclas y fuga.</p></li>
+<li><p><strong>Repositorios de código.</strong> Seis consultas a GitHub y revisión de las librerías de la familia.</p></li>
+<li><p><strong>Fechas.</strong> La búsqueda se hizo dos veces. La primera consulta usó las cadenas C1 a C9. Una revisión independiente del
+informe señaló familias vecinas que esas cadenas no nombraban; en la segunda consulta, que es la repetición que pide
+la guía antes de la entrega, se añadieron las cadenas C10 a C13 y la búsqueda por citación desde los trabajos que
+aparecieron con ellas. La matriz registra las dos fechas.</p></li>
+</ul>
+</section>
+<section id="matriz-de-novedad">
+<h2>4.2. Matriz de novedad<a class="headerlink" href="#matriz-de-novedad" title="Link to this heading">#</a></h2>
+<p id="tab-matriz"><strong>Tabla 4.1.</strong> Matriz de novedad: por base de datos y cadena de búsqueda, número de resultados, resultados revisados,
+resultados cercanos a la propuesta y observación.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 4.1. Lee resultados/literatura/busqueda.json (lo que devolvieron las tres</span>
+<span class="c1"># bases en la última consulta), las copias con fecha de las consultas anteriores y</span>
+<span class="c1"># experiments/literatura_relevancia.csv (la lectura de títulos y resúmenes, anotada</span>
+<span class="c1"># a mano por base y cadena).</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_matriz'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<p><strong>Consulta del 18 de noviembre de 2026.</strong> Es la repetición que pide la guía: la primera consulta fue el 17 de noviembre de 2026, con las cadenas C1 a C9; las cadenas C10 a C13 se añadieron en esta. Entre las dos fechas, en las 26 combinaciones de base y cadena que se pueden comparar entraron 4 resultados que no estaban entre los primeros 25; se leyeron y no cambian ninguna observación.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Base</p></th>
+<th class="head text-left"><p>Cadena</p></th>
+<th class="head text-right"><p>Result.</p></th>
+<th class="head text-right"><p>Revis.</p></th>
+<th class="head text-right"><p>Relev.</p></th>
+<th class="head text-left"><p>Observación</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>OpenAlex</p></td>
+<td class="text-left"><p>C1. Mezcla o clase latente + boosting + fuga de clientes</p></td>
+<td class="text-right"><p>108</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-left"><p>Lemmens y Croux (2006) y comparaciones posteriores: boosting aplicado a fuga, siempre sobre la etiqueta; ninguno con clase latente en la respuesta</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>arXiv</p></td>
+<td class="text-left"><p>C1. Mezcla o clase latente + boosting + fuga de clientes</p></td>
+<td class="text-right"><p>3</p></td>
+<td class="text-right"><p>3</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-left"><p>Buginga y de Souza e Silva (2024): mezcla de expertos no paramétricos para agrupar curvas de supervivencia; menciona la fuga como campo de uso, agrupa clientes y no modela un desplazamiento</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Crossref</p></td>
+<td class="text-left"><p>C1. Mezcla o clase latente + boosting + fuga de clientes</p></td>
+<td class="text-right"><p>176.228</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-left"><p>Vakeel y otros (2022): boosting para predecir la fuga y mezcla gaussiana para agrupar a los clientes que se fueron; la mezcla no entra en el modelo predictivo</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>OpenAlex</p></td>
+<td class="text-left"><p>C2. Heterogeneidad no observada + boosting + fuga de clientes</p></td>
+<td class="text-right"><p>90</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-left"><p>Dong y otros (2026): heterogeneidad no observada con efectos aleatorios compartidos entre costo y fuga; modelo paramétrico, sin boosting</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>arXiv</p></td>
+<td class="text-left"><p>C2. Heterogeneidad no observada + boosting + fuga de clientes</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>Sin resultados</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Crossref</p></td>
+<td class="text-left"><p>C2. Heterogeneidad no observada + boosting + fuga de clientes</p></td>
+<td class="text-right"><p>133.770</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-left"><p>Un modelo de riesgos competitivos con asignación latente de Dirichlet para los motivos de la fuga (2021); el resto, comparaciones de boosting sobre la etiqueta</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>OpenAlex</p></td>
+<td class="text-left"><p>C3. Mezcla de regresiones ajustada con boosting y EM (familia del algoritmo, cualquier aplicación)</p></td>
+<td class="text-right"><p>33</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>3</p></td>
+<td class="text-left"><p>Misma familia en otras aplicaciones: Hepp y otros (2020), Rügamer y otros (2023) y una mezcla de regresiones logísticas con LASSO (2026); ninguno en fuga ni con un índice compartido</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>arXiv</p></td>
+<td class="text-left"><p>C3. Mezcla de regresiones ajustada con boosting y EM (familia del algoritmo, cualquier aplicación)</p></td>
+<td class="text-right"><p>2</p></td>
+<td class="text-right"><p>2</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-left"><p>Jobst (2024): regresión de mezcla ajustada con boosting para pronóstico meteorológico</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Crossref</p></td>
+<td class="text-left"><p>C3. Mezcla de regresiones ajustada con boosting y EM (familia del algoritmo, cualquier aplicación)</p></td>
+<td class="text-right"><p>1.432.973</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-left"><p>Xue, Yao y Xiang (2024): EM con métodos de aprendizaje automático en el paso M para mezclas semiparamétricas de regresiones</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>OpenAlex</p></td>
+<td class="text-left"><p>C4. Boosting con ruido multimodal o de mezcla</p></td>
+<td class="text-right"><p>16</p></td>
+<td class="text-right"><p>16</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>Pérdidas robustas y mezclas de expertos para diagnóstico de fallas; sin relación con el mecanismo</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>arXiv</p></td>
+<td class="text-left"><p>C4. Boosting con ruido multimodal o de mezcla</p></td>
+<td class="text-right"><p>2</p></td>
+<td class="text-right"><p>2</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-left"><p>Su y Qu (2025): Anchor-MoE, media por boosting y mezcla de expertos neuronales para la densidad</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Crossref</p></td>
+<td class="text-left"><p>C4. Boosting con ruido multimodal o de mezcla</p></td>
+<td class="text-right"><p>837.602</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>Redes de densidad de mezcla, regresión cuantílica por boosting y boosting de regresión distribucional por etapas (2024)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>OpenAlex</p></td>
+<td class="text-left"><p>C5. Predicción conforme + fuga de clientes</p></td>
+<td class="text-right"><p>70</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-left"><p>Guo y vanden Broucke (2024): intervalos conformes para reforzar un clasificador de fuga; el resto evalúa la calibración o la incertidumbre de clasificadores de fuga sin modelar el puntaje. La consulta del 17 de noviembre a esta base falló y no devolvió resultados</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>arXiv</p></td>
+<td class="text-left"><p>C5. Predicción conforme + fuga de clientes</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>Aprendizaje por transferencia bayesiano; menciona fuga como caso de uso</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Crossref</p></td>
+<td class="text-left"><p>C5. Predicción conforme + fuga de clientes</p></td>
+<td class="text-right"><p>788.366</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-left"><p>Guo y vanden Broucke (2024), ya contado en OpenAlex</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>OpenAlex</p></td>
+<td class="text-left"><p>C6. Regresión distribucional o probabilística + fuga de clientes</p></td>
+<td class="text-right"><p>36</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-left"><p>Ali y otros (2026): NGBoost como clasificador probabilístico de fuga; distribución unimodal</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>arXiv</p></td>
+<td class="text-left"><p>C6. Regresión distribucional o probabilística + fuga de clientes</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>Sin resultados</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Crossref</p></td>
+<td class="text-left"><p>C6. Regresión distribucional o probabilística + fuga de clientes</p></td>
+<td class="text-right"><p>215.445</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>Textos generales de regresión distribucional; regresión simbólica para fuga (2026)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>OpenAlex</p></td>
+<td class="text-left"><p>C7. Clasificar una respuesta continua dicotomizada usando la respuesta continua</p></td>
+<td class="text-right"><p>20</p></td>
+<td class="text-right"><p>20</p></td>
+<td class="text-right"><p>2</p></td>
+<td class="text-left"><p>Método distribucional de dicotomización (Sauzet y Kleine, 2016; distdichoR, 2018): inferencia sobre proporciones, no predicción por cliente</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>arXiv</p></td>
+<td class="text-left"><p>C7. Clasificar una respuesta continua dicotomizada usando la respuesta continua</p></td>
+<td class="text-right"><p>8</p></td>
+<td class="text-right"><p>8</p></td>
+<td class="text-right"><p>2</p></td>
+<td class="text-left"><p>Respuestas binarias dicotomizadas de una continua en ensayos clínicos; ganancia de eficiencia con datos externos dicotomizados (2025)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Crossref</p></td>
+<td class="text-left"><p>C7. Clasificar una respuesta continua dicotomizada usando la respuesta continua</p></td>
+<td class="text-right"><p>1.278.944</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>2</p></td>
+<td class="text-left"><p>Sauzet y Kleine (2016) y análisis de respuestas dicotomizadas en ensayos clínicos</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>OpenAlex</p></td>
+<td class="text-left"><p>C8. Modelo aditivo (GAM, EBM) con clases latentes o mezcla</p></td>
+<td class="text-right"><p>231</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>3</p></td>
+<td class="text-left"><p>Hepp y otros (2020); Wattanawongwan y otros (2023), mezcla en GAMLSS para exposición crediticia; boosting de regresión distribucional aditiva (2023)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>arXiv</p></td>
+<td class="text-left"><p>C8. Modelo aditivo (GAM, EBM) con clases latentes o mezcla</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>Sin resultados</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Crossref</p></td>
+<td class="text-left"><p>C8. Modelo aditivo (GAM, EBM) con clases latentes o mezcla</p></td>
+<td class="text-right"><p>3.790.598</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>Textos generales de mezclas finitas; híbrido de XGBoost y mezcla gaussiana para caudales (2021)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>OpenAlex</p></td>
+<td class="text-left"><p>C9. En español: fuga o deserción de clientes + clase latente, mezcla o boosting</p></td>
+<td class="text-right"><p>40</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>Estudios en español con regresión logística, AdaBoost, árboles o TabNet sobre la etiqueta</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>arXiv</p></td>
+<td class="text-left"><p>C9. En español: fuga o deserción de clientes + clase latente, mezcla o boosting</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>Sin resultados</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Crossref</p></td>
+<td class="text-left"><p>C9. En español: fuga o deserción de clientes + clase latente, mezcla o boosting</p></td>
+<td class="text-right"><p>10.404.868</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>Tesis y artículos en español con árboles, AdaBoost y regresión logística</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>OpenAlex</p></td>
+<td class="text-left"><p>C10. EM con un paso de boosting para modelos de mezcla (regla de aprendizaje, cualquier aplicación)</p></td>
+<td class="text-right"><p>1.188</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>7</p></td>
+<td class="text-left"><p>Los antecedentes algorítmicos más cercanos. Hou, Li y Gao (2025): algoritmo Expectation-Boosting, que sustituye el paso M del EM por boosting de árboles en mezclas para pérdidas de seguros. Zhou, Qian y Yang (2022): EMTboost. Adam, Mayr y Kneib (2022): boosting en modelos de Markov con estados latentes. Meek, Thiesson y Heckerman (2002). Hepp y otros (2020). Dos marcos de EM con aprendizaje automático (2024 y 2025). Ninguno trata la fuga ni comparte un índice entre clases</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>arXiv</p></td>
+<td class="text-left"><p>C10. EM con un paso de boosting para modelos de mezcla (regla de aprendizaje, cualquier aplicación)</p></td>
+<td class="text-right"><p>7</p></td>
+<td class="text-right"><p>7</p></td>
+<td class="text-right"><p>2</p></td>
+<td class="text-left"><p>Meek, Thiesson y Heckerman (2002) y Adam, Mayr y Kneib (2022), ya contados en OpenAlex</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Crossref</p></td>
+<td class="text-left"><p>C10. EM con un paso de boosting para modelos de mezcla (regla de aprendizaje, cualquier aplicación)</p></td>
+<td class="text-right"><p>4.762.607</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>2</p></td>
+<td class="text-left"><p>Zheng, Li y Peng (2026): modelo de cura de mezcla estimado con boosting de árboles; híbrido de XGBoost y mezcla gaussiana para caudales (2021). Otro modelo y otra aplicación</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>OpenAlex</p></td>
+<td class="text-left"><p>C11. Árboles o boosting con efectos aleatorios estimados por EM (grupos observados)</p></td>
+<td class="text-right"><p>942</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>12</p></td>
+<td class="text-left"><p>La familia de árboles y bosques con efectos aleatorios estimados por EM: Hajjem, Bellavance y Larocque (2011, 2014), Sela y Simonoff (2012) y sus extensiones. Pellagatti y otros (2021) la aplican a la deserción de estudiantes universitarios. Los grupos son observados, no latentes, y ninguno trata la fuga de clientes</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>arXiv</p></td>
+<td class="text-left"><p>C11. Árboles o boosting con efectos aleatorios estimados por EM (grupos observados)</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-left"><p>Aplicación de esos algoritmos a datos de salud mental (2023); misma familia</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Crossref</p></td>
+<td class="text-left"><p>C11. Árboles o boosting con efectos aleatorios estimados por EM (grupos observados)</p></td>
+<td class="text-right"><p>8.652.432</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>5</p></td>
+<td class="text-left"><p>Hajjem, Bellavance y Larocque (2014) y aplicaciones del bosque de efectos mixtos; un boosting para elegir los efectos aleatorios de un modelo lineal mixto (2024)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>OpenAlex</p></td>
+<td class="text-left"><p>C12. Modelos de abandono latente o de mezcla aplicados a fuga de clientes (sin boosting)</p></td>
+<td class="text-right"><p>546</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>9</p></td>
+<td class="text-left"><p>Modelos de mezcla o de abandono latente aplicados a fuga, sin boosting: Jamal y Bucklin (2006), riesgo de Weibull con clases latentes; Bachmann, Meierer y Näf (2021), abandono latente con covariables; modelos de tasa de curación y de mezcla finita para la retención (2001, 2008). Es el antecedente de aplicación más cercano: clases latentes para predecir la fuga, con un modelo paramétrico por clase</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>arXiv</p></td>
+<td class="text-left"><p>C12. Modelos de abandono latente o de mezcla aplicados a fuga de clientes (sin boosting)</p></td>
+<td class="text-right"><p>3</p></td>
+<td class="text-right"><p>3</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-left"><p>Un modelo conjunto de datos longitudinales y duraciones con clases latentes (2023), que menciona la fuga entre sus usos; sin boosting. Los otros dos resultados son de astronomía</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Crossref</p></td>
+<td class="text-left"><p>C12. Modelos de abandono latente o de mezcla aplicados a fuga de clientes (sin boosting)</p></td>
+<td class="text-right"><p>1.196.345</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-left"><p>Textos generales de clases latentes y mezclas finitas; un modelo de abandono latente para varias actividades (2013)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>OpenAlex</p></td>
+<td class="text-left"><p>C13. Boosting con efectos aleatorios o con densidad de mezcla aplicado a fuga de clientes</p></td>
+<td class="text-right"><p>99</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>2</p></td>
+<td class="text-left"><p>Dong y otros (2026), ya contado en C2, y un modelo jerárquico bayesiano de supervivencia para ciclos de renovación (2026). Ningún boosting con efectos aleatorios o con densidad de mezcla aplicado a fuga</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>arXiv</p></td>
+<td class="text-left"><p>C13. Boosting con efectos aleatorios o con densidad de mezcla aplicado a fuga de clientes</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>Sin resultados</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Crossref</p></td>
+<td class="text-left"><p>C13. Boosting con efectos aleatorios o con densidad de mezcla aplicado a fuga de clientes</p></td>
+<td class="text-right"><p>3.991.974</p></td>
+<td class="text-right"><p>25</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-left"><p>Vakeel y otros (2022), ya contado en C1; el resto, comparaciones de boosting sobre la etiqueta</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Result.: registros que devuelve la base. Revis.: los primeros por relevancia, cuyo título y resumen se leyeron (hasta 25; Crossref no da resumen y su búsqueda no admite operadores, así que su total cuenta todo registro con alguno de los términos). Relev.: de los revisados, los trabajos cercanos, es decir, los que comparten con la propuesta la familia del modelo o el problema con un componente latente o probabilístico; son los que nombra la observación. Un trabajo cercano no es una coincidencia: ninguno aplica el modelo propuesto a la fuga de clientes.</p>
+</div>
+</div>
+<p>Los totales de Crossref no son comparables con los demás: cuentan cualquier registro que contenga alguno de los
+términos. La <a class="reference internal" href="#tab-matriz"><span class="std std-ref">Tabla 4.1</span></a> deja tres grupos de trabajos cercanos:</p>
+<ul class="simple">
+<li><p><strong>La misma familia de algoritmo, en otra aplicación</strong> (cadenas C3, C4, C8, C10 y C11). La más cercana es la de los
+algoritmos EM cuyo paso M se hace con boosting: <span class="bibtex-citation" id="id1">Zhou <em>et al.</em> [<a class="reference internal" href="10_reproducibilidad.html#id55" title="He Zhou, Wei Qian, and Yi Yang. Tweedie gradient boosting for extremely unbalanced zero-inflated data. Communications in Statistics - Simulation and Computation, 51(9):5507–5529, 2022. doi:10.1080/03610918.2020.1772302.">2022</a>]</span>, <span class="bibtex-citation" id="id2">Adam <em>et al.</em> [<a class="reference internal" href="10_reproducibilidad.html#id56" title="Timo Adam, Andreas Mayr, and Thomas Kneib. Gradient boosting in Markov-switching generalized additive models for location, scale, and shape. Econometrics and Statistics, 22:3–16, 2022. doi:10.1016/j.ecosta.2021.04.002.">2022</a>]</span> y <span class="bibtex-citation" id="id3">Hou <em>et al.</em> [<a class="reference internal" href="10_reproducibilidad.html#id54" title="Yanxi Hou, Jiahong Li, and Guangyuan Gao. Insurance loss modeling with gradient tree-boosted mixture models. Insurance: Mathematics and Economics, 121:45–62, 2025. doi:10.1016/j.insmatheco.2024.12.007.">2025</a>]</span>. BDL
+pertenece a esa familia. Ninguno de esos trabajos trata la fuga de clientes, y ninguno de
+los que los citan la menciona (<a class="reference internal" href="#tab-citacion"><span class="std std-ref">Tabla 4.2</span></a>).</p></li>
+<li><p><strong>El mismo problema, con otra familia</strong> (cadenas C1, C2, C5, C6, C12 y C13). Hay modelos de clases latentes y de
+abandono latente para la fuga, como el de <span class="bibtex-citation" id="id4">Jamal and Bucklin [<a class="reference internal" href="10_reproducibilidad.html#id65" title="Zainab Jamal and Randolph E. Bucklin. Improving the diagnosis and prediction of customer churn: a heterogeneous hazard modeling approach. Journal of Interactive Marketing, 20(3–4):16–29, 2006. doi:10.1002/dir.20064.">2006</a>]</span>; son modelos paramétricos, sin boosting.</p></li>
+<li><p><strong>Ninguno que combine las dos cosas.</strong> Ninguna combinación de base y cadena devuelve un estudio que aplique a la fuga
+de clientes un boosting con una mezcla latente, ni otro algoritmo de la familia de EM con boosting.</p></li>
+</ul>
+<p>La primera consulta no devolvió la familia de algoritmos más cercana, porque ninguna de sus cadenas la nombraba; apareció
+al ampliarlas. Es una advertencia sobre el alcance de cualquier búsqueda por palabras clave, incluida esta: se leyeron
+los 25 primeros resultados de cada base y cadena, no toda la literatura.</p>
+</section>
+<section id="busqueda-por-citacion-y-repositorios">
+<h2>4.3. Búsqueda por citación y repositorios<a class="headerlink" href="#busqueda-por-citacion-y-repositorios" title="Link to this heading">#</a></h2>
+<p id="tab-citacion"><strong>Tabla 4.2.</strong> Búsqueda por citación en los dos sentidos y revisión de repositorios: trabajos que citan a cada
+antecedente y mencionan la fuga, referencias de los trabajos más cercanos clasificadas por tema y resultados de las
+consultas a GitHub.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 4.2. De busqueda.json: citas recibidas por cada antecedente (OpenAlex) y</span>
+<span class="c1"># cuántas mencionan «churn»; referencias de los trabajos cercanos clasificadas por</span>
+<span class="c1"># tema; y repositorios de GitHub que responden a cada consulta.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_citacion'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<p><strong>Hacia adelante: trabajos que citan a cada antecedente y mencionan «churn» en el título o el resumen.</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Antecedente</p></th>
+<th class="head text-right"><p>Citado por</p></th>
+<th class="head text-right"><p>De ellos, mencionan «churn»</p></th>
+<th class="head text-left"><p>Primeros</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>DeSarbo y Cron (1988), regresión por conglomerados con máxima verosimilitud</p></td>
+<td class="text-right"><p>599</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>—</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Jacobs y otros (1991), mezcla de expertos</p></td>
+<td class="text-right"><p>7.767</p></td>
+<td class="text-right"><p>6</p></td>
+<td class="text-left"><p>A new hybrid classification algorithm for customer churn prediction based on logistic… (2018); Improving prediction of customer behavior in nonstationary environments (2002)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Grün y Leisch (2008), FlexMix versión 2</p></td>
+<td class="text-right"><p>532</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>—</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Mayr y otros (2012), gamboostLSS</p></td>
+<td class="text-right"><p>202</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-left"><p>FACTORS INFLUENCING SCHOOL PERFORMANCE IN THE STATE OF LOUISIANA, U.S.: A GENERALIZED… (2024)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Duan y otros (2020), NGBoost</p></td>
+<td class="text-right"><p>346</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-left"><p>Predictive Analytics for Customer Behavior (2024)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Lou y otros (2013), GA2M</p></td>
+<td class="text-right"><p>902</p></td>
+<td class="text-right"><p>2</p></td>
+<td class="text-left"><p>An Interpretable Hybrid of Boosted Trees and Regularised Logistic Regression for… (2026); A Composable Additive-Tree Hybrid with a Stabilised Decision Threshold for Explainable… (2026)</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Vovk y otros (2019), distribuciones predictivas conformes</p></td>
+<td class="text-right"><p>91</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>—</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Hou, Li y Gao (2025), algoritmo Expectation-Boosting para mezclas</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>—</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Zhou, Qian y Yang (2022), EMTboost</p></td>
+<td class="text-right"><p>61</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>—</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Xue, Yao y Xiang (2024), EM con aprendizaje automático</p></td>
+<td class="text-right"><p>6</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>—</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Jobst (2024), regresión de mezcla con boosting</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>—</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>März (2019), XGBoostLSS</p></td>
+<td class="text-right"><p>46</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>—</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Hajjem, Bellavance y Larocque (2014), bosque aleatorio de efectos mixtos</p></td>
+<td class="text-right"><p>333</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>—</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Sela y Simonoff (2012), árboles RE-EM</p></td>
+<td class="text-right"><p>323</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>—</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Sigrist (2022), GPBoost</p></td>
+<td class="text-right"><p>71</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>—</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>La cuenta es automática (OpenAlex) y cada resultado se leyó: no todos tratan de fuga de clientes (la palabra también nombra la rotación de personal). De los 842 trabajos que citan a los 8 antecedentes algorítmicos más cercanos (las 8 últimas filas), mencionan la fuga 0.</p>
+<p><strong>Hacia atrás: referencias de los trabajos más cercanos.</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Trabajo cercano</p></th>
+<th class="head text-right"><p>Referencias</p></th>
+<th class="head text-right"><p>Sobre mezclas o clases latentes</p></th>
+<th class="head text-right"><p>Sobre fuga</p></th>
+<th class="head text-right"><p>Mezcla y fuga a la vez</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Xue, Yao y Xiang (2024), EM con aprendizaje automático para mezclas de regresiones</p></td>
+<td class="text-right"><p>19</p></td>
+<td class="text-right"><p>15</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Hepp y otros (2020), regresión distribucional con clases latentes</p></td>
+<td class="text-right"><p>38</p></td>
+<td class="text-right"><p>11</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Rügamer y otros (2023), mezcla de expertos con regresión distribucional</p></td>
+<td class="text-right"><p>40</p></td>
+<td class="text-right"><p>11</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>De Caigny, Coussement y De Bock (2018), híbrido de árboles y logística para fuga</p></td>
+<td class="text-right"><p>81</p></td>
+<td class="text-right"><p>4</p></td>
+<td class="text-right"><p>18</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Guo y vanden Broucke (2024), predicción conforme para fuga</p></td>
+<td class="text-right"><p>53</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>18</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Hou, Li y Gao (2025), algoritmo Expectation-Boosting para mezclas</p></td>
+<td class="text-right"><p>35</p></td>
+<td class="text-right"><p>20</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Jobst (2024), regresión de mezcla con boosting</p></td>
+<td class="text-right"><p>79</p></td>
+<td class="text-right"><p>10</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Repositorios de código: consultas a GitHub, por número de estrellas.</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Consulta</p></th>
+<th class="head text-right"><p>Repositorios</p></th>
+<th class="head text-left"><p>El primero</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">mixture</span> <span class="pre">regression</span> <span class="pre">boosting</span></code></p></td>
+<td class="text-right"><p>6</p></td>
+<td class="text-left"><p>kanyun-inc/ytk-learn: Ytk-learn is a distributed machine learning library which implements most of popular…</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">latent</span> <span class="pre">class</span> <span class="pre">gradient</span> <span class="pre">boosting</span></code></p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-left"><p>kre-men/Classification_of_Reviews_as_Positive_or_Negative: This project used machine learning algorithms…</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">finite</span> <span class="pre">mixture</span> <span class="pre">boosting</span> <span class="pre">EM</span></code></p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>—</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">churn</span> <span class="pre">mixture</span> <span class="pre">model</span> <span class="pre">boosting</span></code></p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>—</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">expectation</span> <span class="pre">boosting</span> <span class="pre">mixture</span></code></p></td>
+<td class="text-right"><p>2</p></td>
+<td class="text-left"><p>l-/CommonDataAnalysis: Mainly Expectation Maximization fitting of Gaussian Mixture Models in for now, with a…</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">mixed</span> <span class="pre">effects</span> <span class="pre">boosting</span> <span class="pre">churn</span></code></p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-left"><p>—</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Los pocos trabajos que citan a los antecedentes clásicos y mencionan la fuga son híbridos y ensambles sobre la etiqueta;
+ninguno usa una mezcla o una clase latente en la respuesta. En el otro sentido, ninguna de las referencias de los
+trabajos más cercanos sobre mezclas trata de fuga, y ninguna de las referencias de los trabajos de fuga más cercanos
+trata de mezclas (<a class="reference internal" href="#tab-citacion"><span class="std std-ref">Tabla 4.2</span></a>).</p>
+<p><strong>Repositorios.</strong> Las consultas a GitHub no devuelven ningún repositorio que combine una mezcla en la respuesta con
+boosting para fuga de clientes. Las librerías de la familia son <code class="docutils literal notranslate"><span class="pre">flexmix</span></code> y <code class="docutils literal notranslate"><span class="pre">mixtools</span></code> (mezclas de regresiones por EM,
+en R), <code class="docutils literal notranslate"><span class="pre">gamboostLSS</span></code> (boosting de regresión distribucional, en R), <code class="docutils literal notranslate"><span class="pre">NGBoost</span></code> y <code class="docutils literal notranslate"><span class="pre">XGBoostLSS</span></code> (boosting probabilístico, en
+Python; la segunda admite desde 2023 densidades de mezcla cuyos parámetros dependen todos de los predictores), <code class="docutils literal notranslate"><span class="pre">merf</span></code> y
+<code class="docutils literal notranslate"><span class="pre">GPBoost</span></code> (árboles y boosting con efectos aleatorios de grupos observados), <code class="docutils literal notranslate"><span class="pre">interpret</span></code> (EBM) y <code class="docutils literal notranslate"><span class="pre">MAPIE</span></code> y <code class="docutils literal notranslate"><span class="pre">crepes</span></code>
+(predicción conforme). Ninguna ofrece un índice único por boosting con desplazamientos latentes compartidos; BDL no
+reutiliza código de ninguna.</p>
+</section>
+<section id="trabajos-mas-cercanos-y-diferencias">
+<h2>4.4. Trabajos más cercanos y diferencias<a class="headerlink" href="#trabajos-mas-cercanos-y-diferencias" title="Link to this heading">#</a></h2>
+<p>La <a class="reference internal" href="#tab-cercanos"><span class="std std-ref">Tabla 4.3</span></a> compara BDL con las familias de métodos más cercanas, de la más parecida a la menos.</p>
+<p id="tab-cercanos"><strong>Tabla 4.3.</strong> Métodos afines: qué hace cada uno, qué conserva BDL, qué es distinto y por qué el método no resuelve la
+limitación identificada.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Método (familia)</p></th>
+<th class="head"><p>Qué hace</p></th>
+<th class="head"><p>Qué conserva BDL</p></th>
+<th class="head"><p>Qué es distinto en BDL</p></th>
+<th class="head"><p>Por qué no resuelve la limitación</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>EM con un paso de boosting para modelos con variable latente: EMTboost <span class="bibtex-citation" id="id5">[<a class="reference internal" href="10_reproducibilidad.html#id55" title="He Zhou, Wei Qian, and Yi Yang. Tweedie gradient boosting for extremely unbalanced zero-inflated data. Communications in Statistics - Simulation and Computation, 51(9):5507–5529, 2022. doi:10.1080/03610918.2020.1772302.">Zhou <em>et al.</em>, 2022</a>]</span>, modelos de Markov con estados latentes <span class="bibtex-citation" id="id6">[<a class="reference internal" href="10_reproducibilidad.html#id56" title="Timo Adam, Andreas Mayr, and Thomas Kneib. Gradient boosting in Markov-switching generalized additive models for location, scale, and shape. Econometrics and Statistics, 22:3–16, 2022. doi:10.1016/j.ecosta.2021.04.002.">Adam <em>et al.</em>, 2022</a>]</span>, algoritmo <em>Expectation-Boosting</em> <span class="bibtex-citation" id="id7">[<a class="reference internal" href="10_reproducibilidad.html#id54" title="Yanxi Hou, Jiahong Li, and Guangyuan Gao. Insurance loss modeling with gradient tree-boosted mixture models. Insurance: Mathematics and Economics, 121:45–62, 2025. doi:10.1016/j.insmatheco.2024.12.007.">Hou <em>et al.</em>, 2025</a>]</span></p></td>
+<td><p>Sustituyen el paso M del EM por pasos de boosting para estimar las funciones de cada componente de un modelo con exceso de ceros, de un modelo con estados latentes o de una mezcla</p></td>
+<td><p><strong>La regla de aprendizaje</strong>: un EM generalizado cuyo paso M es un paso de boosting</p></td>
+<td><p>El modelo al que se aplica: un solo índice compartido por todas las clases, con desplazamientos y pesos constantes, de modo que el paso M es un único boosting contra el objetivo menos el desplazamiento esperado; y la regla de salida (excedencia y conjuntos conformes)</p></td>
+<td><p>Estiman una función por componente: cuando las clases comparten el efecto de los predictores, eso multiplica los parámetros y reparte los datos. Ninguno deriva la probabilidad de superar un umbral ni se ha aplicado a fuga</p></td>
+</tr>
+<tr class="row-odd"><td><p>Boosting de una densidad de mezcla sin EM: <span class="bibtex-citation" id="id8">Jobst [<a class="reference internal" href="10_reproducibilidad.html#id28" title="David Jobst. Gradient-boosted mixture regression models for postprocessing ensemble weather forecasts. arXiv:2412.09583, 2024. URL: https://arxiv.org/abs/2412.09583.">2024</a>]</span>; XGBoostLSS con densidades de mezcla <span class="bibtex-citation" id="id9">[<a class="reference internal" href="10_reproducibilidad.html#id59" title="Alexander März. XGBoostLSS: an extension of XGBoost to probabilistic forecasting. arXiv:1907.03178, 2019. URL: https://arxiv.org/abs/1907.03178.">März, 2019</a>]</span></p></td>
+<td><p>Boosting por gradiente de la verosimilitud de una mezcla cuyos parámetros (localización, escala y pesos de cada componente) dependen de los predictores</p></td>
+<td><p>Boosting sobre la verosimilitud de una mezcla</p></td>
+<td><p>Un índice y desplazamientos latentes constantes; EM en lugar de gradiente directo; árboles propios</p></td>
+<td><p>Un boosting por parámetro y por componente; no hay un efecto común de los predictores que las clases compartan</p></td>
+</tr>
+<tr class="row-even"><td><p>Árboles y boosting con efectos aleatorios: MERT y MERF <span class="bibtex-citation" id="id10">[<a class="reference internal" href="10_reproducibilidad.html#id60" title="Ahlem Hajjem, François Bellavance, and Denis Larocque. Mixed effects regression trees for clustered data. Statistics &amp; Probability Letters, 81(4):451–459, 2011. doi:10.1016/j.spl.2010.12.003.">Hajjem <em>et al.</em>, 2011</a>, <a class="reference internal" href="10_reproducibilidad.html#id61" title="Ahlem Hajjem, François Bellavance, and Denis Larocque. Mixed-effects random forest for clustered data. Journal of Statistical Computation and Simulation, 84(6):1313–1328, 2014. doi:10.1080/00949655.2012.741599.">Hajjem <em>et al.</em>, 2014</a>]</span>, RE-EM <span class="bibtex-citation" id="id11">[<a class="reference internal" href="10_reproducibilidad.html#id62" title="Rebecca J. Sela and Jeffrey S. Simonoff. RE-EM trees: a data mining approach for longitudinal and clustered data. Machine Learning, 86(2):169–207, 2012. doi:10.1007/s10994-011-5258-3.">Sela and Simonoff, 2012</a>]</span>, GPBoost <span class="bibtex-citation" id="id12">[<a class="reference internal" href="10_reproducibilidad.html#id63" title="Fabio Sigrist. Gaussian process boosting. Journal of Machine Learning Research, 23(232):1–46, 2022. URL: https://www.jmlr.org/papers/v23/20-322.html.">Sigrist, 2022</a>]</span>; aplicado a la deserción estudiantil por <span class="bibtex-citation" id="id13">Pellagatti <em>et al.</em> [<a class="reference internal" href="10_reproducibilidad.html#id64" title="Massimo Pellagatti, Chiara Masci, Francesca Ieva, and Anna M. Paganoni. Generalized mixed-effects random forest: a flexible approach to predict university student dropout. Statistical Analysis and Data Mining: The ASA Data Science Journal, 14(3):241–257, 2021. doi:10.1002/sam.11505.">2021</a>]</span></p></td>
+<td><p>Alternan entre estimar el efecto aleatorio de cada grupo <strong>observado</strong> y ajustar árboles a la respuesta sin ese efecto</p></td>
+<td><p>Quitar un efecto de grupo de la respuesta antes de ajustar los árboles</p></td>
+<td><p>El grupo no se observa: es una clase latente con sus pesos, y lo que se resta es el desplazamiento esperado según las responsabilidades del paso E</p></td>
+<td><p>Necesitan saber a qué grupo pertenece cada fila; aquí la variable que define el grupo está excluida</p></td>
+</tr>
+<tr class="row-odd"><td><p>EM con aprendizaje automático en el paso M: <span class="bibtex-citation" id="id14">Xue <em>et al.</em> [<a class="reference internal" href="10_reproducibilidad.html#id53" title="Jiacheng Xue, Weixin Yao, and Sijia Xiang. Machine learning embedded EM algorithms for semiparametric mixture regression models. Computational Statistics, 40(1):205–224, 2024. doi:10.1007/s00180-024-01482-5.">2024</a>]</span></p></td>
+<td><p>Mezcla semiparamétrica: cada componente tiene su función de regresión, ajustada con un método de aprendizaje automático</p></td>
+<td><p>EM con un aprendiz flexible en el paso M</p></td>
+<td><p>Un índice común y salida de excedencia y conforme</p></td>
+<td><p>Estima <span class="math notranslate nohighlight">\(K\)</span> funciones; con desplazamientos constantes eso multiplica los parámetros sin necesidad</p></td>
+</tr>
+<tr class="row-even"><td><p>Mezclas de regresiones por EM: <span class="bibtex-citation" id="id15">DeSarbo and Cron [<a class="reference internal" href="10_reproducibilidad.html#id15" title="Wayne S. DeSarbo and William L. Cron. A maximum likelihood methodology for clusterwise linear regression. Journal of Classification, 5(2):249–282, 1988. doi:10.1007/BF01897167.">1988</a>]</span>, FlexMix <span class="bibtex-citation" id="id16">[<a class="reference internal" href="10_reproducibilidad.html#id21" title="Bettina Grün and Friedrich Leisch. FlexMix version 2: finite mixtures with concomitant variables and varying and constant parameters. Journal of Statistical Software, 28(4):1–35, 2008. doi:10.18637/jss.v028.i04.">Grün and Leisch, 2008</a>]</span></p></td>
+<td><p>Una regresión lineal (o un GLM) por clase latente</p></td>
+<td><p>El EM y la idea de clase latente</p></td>
+<td><p>Un solo índice no paramétrico y desplazamientos constantes, no una regresión por clase</p></td>
+<td><p>Cada clase estima su propia regresión con una fracción de los datos; aquí las clases comparten el mismo efecto de los predictores</p></td>
+</tr>
+<tr class="row-odd"><td><p>Heterogeneidad no observada con puntos de masa: <span class="bibtex-citation" id="id17">Heckman and Singer [<a class="reference internal" href="10_reproducibilidad.html#id23" title="James Heckman and Burton Singer. A method for minimizing the impact of distributional assumptions in econometric models for duration data. Econometrica, 52(2):271–320, 1984. doi:10.2307/1911491.">1984</a>]</span>, <span class="bibtex-citation" id="id18">Aitkin [<a class="reference internal" href="10_reproducibilidad.html#id3" title="Murray Aitkin. A general maximum likelihood analysis of variance components in generalized linear models. Biometrics, 55(1):117–128, 1999. doi:10.1111/j.0006-341X.1999.00117.x.">1999</a>]</span></p></td>
+<td><p>Intercepto aleatorio con distribución discreta en modelos lineales generalizados</p></td>
+<td><p>Es el mismo modelo estadístico del error</p></td>
+<td><p>El predictor es un boosting de árboles; la mezcla se usa para predecir (excedencia y conjuntos), no solo para corregir coeficientes</p></td>
+<td><p>Predictor lineal: no capta efectos no lineales; pensado para datos agrupados o de duración</p></td>
+</tr>
+<tr class="row-even"><td><p>Clases latentes y abandono latente en fuga: <span class="bibtex-citation" id="id19">Jamal and Bucklin [<a class="reference internal" href="10_reproducibilidad.html#id65" title="Zainab Jamal and Randolph E. Bucklin. Improving the diagnosis and prediction of customer churn: a heterogeneous hazard modeling approach. Journal of Interactive Marketing, 20(3–4):16–29, 2006. doi:10.1002/dir.20064.">2006</a>]</span>, <span class="bibtex-citation" id="id20">Bachmann <em>et al.</em> [<a class="reference internal" href="10_reproducibilidad.html#id66" title="Patrick Bachmann, Markus Meierer, and Jeffrey Näf. The role of time-varying contextual factors in latent attrition models for customer base analysis. Marketing Science, 40(4):783–809, 2021. doi:10.1287/mksc.2020.1254.">2021</a>]</span>, <span class="bibtex-citation" id="id21">Dong <em>et al.</em> [<a class="reference internal" href="10_reproducibilidad.html#id70" title="Yumo Dong, Edward W. Frees, Fei Huang, Francis K. C. Hui, and Harald J. van Heerde. A joint model of cost and churn for the insurance industry. Journal of Risk and Insurance, 2026. doi:10.1111/jori.70061.">2026</a>]</span>; agrupamiento de curvas de supervivencia de <span class="bibtex-citation" id="id22">Buginga and de Souza e Silva [<a class="reference internal" href="10_reproducibilidad.html#id68" title="Gabriel Buginga and Edmundo de Souza e Silva. Clustering survival data using a mixture of non-parametric experts. arXiv:2405.15934, 2024. URL: https://arxiv.org/abs/2405.15934.">2024</a>]</span></p></td>
+<td><p>Modelan la fuga con clases latentes o efectos aleatorios, cada clase con su modelo de riesgo</p></td>
+<td><p>La idea de que hay heterogeneidad no observada entre clientes</p></td>
+<td><p>Predictor no paramétrico por boosting; la clase latente solo desplaza el puntaje y no tiene parámetros propios</p></td>
+<td><p>Modelos paramétricos por clase, pensados para duraciones y para explicar; no usan boosting ni el puntaje continuo</p></td>
+</tr>
+<tr class="row-odd"><td><p>Mezcla de expertos: <span class="bibtex-citation" id="id23">Jacobs <em>et al.</em> [<a class="reference internal" href="10_reproducibilidad.html#id27" title="Robert A. Jacobs, Michael I. Jordan, Steven J. Nowlan, and Geoffrey E. Hinton. Adaptive mixtures of local experts. Neural Computation, 3(1):79–87, 1991. doi:10.1162/neco.1991.3.1.79.">1991</a>]</span>; con regresión distribucional, <span class="bibtex-citation" id="id24">Rügamer <em>et al.</em> [<a class="reference internal" href="10_reproducibilidad.html#id46" title="David Rügamer, Florian Pfisterer, Bernd Bischl, and Bettina Grün. Mixture of experts distributional regression: implementation using robust estimation with adaptive first-order methods. AStA Advances in Statistical Analysis, 108(2):351–373, 2023. doi:10.1007/s10182-023-00486-8.">2023</a>]</span>; anclada en un boosting, <span class="bibtex-citation" id="id25">Su and Qu [<a class="reference internal" href="10_reproducibilidad.html#id71" title="Baozhuo Su and Zhengxian Qu. Anchor-MoE: a mean-anchored mixture of experts for probabilistic regression. arXiv:2508.16802, 2025. URL: https://arxiv.org/abs/2508.16802.">2025</a>]</span></p></td>
+<td><p>Una red de compuerta reparte cada caso entre expertos</p></td>
+<td><p>La mezcla</p></td>
+<td><p>No hay compuerta: la clase no depende de <span class="math notranslate nohighlight">\(x\)</span>; árboles en lugar de redes</p></td>
+<td><p>Si la clase no depende de <span class="math notranslate nohighlight">\(x\)</span> la compuerta solo añade varianza; además, las redes están excluidas por la guía</p></td>
+</tr>
+<tr class="row-even"><td><p>Boosting distribucional: gamboostLSS <span class="bibtex-citation" id="id26">[<a class="reference internal" href="10_reproducibilidad.html#id36" title="Andreas Mayr, Nora Fenske, Benjamin Hofner, Thomas Kneib, and Matthias Schmid. Generalized additive models for location, scale and shape for high dimensional data: a flexible approach based on boosting. Journal of the Royal Statistical Society: Series C, 61(3):403–427, 2012. doi:10.1111/j.1467-9876.2011.01033.x.">Mayr <em>et al.</em>, 2012</a>]</span>, NGBoost <span class="bibtex-citation" id="id27">[<a class="reference internal" href="10_reproducibilidad.html#id16" title="Tony Duan, Anand Avati, Daisy Yi Ding, Khanh K. Thai, Sanjay Basu, Andrew Y. Ng, and Alejandro Schuler. NGBoost: natural gradient boosting for probabilistic prediction. In Proceedings of the 37th International Conference on Machine Learning, volume 119 of PMLR, 2690–2700. 2020.">Duan <em>et al.</em>, 2020</a>]</span>; aplicado a fuga por <span class="bibtex-citation" id="id28">Ali <em>et al.</em> [<a class="reference internal" href="10_reproducibilidad.html#id5" title="Laila Badawy Ali, Riham M. Haggag, and Mohamed Mostafa Fouad. A probabilistic framework for robust customer churn prediction. In National Radio Science Conference (NRSC), 69–77. 2026. doi:10.1109/nrsc71102.2026.11556062.">2026</a>]</span></p></td>
+<td><p>Boosting de todos los parámetros de una distribución paramétrica</p></td>
+<td><p>La idea de predecir una distribución</p></td>
+<td><p>Ruido de mezcla en lugar de una familia unimodal</p></td>
+<td><p>Con una familia unimodal el escalón sigue siendo ruido</p></td>
+</tr>
+<tr class="row-odd"><td><p>Regresión distribucional con clases latentes: <span class="bibtex-citation" id="id29">Hepp <em>et al.</em> [<a class="reference internal" href="10_reproducibilidad.html#id24" title="Tobias Hepp, Jakob Zierk, Manfred Rauh, Markus Metzler, and Andreas Mayr. Latent class distributional regression for the estimation of non-linear reference limits from contaminated data sources. BMC Bioinformatics, 21:524, 2020. doi:10.1186/s12859-020-03853-3.">2020</a>]</span>, <span class="bibtex-citation" id="id30">Wattanawongwan <em>et al.</em> [<a class="reference internal" href="10_reproducibilidad.html#id72" title="Suttisak Wattanawongwan, Christophe Mues, Ramin Okhrati, Taufiq Choudhry, and Mee Chi So. A mixture model for credit card exposure at default using the GAMLSS framework. International Journal of Forecasting, 39(1):503–518, 2023. doi:10.1016/j.ijforecast.2021.12.014.">2023</a>]</span></p></td>
+<td><p>Dos o más clases, cada una con su GAMLSS, por EM</p></td>
+<td><p>Clase latente y modelo aditivo</p></td>
+<td><p><span class="math notranslate nohighlight">\(K\)</span> desplazamientos que comparten un índice; boosting de árboles; predicción</p></td>
+<td><p>Una regresión completa por clase; objetivo distinto (límites de referencia, exposición crediticia)</p></td>
+</tr>
+<tr class="row-even"><td><p>Modelos aditivos por boosting: GA²M y EBM <span class="bibtex-citation" id="id31">[<a class="reference internal" href="10_reproducibilidad.html#id34" title="Yin Lou, Rich Caruana, Johannes Gehrke, and Giles Hooker. Accurate intelligible models with pairwise interactions. In Proceedings of the 19th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, 623–631. 2013. doi:10.1145/2487575.2487579.">Lou <em>et al.</em>, 2013</a>, <a class="reference internal" href="10_reproducibilidad.html#id42" title="Harsha Nori, Samuel Jenkins, Paul Koch, and Rich Caruana. InterpretML: a unified framework for machine learning interpretability. arXiv:1909.09223, 2019. URL: https://arxiv.org/abs/1909.09223.">Nori <em>et al.</em>, 2019</a>]</span></p></td>
+<td><p>Boosting cíclico de un modelo aditivo con pérdida cuadrática o logística</p></td>
+<td><p>La forma aditiva del índice con profundidad 1</p></td>
+<td><p>La regla de aprendizaje (EM) y la regla de salida</p></td>
+<td><p>Pérdida cuadrática o logística: trata el escalón como ruido y solo ve la etiqueta</p></td>
+</tr>
+<tr class="row-odd"><td><p>Predicción conforme en fuga: <span class="bibtex-citation" id="id32">Guo and vanden Broucke [<a class="reference internal" href="10_reproducibilidad.html#id22" title="Yameng Guo and Seppe vanden Broucke. Learning from uncertainty: improving churn prediction using conformal confidence intervals. In International Conference on Machine Learning and Applications (ICMLA), 9–16. 2024. doi:10.1109/icmla61862.2024.00008.">2024</a>]</span></p></td>
+<td><p>Usa intervalos conformes para mejorar un clasificador de fuga</p></td>
+<td><p>La predicción conforme</p></td>
+<td><p>La medida de conformidad es la densidad de la mezcla: conjuntos que son uniones de intervalos</p></td>
+<td><p>No modela el puntaje continuo</p></td>
+</tr>
+<tr class="row-even"><td><p>Método distribucional para respuestas dicotomizadas: <span class="bibtex-citation" id="id33">Sauzet and Kleine [<a class="reference internal" href="10_reproducibilidad.html#id47" title="Odile Sauzet and Maren Kleine. Distributional estimates for the comparison of proportions of a dichotomized continuous outcome. The Stata Journal, 16(4):880–899, 2016. doi:10.1177/1536867X1601600405.">2016</a>]</span></p></td>
+<td><p>Estima proporciones sobre un umbral a partir de la media y la desviación de la respuesta continua</p></td>
+<td><p>Usar la respuesta continua en lugar de la etiqueta</p></td>
+<td><p>Predicción por cliente con una mezcla aprendida, no una comparación de grupos bajo normalidad</p></td>
+<td><p>Supone una distribución paramétrica sin clases latentes</p></td>
+</tr>
+<tr class="row-odd"><td><p>Boosting e híbridos para fuga: <span class="bibtex-citation" id="id34">Lemmens and Croux [<a class="reference internal" href="10_reproducibilidad.html#id67" title="Aurélie Lemmens and Christophe Croux. Bagging and boosting classification trees to predict churn. Journal of Marketing Research, 43(2):276–286, 2006. doi:10.1509/jmkr.43.2.276.">2006</a>]</span>, <span class="bibtex-citation" id="id35">De Caigny <em>et al.</em> [<a class="reference internal" href="10_reproducibilidad.html#id11" title="Arno De Caigny, Kristof Coussement, and Koen W. De Bock. A new hybrid classification algorithm for customer churn prediction based on logistic regression and decision trees. European Journal of Operational Research, 269(2):760–772, 2018. doi:10.1016/j.ejor.2018.02.009.">2018</a>]</span>, <span class="bibtex-citation" id="id36">Vakeel <em>et al.</em> [<a class="reference internal" href="10_reproducibilidad.html#id69" title="Aditi Vakeel, Neha Reddy Vantari, Sai Nivas Reddy, Rishith Muthyapu, and Ameet Chavan. Machine learning models for predicting and clustering customer churn based on boosting algorithms and Gaussian mixture model. In International Conference for Advancement in Technology (ICONAT), 1–5. 2022. doi:10.1109/iconat53423.2022.9725957.">2022</a>]</span>, <span class="bibtex-citation" id="id37">Adegboye <em>et al.</em> [<a class="reference internal" href="10_reproducibilidad.html#id2" title="Oluwatayomi Rereloluwa Adegboye, Hüseyin Kusetoğulları, and Afi Kekeli Feda. An interpretable hybrid of boosted trees and regularised logistic regression for predicting customer churn in online retail. Information, 17(11):1118, 2026. doi:10.3390/info17111118.">2026</a>]</span></p></td>
+<td><p>Boosting o combinaciones de árboles y regresión logística sobre la etiqueta; cuando hay una mezcla, agrupa clientes fuera del modelo predictivo</p></td>
+<td><p>—</p></td>
+<td><p>Aprende del puntaje y de su estructura latente</p></td>
+<td><p>Solo usan la etiqueta</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>La relación entre el EM y el boosting se señaló pronto <span class="bibtex-citation" id="id38">[<a class="reference internal" href="10_reproducibilidad.html#id58" title="Christopher Meek, Bo Thiesson, and David Heckerman. Staged mixture modelling and boosting. Conference on Uncertainty in Artificial Intelligence (UAI); arXiv:1301.0586, 2002. URL: https://arxiv.org/abs/1301.0586.">Meek <em>et al.</em>, 2002</a>]</span>: añadir componentes a una mezcla con un EM
+estructural se parece a un boosting. Los algoritmos de la primera fila van en la otra dirección y son el antecedente
+directo de BDL. El boosting de árboles también se ha usado para estimar modelos de cura de mezcla, que separan a los
+individuos en dos clases latentes <span class="bibtex-citation" id="id39">[<a class="reference internal" href="10_reproducibilidad.html#id57" title="Jianing Zheng, Peizhi Li, and Yingwei Peng. A gradient boosting decision tree based estimation method for the mixture cure model. Journal of Applied Statistics, 53(3):484–509, 2026. doi:10.1080/02664763.2025.2520337.">Zheng <em>et al.</em>, 2026</a>]</span>.</p>
+</section>
+<section id="declaracion-de-novedad">
+<h2>4.5. Declaración de novedad<a class="headerlink" href="#declaracion-de-novedad" title="Link to this heading">#</a></h2>
+<p>Al mejor de nuestro conocimiento, y según la búsqueda descrita (tres bases de datos, trece cadenas, búsqueda por
+citación en los dos sentidos y revisión de repositorios, en las fechas que registra la matriz), <strong>no se encontraron
+estudios que apliquen a la predicción de fuga de clientes un modelo de boosting con una mezcla latente de
+desplazamientos ajustado por EM generalizado</strong>, ni otro algoritmo de la familia de EM con paso de boosting, ni que
+deriven de un modelo así la probabilidad de superar un umbral de riesgo.</p>
+<p>La novedad que se afirma es precisa y acotada:</p>
+<ul class="simple">
+<li><p><strong>Qué no es nuevo.</strong> Sustituir el paso M del EM por un paso de boosting ya se había hecho: en mezclas con exceso de
+ceros <span class="bibtex-citation" id="id40">[<a class="reference internal" href="10_reproducibilidad.html#id55" title="He Zhou, Wei Qian, and Yi Yang. Tweedie gradient boosting for extremely unbalanced zero-inflated data. Communications in Statistics - Simulation and Computation, 51(9):5507–5529, 2022. doi:10.1080/03610918.2020.1772302.">Zhou <em>et al.</em>, 2022</a>]</span>, en modelos con estados latentes <span class="bibtex-citation" id="id41">[<a class="reference internal" href="10_reproducibilidad.html#id56" title="Timo Adam, Andreas Mayr, and Thomas Kneib. Gradient boosting in Markov-switching generalized additive models for location, scale, and shape. Econometrics and Statistics, 22:3–16, 2022. doi:10.1016/j.ecosta.2021.04.002.">Adam <em>et al.</em>, 2022</a>]</span> y en mezclas para pérdidas de seguros, con
+el nombre de <em>Expectation-Boosting</em> <span class="bibtex-citation" id="id42">[<a class="reference internal" href="10_reproducibilidad.html#id54" title="Yanxi Hou, Jiahong Li, and Guangyuan Gao. Insurance loss modeling with gradient tree-boosted mixture models. Insurance: Mathematics and Economics, 121:45–62, 2025. doi:10.1016/j.insmatheco.2024.12.007.">Hou <em>et al.</em>, 2025</a>]</span>. BDL es un miembro de esa familia, no su origen.</p></li>
+<li><p><strong>Qué es propio de BDL.</strong> (i) El modelo: un índice único aprendido por boosting de árboles, con desplazamientos
+latentes constantes y pesos que no dependen de los predictores. Es la contraparte con clase latente de los árboles
+con efectos aleatorios, y un caso mucho más restringido que una mezcla de regresiones. (ii) La forma que toma el
+paso M con ese modelo: un solo paso de boosting contra el objetivo al que se le resta el desplazamiento esperado,
+en lugar de un boosting por componente. (iii) La regla de salida: la probabilidad de excedencia de la mezcla como
+clasificador de una respuesta continua dicotomizada. (iv) La densidad de la mezcla como medida de conformidad de los
+conjuntos de predicción. (v) La implementación, programada desde cero, y su aplicación a la fuga de clientes.</p></li>
+<li><p><strong>Qué se reutiliza.</strong> El algoritmo EM <span class="bibtex-citation" id="id43">[<a class="reference internal" href="10_reproducibilidad.html#id13" title="Arthur P. Dempster, Nan M. Laird, and Donald B. Rubin. Maximum likelihood from incomplete data via the EM algorithm. Journal of the Royal Statistical Society: Series B, 39(1):1–38, 1977. doi:10.1111/j.2517-6161.1977.tb01600.x.">Dempster <em>et al.</em>, 1977</a>]</span>, el boosting de gradiente <span class="bibtex-citation" id="id44">[<a class="reference internal" href="10_reproducibilidad.html#id19" title="Jerome H. Friedman. Greedy function approximation: a gradient boosting machine. The Annals of Statistics, 29(5):1189–1232, 2001. doi:10.1214/aos/1013203451.">Friedman, 2001</a>]</span>, las
+mezclas finitas <span class="bibtex-citation" id="id45">[<a class="reference internal" href="10_reproducibilidad.html#id37" title="Geoffrey McLachlan and David Peel. Finite Mixture Models. Wiley, 2000. doi:10.1002/0471721182.">McLachlan and Peel, 2000</a>]</span>, la predicción conforme por partición <span class="bibtex-citation" id="id46">[<a class="reference internal" href="10_reproducibilidad.html#id33" title="Jing Lei, Max G'Sell, Alessandro Rinaldo, Ryan J. Tibshirani, and Larry Wasserman. Distribution-free predictive inference for regression. Journal of the American Statistical Association, 113(523):1094–1111, 2018. doi:10.1080/01621459.2017.1307116.">Lei <em>et al.</em>, 2018</a>, <a class="reference internal" href="10_reproducibilidad.html#id50" title="Vladimir Vovk, Alexander Gammerman, and Glenn Shafer. Algorithmic Learning in a Random World. Springer, 2005. doi:10.1007/b106715.">Vovk <em>et al.</em>, 2005</a>]</span> y el criterio
+BIC <span class="bibtex-citation" id="id47">[<a class="reference internal" href="10_reproducibilidad.html#id48" title="Gideon Schwarz. Estimating the dimension of a model. The Annals of Statistics, 6(2):461–464, 1978. doi:10.1214/aos/1176344136.">Schwarz, 1978</a>]</span>. Ninguna de esas piezas es nuestra.</p></li>
+<li><p><strong>Qué no se afirma.</strong> No se afirma que el modelo estadístico del error sea nuevo (es el de los interceptos aleatorios
+con puntos de masa), ni que la alternancia entre EM y boosting lo sea, ni que BDL sea mejor fuera de los problemas
+con un desplazamiento latente: sin él se reduce a un boosting de mínimos cuadrados (capítulo 7).</p></li>
+</ul>
+<p>Los antecedentes algorítmicos más cercanos son el algoritmo <em>Expectation-Boosting</em> de <span class="bibtex-citation" id="id48">Hou <em>et al.</em> [<a class="reference internal" href="10_reproducibilidad.html#id54" title="Yanxi Hou, Jiahong Li, and Guangyuan Gao. Insurance loss modeling with gradient tree-boosted mixture models. Insurance: Mathematics and Economics, 121:45–62, 2025. doi:10.1016/j.insmatheco.2024.12.007.">2025</a>]</span>, la regresión de
+mezcla con boosting de <span class="bibtex-citation" id="id49">Jobst [<a class="reference internal" href="10_reproducibilidad.html#id28" title="David Jobst. Gradient-boosted mixture regression models for postprocessing ensemble weather forecasts. arXiv:2412.09583, 2024. URL: https://arxiv.org/abs/2412.09583.">2024</a>]</span> y el EM con aprendizaje automático de <span class="bibtex-citation" id="id50">Xue <em>et al.</em> [<a class="reference internal" href="10_reproducibilidad.html#id53" title="Jiacheng Xue, Weixin Yao, and Sijia Xiang. Machine learning embedded EM algorithms for semiparametric mixture regression models. Computational Statistics, 40(1):205–224, 2024. doi:10.1007/s00180-024-01482-5.">2024</a>]</span>; la
+<a class="reference internal" href="#tab-cercanos"><span class="std std-ref">Tabla 4.3</span></a> precisa las diferencias. El mecanismo está formulado de manera general (capítulo 5):
+sirve para una regresión en la que una variable discreta que no está entre los predictores desplaza la respuesta, y
+para clasificar una respuesta continua dicotomizada. Tiene condiciones: el desplazamiento debe ser aditivo, no depender
+de los predictores y ser grande frente al error del índice. En los dos conjuntos adicionales construidos con una
+variable omitida esas condiciones no se dieron y el modelo no encontró clases latentes (sección 7.1).</p>
+</section>
+<section id="cadenas-de-busqueda">
+<h2>4.6. Cadenas de búsqueda<a class="headerlink" href="#cadenas-de-busqueda" title="Link to this heading">#</a></h2>
+<p id="tab-cadenas"><strong>Tabla 4.4.</strong> Cadenas de búsqueda, tal como se enviaron a cada base. La sintaxis cambia de una base a otra: OpenAlex
+admite operadores y frases, arXiv busca por campos y Crossref ordena por relevancia los registros que contienen los
+términos.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 4.4. De busqueda.json: la cadena literal de cada consulta, por base.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_cadenas'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Cadena</p></th>
+<th class="head text-left"><p>OpenAlex</p></th>
+<th class="head text-left"><p>arXiv</p></th>
+<th class="head text-left"><p>Crossref</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>C1</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">&quot;customer</span> <span class="pre">churn&quot;</span> <span class="pre">AND</span> <span class="pre">(&quot;latent</span> <span class="pre">class&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;finite</span> <span class="pre">mixture&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;mixture</span> <span class="pre">of</span> <span class="pre">regressions&quot;)</span> <span class="pre">AND</span> <span class="pre">boosting</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">all:&quot;customer</span> <span class="pre">churn&quot;</span> <span class="pre">AND</span> <span class="pre">(all:mixture</span> <span class="pre">OR</span> <span class="pre">all:&quot;latent</span> <span class="pre">class&quot;)</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">churn</span> <span class="pre">mixture</span> <span class="pre">boosting</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>C2</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">&quot;customer</span> <span class="pre">churn&quot;</span> <span class="pre">AND</span> <span class="pre">(&quot;unobserved</span> <span class="pre">heterogeneity&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;latent</span> <span class="pre">variable&quot;)</span> <span class="pre">AND</span> <span class="pre">&quot;gradient</span> <span class="pre">boosting&quot;</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">all:churn</span> <span class="pre">AND</span> <span class="pre">all:&quot;latent</span> <span class="pre">variable&quot;</span> <span class="pre">AND</span> <span class="pre">all:boosting</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">churn</span> <span class="pre">latent</span> <span class="pre">boosting</span></code></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>C3</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">(&quot;mixture</span> <span class="pre">of</span> <span class="pre">regressions&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;finite</span> <span class="pre">mixture</span> <span class="pre">regression&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;latent</span> <span class="pre">class</span> <span class="pre">regression&quot;)</span> <span class="pre">AND</span> <span class="pre">(&quot;gradient</span> <span class="pre">boosting&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;boosted</span> <span class="pre">trees&quot;)</span> <span class="pre">AND</span> <span class="pre">(&quot;expectation-maximization&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;EM</span> <span class="pre">algorithm&quot;)</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">(all:&quot;mixture</span> <span class="pre">of</span> <span class="pre">regressions&quot;</span> <span class="pre">OR</span> <span class="pre">all:&quot;mixture</span> <span class="pre">regression&quot;)</span> <span class="pre">AND</span> <span class="pre">all:boosting</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">mixture</span> <span class="pre">regression</span> <span class="pre">boosting</span> <span class="pre">EM</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>C4</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">&quot;gradient</span> <span class="pre">boosting&quot;</span> <span class="pre">AND</span> <span class="pre">(&quot;mixture</span> <span class="pre">noise&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;multimodal</span> <span class="pre">noise&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;mixture</span> <span class="pre">of</span> <span class="pre">Gaussians</span> <span class="pre">noise&quot;)</span> <span class="pre">AND</span> <span class="pre">regression</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">all:&quot;gradient</span> <span class="pre">boosting&quot;</span> <span class="pre">AND</span> <span class="pre">all:&quot;mixture</span> <span class="pre">density&quot;</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">boosting</span> <span class="pre">mixture</span> <span class="pre">density</span> <span class="pre">regression</span></code></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>C5</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">(&quot;customer</span> <span class="pre">churn&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;customer</span> <span class="pre">attrition&quot;)</span> <span class="pre">AND</span> <span class="pre">(&quot;conformal</span> <span class="pre">prediction&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;prediction</span> <span class="pre">sets&quot;)</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">all:churn</span> <span class="pre">AND</span> <span class="pre">all:&quot;conformal</span> <span class="pre">prediction&quot;</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">churn</span> <span class="pre">conformal</span> <span class="pre">prediction</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>C6</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">(&quot;customer</span> <span class="pre">churn&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;customer</span> <span class="pre">attrition&quot;)</span> <span class="pre">AND</span> <span class="pre">(&quot;distributional</span> <span class="pre">regression&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;probabilistic</span> <span class="pre">regression&quot;</span> <span class="pre">OR</span> <span class="pre">NGBoost</span> <span class="pre">OR</span> <span class="pre">&quot;GAMLSS&quot;)</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">all:churn</span> <span class="pre">AND</span> <span class="pre">(all:&quot;distributional</span> <span class="pre">regression&quot;</span> <span class="pre">OR</span> <span class="pre">all:NGBoost</span> <span class="pre">OR</span> <span class="pre">all:&quot;probabilistic</span> <span class="pre">regression&quot;)</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">churn</span> <span class="pre">distributional</span> <span class="pre">regression</span></code></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>C7</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">(&quot;dichotomized&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;dichotomised&quot;)</span> <span class="pre">AND</span> <span class="pre">&quot;continuous</span> <span class="pre">outcome&quot;</span> <span class="pre">AND</span> <span class="pre">(&quot;exceedance</span> <span class="pre">probability&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;distributional</span> <span class="pre">approach&quot;)</span> <span class="pre">AND</span> <span class="pre">classification</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">all:dichotomized</span> <span class="pre">AND</span> <span class="pre">all:&quot;continuous</span> <span class="pre">outcome&quot;</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">dichotomized</span> <span class="pre">continuous</span> <span class="pre">outcome</span> <span class="pre">classification</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>C8</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">(&quot;generalized</span> <span class="pre">additive</span> <span class="pre">model&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;explainable</span> <span class="pre">boosting</span> <span class="pre">machine&quot;)</span> <span class="pre">AND</span> <span class="pre">(&quot;finite</span> <span class="pre">mixture&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;latent</span> <span class="pre">class&quot;)</span> <span class="pre">AND</span> <span class="pre">boosting</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">all:&quot;additive</span> <span class="pre">model&quot;</span> <span class="pre">AND</span> <span class="pre">all:&quot;finite</span> <span class="pre">mixture&quot;</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">additive</span> <span class="pre">model</span> <span class="pre">finite</span> <span class="pre">mixture</span> <span class="pre">boosting</span></code></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>C9</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">(&quot;fuga</span> <span class="pre">de</span> <span class="pre">clientes&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;deserción</span> <span class="pre">de</span> <span class="pre">clientes&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;abandono</span> <span class="pre">de</span> <span class="pre">clientes&quot;)</span> <span class="pre">AND</span> <span class="pre">(&quot;clase</span> <span class="pre">latente&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;mezcla</span> <span class="pre">finita&quot;</span> <span class="pre">OR</span> <span class="pre">boosting)</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">all:&quot;fuga</span> <span class="pre">de</span> <span class="pre">clientes&quot;</span> <span class="pre">OR</span> <span class="pre">all:&quot;abandono</span> <span class="pre">de</span> <span class="pre">clientes&quot;</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">fuga</span> <span class="pre">de</span> <span class="pre">clientes</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>C10</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">(&quot;finite</span> <span class="pre">mixture&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;mixture</span> <span class="pre">model&quot;)</span> <span class="pre">AND</span> <span class="pre">(&quot;gradient</span> <span class="pre">boosting&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;boosted</span> <span class="pre">trees&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;tree</span> <span class="pre">boosting&quot;)</span> <span class="pre">AND</span> <span class="pre">(&quot;EM</span> <span class="pre">algorithm&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;expectation-maximization&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;expectation-boosting&quot;)</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">all:mixture</span> <span class="pre">AND</span> <span class="pre">all:boosting</span> <span class="pre">AND</span> <span class="pre">(all:&quot;EM</span> <span class="pre">algorithm&quot;</span> <span class="pre">OR</span> <span class="pre">all:&quot;expectation-maximization&quot;</span> <span class="pre">OR</span> <span class="pre">all:&quot;expectation-boosting&quot;)</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">expectation</span> <span class="pre">boosting</span> <span class="pre">mixture</span> <span class="pre">model</span> <span class="pre">gradient</span> <span class="pre">tree</span> <span class="pre">boosting</span> <span class="pre">EM</span></code></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>C11</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">(&quot;mixed</span> <span class="pre">effects&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;random</span> <span class="pre">effects&quot;)</span> <span class="pre">AND</span> <span class="pre">(&quot;random</span> <span class="pre">forest&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;gradient</span> <span class="pre">boosting&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;regression</span> <span class="pre">tree&quot;)</span> <span class="pre">AND</span> <span class="pre">(&quot;EM</span> <span class="pre">algorithm&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;expectation-maximization&quot;)</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">(all:&quot;mixed</span> <span class="pre">effects&quot;</span> <span class="pre">OR</span> <span class="pre">all:&quot;random</span> <span class="pre">effects&quot;)</span> <span class="pre">AND</span> <span class="pre">(all:boosting</span> <span class="pre">OR</span> <span class="pre">all:&quot;random</span> <span class="pre">forest&quot;)</span> <span class="pre">AND</span> <span class="pre">(all:&quot;EM</span> <span class="pre">algorithm&quot;</span> <span class="pre">OR</span> <span class="pre">all:&quot;expectation-maximization&quot;)</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">mixed</span> <span class="pre">effects</span> <span class="pre">random</span> <span class="pre">forest</span> <span class="pre">boosting</span> <span class="pre">EM</span> <span class="pre">algorithm</span> <span class="pre">clustered</span> <span class="pre">data</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>C12</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">(&quot;customer</span> <span class="pre">churn&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;customer</span> <span class="pre">attrition&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;latent</span> <span class="pre">attrition&quot;)</span> <span class="pre">AND</span> <span class="pre">(&quot;finite</span> <span class="pre">mixture&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;latent</span> <span class="pre">class&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;mixture</span> <span class="pre">model&quot;)</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">all:churn</span> <span class="pre">AND</span> <span class="pre">(all:&quot;finite</span> <span class="pre">mixture&quot;</span> <span class="pre">OR</span> <span class="pre">all:&quot;latent</span> <span class="pre">class&quot;</span> <span class="pre">OR</span> <span class="pre">all:&quot;mixture</span> <span class="pre">model&quot;</span> <span class="pre">OR</span> <span class="pre">all:&quot;latent</span> <span class="pre">attrition&quot;)</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">latent</span> <span class="pre">attrition</span> <span class="pre">finite</span> <span class="pre">mixture</span> <span class="pre">latent</span> <span class="pre">class</span> <span class="pre">customer</span> <span class="pre">churn</span></code></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>C13</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">(&quot;customer</span> <span class="pre">churn&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;customer</span> <span class="pre">attrition&quot;)</span> <span class="pre">AND</span> <span class="pre">(&quot;mixed</span> <span class="pre">effects&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;random</span> <span class="pre">effects&quot;</span> <span class="pre">OR</span> <span class="pre">&quot;mixture</span> <span class="pre">density&quot;</span> <span class="pre">OR</span> <span class="pre">XGBoostLSS</span> <span class="pre">OR</span> <span class="pre">GPBoost)</span> <span class="pre">AND</span> <span class="pre">boosting</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">all:churn</span> <span class="pre">AND</span> <span class="pre">all:boosting</span> <span class="pre">AND</span> <span class="pre">(all:&quot;mixed</span> <span class="pre">effects&quot;</span> <span class="pre">OR</span> <span class="pre">all:&quot;random</span> <span class="pre">effects&quot;</span> <span class="pre">OR</span> <span class="pre">all:&quot;mixture</span> <span class="pre">density&quot;)</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">customer</span> <span class="pre">churn</span> <span class="pre">mixed</span> <span class="pre">effects</span> <span class="pre">boosting</span> <span class="pre">mixture</span> <span class="pre">density</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./ProyectoFinal"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="03_benchmarks.html"
+       title="página anterior">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">anterior</p>
+        <p class="prev-next-title">3. Modelos benchmark</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="05_modelo_original.html"
+       title="siguiente página">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">siguiente</p>
+        <p class="prev-next-title">5. El modelo original: Boosting con Desplazamiento Latente (BDL)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contenido
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#protocolo-de-busqueda">4.1. Protocolo de búsqueda</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#matriz-de-novedad">4.2. Matriz de novedad</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#busqueda-por-citacion-y-repositorios">4.3. Búsqueda por citación y repositorios</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trabajos-mas-cercanos-y-diferencias">4.4. Trabajos más cercanos y diferencias</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#declaracion-de-novedad">4.5. Declaración de novedad</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cadenas-de-busqueda">4.6. Cadenas de búsqueda</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+Por Martínez Pulido Valerie · Basto Martínez Abrahan · Esguerra Fernández Rubén
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

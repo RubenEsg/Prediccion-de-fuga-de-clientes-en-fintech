@@ -7,3 +7,10 @@ div.cell_output pre { white-space: pre-wrap; word-break: break-word; }
 /* Tablas de pandas con desplazamiento horizontal en pantallas estrechas. */
 div.cell_output .output { overflow-x: auto; }
 div.cell_output table { font-size: 0.85em; }
+
+/* Tablas de texto del informe: un poco más compactas, para que las de muchas columnas quepan sin desplazamiento. */
+.pst-scrollable-table-container table { font-size: 0.9em; }
+.pst-scrollable-table-container td, .pst-scrollable-table-container th { padding: 0.45rem 0.5rem; }
+
+/* Las figuras y tablas del informe llevan su número en la leyenda (Figura 5.1, Tabla 6.3): se oculta el automático. */
+figcaption .caption-number { display: none; }

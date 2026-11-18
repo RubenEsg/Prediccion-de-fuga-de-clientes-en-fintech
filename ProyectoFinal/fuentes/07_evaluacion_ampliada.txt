@@ -1,0 +1,280 @@
+#%% md
+# 7. Evaluación ampliada y robustez
+
+Un resultado en un solo escenario no basta. Este capítulo evalúa el modelo original en otros conjuntos de datos y mide
+cómo se comporta cuando cambian los hiperparámetros, la semilla, el ruido, el tamaño de la muestra y la distribución.
+Salvo la evaluación en prueba, todo se hace dentro de la partición de entrenamiento, con los cinco pliegues externos de
+la semilla 42 y los hiperparámetros finales de cada modelo. En los estudios de robustez el original se compara con los
+dos benchmarks de boosting, XGBoost y LightGBM, que son los que más se le parecen y los mejores en regresión.
+
+#%% code
+# Preparación: acceso a los resultados versionados y a las funciones que generan las tablas y figuras del informe.
+import sys
+sys.path.insert(0, '../ModeloOriginal')
+from src import informe as inf
+
+#%% md
+## 7.1. Conjuntos de datos adicionales
+
+Los cuatro conjuntos se eligieron en el protocolo, **antes de ajustar ningún modelo en ellos**: dos con una variable
+categórica omitida para todos los modelos (la situación para la que se diseñó BDL, que reproduce la exclusión de
+`active_products`) y dos sin modificar, como control. La {ref}`Tabla 7.1 <tab-conjuntos-fuente>` dice de dónde sale
+cada uno y por qué se eligió, y la {ref}`Tabla 7.2 <tab-conjuntos>`, cómo quedó tras prepararlo.
+
+(tab-conjuntos-fuente)=
+**Tabla 7.1.** Conjuntos de datos adicionales: fuente, origen de los datos, objetivo con su unidad y criterio de
+elección.
+
+| Conjunto | Fuente | Origen | Objetivo (unidad) | Por qué se eligió |
+|---|---|---|---|---|
+| Seguros médicos | {cite:t}`lantz2013`, `insurance.csv` | Simulado a partir de estadísticas demográficas de Estados Unidos | Costo médico facturado al año (dólares) | Se omite `smoker`, que desplaza el costo |
+| Eficiencia energética | UCI n.º 242, {cite:t}`tsanas2012` | Simulación de edificios por computador | Carga de calefacción (kWh/m²) | Casi sin ruido; se omite el área de vidrio (cuatro niveles) |
+| Abulón | UCI n.º 1, {cite:t}`nash1994` | Mediciones de ejemplares reales | Anillos de la concha (conteo; la edad en años es ese número más 1,5) | Control: objetivo entero, datos biológicos |
+| Vivienda de California | {cite:t}`pace1997` | Censo de 1990, por grupo de manzanas censales | Valor mediano de la vivienda (cientos de miles de dólares) | Control: el más grande, datos de censo con estructura espacial |
+
+Dos de los cuatro son simulados y dos provienen de mediciones reales; COFINFAD, el problema principal, es sintético.
+
+(tab-conjuntos)=
+**Tabla 7.2.** Conjuntos adicionales ya preparados: filas, predictores, variable omitida, proporción de la clase
+positiva en entrenamiento y huella SHA-256 del archivo descargado.
+
+#%% code
+# Tabla 7.2. Lee la ficha de cada conjunto (resultados/adicionales/<conjunto>/ficha.json), que escribe
+# experiments/05_conjuntos_adicionales.py al descargarlo y partirlo.
+inf.tabla('tabla_conjuntos')
+
+#%% md
+En cada uno se repite el procedimiento del problema principal: 20 % de prueba, validación anidada de 5 × 3 con la
+semilla 42 para los diez modelos, y la etiqueta «cuarto superior del objetivo» con el umbral estimado en entrenamiento.
+
+(tab-adicionales)=
+**Tabla 7.3.** Resultados por conjunto adicional y tarea: mejor benchmark, métrica en los pliegues externos del
+benchmark y del original, puesto del original entre los diez modelos, ventaja relativa, p-valor de la *t* corregida,
+resultado, métrica en prueba y número de clases latentes del modelo final.
+
+#%% code
+# Tabla 7.3. De la tabla maestra de cada conjunto (resultados/adicionales/<conjunto>/experimentos.parquet): métrica por
+# pliegue externo de cada modelo, mejor benchmark y prueba t corregida de Nadeau-Bengio del original contra él.
+inf.tabla('tabla_adicionales')
+
+#%% md
+**Prueba consolidada entre conjuntos.** Friedman con corrección de Iman-Davenport sobre los rangos de los diez modelos
+en los cinco conjuntos (los cuatro adicionales y COFINFAD), y Wilcoxon-Holm del original contra cada benchmark
+({ref}`Tabla 7.4 <tab-consolidada>`). Las métricas no se promedian entre conjuntos porque sus escalas son distintas.
+
+(tab-consolidada)=
+**Tabla 7.4.** Prueba consolidada entre conjuntos de datos: Friedman con Iman-Davenport sobre los rangos de los diez
+modelos, rango medio del original y menor p-valor de Wilcoxon-Holm frente a los benchmarks.
+
+#%% code
+# Tabla 7.4. Rangos de los diez modelos por conjunto (media de los pliegues externos), prueba de Friedman con la
+# corrección de Iman-Davenport y Wilcoxon del original contra cada benchmark con el ajuste de Holm.
+inf.tabla('tabla_consolidada')
+
+#%% md
+Con tan pocos conjuntos la prueba de Wilcoxon no puede dar un p-valor menor que 0,05 (con cinco, el mínimo posible es
+0,0625): la comparación por pares entre conjuntos no puede ser significativa sea cual sea el resultado, y se reporta por
+transparencia.
+
+#%% code
+# Lectura de las tablas 7.3 y 7.4 frente a la expectativa declarada en el protocolo (resultados/condicion4.json).
+inf.texto('adicionales_texto')
+
+#%% md
+## 7.2. Sensibilidad a los hiperparámetros propios
+
+Se varía un hiperparámetro cada vez alrededor de la configuración final ({ref}`Figura 7.1 <fig-sensibilidad>` y
+{ref}`Tabla 7.5 <tab-sensibilidad>`).
+
+#%% figura fig-sensibilidad 100%
+**Figura 7.1.** Métrica del modelo original al variar cada hiperparámetro propio (media ± desviación en cinco
+pliegues): en las dos primeras filas, RMSE de la regresión; en las dos últimas, AUC de la clasificación. La línea
+discontinua es el mejor benchmark con sus hiperparámetros finales, evaluado en los mismos pliegues, y el círculo marca
+la configuración final cuando su valor está entre los probados. **Interpretación:** en regresión el resultado casi no
+depende de los hiperparámetros, salvo con una tasa de aprendizaje muy baja; en clasificación depende de la profundidad
+de los árboles, del número de clases y del calentamiento. La comparación con la línea discontinua se cuenta en la
+{ref}`Tabla 7.5 <tab-sensibilidad>`.
+---
+# Figura 7.1. Lee resultados/robustez/sensibilidad.csv (experiments/06_robustez.py sensibilidad): una fila por tarea,
+# hiperparámetro y valor, con la media y la desviación en los cinco pliegues externos de la semilla 42.
+inf.figura('sensibilidad')
+
+#%% md
+(tab-sensibilidad)=
+**Tabla 7.5.** Sensibilidad: número de configuraciones evaluadas, métrica de la configuración final y del mejor
+benchmark con sus hiperparámetros finales, cuántas configuraciones quedan mejor que ese benchmark, y peor y mejor valor
+de la métrica.
+
+#%% code
+# Tabla 7.5. Resume sensibilidad.csv frente al mejor benchmark evaluado igual que el original: con sus hiperparámetros
+# finales y en los mismos pliegues (resultados/robustez/muestra.csv, fila del 100 % de las filas).
+inf.tabla('tabla_sensibilidad')
+
+#%% md
+## 7.3. Estabilidad por semilla y cómputo
+
+Cada modelo final se reajustó con diez semillas (42 a 51) con sus hiperparámetros finales y se evaluó en prueba
+({ref}`Figura 7.2 <fig-semillas>` y {ref}`Tabla 7.6 <tab-semillas>`). Esta sección mide la variación que se debe solo a
+la semilla del modelo. La que se debe a la partición es la desviación entre pliegues externos de las tablas
+{ref}`6.5 <tab-resumen-regresion>` y {ref}`6.6 <tab-resumen-clasificacion>`; la que se debe a la búsqueda de
+hiperparámetros no se mide por separado: va dentro de esa misma desviación, porque cada pliegue externo repite la
+búsqueda. Al interpretar una diferencia entre modelos hay que compararla con las tres.
+
+#%% figura fig-semillas 100%
+**Figura 7.2.** Métrica en prueba de los seis mejores modelos de cada tarea al reajustarlos con diez semillas
+(cajas: cuartiles). **Interpretación:** el ancho de cada caja es la variación que se debe solo a la semilla; las
+diferencias entre modelos menores que ese ancho no son atribuibles al modelo.
+---
+# Figura 7.2. Lee resultados/semillas.csv (experiments/03b_semillas.py): una fila por tarea, modelo y semilla.
+inf.figura('semillas')
+
+#%% md
+(tab-semillas)=
+**Tabla 7.6.** Estabilidad por semilla y cómputo de los diez modelos de cada tarea. Primera parte: media, desviación,
+intervalo de confianza del 95 % de la media, mínimo y máximo de la métrica en prueba con diez semillas. Segunda parte:
+tiempo de ajuste, tiempo de inferencia sobre la prueba, memoria y tamaño del modelo serializado.
+
+#%% code
+# Tabla 7.6. Resume semillas.csv por tarea y modelo (los modelos deterministas dan el mismo valor las diez veces) y añade
+# la memoria medida en un proceso aparte por modelo (resultados/memoria.csv, experiments/03c_memoria.py).
+inf.tabla('tabla_semillas')
+
+#%% md
+## 7.4. Ruido y valores atípicos
+
+Se contamina la partición de entrenamiento de tres maneras (ruido en el puntaje, puntajes reemplazados por valores al
+azar y ruido en los predictores numéricos) y se evalúa siempre contra datos sin contaminar
+({ref}`Tabla 7.7 <tab-ruido>`).
+
+(tab-ruido)=
+**Tabla 7.7.** Métrica del original y de los dos benchmarks de boosting con distintos niveles de contaminación de los
+datos de entrenamiento.
+
+#%% code
+# Tabla 7.7. Lee resultados/robustez/ruido.csv (experiments/06_robustez.py ruido): media en los cinco pliegues por
+# escenario, nivel de contaminación y modelo.
+inf.tabla('tabla_ruido')
+
+#%% md
+## 7.5. Tamaño de muestra y escalabilidad
+
+La {ref}`Figura 7.3 <fig-aprendizaje>` y la {ref}`Tabla 7.8 <tab-muestra>` muestran la curva de aprendizaje y el tiempo
+de ajuste al variar el número de filas; la {ref}`Tabla 7.9 <tab-columnas>`, el tiempo de ajuste al variar el número de
+columnas y el de inferencia al variar el número de filas.
+
+#%% figura fig-aprendizaje 100%
+**Figura 7.3.** Curva de aprendizaje con el 10 %, 25 %, 50 % y 100 % de las filas de entrenamiento (media ± desviación
+en cinco pliegues; la línea discontinua es el modelo original sin la mezcla) y tiempo de ajuste en segundos, en escala
+logarítmica. **Interpretación:** con pocas filas el modelo original lleva una ventaja clara, que se cierra al crecer la
+muestra, cuando todos los modelos se acercan al límite. Sin la mezcla esa ventaja desaparece y el modelo sigue la curva
+de los benchmarks: al quitar el escalón, cada fila informa más sobre el índice (Proposición 4).
+---
+# Figura 7.3. Lee resultados/robustez/muestra.csv y muestra_sin_mezcla.csv (experiments/06_robustez.py muestra mezcla):
+# las filas se submuestrean dentro de cada pliegue de entrenamiento y la evaluación usa el pliegue de prueba completo.
+inf.figura('aprendizaje')
+
+#%% md
+(tab-muestra)=
+**Tabla 7.8.** Curva de aprendizaje: métrica (media ± desviación) de los tres modelos y del original sin la mezcla, y
+tiempo de ajuste, según el número de filas de entrenamiento.
+
+#%% code
+# Tabla 7.8. Resume muestra.csv y muestra_sin_mezcla.csv: con cuántas filas alcanza el original el valor del mejor de
+# los otros dos, y qué parte de esa ventaja desaparece al retirar la mezcla.
+inf.tabla('tabla_muestra')
+
+#%% md
+(tab-columnas)=
+**Tabla 7.9.** Escalabilidad. Primera parte: tiempo de ajuste al variar el número de columnas originales, con las
+mismas filas. Segunda parte: tiempo de inferencia del modelo original y del mejor benchmark de regresión al variar el
+número de filas.
+
+#%% code
+# Tabla 7.9. Lee resultados/robustez/columnas.csv (tiempo de ajuste con las primeras 6, 12, 24 y 48 columnas) y
+# resultados/inferencia_filas.csv (experiments/03c_memoria.py: mediana de cinco medidas con 1.000, 10.000 y 100.000 filas).
+inf.tabla('tabla_columnas', 'tabla_inferencia')
+
+#%% md
+La complejidad de la sección 5.7 predice un costo de ajuste lineal en $n$ y en $p$ y un costo de inferencia lineal en
+$n$; las tablas {ref}`7.8 <tab-muestra>` y {ref}`7.9 <tab-columnas>` lo contrastan con el tiempo medido.
+
+## 7.6. Cambio de distribución
+
+Se deja fuera una ciudad cada vez: los modelos se ajustan con los clientes de las demás y se evalúan en la que quedó
+fuera ({ref}`Tabla 7.10 <tab-ciudades>`). Los hiperparámetros son los finales, que se eligieron con clientes de todas las
+ciudades: la ciudad excluida no interviene en el ajuste, pero sí intervino en esa elección.
+
+(tab-ciudades)=
+**Tabla 7.10.** Cambio de distribución espacial: métrica de los tres modelos en la ciudad que se deja fuera.
+
+#%% code
+# Tabla 7.10. Lee resultados/robustez/ciudades.csv (experiments/06_robustez.py ciudades): una fila por tarea, ciudad
+# excluida y modelo.
+inf.tabla('tabla_ciudades')
+
+#%% md
+## 7.7. Calibración y reglas de puntuación
+
+La {ref}`Tabla 7.11 <tab-calibracion>` reporta las reglas de puntuación propias de los diez clasificadores y la
+{ref}`Figura 7.4 <fig-calibracion>`, la curva de calibración del original frente al mejor benchmark.
+
+(tab-calibracion)=
+**Tabla 7.11.** Clasificación en prueba: AUC, precisión media, captura de la campaña del 25 %, pérdida logarítmica,
+puntaje de Brier y error de calibración esperado (ECE), tal como sale cada modelo y tras recalibrarlo.
+
+#%% code
+# Tabla 7.11. Lee resultados/metricas_prueba.csv (experiments/03_prueba.py). La recalibración isotónica de cada modelo
+# se ajusta con sus predicciones fuera de pliegue de entrenamiento, nunca con la prueba.
+inf.tabla('tabla_calibracion')
+
+#%% figura fig-calibracion 60%
+**Figura 7.4.** Curva de calibración en prueba (diez tramos de igual número de clientes): probabilidad predicha media
+de cada tramo frente a la frecuencia observada de riesgo alto. **Interpretación:** sobre la diagonal, la probabilidad
+predicha coincide con la frecuencia observada; el original queda sobre ella sin recalibrar.
+---
+# Figura 7.4. De resultados/predicciones_prueba.parquet: el original, y el mejor benchmark antes y después de recalibrar.
+inf.figura('calibracion')
+
+#%% md
+## 7.8. Cuantificación de la incertidumbre
+
+La {ref}`Tabla 7.12 <tab-incertidumbre>` compara la cobertura medida y el largo de los intervalos y de los conjuntos de
+predicción, y la {ref}`Figura 7.5 <fig-predictiva>` muestra la distribución predictiva de un cliente.
+
+(tab-incertidumbre)=
+**Tabla 7.12.** Regresión en prueba: cobertura medida y largo de los intervalos y de los conjuntos de predicción, para
+tres coberturas nominales.
+
+#%% code
+# Tabla 7.12. Lee resultados/incertidumbre_prueba.csv: intervalo conforme del mejor benchmark (pronóstico ± q, con q de
+# sus errores fuera de pliegue), y los intervalos y conjuntos de predicción del modelo original.
+inf.tabla('tabla_incertidumbre')
+
+#%% figura fig-predictiva 100%
+**Figura 7.5.** Distribución predictiva del modelo original para un cliente de prueba: niveles posibles del puntaje
+(azul), conjunto de predicción al 90 % (naranja), intervalo al 90 % del mejor benchmark (gris), valor real (verde) y
+umbral de riesgo alto (línea discontinua). **Interpretación:** el modelo no dice «el puntaje está en algún lugar de
+este intervalo ancho», sino «está en uno de estos niveles, con estas probabilidades».
+---
+# Figura 7.5. Para el primer cliente de prueba: índice del modelo más sus residuos de calibración (la distribución
+# predictiva), tramos del conjunto al 90 % (conjunto_residual) e intervalo del mejor benchmark.
+inf.figura('distribucion_predictiva')
+
+#%% md
+## 7.9. Análisis de errores
+
+La {ref}`Tabla 7.13 <tab-errores>` compara al original con el mejor benchmark de cada tarea por subgrupos de clientes
+de prueba.
+
+(tab-errores)=
+**Tabla 7.13.** Error por subgrupo de prueba: RMSE y AUC del original y del mejor benchmark de cada tarea, y cuál es
+mejor en cada subgrupo.
+
+#%% code
+# Tabla 7.13. De predicciones_prueba.parquet: RMSE y AUC por edad, por la cola de tx_count y por segmento de cliente.
+inf.tabla('tabla_errores')
+
+#%% code
+# Dónde falla el modelo y por qué: descompone el error con active_products (solo para el análisis) y con las
+# probabilidades de prueba.
+inf.texto('errores_texto')

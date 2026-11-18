@@ -1,0 +1,109 @@
+ciudad,n,tarea,modelo,metrica
+"Armenia, Quindío",405,regresion,bdl,0.06047871649005199
+"Armenia, Quindío",405,regresion,xgboost,0.06048305369587255
+"Armenia, Quindío",405,regresion,lightgbm,0.06060222946215254
+"Armenia, Quindío",405,clasificacion,bdl,0.8572197527434366
+"Armenia, Quindío",405,clasificacion,xgboost,0.8570808445617446
+"Armenia, Quindío",405,clasificacion,lightgbm,0.8482775385470205
+"Barranquilla, Atlántico",3069,regresion,bdl,0.058733780394447835
+"Barranquilla, Atlántico",3069,regresion,xgboost,0.05879288267471788
+"Barranquilla, Atlántico",3069,regresion,lightgbm,0.05886814582079456
+"Barranquilla, Atlántico",3069,clasificacion,bdl,0.8236250089886771
+"Barranquilla, Atlántico",3069,clasificacion,xgboost,0.8191456055049423
+"Barranquilla, Atlántico",3069,clasificacion,lightgbm,0.8169551340557464
+"Bogotá, Cundinamarca",13613,regresion,bdl,0.05944046657579568
+"Bogotá, Cundinamarca",13613,regresion,xgboost,0.059496333486676524
+"Bogotá, Cundinamarca",13613,regresion,lightgbm,0.05950455202532826
+"Bogotá, Cundinamarca",13613,clasificacion,bdl,0.8344810456775644
+"Bogotá, Cundinamarca",13613,clasificacion,xgboost,0.8342163351868265
+"Bogotá, Cundinamarca",13613,clasificacion,lightgbm,0.8375594948966871
+"Bucaramanga, Santander",1512,regresion,bdl,0.05897297531485833
+"Bucaramanga, Santander",1512,regresion,xgboost,0.05912886485725079
+"Bucaramanga, Santander",1512,regresion,lightgbm,0.05906526916537375
+"Bucaramanga, Santander",1512,clasificacion,bdl,0.8312240047534165
+"Bucaramanga, Santander",1512,clasificacion,xgboost,0.8398407148407149
+"Bucaramanga, Santander",1512,clasificacion,lightgbm,0.8286553315965081
+"Cali, Valle del Cauca",4669,regresion,bdl,0.05816804984559987
+"Cali, Valle del Cauca",4669,regresion,xgboost,0.05825142707255307
+"Cali, Valle del Cauca",4669,regresion,lightgbm,0.058270614566486224
+"Cali, Valle del Cauca",4669,clasificacion,bdl,0.8443127369499226
+"Cali, Valle del Cauca",4669,clasificacion,xgboost,0.848205236620817
+"Cali, Valle del Cauca",4669,clasificacion,lightgbm,0.8418306199860331
+"Cartagena, Bolívar",1898,regresion,bdl,0.058779914321881885
+"Cartagena, Bolívar",1898,regresion,xgboost,0.05888363270845214
+"Cartagena, Bolívar",1898,regresion,lightgbm,0.05887015796534815
+"Cartagena, Bolívar",1898,clasificacion,bdl,0.824495392526805
+"Cartagena, Bolívar",1898,clasificacion,xgboost,0.8253057268418389
+"Cartagena, Bolívar",1898,clasificacion,lightgbm,0.8141149164787631
+"Cúcuta, Norte de Santander",1556,regresion,bdl,0.058793497370234905
+"Cúcuta, Norte de Santander",1556,regresion,xgboost,0.058897942259728525
+"Cúcuta, Norte de Santander",1556,regresion,lightgbm,0.058958510187145416
+"Cúcuta, Norte de Santander",1556,clasificacion,bdl,0.825587870648978
+"Cúcuta, Norte de Santander",1556,clasificacion,xgboost,0.8282782912391746
+"Cúcuta, Norte de Santander",1556,clasificacion,lightgbm,0.8282462078590531
+"Ibagué, Tolima",849,regresion,bdl,0.05792735716668738
+"Ibagué, Tolima",849,regresion,xgboost,0.058189101588449976
+"Ibagué, Tolima",849,regresion,lightgbm,0.058186889793657444
+"Ibagué, Tolima",849,clasificacion,bdl,0.8434388146805105
+"Ibagué, Tolima",849,clasificacion,xgboost,0.851580095471479
+"Ibagué, Tolima",849,clasificacion,lightgbm,0.8465090584585747
+"Manizales, Caldas",782,regresion,bdl,0.05882576724392375
+"Manizales, Caldas",782,regresion,xgboost,0.05891215787476564
+"Manizales, Caldas",782,regresion,lightgbm,0.05902152389584106
+"Manizales, Caldas",782,clasificacion,bdl,0.8331456043956044
+"Manizales, Caldas",782,clasificacion,xgboost,0.8457051282051282
+"Manizales, Caldas",782,clasificacion,lightgbm,0.8515018315018315
+"Medellín, Antioquia",5909,regresion,bdl,0.05894759209297428
+"Medellín, Antioquia",5909,regresion,xgboost,0.05907873609294952
+"Medellín, Antioquia",5909,regresion,lightgbm,0.05909443541295892
+"Medellín, Antioquia",5909,clasificacion,bdl,0.8300916624065247
+"Medellín, Antioquia",5909,clasificacion,xgboost,0.8318236121310557
+"Medellín, Antioquia",5909,clasificacion,lightgbm,0.8282565242666535
+"Montería, Córdoba",172,regresion,bdl,0.05395876513011004
+"Montería, Córdoba",172,regresion,xgboost,0.05413457448239766
+"Montería, Córdoba",172,regresion,lightgbm,0.05423086347575868
+"Montería, Córdoba",172,clasificacion,bdl,0.8453296703296702
+"Montería, Córdoba",172,clasificacion,xgboost,0.8505494505494505
+"Montería, Córdoba",172,clasificacion,lightgbm,0.8521978021978023
+"Neiva, Huila",395,regresion,bdl,0.06065150768184142
+"Neiva, Huila",395,regresion,xgboost,0.06074673680085908
+"Neiva, Huila",395,regresion,lightgbm,0.06066887902292486
+"Neiva, Huila",395,clasificacion,bdl,0.7897825508711265
+"Neiva, Huila",395,clasificacion,xgboost,0.7861417741720973
+"Neiva, Huila",395,clasificacion,lightgbm,0.7690849847054131
+"Pasto, Nariño",786,regresion,bdl,0.058622750418614665
+"Pasto, Nariño",786,regresion,xgboost,0.058760643388104404
+"Pasto, Nariño",786,regresion,lightgbm,0.058789397604060295
+"Pasto, Nariño",786,clasificacion,bdl,0.8442737148977636
+"Pasto, Nariño",786,clasificacion,xgboost,0.8386847382281173
+"Pasto, Nariño",786,clasificacion,lightgbm,0.8339252494503637
+"Pereira, Risaralda",1131,regresion,bdl,0.05810479259105032
+"Pereira, Risaralda",1131,regresion,xgboost,0.05824371024866054
+"Pereira, Risaralda",1131,regresion,lightgbm,0.058216953206749945
+"Pereira, Risaralda",1131,clasificacion,bdl,0.8476586122017903
+"Pereira, Risaralda",1131,clasificacion,xgboost,0.8399164459283359
+"Pereira, Risaralda",1131,clasificacion,lightgbm,0.8423034009317856
+"Santa Marta, Magdalena",1243,regresion,bdl,0.0573048808356198
+"Santa Marta, Magdalena",1243,regresion,xgboost,0.057319334536982396
+"Santa Marta, Magdalena",1243,regresion,lightgbm,0.057376900780571664
+"Santa Marta, Magdalena",1243,clasificacion,bdl,0.8328180763412593
+"Santa Marta, Magdalena",1243,clasificacion,xgboost,0.8329998237600788
+"Santa Marta, Magdalena",1243,clasificacion,lightgbm,0.8237747653806049
+"Sincelejo, Sucre",175,regresion,bdl,0.06122943627925096
+"Sincelejo, Sucre",175,regresion,xgboost,0.06116328049721532
+"Sincelejo, Sucre",175,regresion,lightgbm,0.06123434715385974
+"Sincelejo, Sucre",175,clasificacion,bdl,0.8413265306122449
+"Sincelejo, Sucre",175,clasificacion,xgboost,0.8471428571428571
+"Sincelejo, Sucre",175,clasificacion,lightgbm,0.8446938775510203
+"Valledupar, Cesar",406,regresion,bdl,0.05779664988929176
+"Valledupar, Cesar",406,regresion,xgboost,0.057879948117315276
+"Valledupar, Cesar",406,regresion,lightgbm,0.0578228937581181
+"Valledupar, Cesar",406,clasificacion,bdl,0.8411585944919278
+"Valledupar, Cesar",406,clasificacion,xgboost,0.8262488129154796
+"Valledupar, Cesar",406,clasificacion,lightgbm,0.8139031339031338
+"Villavicencio, Meta",408,regresion,bdl,0.057513041767376503
+"Villavicencio, Meta",408,regresion,xgboost,0.05750784801473174
+"Villavicencio, Meta",408,regresion,lightgbm,0.057551376905299684
+"Villavicencio, Meta",408,clasificacion,bdl,0.8290897014170041
+"Villavicencio, Meta",408,clasificacion,xgboost,0.8256895242914979
+"Villavicencio, Meta",408,clasificacion,lightgbm,0.8398595647773279

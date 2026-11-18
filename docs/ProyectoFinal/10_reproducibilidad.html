@@ -1,0 +1,1316 @@
+
+<!DOCTYPE html>
+
+
+<html lang="es" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>10. Reproducibilidad y bibliografía &#8212; Predicción de fuga de clientes en una fintech colombiana</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=33c23bfc" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../_static/documentation_options.js?v=78d55cf8"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Haz clic para mostrar';</script>
+    <script>let toggleHintHide = 'Haz clic para ocultar';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../_static/translations.js?v=d190bf04"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ProyectoFinal/10_reproducibilidad';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Índice" href="../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../search.html" />
+    <link rel="next" title="Código del modelo original" href="codigo_modelo_original.html" />
+    <link rel="prev" title="9. Conclusiones y limitaciones" href="09_conclusiones.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="es"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Saltar al contenido principal</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Volver arriba</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Advertencia de versión"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Navegación del sitio">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="En esta página">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Predicción de fuga de clientes en una fintech colombiana</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Proyecto final · Dashboard, modelo original y evaluación rigurosa</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_introduccion.html">Proyecto final: dashboard predictivo, modelo original y evaluación rigurosa</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_correcciones.html">1. Trazabilidad de las correcciones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_datos.html">2. Datos: ETL, EDA y auditoría de fuga</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_benchmarks.html">3. Modelos benchmark</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_literatura.html">4. Revisión de literatura y novedad</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_modelo_original.html">5. El modelo original: Boosting con Desplazamiento Latente (BDL)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_validacion.html">6. Protocolo y validación estadística</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_evaluacion_ampliada.html">7. Evaluación ampliada y robustez</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_dashboard.html">8. Dashboard y despliegue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_conclusiones.html">9. Conclusiones y limitaciones</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">10. Reproducibilidad y bibliografía</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codigo_modelo_original.html">Código del modelo original</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 1 · EDA</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega1/eda_bancario.html">Caracterización y auditoría de calidad de datos para predecir la fuga (<em>churn</em>) y el valor del cliente (<em>CLV</em>) en una <em>fintech</em> colombiana</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 2 · Modelos base</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega2/entrega2_modelo.html">Entrega 2 — Procesamiento de datos y modelo base</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Introducción</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/00_introduccion.html">Fuga de clientes en una <em>fintech</em> colombiana: modelos, optimización y evaluación</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/01_datos.html">Datos, análisis exploratorio y construcción de la etiqueta</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Metodología</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/02_metodologia.html">Metodología</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Modelos y Resultados</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/03_corridas.html">Las 140 corridas del pipeline combinatorio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/04_optimizadores.html">Comparación de los métodos de optimización</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/05_computo.html">Optimización computacional</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/06_evaluacion.html">Evaluación en prueba, calibración, residuos y robustez</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/07_interpretabilidad.html">Interpretabilidad: SHAP, LIME y las funciones de forma de la EBM</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · El modelo nuevo</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/08_modelo_nuevo.html">El modelo nuevo frente a la Entrega 2</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 3 · Comparación estadística y conclusiones</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/09_estadistica.html">Comparación estadística de los modelos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Entrega3/notebook/10_conclusiones.html">Conclusiones</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Código fuente</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../codigo/indice.html">Código fuente</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src___init__.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/__init__.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_analisis.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/analisis.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_balanceo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/balanceo.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_comparacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/comparacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_config.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/config.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_datos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/datos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_estadistica.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/estadistica.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_evaluacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/evaluacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_experimento.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/experimento.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_formato.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/formato.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_graficos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/graficos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_modelos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/modelos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_optimizacion.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/optimizacion.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_preprocesamiento.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/preprocesamiento.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/src_registro.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/src/registro.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/correr_140.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/correr_140.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/comparar_entrega2.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/comparar_entrega2.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/computo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/computo.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/complementos.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/complementos.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/medir_tiempos_finales.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/medir_tiempos_finales.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/notebook_construir.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/notebook/construir.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/notebook_exportar_pdf.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/notebook/exportar_pdf.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/articulo_generar_material.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/articulo/generar_material.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/articulo_compilar.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/articulo/compilar.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_analisis.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_analisis.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_bloque0.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_bloque0.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_estadistica.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_estadistica.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codigo/tests_test_modelo_nuevo.html"><code class="docutils literal notranslate"><span class="pre">Entrega3/tests/test_modelo_nuevo.py</span></code></a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Descarga esta pagina">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/ProyectoFinal/10_reproducibilidad.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Descargar archivo fuente"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Imprimir en PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Modo de pantalla completa"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Tema" data-bs-title="Tema"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Claro"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Oscuro"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="Sistema"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>10. Reproducibilidad y bibliografía</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contenido </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#entorno">10.1. Entorno</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#semillas">10.2. Semillas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#como-reproducir-cada-resultado">10.3. Cómo reproducir cada resultado</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabla-maestra-de-experimentos">10.4. Tabla maestra de experimentos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lista-de-verificacion-de-reproducibilidad">10.5. Lista de verificación de reproducibilidad</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#archivo-del-repositorio">10.6. Archivo del repositorio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#declaracion-de-autoria-y-uso-de-herramientas">10.7. Declaración de autoría y uso de herramientas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bibliografia">10.8. Bibliografía</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="reproducibilidad-y-bibliografia">
+<h1>10. Reproducibilidad y bibliografía<a class="headerlink" href="#reproducibilidad-y-bibliografia" title="Link to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Preparación: acceso a los resultados versionados y a las funciones que generan las</span>
+<span class="c1"># tablas del informe.</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">'../ModeloOriginal'</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src</span><span class="w"> </span><span class="kn">import</span> <span class="n">informe</span> <span class="k">as</span> <span class="n">inf</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="entorno">
+<h2>10.1. Entorno<a class="headerlink" href="#entorno" title="Link to this heading">#</a></h2>
+<p>La <a class="reference internal" href="#tab-entorno"><span class="std std-ref">Tabla 10.1</span></a> describe el equipo y las versiones con que se ejecutaron los experimentos y se
+generó este libro. Las versiones exactas de todas las dependencias están en
+<a class="reference external" href="https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech/blob/main/Entrega3/requirements.txt"><code class="docutils literal notranslate"><span class="pre">Entrega3/requirements.txt</span></code></a>
+(experimentos), <code class="docutils literal notranslate"><span class="pre">ModeloOriginal/requirements-dev.txt</span></code> (pruebas del modelo original) y <code class="docutils literal notranslate"><span class="pre">Dashboard/requirements.txt</span></code>
+(aplicación desplegada). El modelo original solo necesita <code class="docutils literal notranslate"><span class="pre">numpy</span></code>, <code class="docutils literal notranslate"><span class="pre">scipy</span></code> y <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code>.</p>
+<p id="tab-entorno"><strong>Tabla 10.1.</strong> Equipo y versiones del software. Todos los tiempos del libro se midieron en este equipo.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 10.1. Consulta al intérprete, al sistema y a los paquetes instalados en el</span>
+<span class="c1"># entorno que ejecuta esta celda.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_entorno'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Componente</p></th>
+<th class="head text-left"><p>Versión</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Python</p></td>
+<td class="text-left"><p>3.13.3</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Sistema operativo</p></td>
+<td class="text-left"><p>Windows 11</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Procesador</p></td>
+<td class="text-left"><p>AMD Ryzen 5 3500X 6-Core Processor; 6 hilos</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Memoria</p></td>
+<td class="text-left"><p>16 GB</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Aceleración</p></td>
+<td class="text-left"><p>Ninguna: todos los modelos se ajustan en CPU</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">numpy</span></code></p></td>
+<td class="text-left"><p>2.5.3</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">scipy</span></code></p></td>
+<td class="text-left"><p>1.18.1</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">pandas</span></code></p></td>
+<td class="text-left"><p>3.0.6</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code></p></td>
+<td class="text-left"><p>1.9.1</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">imbalanced-learn</span></code></p></td>
+<td class="text-left"><p>0.14.2</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">xgboost</span></code></p></td>
+<td class="text-left"><p>3.4.1</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">lightgbm</span></code></p></td>
+<td class="text-left"><p>4.7.0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">interpret-core</span></code></p></td>
+<td class="text-left"><p>0.7.8</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">optuna</span></code></p></td>
+<td class="text-left"><p>5.0.0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">deap</span></code></p></td>
+<td class="text-left"><p>1.4.4</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">joblib</span></code></p></td>
+<td class="text-left"><p>1.6.0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">matplotlib</span></code></p></td>
+<td class="text-left"><p>3.11.2</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">jupyter-book</span></code></p></td>
+<td class="text-left"><p>1.0.4.post1</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="semillas">
+<h2>10.2. Semillas<a class="headerlink" href="#semillas" title="Link to this heading">#</a></h2>
+<p id="tab-semillas-usadas"><strong>Tabla 10.2.</strong> Semillas del proyecto y su uso.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Uso</p></th>
+<th class="head"><p>Semilla</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Partición entrenamiento/prueba (80/20)</p></td>
+<td><p>42</p></td>
+</tr>
+<tr class="row-odd"><td><p>Validación anidada, repeticiones 1, 2 y 3 (partición externa, interna, modelos y optimizador)</p></td>
+<td><p>42, 43 y 44</p></td>
+</tr>
+<tr class="row-even"><td><p>Estabilidad de los modelos finales</p></td>
+<td><p>42 a 51</p></td>
+</tr>
+<tr class="row-odd"><td><p>Reparto interno del modelo original (ajuste, validación, calibración)</p></td>
+<td><p>la del modelo</p></td>
+</tr>
+<tr class="row-even"><td><p>Permutaciones y bootstrap de las pruebas de hipótesis</p></td>
+<td><p>42</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>La única aleatoriedad del modelo original es su reparto interno (ajuste, validación y calibración), que depende de la
+semilla. Fijado el reparto, el ajuste es determinista, porque no submuestrea filas ni columnas; por eso su desviación
+entre semillas es pequeña pero no nula (<a class="reference internal" href="07_evaluacion_ampliada.html#tab-semillas"><span class="std std-ref">Tabla 7.6</span></a>).</p>
+</section>
+<section id="como-reproducir-cada-resultado">
+<h2>10.3. Cómo reproducir cada resultado<a class="headerlink" href="#como-reproducir-cada-resultado" title="Link to this heading">#</a></h2>
+<p>Desde <code class="docutils literal notranslate"><span class="pre">ModeloOriginal/</span></code>, con los CSV de COFINFAD en <code class="docutils literal notranslate"><span class="pre">datos/</span></code> (el repositorio los trae comprimidos y se extraen solos),
+la <a class="reference internal" href="#tab-reproducir"><span class="std std-ref">Tabla 10.3</span></a> dice qué guion produce cada resultado.</p>
+<p id="tab-reproducir"><strong>Tabla 10.3.</strong> Guiones del proyecto final, en el orden en que se ejecutan, y lo que produce cada uno.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Paso</p></th>
+<th class="head"><p>Orden</p></th>
+<th class="head"><p>Produce</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Pruebas unitarias</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">pytest</span> <span class="pre">-q</span></code></p></td>
+<td><p>Verifica el modelo, el marco de experimentos, las pruebas de hipótesis y el informe</p></td>
+</tr>
+<tr class="row-odd"><td><p>Búsqueda de literatura</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">experiments/00_busqueda_literatura.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">resultados/literatura/</span></code> (capítulo 4)</p></td>
+</tr>
+<tr class="row-even"><td><p>Auditoría de fuga</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">experiments/01_auditoria_fuga.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">resultados/auditoria_fuga.json</span></code> (sección 2.5)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Validación anidada</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">experiments/02_validacion_anidada.py</span> <span class="pre">--semillas</span> <span class="pre">42</span> <span class="pre">43</span> <span class="pre">44</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">resultados/experimentos.parquet</span></code>, la tabla maestra (capítulos 3 y 6)</p></td>
+</tr>
+<tr class="row-even"><td><p>Evaluación en prueba</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">experiments/03_prueba.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">predicciones_prueba.parquet</span></code>, <code class="docutils literal notranslate"><span class="pre">metricas_prueba.csv</span></code>, <code class="docutils literal notranslate"><span class="pre">incertidumbre_prueba.csv</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Estabilidad por semilla y cómputo</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">experiments/03b_semillas.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">semillas.csv</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Memoria e inferencia según las filas</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">experiments/03c_memoria.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">memoria.csv</span></code>, <code class="docutils literal notranslate"><span class="pre">inferencia_filas.csv</span></code> (secciones 7.3 y 7.5)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Métodos recientes con hiperparámetros recomendados</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">experiments/03d_recomendados.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">recomendados.csv</span></code> (sección 3.6)</p></td>
+</tr>
+<tr class="row-even"><td><p>Techo teórico</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">experiments/04b_techo.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">techo.json</span></code> (sección 6.4)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Pruebas de hipótesis</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">experiments/04_pruebas_hipotesis.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pruebas_hipotesis.csv</span></code>, <code class="docutils literal notranslate"><span class="pre">veredicto.json</span></code>, <code class="docutils literal notranslate"><span class="pre">pliegues_&lt;tarea&gt;.csv</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Predictor óptimo</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">experiments/04c_optimo.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">optimo.json</span></code> (sección 6.9)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Empates de la campaña</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">experiments/04d_empates_campana.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">empates_campana.json</span></code> (sección 6.9)</p></td>
+</tr>
+<tr class="row-even"><td><p>Referencias homogéneas</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">experiments/04e_referencias_homogeneas.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">referencias_homogeneas.json</span></code> (secciones 6.7 y 7.8)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Conjuntos adicionales</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">experiments/05_conjuntos_adicionales.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">resultados/adicionales/&lt;conjunto&gt;/</span></code> (sección 7.1)</p></td>
+</tr>
+<tr class="row-even"><td><p>Robustez</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">experiments/06_robustez.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">resultados/robustez/</span></code> (secciones 7.2 a 7.6), incluida la curva de aprendizaje sin la mezcla</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ablación</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">experiments/07_ablacion.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ablacion.csv</span></code> (sección 5.9)</p></td>
+</tr>
+<tr class="row-even"><td><p>Rutas relativas</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">experiments/09_rutas_relativas.py</span></code></p></td>
+<td><p>Reescribe las rutas de las tablas maestras relativas al repositorio, para publicarlas</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tablas y figuras del libro</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">experiments/08_tablas_libro.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ProyectoFinal/_generado/</span></code> y <code class="docutils literal notranslate"><span class="pre">ProyectoFinal/figuras/</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Todo lo anterior, en dos colas</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">experiments/correr_todo.py</span></code> y <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">experiments/correr_todo.py</span> <span class="pre">--cola</span> <span class="pre">b</span></code></p></td>
+<td><p>Ejecuta los pasos en orden y salta lo ya hecho</p></td>
+</tr>
+<tr class="row-odd"><td><p>Capturas del dashboard</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">ProyectoFinal/capturar_dash.py</span> <span class="pre">--url</span> <span class="pre">&lt;dirección</span> <span class="pre">del</span> <span class="pre">dashboard&gt;</span></code> (en la raíz del repositorio)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ProyectoFinal/figuras/dash_*.png</span></code> (capítulo 8)</p></td>
+</tr>
+<tr class="row-even"><td><p>Cuadernos del libro</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">ProyectoFinal/construir.py</span></code> (en la raíz del repositorio)</p></td>
+<td><p>Los capítulos ejecutados, <code class="docutils literal notranslate"><span class="pre">ProyectoFinal/*.ipynb</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Libro</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">jupyter-book</span> <span class="pre">build</span> <span class="pre">.</span></code> (en la raíz del repositorio)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_build/html</span></code>, que se publica en <code class="docutils literal notranslate"><span class="pre">docs/</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Informe en PDF</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">ProyectoFinal/exportar_pdf.py</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ProyectoFinal/ProyectoFinal_informe.pdf</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Los guiones 02, 03b, 03c, 03d, 05, 06 y 07 se pueden interrumpir y relanzar: saltan lo que ya está registrado. Las
+tablas y las figuras de resultados no se escriben a mano: cada una sale de una celda que llama a
+<code class="docutils literal notranslate"><span class="pre">ModeloOriginal/src/informe.py</span></code>, y ese módulo lee los resultados. Hay dos excepciones declaradas: la
+<a class="reference internal" href="06_validacion.html#tab-iteraciones"><span class="std std-ref">Tabla 6.3</span></a>, con las cifras de los pilotos de diseño, que no dejaron archivos, y las cifras que
+el texto corrido repite de esas tablas para comentarlas.</p>
+</section>
+<section id="tabla-maestra-de-experimentos">
+<h2>10.4. Tabla maestra de experimentos<a class="headerlink" href="#tabla-maestra-de-experimentos" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">ModeloOriginal/resultados/experimentos.parquet</span></code> tiene una fila por corrida, con la clave (tarea, modelo, balanceo,
+optimizador, semilla) y, para cada una: la métrica de cada pliegue externo, su media y su desviación, los
+hiperparámetros por pliegue y los finales, el presupuesto, el número de evaluaciones, los tiempos y el origen
+(<code class="docutils literal notranslate"><span class="pre">Entregable</span> <span class="pre">3</span></code> para las corridas reutilizadas). Los conjuntos adicionales tienen su propia tabla en
+<code class="docutils literal notranslate"><span class="pre">resultados/adicionales/&lt;conjunto&gt;/experimentos.parquet</span></code>. La <a class="reference internal" href="#tab-maestra"><span class="std std-ref">Tabla 10.4</span></a> la resume.</p>
+<p id="tab-maestra"><strong>Tabla 10.4.</strong> Resumen de la tabla maestra: corridas, evaluaciones de hiperparámetros y tiempo de cómputo, por
+conjunto de datos, origen y semilla.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tabla 10.4. Agrupa resultados/experimentos.parquet y la tabla de cada conjunto</span>
+<span class="c1"># adicional por origen y semilla.</span>
+<span class="n">inf</span><span class="o">.</span><span class="n">tabla</span><span class="p">(</span><span class="s1">'tabla_maestra'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Conjunto</p></th>
+<th class="head text-left"><p>Origen</p></th>
+<th class="head text-right"><p>Semilla</p></th>
+<th class="head text-right"><p>Corridas</p></th>
+<th class="head text-left"><p>Modelos</p></th>
+<th class="head text-right"><p>Evaluaciones</p></th>
+<th class="head text-right"><p>Tiempo (h)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>COFINFAD</p></td>
+<td class="text-left"><p>Entregable 3</p></td>
+<td class="text-right"><p>42</p></td>
+<td class="text-right"><p>16</p></td>
+<td class="text-left"><p>11 modelos</p></td>
+<td class="text-right"><p>3.288</p></td>
+<td class="text-right"><p>3,1</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>COFINFAD</p></td>
+<td class="text-left"><p>Proyecto final</p></td>
+<td class="text-right"><p>42</p></td>
+<td class="text-right"><p>4</p></td>
+<td class="text-left"><p>BDL (original), LightGBM</p></td>
+<td class="text-right"><p>744</p></td>
+<td class="text-right"><p>1,5</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>COFINFAD</p></td>
+<td class="text-left"><p>Proyecto final</p></td>
+<td class="text-right"><p>43</p></td>
+<td class="text-right"><p>20</p></td>
+<td class="text-left"><p>13 modelos</p></td>
+<td class="text-right"><p>4.032</p></td>
+<td class="text-right"><p>4,4</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>COFINFAD</p></td>
+<td class="text-left"><p>Proyecto final</p></td>
+<td class="text-right"><p>44</p></td>
+<td class="text-right"><p>20</p></td>
+<td class="text-left"><p>13 modelos</p></td>
+<td class="text-right"><p>4.032</p></td>
+<td class="text-right"><p>4,2</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>COFINFAD</p></td>
+<td class="text-left"><p>ablación</p></td>
+<td class="text-right"><p>42</p></td>
+<td class="text-right"><p>4</p></td>
+<td class="text-left"><p>BDL con salida conforme empírica, BDL sin mezcla (K = 1), BDL sin puntaje (aprende de la etiqueta)</p></td>
+<td class="text-right"><p>720</p></td>
+<td class="text-right"><p>2,6</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Seguros médicos</p></td>
+<td class="text-left"><p>Proyecto final</p></td>
+<td class="text-right"><p>42</p></td>
+<td class="text-right"><p>20</p></td>
+<td class="text-left"><p>13 modelos</p></td>
+<td class="text-right"><p>4.032</p></td>
+<td class="text-right"><p>0,3</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Eficiencia energética</p></td>
+<td class="text-left"><p>Proyecto final</p></td>
+<td class="text-right"><p>42</p></td>
+<td class="text-right"><p>20</p></td>
+<td class="text-left"><p>13 modelos</p></td>
+<td class="text-right"><p>4.032</p></td>
+<td class="text-right"><p>0,3</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Abulón</p></td>
+<td class="text-left"><p>Proyecto final</p></td>
+<td class="text-right"><p>42</p></td>
+<td class="text-right"><p>20</p></td>
+<td class="text-left"><p>13 modelos</p></td>
+<td class="text-right"><p>4.032</p></td>
+<td class="text-right"><p>0,9</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Vivienda de California</p></td>
+<td class="text-left"><p>Proyecto final</p></td>
+<td class="text-right"><p>42</p></td>
+<td class="text-right"><p>20</p></td>
+<td class="text-left"><p>13 modelos</p></td>
+<td class="text-right"><p>4.032</p></td>
+<td class="text-right"><p>6,0</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Cada corrida es una validación anidada completa de 5 pliegues externos × 3 internos más el reajuste final, y la dispersión que se reporta es la desviación típica entre los pliegues externos. Las corridas de esta tabla suman 23,3 horas de cómputo. Las 160 corridas del Entregable 3 (las 140 combinaciones de la guía y las de la EBM) están en <code class="docutils literal notranslate"><span class="pre">Entrega3/resultados/experimentos.parquet</span></code> y sumaron 46 horas; las filas con origen «Entregable 3» son la mejor combinación de cada benchmark, tomada de ahí. Las corridas del proyecto final posteriores a la primera repetición de COFINFAD se ejecutaron en dos colas simultáneas y con otras tareas en el mismo equipo: sus tiempos incluyen esa competencia por los núcleos y sirven para comparar órdenes de magnitud, no como medida exacta. El tiempo de ajuste de cada modelo final, medido aparte, está en la Tabla 7.6.</p>
+</div>
+</div>
+</section>
+<section id="lista-de-verificacion-de-reproducibilidad">
+<h2>10.5. Lista de verificación de reproducibilidad<a class="headerlink" href="#lista-de-verificacion-de-reproducibilidad" title="Link to this heading">#</a></h2>
+<p>La <a class="reference internal" href="#tab-verificacion"><span class="std std-ref">Tabla 10.5</span></a> recorre los elementos que pide la guía y dice dónde está cada uno.</p>
+<p id="tab-verificacion"><strong>Tabla 10.5.</strong> Lista de verificación de reproducibilidad.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Elemento</p></th>
+<th class="head"><p>Estado</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Código público y versionado</p></td>
+<td><p>Repositorio de GitHub, con el historial completo</p></td>
+</tr>
+<tr class="row-odd"><td><p>Versiones del software y del hardware</p></td>
+<td><p><a class="reference internal" href="#tab-entorno"><span class="std std-ref">Tabla 10.1</span></a>; <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> con versiones exactas</p></td>
+</tr>
+<tr class="row-even"><td><p>Semillas declaradas</p></td>
+<td><p><a class="reference internal" href="#tab-semillas-usadas"><span class="std std-ref">Tabla 10.2</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Rangos de hiperparámetros</p></td>
+<td><p><a class="reference internal" href="03_benchmarks.html#tab-espacios"><span class="std std-ref">Tabla 3.2</span></a>; valores finales en la <a class="reference internal" href="03_benchmarks.html#tab-hiperparametros"><span class="std std-ref">Tabla 3.4</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>Número de ejecuciones</p></td>
+<td><p><a class="reference internal" href="#tab-maestra"><span class="std std-ref">Tabla 10.4</span></a>: tres repeticiones de cinco pliegues externos por modelo y diez semillas por modelo final</p></td>
+</tr>
+<tr class="row-odd"><td><p>Medidas de dispersión</p></td>
+<td><p>Desviación típica entre pliegues externos, intervalos de confianza BCa en prueba y desviación entre semillas (capítulos 6 y 7)</p></td>
+</tr>
+<tr class="row-even"><td><p>Tiempo de cómputo y memoria</p></td>
+<td><p><a class="reference internal" href="#tab-maestra"><span class="std std-ref">Tabla 10.4</span></a> (búsqueda), <a class="reference internal" href="07_evaluacion_ampliada.html#tab-semillas"><span class="std std-ref">Tabla 7.6</span></a> (ajuste, inferencia y memoria de cada modelo final) y <a class="reference internal" href="07_evaluacion_ampliada.html#tab-columnas"><span class="std std-ref">Tabla 7.9</span></a> (escalabilidad)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Datos o instrucciones exactas para obtenerlos</p></td>
+<td><p>COFINFAD en <code class="docutils literal notranslate"><span class="pre">datos/</span></code> (CC BY 4.0, DOI 10.17632/mhb4zn3258.1); los conjuntos adicionales se descargan de su fuente y se registra su huella SHA-256 (<a class="reference internal" href="07_evaluacion_ampliada.html#tab-conjuntos"><span class="std std-ref">Tabla 7.2</span></a>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Protocolo registrado antes de los experimentos definitivos</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ModeloOriginal/experiments/protocolo.md</span></code>, etiqueta <code class="docutils literal notranslate"><span class="pre">protocolo-modelo-original-v1</span></code> (<a class="reference internal" href="06_validacion.html#tab-registro"><span class="std std-ref">Tabla 6.2</span></a>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Desviaciones del protocolo declaradas</p></td>
+<td><p>Sección 6.2</p></td>
+</tr>
+<tr class="row-even"><td><p>Pruebas unitarias que verifican las propiedades del algoritmo</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ModeloOriginal/tests/</span></code>, en integración continua (<a class="reference internal" href="05_modelo_original.html#tab-pruebas-unitarias"><span class="std std-ref">Tabla 5.4</span></a>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Mismo preprocesamiento, particiones y semilla para todos los modelos</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">src/plan.py</span></code>, <code class="docutils literal notranslate"><span class="pre">src/optimizacion.py</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Presupuesto de ajuste reportado por modelo</p></td>
+<td><p><a class="reference internal" href="03_benchmarks.html#tab-benchmarks"><span class="std std-ref">Tabla 3.3</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Todas las corridas reportadas, no la mejor de varias</p></td>
+<td><p>Tabla maestra</p></td>
+</tr>
+<tr class="row-even"><td><p>Modelos serializados con metadatos y prueba de ida y vuelta</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Dashboard/artifacts/</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Ficha del modelo y declaración de los datos</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Dashboard/MODEL_CARD.md</span></code>, <code class="docutils literal notranslate"><span class="pre">Dashboard/DATA_STATEMENT.md</span></code>; la declaración de los datos, resumida en la <a class="reference internal" href="02_datos.html#tab-declaracion"><span class="std std-ref">Tabla 2.1</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>Archivo del repositorio con identificador persistente</p></td>
+<td><p>Pendiente del equipo: generar el DOI en Zenodo a partir de una <em>release</em> de GitHub (sección 10.6)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Declaración de autoría y uso de herramientas, firmada</p></td>
+<td><p><a class="reference internal" href="09_conclusiones.html#sec-declaracion"><span class="std std-ref">Sección 9.6</span></a>, enlazada desde la sección 10.7</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="archivo-del-repositorio">
+<h2>10.6. Archivo del repositorio<a class="headerlink" href="#archivo-del-repositorio" title="Link to this heading">#</a></h2>
+<p>El identificador persistente se obtiene creando una <em>release</em> en GitHub con el repositorio enlazado a Zenodo. Es un
+paso que solo puede hacer el propietario del repositorio con su cuenta; cuando se genere, el DOI se cita aquí y en
+<code class="docutils literal notranslate"><span class="pre">CITATION.cff</span></code>.</p>
+</section>
+<section id="declaracion-de-autoria-y-uso-de-herramientas">
+<h2>10.7. Declaración de autoría y uso de herramientas<a class="headerlink" href="#declaracion-de-autoria-y-uso-de-herramientas" title="Link to this heading">#</a></h2>
+<p>La declaración de autoría y de uso de herramientas, incluidas las de inteligencia artificial, con las firmas del equipo,
+está en la <a class="reference internal" href="09_conclusiones.html#sec-declaracion"><span class="std std-ref">sección 9.6</span></a>. La guía la sitúa en el capítulo 9 en su tabla de capítulos y en el
+último capítulo en su lista de entregables: el texto se deja en el capítulo 9 y se enlaza desde aquí para que conste en
+los dos.</p>
+</section>
+<section id="bibliografia">
+<h2>10.8. Bibliografía<a class="headerlink" href="#bibliografia" title="Link to this heading">#</a></h2>
+<p>Las referencias están en formato BibTeX en
+<a class="reference external" href="https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech/blob/main/ProyectoFinal/references.bib"><code class="docutils literal notranslate"><span class="pre">ProyectoFinal/references.bib</span></code></a>.
+Cada DOI se comprobó contra el registro de Crossref.</p>
+<div class="docutils container" id="id1">
+<div role="list" class="citation-list">
+<div class="citation" id="id56" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Timo Adam, Andreas Mayr, and Thomas Kneib. Gradient boosting in Markov-switching generalized additive models for location, scale, and shape. <em>Econometrics and Statistics</em>, 22:3–16, 2022. <a class="reference external" href="https://doi.org/10.1016/j.ecosta.2021.04.002">doi:10.1016/j.ecosta.2021.04.002</a>.</p>
+</div>
+<div class="citation" id="id2" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<p>Oluwatayomi Rereloluwa Adegboye, Hüseyin Kusetoğulları, and Afi Kekeli Feda. An interpretable hybrid of boosted trees and regularised logistic regression for predicting customer churn in online retail. <em>Information</em>, 17(11):1118, 2026. <a class="reference external" href="https://doi.org/10.3390/info17111118">doi:10.3390/info17111118</a>.</p>
+</div>
+<div class="citation" id="id3" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<p>Murray Aitkin. A general maximum likelihood analysis of variance components in generalized linear models. <em>Biometrics</em>, 55(1):117–128, 1999. <a class="reference external" href="https://doi.org/10.1111/j.0006-341X.1999.00117.x">doi:10.1111/j.0006-341X.1999.00117.x</a>.</p>
+</div>
+<div class="citation" id="id4" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
+<p>Takuya Akiba, Shotaro Sano, Toshihiko Yanase, Takeru Ohta, and Masanori Koyama. Optuna: a next-generation hyperparameter optimization framework. In <em>Proceedings of the 25th ACM SIGKDD International Conference on Knowledge Discovery &amp; Data Mining</em>, 2623–2631. 2019. <a class="reference external" href="https://doi.org/10.1145/3292500.3330701">doi:10.1145/3292500.3330701</a>.</p>
+</div>
+<div class="citation" id="id5" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></span>
+<p>Laila Badawy Ali, Riham M. Haggag, and Mohamed Mostafa Fouad. A probabilistic framework for robust customer churn prediction. In <em>National Radio Science Conference (NRSC)</em>, 69–77. 2026. <a class="reference external" href="https://doi.org/10.1109/nrsc71102.2026.11556062">doi:10.1109/nrsc71102.2026.11556062</a>.</p>
+</div>
+<div class="citation" id="id66" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></span>
+<p>Patrick Bachmann, Markus Meierer, and Jeffrey Näf. The role of time-varying contextual factors in latent attrition models for customer base analysis. <em>Marketing Science</em>, 40(4):783–809, 2021. <a class="reference external" href="https://doi.org/10.1287/mksc.2020.1254">doi:10.1287/mksc.2020.1254</a>.</p>
+</div>
+<div class="citation" id="id7" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></span>
+<p>Leo Breiman. Random forests. <em>Machine Learning</em>, 45(1):5–32, 2001. <a class="reference external" href="https://doi.org/10.1023/A:1010933404324">doi:10.1023/A:1010933404324</a>.</p>
+</div>
+<div class="citation" id="id68" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></span>
+<p>Gabriel Buginga and Edmundo de Souza e Silva. Clustering survival data using a mixture of non-parametric experts. arXiv:2405.15934, 2024. URL: <a class="reference external" href="https://arxiv.org/abs/2405.15934">https://arxiv.org/abs/2405.15934</a>.</p>
+</div>
+<div class="citation" id="id6" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></span>
+<p>Dankmar Böhning and Bruce G. Lindsay. Monotonicity of quadratic-approximation algorithms. <em>Annals of the Institute of Statistical Mathematics</em>, 40(4):641–663, 1988. <a class="reference external" href="https://doi.org/10.1007/BF00049423">doi:10.1007/BF00049423</a>.</p>
+</div>
+<div class="citation" id="id8" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></span>
+<p>Gavin C. Cawley and Nicola L. C. Talbot. On over-fitting in model selection and subsequent selection bias in performance evaluation. <em>Journal of Machine Learning Research</em>, 11:2079–2107, 2010.</p>
+</div>
+<div class="citation" id="id9" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>11<span class="fn-bracket">]</span></span>
+<p>Tianqi Chen and Carlos Guestrin. Xgboost: a scalable tree boosting system. In <em>Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</em>, 785–794. 2016. <a class="reference external" href="https://doi.org/10.1145/2939672.2939785">doi:10.1145/2939672.2939785</a>.</p>
+</div>
+<div class="citation" id="id10" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>12<span class="fn-bracket">]</span></span>
+<p>Jacob Cohen. The cost of dichotomization. <em>Applied Psychological Measurement</em>, 7(3):249–253, 1983. <a class="reference external" href="https://doi.org/10.1177/014662168300700301">doi:10.1177/014662168300700301</a>.</p>
+</div>
+<div class="citation" id="id11" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>13<span class="fn-bracket">]</span></span>
+<p>Arno De Caigny, Kristof Coussement, and Koen W. De Bock. A new hybrid classification algorithm for customer churn prediction based on logistic regression and decision trees. <em>European Journal of Operational Research</em>, 269(2):760–772, 2018. <a class="reference external" href="https://doi.org/10.1016/j.ejor.2018.02.009">doi:10.1016/j.ejor.2018.02.009</a>.</p>
+</div>
+<div class="citation" id="id12" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>14<span class="fn-bracket">]</span></span>
+<p>Elizabeth R. DeLong, David M. DeLong, and Daniel L. Clarke-Pearson. Comparing the areas under two or more correlated receiver operating characteristic curves: a nonparametric approach. <em>Biometrics</em>, 44(3):837–845, 1988. <a class="reference external" href="https://doi.org/10.2307/2531595">doi:10.2307/2531595</a>.</p>
+</div>
+<div class="citation" id="id13" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>15<span class="fn-bracket">]</span></span>
+<p>Arthur P. Dempster, Nan M. Laird, and Donald B. Rubin. Maximum likelihood from incomplete data via the EM algorithm. <em>Journal of the Royal Statistical Society: Series B</em>, 39(1):1–38, 1977. <a class="reference external" href="https://doi.org/10.1111/j.2517-6161.1977.tb01600.x">doi:10.1111/j.2517-6161.1977.tb01600.x</a>.</p>
+</div>
+<div class="citation" id="id14" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>16<span class="fn-bracket">]</span></span>
+<p>Janez Demšar. Statistical comparisons of classifiers over multiple data sets. <em>Journal of Machine Learning Research</em>, 7:1–30, 2006.</p>
+</div>
+<div class="citation" id="id15" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>17<span class="fn-bracket">]</span></span>
+<p>Wayne S. DeSarbo and William L. Cron. A maximum likelihood methodology for clusterwise linear regression. <em>Journal of Classification</em>, 5(2):249–282, 1988. <a class="reference external" href="https://doi.org/10.1007/BF01897167">doi:10.1007/BF01897167</a>.</p>
+</div>
+<div class="citation" id="id70" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>18<span class="fn-bracket">]</span></span>
+<p>Yumo Dong, Edward W. Frees, Fei Huang, Francis K. C. Hui, and Harald J. van Heerde. A joint model of cost and churn for the insurance industry. <em>Journal of Risk and Insurance</em>, 2026. <a class="reference external" href="https://doi.org/10.1111/jori.70061">doi:10.1111/jori.70061</a>.</p>
+</div>
+<div class="citation" id="id16" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>19<span class="fn-bracket">]</span></span>
+<p>Tony Duan, Anand Avati, Daisy Yi Ding, Khanh K. Thai, Sanjay Basu, Andrew Y. Ng, and Alejandro Schuler. NGBoost: natural gradient boosting for probabilistic prediction. In <em>Proceedings of the 37th International Conference on Machine Learning</em>, volume 119 of PMLR, 2690–2700. 2020.</p>
+</div>
+<div class="citation" id="id17" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>20<span class="fn-bracket">]</span></span>
+<p>Bradley Efron. Better bootstrap confidence intervals. <em>Journal of the American Statistical Association</em>, 82(397):171–185, 1987. <a class="reference external" href="https://doi.org/10.1080/01621459.1987.10478410">doi:10.1080/01621459.1987.10478410</a>.</p>
+</div>
+<div class="citation" id="id19" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>21<span class="fn-bracket">]</span></span>
+<p>Jerome H. Friedman. Greedy function approximation: a gradient boosting machine. <em>The Annals of Statistics</em>, 29(5):1189–1232, 2001. <a class="reference external" href="https://doi.org/10.1214/aos/1013203451">doi:10.1214/aos/1013203451</a>.</p>
+</div>
+<div class="citation" id="id18" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>22<span class="fn-bracket">]</span></span>
+<p>Milton Friedman. The use of ranks to avoid the assumption of normality implicit in the analysis of variance. <em>Journal of the American Statistical Association</em>, 32(200):675–701, 1937. <a class="reference external" href="https://doi.org/10.1080/01621459.1937.10503522">doi:10.1080/01621459.1937.10503522</a>.</p>
+</div>
+<div class="citation" id="id20" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>23<span class="fn-bracket">]</span></span>
+<p>Amy Gallo. The value of keeping the right customers. Harvard Business Review, October 2014. URL: <a class="reference external" href="https://hbr.org/2014/10/the-value-of-keeping-the-right-customers">https://hbr.org/2014/10/the-value-of-keeping-the-right-customers</a>.</p>
+</div>
+<div class="citation" id="id21" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>24<span class="fn-bracket">]</span></span>
+<p>Bettina Grün and Friedrich Leisch. FlexMix version 2: finite mixtures with concomitant variables and varying and constant parameters. <em>Journal of Statistical Software</em>, 28(4):1–35, 2008. <a class="reference external" href="https://doi.org/10.18637/jss.v028.i04">doi:10.18637/jss.v028.i04</a>.</p>
+</div>
+<div class="citation" id="id22" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>25<span class="fn-bracket">]</span></span>
+<p>Yameng Guo and Seppe vanden Broucke. Learning from uncertainty: improving churn prediction using conformal confidence intervals. In <em>International Conference on Machine Learning and Applications (ICMLA)</em>, 9–16. 2024. <a class="reference external" href="https://doi.org/10.1109/icmla61862.2024.00008">doi:10.1109/icmla61862.2024.00008</a>.</p>
+</div>
+<div class="citation" id="id60" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>26<span class="fn-bracket">]</span></span>
+<p>Ahlem Hajjem, François Bellavance, and Denis Larocque. Mixed effects regression trees for clustered data. <em>Statistics &amp; Probability Letters</em>, 81(4):451–459, 2011. <a class="reference external" href="https://doi.org/10.1016/j.spl.2010.12.003">doi:10.1016/j.spl.2010.12.003</a>.</p>
+</div>
+<div class="citation" id="id61" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>27<span class="fn-bracket">]</span></span>
+<p>Ahlem Hajjem, François Bellavance, and Denis Larocque. Mixed-effects random forest for clustered data. <em>Journal of Statistical Computation and Simulation</em>, 84(6):1313–1328, 2014. <a class="reference external" href="https://doi.org/10.1080/00949655.2012.741599">doi:10.1080/00949655.2012.741599</a>.</p>
+</div>
+<div class="citation" id="id23" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>28<span class="fn-bracket">]</span></span>
+<p>James Heckman and Burton Singer. A method for minimizing the impact of distributional assumptions in econometric models for duration data. <em>Econometrica</em>, 52(2):271–320, 1984. <a class="reference external" href="https://doi.org/10.2307/1911491">doi:10.2307/1911491</a>.</p>
+</div>
+<div class="citation" id="id24" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>29<span class="fn-bracket">]</span></span>
+<p>Tobias Hepp, Jakob Zierk, Manfred Rauh, Markus Metzler, and Andreas Mayr. Latent class distributional regression for the estimation of non-linear reference limits from contaminated data sources. <em>BMC Bioinformatics</em>, 21:524, 2020. <a class="reference external" href="https://doi.org/10.1186/s12859-020-03853-3">doi:10.1186/s12859-020-03853-3</a>.</p>
+</div>
+<div class="citation" id="id25" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>30<span class="fn-bracket">]</span></span>
+<p>Sture Holm. A simple sequentially rejective multiple test procedure. <em>Scandinavian Journal of Statistics</em>, 6(2):65–70, 1979.</p>
+</div>
+<div class="citation" id="id54" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>31<span class="fn-bracket">]</span></span>
+<p>Yanxi Hou, Jiahong Li, and Guangyuan Gao. Insurance loss modeling with gradient tree-boosted mixture models. <em>Insurance: Mathematics and Economics</em>, 121:45–62, 2025. <a class="reference external" href="https://doi.org/10.1016/j.insmatheco.2024.12.007">doi:10.1016/j.insmatheco.2024.12.007</a>.</p>
+</div>
+<div class="citation" id="id26" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>32<span class="fn-bracket">]</span></span>
+<p>Ronald L. Iman and James M. Davenport. Approximations of the critical region of the Friedman statistic. <em>Communications in Statistics - Theory and Methods</em>, 9(6):571–595, 1980. <a class="reference external" href="https://doi.org/10.1080/03610928008827904">doi:10.1080/03610928008827904</a>.</p>
+</div>
+<div class="citation" id="id27" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>33<span class="fn-bracket">]</span></span>
+<p>Robert A. Jacobs, Michael I. Jordan, Steven J. Nowlan, and Geoffrey E. Hinton. Adaptive mixtures of local experts. <em>Neural Computation</em>, 3(1):79–87, 1991. <a class="reference external" href="https://doi.org/10.1162/neco.1991.3.1.79">doi:10.1162/neco.1991.3.1.79</a>.</p>
+</div>
+<div class="citation" id="id65" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>34<span class="fn-bracket">]</span></span>
+<p>Zainab Jamal and Randolph E. Bucklin. Improving the diagnosis and prediction of customer churn: a heterogeneous hazard modeling approach. <em>Journal of Interactive Marketing</em>, 20(3–4):16–29, 2006. <a class="reference external" href="https://doi.org/10.1002/dir.20064">doi:10.1002/dir.20064</a>.</p>
+</div>
+<div class="citation" id="id28" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>35<span class="fn-bracket">]</span></span>
+<p>David Jobst. Gradient-boosted mixture regression models for postprocessing ensemble weather forecasts. arXiv:2412.09583, 2024. URL: <a class="reference external" href="https://arxiv.org/abs/2412.09583">https://arxiv.org/abs/2412.09583</a>.</p>
+</div>
+<div class="citation" id="id29" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>36<span class="fn-bracket">]</span></span>
+<p>Sayash Kapoor and Arvind Narayanan. Leakage and the reproducibility crisis in machine-learning-based science. <em>Patterns</em>, 4(9):100804, 2023. <a class="reference external" href="https://doi.org/10.1016/j.patter.2023.100804">doi:10.1016/j.patter.2023.100804</a>.</p>
+</div>
+<div class="citation" id="id30" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>37<span class="fn-bracket">]</span></span>
+<p>Shachar Kaufman, Saharon Rosset, Claudia Perlich, and Ori Stitelman. Leakage in data mining: formulation, detection, and avoidance. <em>ACM Transactions on Knowledge Discovery from Data</em>, 6(4):15, 2012. <a class="reference external" href="https://doi.org/10.1145/2382577.2382579">doi:10.1145/2382577.2382579</a>.</p>
+</div>
+<div class="citation" id="id31" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>38<span class="fn-bracket">]</span></span>
+<p>Guolin Ke, Qi Meng, Thomas Finley, Taifeng Wang, Wei Chen, Weidong Ma, Qiwei Ye, and Tie-Yan Liu. LightGBM: a highly efficient gradient boosting decision tree. In <em>Advances in Neural Information Processing Systems</em>, volume 30. 2017.</p>
+</div>
+<div class="citation" id="id32" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>39<span class="fn-bracket">]</span></span>
+<p>Brett Lantz. <em>Machine Learning with R</em>. Packt Publishing, 2013.</p>
+</div>
+<div class="citation" id="id33" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>40<span class="fn-bracket">]</span></span>
+<p>Jing Lei, Max G'Sell, Alessandro Rinaldo, Ryan J. Tibshirani, and Larry Wasserman. Distribution-free predictive inference for regression. <em>Journal of the American Statistical Association</em>, 113(523):1094–1111, 2018. <a class="reference external" href="https://doi.org/10.1080/01621459.2017.1307116">doi:10.1080/01621459.2017.1307116</a>.</p>
+</div>
+<div class="citation" id="id67" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>41<span class="fn-bracket">]</span></span>
+<p>Aurélie Lemmens and Christophe Croux. Bagging and boosting classification trees to predict churn. <em>Journal of Marketing Research</em>, 43(2):276–286, 2006. <a class="reference external" href="https://doi.org/10.1509/jmkr.43.2.276">doi:10.1509/jmkr.43.2.276</a>.</p>
+</div>
+<div class="citation" id="id34" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>42<span class="fn-bracket">]</span></span>
+<p>Yin Lou, Rich Caruana, Johannes Gehrke, and Giles Hooker. Accurate intelligible models with pairwise interactions. In <em>Proceedings of the 19th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</em>, 623–631. 2013. <a class="reference external" href="https://doi.org/10.1145/2487575.2487579">doi:10.1145/2487575.2487579</a>.</p>
+</div>
+<div class="citation" id="id35" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>43<span class="fn-bracket">]</span></span>
+<p>Scott M. Lundberg and Su-In Lee. A unified approach to interpreting model predictions. In <em>Advances in Neural Information Processing Systems</em>, volume 30. 2017.</p>
+</div>
+<div class="citation" id="id36" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>44<span class="fn-bracket">]</span></span>
+<p>Andreas Mayr, Nora Fenske, Benjamin Hofner, Thomas Kneib, and Matthias Schmid. Generalized additive models for location, scale and shape for high dimensional data: a flexible approach based on boosting. <em>Journal of the Royal Statistical Society: Series C</em>, 61(3):403–427, 2012. <a class="reference external" href="https://doi.org/10.1111/j.1467-9876.2011.01033.x">doi:10.1111/j.1467-9876.2011.01033.x</a>.</p>
+</div>
+<div class="citation" id="id37" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>45<span class="fn-bracket">]</span></span>
+<p>Geoffrey McLachlan and David Peel. <em>Finite Mixture Models</em>. Wiley, 2000. <a class="reference external" href="https://doi.org/10.1002/0471721182">doi:10.1002/0471721182</a>.</p>
+</div>
+<div class="citation" id="id38" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>46<span class="fn-bracket">]</span></span>
+<p>Quinn McNemar. Note on the sampling error of the difference between correlated proportions or percentages. <em>Psychometrika</em>, 12(2):153–157, 1947. <a class="reference external" href="https://doi.org/10.1007/BF02295996">doi:10.1007/BF02295996</a>.</p>
+</div>
+<div class="citation" id="id58" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>47<span class="fn-bracket">]</span></span>
+<p>Christopher Meek, Bo Thiesson, and David Heckerman. Staged mixture modelling and boosting. Conference on Uncertainty in Artificial Intelligence (UAI); arXiv:1301.0586, 2002. URL: <a class="reference external" href="https://arxiv.org/abs/1301.0586">https://arxiv.org/abs/1301.0586</a>.</p>
+</div>
+<div class="citation" id="id39" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>48<span class="fn-bracket">]</span></span>
+<p>Luis Eduardo Muñoz Guerrero, Yony Fernando Ceballos, and Luis David Trejos Rojas. COFINFAD: colombian fintech financial analytics dataset. Mendeley Data, versión 1, 2025. <a class="reference external" href="https://doi.org/10.17632/mhb4zn3258.1">doi:10.17632/mhb4zn3258.1</a>.</p>
+</div>
+<div class="citation" id="id59" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>49<span class="fn-bracket">]</span></span>
+<p>Alexander März. XGBoostLSS: an extension of XGBoost to probabilistic forecasting. arXiv:1907.03178, 2019. URL: <a class="reference external" href="https://arxiv.org/abs/1907.03178">https://arxiv.org/abs/1907.03178</a>.</p>
+</div>
+<div class="citation" id="id40" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>50<span class="fn-bracket">]</span></span>
+<p>Claude Nadeau and Yoshua Bengio. Inference for the generalization error. <em>Machine Learning</em>, 52(3):239–281, 2003. <a class="reference external" href="https://doi.org/10.1023/A:1024068626366">doi:10.1023/A:1024068626366</a>.</p>
+</div>
+<div class="citation" id="id41" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>51<span class="fn-bracket">]</span></span>
+<p>Warwick J. Nash, Tracy L. Sellers, Simon R. Talbot, Andrew J. Cawthorn, and Wes B. Ford. The population biology of abalone (Haliotis species) in Tasmania. I. blacklip abalone (H. rubra) from the north coast and islands of Bass Strait. Technical Report 48, Sea Fisheries Division, Tasmania, 1994.</p>
+</div>
+<div class="citation" id="id42" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>52<span class="fn-bracket">]</span></span>
+<p>Harsha Nori, Samuel Jenkins, Paul Koch, and Rich Caruana. InterpretML: a unified framework for machine learning interpretability. arXiv:1909.09223, 2019. URL: <a class="reference external" href="https://arxiv.org/abs/1909.09223">https://arxiv.org/abs/1909.09223</a>.</p>
+</div>
+<div class="citation" id="id43" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>53<span class="fn-bracket">]</span></span>
+<p>R. Kelley Pace and Ronald Barry. Sparse spatial autoregressions. <em>Statistics &amp; Probability Letters</em>, 33(3):291–297, 1997. <a class="reference external" href="https://doi.org/10.1016/S0167-7152(96)00140-X">doi:10.1016/S0167-7152(96)00140-X</a>.</p>
+</div>
+<div class="citation" id="id64" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>54<span class="fn-bracket">]</span></span>
+<p>Massimo Pellagatti, Chiara Masci, Francesca Ieva, and Anna M. Paganoni. Generalized mixed-effects random forest: a flexible approach to predict university student dropout. <em>Statistical Analysis and Data Mining: The ASA Data Science Journal</em>, 14(3):241–257, 2021. <a class="reference external" href="https://doi.org/10.1002/sam.11505">doi:10.1002/sam.11505</a>.</p>
+</div>
+<div class="citation" id="id44" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>55<span class="fn-bracket">]</span></span>
+<p>Jeanine Romano, Jeffrey D. Kromrey, Jesse Coraggio, and Jeff Skowronek. Appropriate statistics for ordinal level data: should we really be using t-test and Cohen's d for evaluating group differences on the NSSE and other surveys? In <em>Annual Meeting of the Florida Association of Institutional Research</em>. 2006.</p>
+</div>
+<div class="citation" id="id45" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>56<span class="fn-bracket">]</span></span>
+<p>Patrick Royston, Douglas G. Altman, and Willi Sauerbrei. Dichotomizing continuous predictors in multiple regression: a bad idea. <em>Statistics in Medicine</em>, 25(1):127–141, 2006. <a class="reference external" href="https://doi.org/10.1002/sim.2331">doi:10.1002/sim.2331</a>.</p>
+</div>
+<div class="citation" id="id46" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>57<span class="fn-bracket">]</span></span>
+<p>David Rügamer, Florian Pfisterer, Bernd Bischl, and Bettina Grün. Mixture of experts distributional regression: implementation using robust estimation with adaptive first-order methods. <em>AStA Advances in Statistical Analysis</em>, 108(2):351–373, 2023. <a class="reference external" href="https://doi.org/10.1007/s10182-023-00486-8">doi:10.1007/s10182-023-00486-8</a>.</p>
+</div>
+<div class="citation" id="id47" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>58<span class="fn-bracket">]</span></span>
+<p>Odile Sauzet and Maren Kleine. Distributional estimates for the comparison of proportions of a dichotomized continuous outcome. <em>The Stata Journal</em>, 16(4):880–899, 2016. <a class="reference external" href="https://doi.org/10.1177/1536867X1601600405">doi:10.1177/1536867X1601600405</a>.</p>
+</div>
+<div class="citation" id="id48" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>59<span class="fn-bracket">]</span></span>
+<p>Gideon Schwarz. Estimating the dimension of a model. <em>The Annals of Statistics</em>, 6(2):461–464, 1978. <a class="reference external" href="https://doi.org/10.1214/aos/1176344136">doi:10.1214/aos/1176344136</a>.</p>
+</div>
+<div class="citation" id="id62" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>60<span class="fn-bracket">]</span></span>
+<p>Rebecca J. Sela and Jeffrey S. Simonoff. RE-EM trees: a data mining approach for longitudinal and clustered data. <em>Machine Learning</em>, 86(2):169–207, 2012. <a class="reference external" href="https://doi.org/10.1007/s10994-011-5258-3">doi:10.1007/s10994-011-5258-3</a>.</p>
+</div>
+<div class="citation" id="id63" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>61<span class="fn-bracket">]</span></span>
+<p>Fabio Sigrist. Gaussian process boosting. <em>Journal of Machine Learning Research</em>, 23(232):1–46, 2022. URL: <a class="reference external" href="https://www.jmlr.org/papers/v23/20-322.html">https://www.jmlr.org/papers/v23/20-322.html</a>.</p>
+</div>
+<div class="citation" id="id71" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>62<span class="fn-bracket">]</span></span>
+<p>Baozhuo Su and Zhengxian Qu. Anchor-MoE: a mean-anchored mixture of experts for probabilistic regression. arXiv:2508.16802, 2025. URL: <a class="reference external" href="https://arxiv.org/abs/2508.16802">https://arxiv.org/abs/2508.16802</a>.</p>
+</div>
+<div class="citation" id="id49" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>63<span class="fn-bracket">]</span></span>
+<p>Athanasios Tsanas and Angeliki Xifara. Accurate quantitative estimation of energy performance of residential buildings using statistical machine learning tools. <em>Energy and Buildings</em>, 49:560–567, 2012. <a class="reference external" href="https://doi.org/10.1016/j.enbuild.2012.03.003">doi:10.1016/j.enbuild.2012.03.003</a>.</p>
+</div>
+<div class="citation" id="id69" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>64<span class="fn-bracket">]</span></span>
+<p>Aditi Vakeel, Neha Reddy Vantari, Sai Nivas Reddy, Rishith Muthyapu, and Ameet Chavan. Machine learning models for predicting and clustering customer churn based on boosting algorithms and Gaussian mixture model. In <em>International Conference for Advancement in Technology (ICONAT)</em>, 1–5. 2022. <a class="reference external" href="https://doi.org/10.1109/iconat53423.2022.9725957">doi:10.1109/iconat53423.2022.9725957</a>.</p>
+</div>
+<div class="citation" id="id50" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>65<span class="fn-bracket">]</span></span>
+<p>Vladimir Vovk, Alexander Gammerman, and Glenn Shafer. <em>Algorithmic Learning in a Random World</em>. Springer, 2005. <a class="reference external" href="https://doi.org/10.1007/b106715">doi:10.1007/b106715</a>.</p>
+</div>
+<div class="citation" id="id51" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>66<span class="fn-bracket">]</span></span>
+<p>Vladimir Vovk, Jieli Shen, Valery Manokhin, and Min-ge Xie. Nonparametric predictive distributions based on conformal prediction. <em>Machine Learning</em>, 108(3):445–474, 2019. <a class="reference external" href="https://doi.org/10.1007/s10994-018-5755-8">doi:10.1007/s10994-018-5755-8</a>.</p>
+</div>
+<div class="citation" id="id72" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>67<span class="fn-bracket">]</span></span>
+<p>Suttisak Wattanawongwan, Christophe Mues, Ramin Okhrati, Taufiq Choudhry, and Mee Chi So. A mixture model for credit card exposure at default using the GAMLSS framework. <em>International Journal of Forecasting</em>, 39(1):503–518, 2023. <a class="reference external" href="https://doi.org/10.1016/j.ijforecast.2021.12.014">doi:10.1016/j.ijforecast.2021.12.014</a>.</p>
+</div>
+<div class="citation" id="id52" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>68<span class="fn-bracket">]</span></span>
+<p>Frank Wilcoxon. Individual comparisons by ranking methods. <em>Biometrics Bulletin</em>, 1(6):80–83, 1945. <a class="reference external" href="https://doi.org/10.2307/3001968">doi:10.2307/3001968</a>.</p>
+</div>
+<div class="citation" id="id53" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>69<span class="fn-bracket">]</span></span>
+<p>Jiacheng Xue, Weixin Yao, and Sijia Xiang. Machine learning embedded EM algorithms for semiparametric mixture regression models. <em>Computational Statistics</em>, 40(1):205–224, 2024. <a class="reference external" href="https://doi.org/10.1007/s00180-024-01482-5">doi:10.1007/s00180-024-01482-5</a>.</p>
+</div>
+<div class="citation" id="id57" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>70<span class="fn-bracket">]</span></span>
+<p>Jianing Zheng, Peizhi Li, and Yingwei Peng. A gradient boosting decision tree based estimation method for the mixture cure model. <em>Journal of Applied Statistics</em>, 53(3):484–509, 2026. <a class="reference external" href="https://doi.org/10.1080/02664763.2025.2520337">doi:10.1080/02664763.2025.2520337</a>.</p>
+</div>
+<div class="citation" id="id55" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>71<span class="fn-bracket">]</span></span>
+<p>He Zhou, Wei Qian, and Yi Yang. Tweedie gradient boosting for extremely unbalanced zero-inflated data. <em>Communications in Statistics - Simulation and Computation</em>, 51(9):5507–5529, 2022. <a class="reference external" href="https://doi.org/10.1080/03610918.2020.1772302">doi:10.1080/03610918.2020.1772302</a>.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./ProyectoFinal"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="09_conclusiones.html"
+       title="página anterior">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">anterior</p>
+        <p class="prev-next-title">9. Conclusiones y limitaciones</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="codigo_modelo_original.html"
+       title="siguiente página">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">siguiente</p>
+        <p class="prev-next-title">Código del modelo original</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contenido
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#entorno">10.1. Entorno</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#semillas">10.2. Semillas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#como-reproducir-cada-resultado">10.3. Cómo reproducir cada resultado</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabla-maestra-de-experimentos">10.4. Tabla maestra de experimentos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lista-de-verificacion-de-reproducibilidad">10.5. Lista de verificación de reproducibilidad</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#archivo-del-repositorio">10.6. Archivo del repositorio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#declaracion-de-autoria-y-uso-de-herramientas">10.7. Declaración de autoría y uso de herramientas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bibliografia">10.8. Bibliografía</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+Por Martínez Pulido Valerie · Basto Martínez Abrahan · Esguerra Fernández Rubén
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,9 +1,12 @@
 """Inicio · ¿Qué encontramos? (pantalla de la versión de nueve; hoy sus piezas las usa la sección Contexto)
 
-La respuesta del informe en una pantalla: la cifra principal con lo que la acota, la EBM frente a cada referencia y lo que
-hay detrás del resultado. Contexto (paginas/contexto.py) reutiliza _heroe, _saldo, TAREA, NIVEL_MCS y FUENTES_PRUEBAS; el
-layout de abajo ya no se monta y su callback se retiró. Es también el ejemplo de referencia de CONTRATO.md §3: toda cifra sale de datos/ o del motor,
-cada tarjeta dice sus fuentes y los colores salen de los roles.
+La respuesta del informe del Entregable 3 en una pantalla, con la EBM en foco: la cifra principal con lo que la acota, la
+EBM frente a cada referencia y lo que hay detrás del resultado. La EBM es hoy un benchmark; el modelo original es BDL y la
+cifra principal de Contexto es la suya (paginas/contexto.py::_heroe_original). Contexto sigue usando de aquí TAREA,
+NIVEL_MCS y FUENTES_PRUEBAS, y el héroe de la EBM (_heroe, con _saldo) solo como respaldo, mientras la corrección no haya
+dejado al original en una tarea. El layout de abajo ya no se monta y su callback se retiró. Es también el ejemplo de
+referencia de CONTRATO.md §3: toda cifra sale de datos/ o del motor, cada tarjeta dice sus fuentes y los colores salen de
+los roles (aquí, los de las vistas de la EBM: D.ROL_VISTA_EBM).
 """
 import dash
 import plotly.graph_objects as go
@@ -79,7 +82,7 @@ def _heroe(tarea):
     if tarea == "clasificacion":
         margen = e[c["prueba"]] - x[c["prueba"]]
         cuanto = "menos de una milésima" if margen < MILESIMA else ui.num(margen, c["d"])
-        lectura = (f"Es el mayor de los ocho modelos, por {cuanto} sobre {D.NOMBRE_MODELO[RIVAL]} ({ui.num(x[c['prueba']], c['d'])}). "
+        lectura = (f"Es el mayor de los modelos del Entregable 3, por {cuanto} sobre {D.NOMBRE_MODELO[RIVAL]} ({ui.num(x[c['prueba']], c['d'])}). "
                    f"En la validación anidada la EBM queda {ORDINAL[puesto]} ({ui.num(e[c['externa']], c['d'])} frente a "
                    f"{ui.num(mejor_externa, c['d'])} de la mejor).")
     else:
@@ -103,7 +106,7 @@ def _diferencias(tarea):
     nombres = [D.NOMBRE_MODELO[m] for m in t["modelo"]]
     fig = go.Figure()
     for rol, forma in (("rival", "barra"), ("base", "rayada")):          # rosa sólido y gris rayado: nunca la misma forma
-        s = t[t["modelo"].map(D.ROL_MODELO) == rol]
+        s = t[t["modelo"].map(D.ROL_VISTA_EBM) == rol]
         if s.empty:
             continue
         textos = [f"{D.NOMBRE_MODELO[f['modelo']]}: <b>{ui.con_signo(f[c['delta']], c['d'])}</b> "
@@ -130,7 +133,7 @@ def _diferencias(tarea):
               F.intervalo(f["delta_bca_inf"], f["delta_bca_sup"], c["d"], signo=True), F.p_valor(f["p_t_holm"]),
               F.p_valor(f[c["p_fijada"]]), F.prob(f["p_rope"]), D.VEREDICTO_TEXTO[v[f["modelo"]]]] for _, f in t.iterrows()]
     tabla = ui.tabla(["Referencia", "Diferencia", "Intervalo del 95 %", "t corregida (p ajustado)", f"{c['fijada']} (p ajustado)",
-                      "Equivalencia práctica", "Veredicto"], filas, compacta=True, muestras=[D.ROL_MODELO[m] for m in t["modelo"]],
+                      "Equivalencia práctica", "Veredicto"], filas, compacta=True, muestras=[D.ROL_VISTA_EBM[m] for m in t["modelo"]],
                      num=[False, True, True, True, True, True, False], ocultar_movil=(3, 4))
     etiqueta = f"{titulo}. " + "; ".join(f"{r[0]}: {r[1]}, {r[6]}" for r in filas) + "."
     return fig, titulo, sub, tabla, etiqueta

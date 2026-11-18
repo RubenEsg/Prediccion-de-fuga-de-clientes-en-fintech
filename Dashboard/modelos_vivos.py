@@ -1,23 +1,34 @@
-"""Los 16 modelos finales en vivo: catálogo, carga de artifacts/, predicción, incertidumbre y explicación local.
+"""Los modelos finales en vivo: catálogo, carga de artifacts/, predicción, incertidumbre y explicación local.
 
-La app nunca entrena ni optimiza: carga las tuberías ya entrenadas de artifacts/<tarea>/<modelo>/modelo.joblib (las arma
-preparar_artefactos.py con la prueba de ida y vuelta) y las evalúa. Las carga cuando se piden y las guarda (lru_cache):
-las 14 juntas ocupan unos 260 MB en Windows (menos en Linux, con XGBoost sin CUDA). Si el servidor se queda sin memoria,
-la variable FUGA_CACHE_MODELOS limita cuántas guarda (con 3, cada cliente nuevo recarga las que falten). La EBM se evalúa con motor.py (sus tablas en numpy,
-idénticas al artefacto), así que la app no necesita interpret.
+Son los 16 del Entregable 3 (ocho por tarea) y el modelo original del proyecto, BDL (Boosting con Desplazamiento Latente),
+en las tareas en que la corrección ya lo dejó (artifacts/indice.json lo dice). LightGBM, el segundo benchmark reciente,
+solo aparece en las tablas: no tiene artefacto, para no añadir una dependencia al servidor.
+
+La app nunca entrena ni optimiza: carga las tuberías ya entrenadas de artifacts/<tarea>/<modelo>/modelo.joblib (las arman
+preparar_artefactos.py y preparar_original.py con la prueba de ida y vuelta) y las evalúa. Las carga cuando se piden y las
+guarda (lru_cache): las 14 del Entregable 3 ocupan juntas unos 260 MB en Windows (menos en Linux, con XGBoost sin CUDA) y
+las dos de BDL, menos de 1 MB. Si el servidor se queda sin memoria, la variable FUGA_CACHE_MODELOS limita cuántas guarda
+(con 3, cada cliente nuevo recarga las que falten). La EBM se evalúa con motor.py (sus tablas en numpy, idénticas al
+artefacto), así que la app no necesita interpret. BDL solo necesita numpy, scipy y scikit-learn: su código está en
+src/original_model.py, copia exacta del de la corrección, y las tuberías serializadas nombran ese módulo.
 
     predecir(tarea, modelo, X)       el puntaje del modelo: probabilidad (o margen del SVM lineal) o churn_probability
     probabilidad(modelo, s)          probabilidad recalibrada (isotónica sobre predicciones fuera de pliegue)
     conjunto(modelo, p, nivel)       conjunto conforme de clases al nivel dado, con su cobertura medida en prueba
     intervalo(modelo, yhat, nivel)   intervalo conforme de regresión, con su cobertura medida en prueba
-    explicar(tarea, modelo, X)       valores SHAP por variable (explicacion.py; la EBM, exacta con motor.py)
+    explicar(tarea, modelo, X)       valores SHAP por variable (explicacion.py; la EBM, exacta con motor.py; BDL, con
+                                     RegresorBDL.contribuciones)
     vecinos(tarea, modelo, X)        k-NN: los vecinos de la fila en el entrenamiento
+    excedencia(X)                    BDL, clasificación: cómo se convierte el índice F(x) en la probabilidad de riesgo alto
+    distribucion(X, nivel)           BDL, regresión: el índice, la media, la mediana, el intervalo central y el conjunto de
+                                     predicción del modelo (una unión de tramos), con su cobertura medida en prueba
 """
 from __future__ import annotations
 
 import json
 import math
 import os
+import sys
 from functools import lru_cache
 from pathlib import Path
 
@@ -29,10 +40,13 @@ import formato as F
 import motor
 
 AQUI = Path(__file__).resolve().parent
+if str(AQUI) not in sys.path:                 # src.original_model: lo nombran las tuberías serializadas del modelo original
+    sys.path.insert(0, str(AQUI))
 ARTEFACTOS = AQUI / "artifacts"
 DATOS = AQUI / "datos"
 TAREAS = ("clasificacion", "regresion")
 NIVELES = ("0.80", "0.90", "0.95")
+ORIGINAL = "bdl"
 CACHE_MODELOS = int(os.environ.get("FUGA_CACHE_MODELOS", "16"))
 
 
@@ -42,15 +56,22 @@ def _json(ruta: Path):
 
 @lru_cache(maxsize=1)
 def indice() -> dict:
-    """artifacts/indice.json: los 16 artefactos, sus huellas, versiones y el resultado de la ida y vuelta."""
+    """artifacts/indice.json: los artefactos (los 16 del Entregable 3 y los del modelo original), sus huellas, versiones y
+    el resultado de la ida y vuelta."""
     return _json(ARTEFACTOS / "indice.json")
 
 
 def modelos(tarea: str) -> list[str]:
-    """Los ocho modelos de una tarea, en el orden de las tablas del informe."""
+    """Los modelos en vivo de una tarea (los que tienen artefacto), en el orden de datos_app.ORDEN_MODELOS: el modelo
+    original, si la corrección ya lo dejó en esa tarea, y los ocho del Entregable 3."""
     import datos_app as D
     hay = {a["modelo"] for a in indice()["artefactos"] if a["tarea"] == tarea}
     return [m for m in D.ORDEN_MODELOS[tarea] if m in hay]
+
+
+def hay_original(tarea: str) -> bool:
+    """Si el modelo original tiene artefacto en esa tarea (la corrección puede no haber terminado todavía una de las dos)."""
+    return ORIGINAL in modelos(tarea)
 
 
 @lru_cache(maxsize=None)
@@ -61,7 +82,7 @@ def metadata(tarea: str, modelo: str) -> dict:
 
 @lru_cache(maxsize=1)
 def esquema() -> list[dict]:
-    """Las 48 variables de entrada: nombre, nombre visible, tipo, rango válido o categorías (el mismo en los 16)."""
+    """Las 48 variables de entrada: nombre, nombre visible, tipo, rango válido o categorías (el mismo en todos)."""
     return metadata("clasificacion", "ebm")["entrada"]["esquema"]
 
 
@@ -178,6 +199,67 @@ def intervalo(modelo: str, yhat: float, nivel: str = "0.90") -> dict:
             "cobertura_prueba": c["cobertura_prueba"], "semiancho": c["semiancho"]}
 
 
+# --- Lo que solo tiene el modelo original (BDL) ----------------------------------------------------------------------------
+def _original(tarea: str):
+    """(preprocesado, estimador, RegresorBDL) del modelo original en una tarea; el regresor es None si el clasificador está
+    en modo directo (aprendió de la etiqueta, sin mezcla)."""
+    pipe = tuberia(tarea, ORIGINAL)
+    est = pipe.named_steps["modelo"]
+    return pipe.named_steps["preprocesado"], est, explicacion.regresor_bdl(est)
+
+
+def excedencia(X: pd.DataFrame):
+    """Clasificación con el modelo original: cómo sale la probabilidad de riesgo alto del índice de cada fila de X.
+
+    P(s > τ | x) = Σ_k π_k · Φ((F(x) + c_k − τ) / σ_r): cada clase latente aporta su peso si su nivel, F(x) + c_k, queda
+    por encima del umbral τ. Devuelve {"indice" (n,), "umbral", "pesos" (K,), "desplazamientos" (K,), "niveles" (n, K),
+    "aporte" (n, K), "probabilidad" (n,), "sigma" (la dispersión robusta de validación), "piso" y "techo" (los límites
+    que impone el tamaño de la muestra de calibración)}; None si el clasificador está en modo directo."""
+    pre, est, reg = _original("clasificacion")
+    if reg is None:
+        return None
+    from scipy.special import ndtr
+    z = pre.transform(X[columnas()])
+    f = np.asarray(reg.indice(z), dtype=float)
+    niveles = f[:, None] + reg.centros_[None, :]
+    aporte = ndtr((niveles - est.umbral_) / reg.sigma_robusta_) * reg.pi_[None, :]
+    m = len(reg.residuos_calibracion_)
+    return {"indice": f, "umbral": float(est.umbral_), "pesos": np.asarray(reg.pi_, dtype=float),
+            "desplazamientos": np.asarray(reg.centros_, dtype=float), "niveles": niveles, "aporte": aporte,
+            "probabilidad": np.asarray(est.predict_proba(z)[:, 1], dtype=float), "sigma": float(reg.sigma_robusta_),
+            "piso": 0.5 / (m + 1.0), "techo": 1.0 - 0.5 / (m + 1.0)}
+
+
+@lru_cache(maxsize=None)
+def _tramos_residuales(nivel: str) -> tuple:
+    """El conjunto de predicción del modelo original en la escala del residuo (no depende del cliente), como tuplas."""
+    reg = _original("regresion")[2]
+    return tuple((float(a), float(b)) for a, b in reg.conjunto_residual(float(nivel)))
+
+
+def distribucion(X: pd.DataFrame, nivel: str = "0.90"):
+    """Regresión con el modelo original: lo que predice para la primera fila de X además de la media.
+
+    Devuelve {"indice" (F(x)), "media" (el pronóstico, F(x) + Σ π_k c_k), "mediana", "central" ((desde, hasta): el
+    intervalo central conforme del modelo), "tramos" (lista de (desde, hasta): el conjunto de predicción, F(x) más los
+    tramos alrededor de cada desplazamiento), "largo" (la suma de los largos de los tramos), "niveles" (F(x) + c_k),
+    "pesos" (π_k), "sigma" (dispersión dentro de clase en validación), "nivel", "cobertura_conjunto",
+    "cobertura_central" y "largo_central_medio" (las tres medidas en la prueba, de datos/conformal.json)}."""
+    pre, _est, reg = _original("regresion")
+    z = pre.transform(X[columnas()].iloc[[0]])
+    f = float(reg.indice(z)[0])
+    bajo, alto = reg.intervalo(z, float(nivel))
+    tramos = [(f + a, f + b) for a, b in _tramos_residuales(nivel)]
+    medido = conformal()["modelos"].get(ORIGINAL, {}).get(nivel, {})
+    return {"indice": f, "media": float(reg.predict(z)[0]), "mediana": float(reg.cuantil(z, 0.5)[0]),
+            "central": (float(bajo[0]), float(alto[0])), "tramos": tramos, "largo": float(sum(b - a for a, b in tramos)),
+            "niveles": [f + float(c) for c in reg.centros_], "pesos": [float(p) for p in reg.pi_],
+            "sigma": float(reg.sigma_validacion_), "nivel": float(nivel),
+            "cobertura_conjunto": (medido.get("conjunto") or {}).get("cobertura_prueba"),
+            "cobertura_central": (medido.get("central") or {}).get("cobertura_prueba"),
+            "largo_central_medio": (medido.get("central") or {}).get("largo_medio")}
+
+
 @lru_cache(maxsize=1)
 def fondo() -> pd.DataFrame:
     """Los 100 clientes de entrenamiento que sirven de fondo a las explicaciones."""
@@ -185,7 +267,8 @@ def fondo() -> pd.DataFrame:
 
 
 def explicar(tarea: str, modelo: str, X: pd.DataFrame) -> dict:
-    """Valores SHAP por variable para las filas de X (ver explicacion.py). La EBM, con su descomposición exacta."""
+    """Valores SHAP por variable para las filas de X (ver explicacion.py). La EBM, con su descomposición exacta; el modelo
+    original, con la suya (en clasificación descompone el índice F(x): excedencia(X) lo lleva a probabilidad)."""
     X = X[columnas()]
     if modelo == "ebm":
         m = motor.ebm(tarea)

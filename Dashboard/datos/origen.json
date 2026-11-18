@@ -12,21 +12,22 @@
   },
   {
    "archivo": "calibracion_modelos.json",
-   "bytes": 38261,
-   "sha256": "c00143b959fa5d254c60d3793aa1e8a91b4144e7edf0585dab3c21c81ce1460f",
+   "bytes": 46433,
+   "sha256": "79100c7dc28f9daeff9b2b9d6489f46549381cbc20b983132c9aedfd8da9c0b8",
    "de": [
-    "Entregable 3: resultados/complementos/fuera_de_pliegue.parquet y predicciones_prueba.parquet"
+    "Entregable 3: resultados/complementos/fuera_de_pliegue.parquet y predicciones_prueba.parquet",
+    "Corrección: ModeloOriginal/resultados/fuera_de_pliegue/*.npy y las predicciones de prueba"
    ],
-   "como": "recalibración isotónica y conjuntos conformes de los 8 clasificadores, con su cobertura en prueba"
+   "como": "recalibración isotónica y conjuntos conformes de los 8 clasificadores, con su cobertura en prueba · Corrección: recalibración isotónica y conjunto conforme de bdl, lightgbm, con el mismo procedimiento"
   },
   {
    "archivo": "cd.json",
-   "bytes": 3483,
-   "sha256": "91ff7cdbc66ab5d77ae178b46a4f4b6fbc1c01275f675e6aa2c1f5ef6dca9a80",
+   "bytes": 9883,
+   "sha256": "1f95983063d9c769c10df99497b02f9d190ffa2e41191842a71cc583568980e5",
    "de": [
-    "Resultados Entregable 3: datos/pliegues_auc.csv y pliegues_rmse.csv"
+    "datos/original/pliegues_<tarea>.csv (ModeloOriginal/resultados)"
    ],
-   "como": "rangos medios por pliegue externo, Friedman, Iman-Davenport y diferencia crítica de Nemenyi (alfa 0,05)"
+   "como": "rangos medios por pliegue externo, Friedman, Iman-Davenport y diferencia crítica de Nemenyi (alfa 0,05) con los diez modelos en clasificacion y regresion"
   },
   {
    "archivo": "clientes_prueba.parquet",
@@ -40,12 +41,13 @@
   },
   {
    "archivo": "conformal.json",
-   "bytes": 3705,
-   "sha256": "e5ef3c0ae396cc58f21a95bab81dc5f1cba892557a9f20c141a14299dfa4ab25",
+   "bytes": 5293,
+   "sha256": "11c4eee8eb2ced2ea016a273aa2edc01ca040a8e9f25422bb322f466b0aec5ec",
    "de": [
-    "Entregable 3: resultados/complementos/fuera_de_pliegue.parquet y predicciones_prueba.parquet"
+    "Entregable 3: resultados/complementos/fuera_de_pliegue.parquet y predicciones_prueba.parquet",
+    "Corrección: ModeloOriginal/resultados/fuera_de_pliegue/*.npy y las predicciones de prueba"
    ],
-   "como": "intervalos conformes al 80, 90 y 95 % de los 8 modelos de regresión, con su cobertura en prueba"
+   "como": "intervalos conformes al 80, 90 y 95 % de los 8 modelos de regresión, con su cobertura en prueba · Corrección: intervalos conformes de bdl, lightgbm; bdl lleva además el intervalo central y el conjunto de predicción del propio modelo (RegresorBDL.intervalo y conjunto_residual), con su cobertura y su largo en prueba"
   },
   {
    "archivo": "eda/asociacion.csv",
@@ -337,22 +339,283 @@
    "como": "coeficientes de la regresión logística y su preprocesado"
   },
   {
-   "archivo": "pronosticos_prueba.parquet",
-   "bytes": 737496,
-   "sha256": "0d89ae472f1828f2a1797a90b65a4adab4969b8a139b1fd77d31b62031215d3d",
+   "archivo": "original/ablacion.csv",
+   "bytes": 1388,
+   "sha256": "4ca6262ce028576d93d6809cd29ac8cab8dccee198e6507bd81fbeb8fed38946",
    "de": [
-    "sección de resultados: datos/pronosticos_prueba.csv"
+    "ModeloOriginal/resultados/ablacion.csv"
    ],
-   "como": "las mismas columnas con el índice del cliente (fila)"
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "original/adicionales.csv",
+   "bytes": 3530,
+   "sha256": "44909df77038ea5e6847f8f6d46efaa974e565f69a218c1beb67f03d21ca7277",
+   "de": [
+    "ModeloOriginal/resultados/adicionales/<conjunto>/experimentos.parquet, ficha.json y metricas_prueba.csv"
+   ],
+   "como": "el modelo original frente al mejor benchmark de cada conjunto adicional y tarea: media ± desviación de los cinco pliegues externos, puesto, ventaja, prueba t corregida de Nadeau-Bengio y métrica de prueba (el cálculo de experiments/08_tablas_libro.py); «completo» dice si ya están los diez modelos"
+  },
+  {
+   "archivo": "original/auditoria_fuga.json",
+   "bytes": 2943,
+   "sha256": "675f0465e3ea7d7eb5ab2e3a0be28d65c440f60fe3b9d88e2a32169414c49162",
+   "de": [
+    "ModeloOriginal/resultados/auditoria_fuga.json"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "original/condicion4.json",
+   "bytes": 5321,
+   "sha256": "84ac9aef6736c306ee09b3abda8b33bd2575371142d695db80c1ba12f8ed8614",
+   "de": [
+    "ModeloOriginal/resultados/condicion4.json"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "original/costo.csv",
+   "bytes": 669,
+   "sha256": "6b09044527b7c9e73a1bdb66250e8ea43d1c91cd0606636d17646ca113fb7beb",
+   "de": [
+    "ModeloOriginal/resultados/experimentos.parquet",
+    "semillas.csv",
+    "metricas_prueba.csv",
+    "artifacts/"
+   ],
+   "como": "tiempo de ajuste, de inferencia sobre la prueba y de la corrida anidada, tamaño serializado y parámetros de bdl y lightgbm; la columna «de» dice de dónde sale cada cifra (el ajuste solo se mide en 03b_semillas.py)"
+  },
+  {
+   "archivo": "original/empates_campana.json",
+   "bytes": 6600,
+   "sha256": "111ad271621d1e19a84323679e0ca5e868820d626eb3001ac5ceb5face612a23",
+   "de": [
+    "ModeloOriginal/resultados/empates_campana.json"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "original/errores_subgrupos.csv",
+   "bytes": 1588,
+   "sha256": "abc6a1485fba998c7b7d6c8a142da0afe697f427c184ecda7bdff86020238b7c",
+   "de": [
+    "ModeloOriginal/resultados/errores_subgrupos.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "original/estado.json",
+   "bytes": 7017,
+   "sha256": "df1e7bf348f1f018089723cd838bd66dded124c9eb88e55f61544d8cb539f709",
+   "de": [
+    "preparar_original.py"
+   ],
+   "como": "qué insumo de la corrección había y cuál faltaba en la última corrida"
+  },
+  {
+   "archivo": "original/experimentos.csv",
+   "bytes": 75729,
+   "sha256": "95eea100182ed0e861fc82701f9a05aec783ada6bd1b55cc25ef0bb5ccda3e70",
+   "de": [
+    "ModeloOriginal/resultados/experimentos.parquet"
+   ],
+   "como": "las corridas «ok» de la tabla maestra de la corrección, sin las trazas de la búsqueda ni las rutas locales"
+  },
+  {
+   "archivo": "original/incertidumbre_prueba.csv",
+   "bytes": 3236,
+   "sha256": "9634378abe8705dc379a9a5d7e94a6089502bf46f58b7bdb330e50b23b706ad5",
+   "de": [
+    "ModeloOriginal/resultados/incertidumbre_prueba.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "original/lideres_clasificacion.csv",
+   "bytes": 1156,
+   "sha256": "d33a4d48331c1e7b5e988dc4fb5ac73f2f6f607cf0a12ea99f15fcb141a70d9c",
+   "de": [
+    "ModeloOriginal/resultados/experimentos.parquet",
+    "datos/puntajes_prueba.parquet"
+   ],
+   "como": "las filas de bdl, lightgbm con las columnas y las definiciones de resultados/clasificacion_prueba.csv (Resultados Entregable 3/generar.py): métrica externa de la validación anidada, métrica de prueba con intervalo BCa (2000 réplicas) y, en clasificación, el punto de operación del 25 %"
+  },
+  {
+   "archivo": "original/lideres_regresion.csv",
+   "bytes": 747,
+   "sha256": "b483bffab08fc4230c56680e40641d2f95e7fdc897fe5b082b2ca8c8f951acad",
+   "de": [
+    "ModeloOriginal/resultados/experimentos.parquet",
+    "datos/pronosticos_prueba.parquet"
+   ],
+   "como": "las filas de bdl, lightgbm con las columnas y las definiciones de resultados/regresion_prueba.csv (Resultados Entregable 3/generar.py): métrica externa de la validación anidada, métrica de prueba con intervalo BCa (2000 réplicas) y, en clasificación, el punto de operación del 25 %"
+  },
+  {
+   "archivo": "original/literatura.json",
+   "bytes": 23047,
+   "sha256": "1f250b8a81556160d14f6f48f9a280f5fdf662077311a2607ab69ecc8fbae3f7",
+   "de": [
+    "ModeloOriginal/resultados/literatura/busqueda.json",
+    "ModeloOriginal/resultados/literatura/busqueda_2026-11-17.json",
+    "ModeloOriginal/experiments/literatura_relevancia.csv"
+   ],
+   "como": "la matriz de novedad (base × cadena: resultados, revisados, relevantes y observación), la fecha y las cadenas de cada consulta, lo que cambió entre fechas, la búsqueda por citación en los dos sentidos (con la consulta en que entró cada trabajo) y la consulta de repositorios, con el mismo cálculo que ModeloOriginal/src/informe.py (Tablas 4.1 y 4.2 del libro)"
+  },
+  {
+   "archivo": "original/metricas_prueba.csv",
+   "bytes": 4362,
+   "sha256": "37609cae4b8efe0a392009880cd64fda2ac126608bb5812e79ea99e9d0c60395",
+   "de": [
+    "ModeloOriginal/resultados/metricas_prueba.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "original/modelo_clasificacion.json",
+   "bytes": 54560,
+   "sha256": "ee2d58f5bfa94f1b3398ee9e1f8989893b16d7446ae2c0ec6722384cf1dd3ac5",
+   "de": [
+    "artifacts/clasificacion/bdl/modelo.joblib"
+   ],
+   "como": "el modelo final por dentro: hiperparámetros, reparto de filas, K, pesos, desplazamientos, dispersiones, árboles, historial de convergencia (historial_), tabla del BIC, conjunto de predicción en la escala del residuo, histograma de los residuos de calibración, importancia por variable y curvas (formas_) de las variables numéricas principales"
+  },
+  {
+   "archivo": "original/modelo_regresion.json",
+   "bytes": 72118,
+   "sha256": "7692235afe2bfe47ae48c14cdff08ad0919ff4e25f35dea2260909f1e7575689",
+   "de": [
+    "artifacts/regresion/bdl/modelo.joblib"
+   ],
+   "como": "el modelo final por dentro: hiperparámetros, reparto de filas, K, pesos, desplazamientos, dispersiones, árboles, historial de convergencia (historial_), tabla del BIC, conjunto de predicción en la escala del residuo, histograma de los residuos de calibración, importancia por variable y curvas (formas_) de las variables numéricas principales"
+  },
+  {
+   "archivo": "original/optimo.json",
+   "bytes": 3018,
+   "sha256": "54a02852c63717033b23c9fac12936f0a2860b2df5b6e2937b5e9dcad881bb4b",
+   "de": [
+    "ModeloOriginal/resultados/optimo.json"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "original/pliegues_clasificacion.csv",
+   "bytes": 3004,
+   "sha256": "e2d9228c10be8faf62ca5ead872ae5295d936b23b5e25843ad284be068800536",
+   "de": [
+    "ModeloOriginal/resultados/pliegues_clasificacion.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "original/pliegues_regresion.csv",
+   "bytes": 3190,
+   "sha256": "9f4655136d9f8d03a5bb256076b2ba1c056f2fe275560fd8014b46e49da0f5e9",
+   "de": [
+    "ModeloOriginal/resultados/pliegues_regresion.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "original/pruebas_hipotesis.csv",
+   "bytes": 14379,
+   "sha256": "6fbf2495ac6270bed91bf66f8a5b03541318470bebc7371b10a297a6df4ef36b",
+   "de": [
+    "ModeloOriginal/resultados/pruebas_hipotesis.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "original/robustez/ciudades.csv",
+   "bytes": 7165,
+   "sha256": "484b8af7947dda2c47dd466b093bec57de3b50326633b73209543aa0b1511ff1",
+   "de": [
+    "ModeloOriginal/resultados/robustez/ciudades.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "original/robustez/columnas.csv",
+   "bytes": 303,
+   "sha256": "1b85f90d73e5187f2a4cdd15eb73a1c216d6264bbdc27f96019afda49484498d",
+   "de": [
+    "ModeloOriginal/resultados/robustez/columnas.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "original/robustez/muestra.csv",
+   "bytes": 2210,
+   "sha256": "4eb9f6a9b8bec462ae2fbdd492288daee9741dc96c2ecea6019b30914406802b",
+   "de": [
+    "ModeloOriginal/resultados/robustez/muestra.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "original/robustez/ruido.csv",
+   "bytes": 6343,
+   "sha256": "669081913ec238029c2690fd8a6ff91df3580c3b991031e9880b1c45fd2a4fb2",
+   "de": [
+    "ModeloOriginal/resultados/robustez/ruido.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "original/robustez/sensibilidad.csv",
+   "bytes": 5164,
+   "sha256": "c9743219266e091a9d715fb1d277593531fbd92afef4dc7981b4c69dc3e09c2c",
+   "de": [
+    "ModeloOriginal/resultados/robustez/sensibilidad.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "original/semillas.csv",
+   "bytes": 28877,
+   "sha256": "143e90db82fb55b63f2502f32c98cfca54745342743dc628def7e3e4fd002028",
+   "de": [
+    "ModeloOriginal/resultados/semillas.csv"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "original/techo.json",
+   "bytes": 1826,
+   "sha256": "a3a657a3541406133e5d7e31697bfd0c589f0580d19a14a4c29d353ff3240b69",
+   "de": [
+    "ModeloOriginal/resultados/techo.json"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "original/veredicto.json",
+   "bytes": 6041,
+   "sha256": "4298de76493778f5c0760a9f37138d29d1c0b6bbeeb33ccc0118dd6c96acaa4f",
+   "de": [
+    "ModeloOriginal/resultados/veredicto.json"
+   ],
+   "como": "copia exacta"
+  },
+  {
+   "archivo": "pronosticos_prueba.parquet",
+   "bytes": 923630,
+   "sha256": "44449472fe24cd43de3bfcc01d8b89661ca17ea18ecd0cac4f54e41d8a686b7e",
+   "de": [
+    "sección de resultados: datos/pronosticos_prueba.csv",
+    "Corrección: ModeloOriginal/resultados/modelos y predicciones_prueba.parquet"
+   ],
+   "como": "las mismas columnas con el índice del cliente (fila) · Corrección: columnas bdl, lightgbm: el artefacto del modelo original evaluado en la prueba y la predicción guardada de LightGBM"
   },
   {
    "archivo": "puntajes_prueba.parquet",
-   "bytes": 686408,
-   "sha256": "46fca37e5c4c27182731fc01ef655d5e89d8a7cc6224c88968fd59d3d48444fd",
+   "bytes": 788690,
+   "sha256": "abfd90d6f657f80ca943da6080e3f002953fb68ef216ff2d4aace847395ca3af",
    "de": [
-    "sección de resultados: datos/puntajes_prueba.csv"
+    "sección de resultados: datos/puntajes_prueba.csv",
+    "Corrección: ModeloOriginal/resultados/modelos y predicciones_prueba.parquet"
    ],
-   "como": "las mismas columnas con el índice del cliente (fila)"
+   "como": "las mismas columnas con el índice del cliente (fila) · Corrección: columnas bdl, lightgbm: el artefacto del modelo original evaluado en la prueba y la predicción guardada de LightGBM"
   },
   {
    "archivo": "resultados/ablacion.csv",
@@ -634,6 +897,15 @@
    "como": "valores SHAP (arbol) de 500 clientes de prueba fijos (semilla 42)"
   },
   {
+   "archivo": "shap/clasificacion__bdl.parquet",
+   "bytes": 43223,
+   "sha256": "e3f413cb770723c19b101882800e79e0126a5f39be08e1ebaecd92ab05514241",
+   "de": [
+    "artifacts/clasificacion/bdl/modelo.joblib"
+   ],
+   "como": "aportes exactos del modelo original (RegresorBDL.contribuciones) de 500 clientes de prueba fijos, los mismos de los demás modelos"
+  },
+  {
    "archivo": "shap/clasificacion__ebm.parquet",
    "bytes": 85169,
    "sha256": "a8275eee2834efb76862bee6a3c40d555c7dc51c4a5cfa6b45a79da65ae7f535",
@@ -698,12 +970,13 @@
   },
   {
    "archivo": "shap/indice.json",
-   "bytes": 39466,
-   "sha256": "75eca338d2b4f41c3379b641079cae11345bd031c0810844e4494b08fb473893",
+   "bytes": 43732,
+   "sha256": "103c551cd394eb63e20cbe4cb349dd700c118c56ea23f2c3dd5f3121093ff954",
    "de": [
-    "preparar_artefactos.py"
+    "preparar_artefactos.py",
+    "Corrección: preparar_original.py"
    ],
-   "como": "método, escala, importancia y verificación de cada resumen SHAP"
+   "como": "método, escala, importancia y verificación de cada resumen SHAP · Corrección: las entradas de clasificacion__bdl, regresion__bdl"
   },
   {
    "archivo": "shap/regresion__arbol.parquet",
@@ -713,6 +986,15 @@
     "artifacts/regresion/arbol/modelo.joblib y datos/fondo.parquet"
    ],
    "como": "valores SHAP (arbol) de 500 clientes de prueba fijos (semilla 42)"
+  },
+  {
+   "archivo": "shap/regresion__bdl.parquet",
+   "bytes": 42955,
+   "sha256": "516cf245b4ee36095d3e98b96d0e7394084058e7c9d2c9dffc7d65f82c33730f",
+   "de": [
+    "artifacts/regresion/bdl/modelo.joblib"
+   ],
+   "como": "aportes exactos del modelo original (RegresorBDL.contribuciones) de 500 clientes de prueba fijos, los mismos de los demás modelos"
   },
   {
    "archivo": "shap/regresion__ebm.parquet",
@@ -789,5 +1071,6 @@
    "como": "una fila por predictor"
   }
  ],
- "artefactos": "2026-11-15T10:20:06"
+ "artefactos": "2026-11-15T10:20:06",
+ "original": "2026-11-18T14:15:49"
 }

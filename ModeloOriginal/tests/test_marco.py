@@ -130,3 +130,48 @@ def test_el_modelo_original_no_importa_ningun_modelo():
         elif isinstance(nodo, ast.ImportFrom):
             importados.add(nodo.module)
     assert importados == {'__future__', 'numpy', 'scipy', 'scipy.special', 'sklearn.base', 'sklearn.utils.validation'}
+
+
+# ------------------------------------------------------------------ tabla maestra con dos procesos
+def test_registro_no_pierde_filas_de_otro_proceso(tmp_path):
+    """Dos colas escriben en la misma tabla: cada escritura parte de lo que hay en disco, no de una copia vieja."""
+    from src.registro import Registro
+
+    ruta = tmp_path / 'experimentos.parquet'
+    a, b = Registro(ruta), Registro(ruta)                # dos «procesos» que cargaron la tabla vacía
+    fila = {'balanceo': 'ninguno', 'optimizador': 'bayesiana', 'semilla': 42, 'media_ext': 0.5, 'puntajes_ext': [0.4, 0.6]}
+    a.anadir({'tarea': 'regresion', 'modelo': 'bdl', **fila})
+    b.anadir({'tarea': 'regresion', 'modelo': 'xgboost', **fila})
+    a.anadir({'tarea': 'clasificacion', 'modelo': 'bdl', **fila})
+    assert len(Registro(ruta).cargar()) == 3
+    assert set(a.cargar()['modelo']) == {'bdl', 'xgboost'} and len(b.cargar()) == 3
+    assert not ruta.with_name(ruta.name + '.candado').exists()
+    with pytest.raises(ValueError):
+        b.anadir({'tarea': 'regresion', 'modelo': 'bdl', **fila})
+    b.anadir({'tarea': 'regresion', 'modelo': 'bdl', **{**fila, 'media_ext': 0.7}}, sobrescribir=True)
+    t = a.cargar()
+    assert len(t) == 3 and float(t[(t.tarea == 'regresion') & (t.modelo == 'bdl')]['media_ext'].iloc[0]) == 0.7
+
+
+# ------------------------------------------------------------------ rutas de la tabla maestra
+def test_rutas_de_la_tabla_relativas_al_repositorio(tmp_path):
+    """Las rutas se publican relativas a la raíz del repositorio y se resuelven igual desde las dos formas."""
+    from pathlib import Path
+
+    from src.registro import RAIZ_REPO, Registro, relativa, resolver
+
+    corta = 'ModeloOriginal/resultados/modelos/m.joblib'
+    dentro = RAIZ_REPO / 'ModeloOriginal' / 'resultados' / 'modelos' / 'm.joblib'
+    assert relativa(str(dentro)) == corta and relativa(corta) == corta                    # y no cambia lo que ya es relativo
+    assert relativa('') == '' and relativa(None) == '' and relativa(float('nan')) == ''
+    fuera = Path(RAIZ_REPO.anchor) / 'otra' / 'carpeta' / 'resultados' / 'modelos' / 'm.joblib'
+    assert relativa(str(fuera)) == 'Entrega3/resultados/modelos/m.joblib'                # los modelos del Entregable 3
+    movido = Path(RAIZ_REPO.anchor) / 'otro' / 'clon' / 'ModeloOriginal' / 'resultados' / 'modelos' / 'm.joblib'
+    assert relativa(str(movido)) == corta                                                # el repositorio en otra carpeta
+    assert resolver(str(dentro)) == dentro and resolver(corta) == dentro
+    ruta = tmp_path / 'experimentos.parquet'
+    reg = Registro(ruta)
+    reg.anadir({'tarea': 'regresion', 'modelo': 'bdl', 'balanceo': 'ninguno', 'optimizador': 'bayesiana', 'semilla': 42,
+                'media_ext': 0.5, 'puntajes_ext': [0.4, 0.6], 'ruta_modelo': str(dentro), 'ruta_predicciones': ''})
+    assert reg.rutas_relativas() == 1 and reg.rutas_relativas() == 0
+    assert Registro(ruta).cargar()['ruta_modelo'].iloc[0] == corta

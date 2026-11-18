@@ -1,0 +1,248 @@
+{
+ "generado": "2026-11-18T14:15:49",
+ "de": "ModeloOriginal/resultados",
+ "codigo": {
+  "archivo": "src/original_model.py",
+  "sha256": "6e03a92afa235ebccebb83ee4f76b5bf0f0ccb243cb86f6b5d208eb773d7a733"
+ },
+ "en_vivo": [
+  "clasificacion",
+  "regresion"
+ ],
+ "repeticiones": {
+  "regresion": [
+   42,
+   43,
+   44
+  ],
+  "clasificacion": [
+   42,
+   43,
+   44
+  ]
+ },
+ "bloques": {
+  "experimentos": {
+   "listo": true
+  },
+  "predicciones_prueba": {
+   "listo": true
+  },
+  "artefacto_clasificacion": {
+   "listo": true,
+   "nota": "92 KB, ida y vuelta idéntica en 9,745 filas"
+  },
+  "artefacto_regresion": {
+   "listo": true,
+   "nota": "144 KB, ida y vuelta idéntica en 9,745 filas"
+  },
+  "salidas_lightgbm_clasificacion": {
+   "listo": true,
+   "nota": "de predicciones_prueba.parquet",
+   "de": "predicciones_prueba.parquet"
+  },
+  "salidas_lightgbm_regresion": {
+   "listo": true,
+   "nota": "de predicciones_prueba.parquet",
+   "de": "predicciones_prueba.parquet"
+  },
+  "calibracion_bdl": {
+   "listo": true,
+   "nota": "ECE recalibrada 0.0036; cobertura al 90 % 0.969"
+  },
+  "calibracion_lightgbm": {
+   "listo": true,
+   "nota": "ECE recalibrada 0.0234; cobertura al 90 % 0.965"
+  },
+  "conformal_bdl": {
+   "listo": true,
+   "nota": "cobertura al 90 % 0.847; conjunto del modelo 0.899 con largo 0.0062 en 4 tramos"
+  },
+  "conformal_lightgbm": {
+   "listo": true,
+   "nota": "cobertura al 90 % 0.901"
+  },
+  "lider_clasificacion_bdl": {
+   "listo": true
+  },
+  "lider_clasificacion_lightgbm": {
+   "listo": true
+  },
+  "lider_regresion_bdl": {
+   "listo": true
+  },
+  "lider_regresion_lightgbm": {
+   "listo": true
+  },
+  "shap_clasificacion": {
+   "listo": true,
+   "nota": "500 filas, eficiencia 1.7e-16; primeras: age, app_logins_frequency, satisfaction_score"
+  },
+  "shap_regresion": {
+   "listo": true,
+   "nota": "500 filas, eficiencia 2.8e-16; primeras: age, app_logins_frequency, satisfaction_score"
+  },
+  "veredicto": {
+   "listo": true,
+   "modificado": "2026-11-18T14:10:38",
+   "sha256": "4298de76493778f5c0760a9f37138d29d1c0b6bbeeb33ccc0118dd6c96acaa4f"
+  },
+  "pruebas_hipotesis": {
+   "listo": true,
+   "modificado": "2026-11-18T14:10:38",
+   "sha256": "6fbf2495ac6270bed91bf66f8a5b03541318470bebc7371b10a297a6df4ef36b"
+  },
+  "pliegues_clasificacion": {
+   "listo": true,
+   "modificado": "2026-11-18T14:10:37",
+   "sha256": "e2d9228c10be8faf62ca5ead872ae5295d936b23b5e25843ad284be068800536"
+  },
+  "pliegues_regresion": {
+   "listo": true,
+   "modificado": "2026-11-18T14:10:25",
+   "sha256": "9f4655136d9f8d03a5bb256076b2ba1c056f2fe275560fd8014b46e49da0f5e9"
+  },
+  "techo": {
+   "listo": true,
+   "modificado": "2026-11-17T21:46:29",
+   "sha256": "a3a657a3541406133e5d7e31697bfd0c589f0580d19a14a4c29d353ff3240b69"
+  },
+  "auditoria_fuga": {
+   "listo": true,
+   "modificado": "2026-11-17T20:03:06",
+   "sha256": "675f0465e3ea7d7eb5ab2e3a0be28d65c440f60fe3b9d88e2a32169414c49162"
+  },
+  "metricas_prueba": {
+   "listo": true,
+   "modificado": "2026-11-17T21:47:31",
+   "sha256": "37609cae4b8efe0a392009880cd64fda2ac126608bb5812e79ea99e9d0c60395"
+  },
+  "incertidumbre_prueba": {
+   "listo": true,
+   "modificado": "2026-11-17T21:47:31",
+   "sha256": "9634378abe8705dc379a9a5d7e94a6089502bf46f58b7bdb330e50b23b706ad5"
+  },
+  "ablacion": {
+   "listo": true,
+   "modificado": "2026-11-18T00:46:25",
+   "sha256": "4ca6262ce028576d93d6809cd29ac8cab8dccee198e6507bd81fbeb8fed38946"
+  },
+  "semillas": {
+   "listo": true,
+   "modificado": "2026-11-17T22:07:16",
+   "sha256": "143e90db82fb55b63f2502f32c98cfca54745342743dc628def7e3e4fd002028"
+  },
+  "condicion4": {
+   "listo": true,
+   "modificado": "2026-11-18T14:14:21",
+   "sha256": "84ac9aef6736c306ee09b3abda8b33bd2575371142d695db80c1ba12f8ed8614"
+  },
+  "errores_subgrupos": {
+   "listo": true,
+   "modificado": "2026-11-18T14:14:24",
+   "sha256": "abc6a1485fba998c7b7d6c8a142da0afe697f427c184ecda7bdff86020238b7c"
+  },
+  "optimo": {
+   "listo": true,
+   "modificado": "2026-11-18T14:11:54",
+   "sha256": "54a02852c63717033b23c9fac12936f0a2860b2df5b6e2937b5e9dcad881bb4b"
+  },
+  "empates_campana": {
+   "listo": true,
+   "modificado": "2026-11-18T14:13:58",
+   "sha256": "111ad271621d1e19a84323679e0ca5e868820d626eb3001ac5ceb5face612a23"
+  },
+  "robustez_sensibilidad": {
+   "listo": true,
+   "modificado": "2026-11-18T02:04:05",
+   "sha256": "c9743219266e091a9d715fb1d277593531fbd92afef4dc7981b4c69dc3e09c2c"
+  },
+  "robustez_ruido": {
+   "listo": true,
+   "modificado": "2026-11-18T01:10:23",
+   "sha256": "669081913ec238029c2690fd8a6ff91df3580c3b991031e9880b1c45fd2a4fb2"
+  },
+  "robustez_muestra": {
+   "listo": true,
+   "modificado": "2026-11-17T22:10:34",
+   "sha256": "4eb9f6a9b8bec462ae2fbdd492288daee9741dc96c2ecea6019b30914406802b"
+  },
+  "robustez_columnas": {
+   "listo": true,
+   "modificado": "2026-11-17T22:10:48",
+   "sha256": "1b85f90d73e5187f2a4cdd15eb73a1c216d6264bbdc27f96019afda49484498d"
+  },
+  "robustez_ciudades": {
+   "listo": true,
+   "modificado": "2026-11-18T00:53:22",
+   "sha256": "484b8af7947dda2c47dd466b093bec57de3b50326633b73209543aa0b1511ff1"
+  },
+  "cd_clasificacion": {
+   "listo": true,
+   "nota": "10 modelos × 15 pliegues, DC = 3.498; coincide con veredicto.json",
+   "de": "datos/original/pliegues_clasificacion.csv"
+  },
+  "cd_regresion": {
+   "listo": true,
+   "nota": "10 modelos × 15 pliegues, DC = 3.498; coincide con veredicto.json",
+   "de": "datos/original/pliegues_regresion.csv"
+  },
+  "experimentos_csv": {
+   "listo": true,
+   "nota": "64 corridas; semillas del original: {'clasificacion': [42, 43, 44], 'regresion': [42, 43, 44]}",
+   "semillas_original": {
+    "clasificacion": [
+     42,
+     43,
+     44
+    ],
+    "regresion": [
+     42,
+     43,
+     44
+    ]
+   }
+  },
+  "costo": {
+   "listo": true,
+   "nota": "4 filas"
+  },
+  "modelo_clasificacion": {
+   "listo": true,
+   "nota": "K = 5, 2100 árboles (100 de calentamiento), 400 vueltas de EM; verosimilitud no decrece: True"
+  },
+  "modelo_regresion": {
+   "listo": true,
+   "nota": "K = 5, 547 árboles (22 de calentamiento), 125 vueltas de EM; verosimilitud no decrece: True"
+  },
+  "adicionales": {
+   "listo": true,
+   "nota": "4 conjuntos con resultados; con los diez modelos: ['abulon', 'california', 'energia', 'seguros']",
+   "conjuntos": [
+    "abulon",
+    "california",
+    "energia",
+    "seguros"
+   ],
+   "completos": [
+    "abulon",
+    "california",
+    "energia",
+    "seguros"
+   ]
+  },
+  "literatura": {
+   "listo": true,
+   "nota": "39 celdas de la matriz (13 cadenas), consulta del 2026-11-18; consultas anteriores: 2026-11-17"
+  },
+  "metadata_clasificacion": {
+   "listo": true,
+   "nota": "AUC externo 0.83202 ± 0.00260"
+  },
+  "metadata_regresion": {
+   "listo": true,
+   "nota": "RMSE externo 0.05887 ± 0.00041"
+  }
+ },
+ "pendientes": {}
+}

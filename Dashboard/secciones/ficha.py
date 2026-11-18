@@ -1,8 +1,9 @@
-"""Ficha del modelo · ¿Para qué sirve el modelo y para qué no?
+"""Ficha del modelo · ¿Para qué sirve el modelo original y para qué no?
 
-La ficha del modelo (model card, Mitchell et al., 2019) de la EBM: detalles (versión, fecha, tipo, autores, licencia,
-artefactos y su huella), uso previsto, usuarios previstos, usos no recomendados, factores, métricas, datos de evaluación y
-de entrenamiento, análisis por segmento, consideraciones éticas, limitaciones y riesgos y recomendaciones.
+La ficha del modelo (model card, Mitchell et al., 2019) del modelo original, BDL: detalles (versión, fecha, tipo, autores,
+licencia, artefactos y su huella), uso previsto, usuarios previstos, usos no recomendados, factores, métricas, datos de
+evaluación y de entrenamiento, análisis por segmento, consideraciones éticas, limitaciones y riesgos y recomendaciones.
+Mientras la corrección no haya dejado al original en la app, generar_fichas escribe la de la EBM y esta vista la muestra.
 
 El contenido sale de generar_fichas.contenido_ficha(), la misma función que escribe MODEL_CARD.md (la que se descarga en
 /ficha.md): la página y el archivo dicen lo mismo, con las cifras leídas de datos/, artifacts/ y CITATION.cff. Esta vista
@@ -58,14 +59,24 @@ def _grupo(g):
 
 
 def _respuesta():
-    clf = D.prueba("clasificacion").set_index("modelo")
-    e = clf.loc["ebm"]
+    clf = D.lideres("clasificacion").set_index("modelo")
     meta = M.meta()
-    return (f"Para ordenar a los clientes de COFINFAD por su riesgo y priorizar una campaña de capacidad limitada: contactando al "
-            f"{F.pct(M.CAPACIDAD_INFORME, 0)} de mayor puntaje alcanza al {F.pct(e['recall_op'])} de los clientes de riesgo alto (AUC "
-            f"{ui.num(e['auc_prueba'], 4)}, como {D.en_frase(RIVAL)} con {ui.num(clf.loc[RIVAL, 'auc_prueba'], 4)}). No para decidir "
-            f"sobre personas: los datos son sintéticos y «riesgo alto» es el cuarto superior (percentil "
-            f"{F.entero(meta['etiqueta']['q'] * 100)}) de un puntaje, no fuga observada.")
+    limite = (f"No para decidir sobre personas: los datos son sintéticos y «riesgo alto» es el cuarto superior (percentil "
+              f"{F.entero(meta['etiqueta']['q'] * 100)}) de un puntaje, no fuga observada.")
+    if not G.hay_original():
+        e = clf.loc["ebm"]
+        return (f"Para ordenar a los clientes de COFINFAD por su riesgo y priorizar una campaña de capacidad limitada: contactando al "
+                f"{F.pct(M.CAPACIDAD_INFORME, 0)} de mayor puntaje, la EBM alcanza al {F.pct(e['recall_op'])} de los clientes de riesgo "
+                f"alto (AUC {ui.num(e['auc_prueba'], 4)}, como {D.en_frase(RIVAL)} con {ui.num(clf.loc[RIVAL, 'auc_prueba'], 4)}). "
+                f"{limite} El modelo original, BDL, todavía no está en la app: esta es la ficha de la EBM.")
+    e = clf.loc[D.ORIGINAL]
+    corta = D.frase_empate_corta(D.ORIGINAL)                    # el corte de la campaña cae en un empate: lo dice junto a la cifra
+    empate = f" Esa captura es la de {corta}." if corta else ""
+    veredicto = "; ".join(f"en {D.NOMBRE_TAREA[t].lower()}, {D.frase_veredicto(t, detalle=False)}" for t in G.TAREAS)
+    return (f"Para ordenar a los clientes de COFINFAD por su riesgo y priorizar una campaña de capacidad limitada, y para decir en qué "
+            f"nivel del puntaje puede estar cada uno: contactando al {F.pct(M.CAPACIDAD_INFORME, 0)} de mayor puntaje, BDL alcanza al "
+            f"{F.pct(e['recall_op'])} de los clientes de riesgo alto (AUC de prueba {ui.num(e['auc_prueba'], 4)}).{empate} {limite} Frente a "
+            f"los benchmarks, con la regla de superioridad de la guía, su veredicto es: {veredicto}.")
 
 
 def _cabecera():
@@ -74,8 +85,13 @@ def _cabecera():
     boton = ui.boton("Descargar la ficha (Markdown)", href="/ficha.md", tipo="primario", icono="descargar", id=f"{PRE}-descargar",
                      titulo="Descarga MODEL_CARD.md, la misma ficha en Markdown")
     boton.download = "MODEL_CARD.md"
-    chips = [ui.chip_valor("Versión:", cff["version"]), ui.chip_valor("Fecha:", ui.fecha_larga(cff["fecha"], con_dia=False)),
-             ui.chip_valor("Licencia:", cff["licencia"])]
+    # La versión y su fecha son las del dashboard (CITATION.cff); los artefactos del modelo original tienen fecha propia
+    chips = [ui.chip_valor("Versión del dashboard:", cff["version"]),
+             ui.chip_valor("Fecha de esa versión:", ui.fecha_larga(cff["fecha"], con_dia=False))]
+    original = G.indice().get("original") if G.hay_original() else None
+    if original and original.get("generado"):
+        chips.append(ui.chip_valor("Artefactos de BDL:", ui.fecha_larga(original["generado"], con_dia=False)))
+    chips.append(ui.chip_valor("Licencia:", cff["licencia"]))
     return [html.Div([boton] + chips, className="botonera")]
 
 

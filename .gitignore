@@ -15,6 +15,15 @@ Entrega3/articulo/articulo.pdf
 InformeFinal/**/*.log
 InformeFinal/**/*.blg
 Dashboard/capturas/
-ModeloOriginal/resultados/modelos/
+# Del modelo original solo se versionan los modelos finales propios (los leen las celdas del libro); los de los
+# benchmarks pesan más de 100 MB y se regeneran con los guiones de experiments/.
+ModeloOriginal/resultados/modelos/*
+!ModeloOriginal/resultados/modelos/*__bdl__*.joblib
 ModeloOriginal/resultados/fuera_de_pliegue/
+ModeloOriginal/resultados/adicionales/*/modelos/*
+!ModeloOriginal/resultados/adicionales/*/modelos/*__bdl__*.joblib
+ModeloOriginal/resultados/adicionales/*/fuera_de_pliegue/
+ModeloOriginal/resultados/**/*.candado
+ModeloOriginal/resultados/**/*.en_uso
+ModeloOriginal/resultados/**/*.tmp
 ModeloOriginal/datos_adicionales/

@@ -34,10 +34,10 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=9c3e77be" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=22de6bcf" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=33c23bfc" />
   
   <!-- So that users can add custom icons -->
   <script defer src="_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
@@ -68,7 +68,7 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Índice" href="genindex.html" />
     <link rel="search" title="Búsqueda" href="search.html" />
-    <link rel="next" title="Caracterización y auditoría de calidad de datos para predecir la fuga (churn) y el valor del cliente (CLV) en una fintech colombiana" href="Entrega1/eda_bancario.html" />
+    <link rel="next" title="Proyecto final: dashboard predictivo, modelo original y evaluación rigurosa" href="ProyectoFinal/00_introduccion.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="es"/>
   <meta name="docsearch:version" content="" />
@@ -156,6 +156,10 @@
   
 
   
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="En esta página">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
 </div>
 
     </header>
@@ -206,7 +210,23 @@
 </button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 1 · EDA</span></p>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Proyecto final · Dashboard, modelo original y evaluación rigurosa</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="ProyectoFinal/00_introduccion.html">Proyecto final: dashboard predictivo, modelo original y evaluación rigurosa</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ProyectoFinal/01_correcciones.html">1. Trazabilidad de las correcciones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ProyectoFinal/02_datos.html">2. Datos: ETL, EDA y auditoría de fuga</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ProyectoFinal/03_benchmarks.html">3. Modelos benchmark</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ProyectoFinal/04_literatura.html">4. Revisión de literatura y novedad</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ProyectoFinal/05_modelo_original.html">5. El modelo original: Boosting con Desplazamiento Latente (BDL)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ProyectoFinal/06_validacion.html">6. Protocolo y validación estadística</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ProyectoFinal/07_evaluacion_ampliada.html">7. Evaluación ampliada y robustez</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ProyectoFinal/08_dashboard.html">8. Dashboard y despliegue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ProyectoFinal/09_conclusiones.html">9. Conclusiones y limitaciones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ProyectoFinal/10_reproducibilidad.html">10. Reproducibilidad y bibliografía</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ProyectoFinal/codigo_modelo_original.html">Código del modelo original</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Entrega 1 · EDA</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="Entrega1/eda_bancario.html">Caracterización y auditoría de calidad de datos para predecir la fuga (<em>churn</em>) y el valor del cliente (<em>CLV</em>) en una <em>fintech</em> colombiana</a></li>
 </ul>
@@ -396,7 +416,9 @@
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -412,6 +434,15 @@
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contenido </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resultados-principales-del-proyecto-final">Resultados principales del proyecto final</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resultados-de-las-entregas-anteriores">Resultados de las entregas anteriores</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -425,8 +456,14 @@
 <h1>Predicción de fuga de clientes en una fintech colombiana<a class="headerlink" href="#prediccion-de-fuga-de-clientes-en-una-fintech-colombiana" title="Link to this heading">#</a></h1>
 <p><strong>Universidad del Norte · Pregrado en Ciencia de Datos · Machine Learning · Proyecto final</strong></p>
 <p>Martínez Pulido, Valerie · Basto Martínez, Abrahan · Esguerra Fernández, Rubén</p>
-<p>Este Jupyter Book reúne las tres entregas del proyecto sobre el conjunto público COFINFAD, en el orden en que se hicieron, y
-el código con que se produjo cada resultado. Repositorio: <a class="github reference external" href="https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech">RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech</a>.</p>
+<p>Este Jupyter Book es el informe técnico del proyecto final sobre el conjunto público COFINFAD. La primera parte,
+<strong>Proyecto final</strong>, sigue los capítulos de la guía (del 0 al 10): el dashboard desplegado, el modelo original y su
+evaluación. Las partes siguientes son las tres entregas anteriores, en el orden en que se hicieron, y el código con que
+se produjo cada resultado.</p>
+<ul class="simple">
+<li><p><strong>Dashboard desplegado:</strong> <a class="reference external" href="https://fuga-de-clientes-dash.onrender.com">https://fuga-de-clientes-dash.onrender.com</a></p></li>
+<li><p><strong>Repositorio:</strong> <a class="github reference external" href="https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech">RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech</a></p></li>
+</ul>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Parte</p></th>
@@ -434,27 +471,46 @@ el código con que se produjo cada resultado. Repositorio: <a class="github refe
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><strong>Entrega 1</strong></p></td>
+<tr class="row-even"><td><p><strong>Proyecto final</strong></p></td>
+<td><p>Capítulos 0 a 10: introducción, trazabilidad de las correcciones, datos y auditoría de fuga, benchmarks, revisión de literatura y novedad, el modelo original (BDL), protocolo y validación estadística, evaluación ampliada y robustez, dashboard y despliegue, conclusiones y reproducibilidad. Al final, el código completo del modelo original, sus pruebas y el protocolo pre-registrado</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Entrega 1</strong></p></td>
 <td><p>Análisis exploratorio de datos: el cuaderno ejecutado de la primera entrega (artículo en <code class="docutils literal notranslate"><span class="pre">Entrega1/</span></code>)</p></td>
 </tr>
-<tr class="row-odd"><td><p><strong>Entrega 2</strong></p></td>
+<tr class="row-even"><td><p><strong>Entrega 2</strong></p></td>
 <td><p>Preparación de datos y modelos base: el cuaderno ejecutado de la segunda entrega (artículo en <code class="docutils literal notranslate"><span class="pre">Entrega2/</span></code>)</p></td>
 </tr>
-<tr class="row-even"><td><p><strong>Entrega 3</strong></p></td>
-<td><p>El entregable final en cinco partes: Data, Metodología, Modelos y Resultados, El modelo nuevo, y Comparación estadística y conclusiones. El artículo en formato Springer, el notebook en PDF y un cuaderno único con todo están en <code class="docutils literal notranslate"><span class="pre">Entrega3/</span></code></p></td>
+<tr class="row-odd"><td><p><strong>Entrega 3</strong></p></td>
+<td><p>El tercer entregable en cinco partes: Data, Metodología, Modelos y Resultados, El modelo nuevo, y Comparación estadística y conclusiones. El artículo en formato Springer, el notebook en PDF y un cuaderno único con todo están en <code class="docutils literal notranslate"><span class="pre">Entrega3/</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p><strong>Código fuente</strong></p></td>
-<td><p>Todo el código utilizado, archivo por archivo</p></td>
+<tr class="row-even"><td><p><strong>Código fuente</strong></p></td>
+<td><p>Todo el código utilizado en la Entrega 3, archivo por archivo</p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<section id="resultados-principales-del-proyecto-final">
+<h2>Resultados principales del proyecto final<a class="headerlink" href="#resultados-principales-del-proyecto-final" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Modelo original: BDL (Boosting con Desplazamiento Latente)</strong>, programado desde cero con <code class="docutils literal notranslate"><span class="pre">numpy</span></code> y <code class="docutils literal notranslate"><span class="pre">scipy</span></code>. Modela como una clase latente el escalón que deja en el puntaje la variable excluida por fuga de información y lo aprende con un EM generalizado cuyo paso M es un paso de boosting.</p></li>
+<li><p><strong>Regresión</strong> (RMSE): en los 15 pliegues externos de la validación anidada, BDL 0,05887 y el mejor benchmark (XGBoost) 0,05897; en prueba, 0,05912 frente a 0,05917, con un límite teórico de 0,05911. 2 de las 4 pruebas de hipótesis registradas rechazan la igualdad a favor de BDL (p ajustado por Holm &lt; 0,05): <strong>no superior</strong> según la guía, que pide tres.</p></li>
+<li><p><strong>Clasificación</strong> (AUC): en los 15 pliegues externos de la validación anidada, BDL 0,8313 y el mejor benchmark (XGBoost) 0,8333; en prueba, 0,8311 frente a 0,8283, con un límite teórico de 0,8313. Ninguna de las 4 pruebas de hipótesis registradas rechaza la igualdad a favor de BDL (p ajustado por Holm &lt; 0,05): <strong>no superior</strong> según la guía, que pide tres.</p></li>
+<li><p><strong>Incertidumbre:</strong> con cobertura del 90 %, los conjuntos de predicción de BDL miden 0,0062 y los intervalos conformes del mejor benchmark, 0,1905; la cobertura medida en prueba es 89,9 %.</p></li>
+<li><p><strong>Conjuntos adicionales:</strong> En los 4 conjuntos de datos adicionales, el original no supera al mejor benchmark en ninguno, ni en regresión ni en clasificación; en regresión es peor de forma significativa en Vivienda de California y en clasificación es peor de forma significativa en Seguros médicos y Vivienda de California (sección 7.1). En 4 de ellos la búsqueda de hiperparámetros eligió para la regresión la variante sin mezcla, incluidos los construidos con una variable omitida: la ventaja que el protocolo esperaba ahí no apareció.</p></li>
+<li><p><strong>Recencia:</strong> la fecha de corte se calcula solo con los clientes de entrenamiento; la auditoría muestra que no cambia ningún dato.</p></li>
+</ul>
+</section>
+<section id="resultados-de-las-entregas-anteriores">
+<h2>Resultados de las entregas anteriores<a class="headerlink" href="#resultados-de-las-entregas-anteriores" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>Pipeline de la guía</strong>: 140 corridas (136 entrenadas y 4 que no aplican), con validación cruzada anidada 5 × 3. Mejor modelo de clasificación: XGBoost (AUC externa 0,8332); de regresión: XGBoost (RMSE externo 0,0590).</p></li>
-<li><p><strong>Modelo nuevo (EBM) frente a la Entrega 2</strong>, en la misma prueba y con la misma etiqueta: AUC 0,6832 → 0,7187 (DeLong p &lt; 10⁻¹⁸) y R² 0,1511 → 0,2159 (Diebold-Mariano con HLN p &lt; 10⁻³⁹). Empata con XGBoost (p = 0,196 en AUC) y queda cerca del techo de información (0,7223 de AUC y 0,2197 de R²).</p></li>
+<li><p><strong>Modelo nuevo de la Entrega 3 (EBM) frente a la Entrega 2</strong>, en la misma prueba y con la misma etiqueta: AUC 0,6832 → 0,7187 (DeLong p &lt; 10⁻¹⁸) y R² 0,1511 → 0,2159 (Diebold-Mariano con HLN p &lt; 10⁻³⁹). Empata con XGBoost (p = 0,196 en AUC) y queda cerca del techo de información (0,7223 de AUC y 0,2197 de R²). En el proyecto final la EBM es un benchmark reciente: proviene de una librería y no cuenta como modelo original.</p></li>
 </ul>
-<p>Toda cifra del notebook se genera a partir de los resultados. Los datos van comprimidos en <code class="docutils literal notranslate"><span class="pre">datos/</span></code> y el entorno se fija con
+<p>Toda cifra del libro se genera a partir de los resultados. Los datos van comprimidos en <code class="docutils literal notranslate"><span class="pre">datos/</span></code> y el entorno se fija con
 <code class="docutils literal notranslate"><span class="pre">Entrega3/requirements.txt</span></code> (Python 3.13.3); la semilla del proyecto es 42.</p>
+</section>
+<div class="toctree-wrapper compound">
+</div>
 <div class="toctree-wrapper compound">
 </div>
 <div class="toctree-wrapper compound">
@@ -506,11 +562,11 @@ el código con que se produjo cada resultado. Repositorio: <a class="github refe
                   
 <div class="prev-next-area">
     <a class="right-next"
-       href="Entrega1/eda_bancario.html"
+       href="ProyectoFinal/00_introduccion.html"
        title="siguiente página">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">siguiente</p>
-        <p class="prev-next-title">Caracterización y auditoría de calidad de datos para predecir la fuga (<em>churn</em>) y el valor del cliente (<em>CLV</em>) en una <em>fintech</em> colombiana</p>
+        <p class="prev-next-title">Proyecto final: dashboard predictivo, modelo original y evaluación rigurosa</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -520,6 +576,24 @@ el código con que se produjo cada resultado. Repositorio: <a class="github refe
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contenido
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resultados-principales-del-proyecto-final">Resultados principales del proyecto final</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resultados-de-las-entregas-anteriores">Resultados de las entregas anteriores</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

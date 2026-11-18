@@ -1,0 +1,81 @@
+{
+ "benchmark": "xgboost",
+ "mae": {
+  "benchmark": "xgboost",
+  "desplazamiento": 0.006044992989967302,
+  "benchmark_media": 0.047059720315962034,
+  "benchmark_con_mediana": 0.045658637289531,
+  "original_media": 0.0469698074269869,
+  "original_mediana": 0.0451027355160874
+ },
+ "conjuntos": {
+  "clases_de_la_mezcla_del_benchmark": 5,
+  "dispersion": 0.0031524882316551774,
+  "centros": [
+   -0.14529190003070364,
+   -0.0953914177204916,
+   -0.04513355337242791,
+   0.004791965250889488,
+   0.054718450092105124
+  ],
+  "pesos": [
+   0.05079787996759984,
+   0.09897762260953517,
+   0.14890628272955012,
+   0.30073481439453903,
+   0.4005834002987758
+  ],
+  "filas_de_ajuste": 19489,
+  "filas_de_calibracion": 19489,
+  "por_cobertura": {
+   "0.80": {
+    "benchmark_conjunto": {
+     "largo": 0.030121062883769367,
+     "tramos": 4,
+     "cobertura": 0.8217547460236019
+    },
+    "benchmark_intervalo": {
+     "largo": 0.1160517160492758,
+     "cobertura": 0.8045151359671626
+    },
+    "original_conjunto": {
+     "largo": 0.0040051451085238,
+     "tramos": 3,
+     "cobertura": 0.7979476654694715
+    }
+   },
+   "0.90": {
+    "benchmark_conjunto": {
+     "largo": 0.04360457532650383,
+     "tramos": 5,
+     "cobertura": 0.9155464340687532
+    },
+    "benchmark_intervalo": {
+     "largo": 0.1904767622228391,
+     "cobertura": 0.8996408414571575
+    },
+    "original_conjunto": {
+     "largo": 0.0062260075620655,
+     "tramos": 4,
+     "cobertura": 0.8988199076449461
+    }
+   },
+   "0.95": {
+    "benchmark_conjunto": {
+     "largo": 0.0549591121203854,
+     "tramos": 5,
+     "cobertura": 0.9591585428424834
+    },
+    "benchmark_intervalo": {
+     "largo": 0.237491901955144,
+     "cobertura": 0.9505387378142636
+    },
+    "original_conjunto": {
+     "largo": 0.0099084632542627,
+     "tramos": 5,
+     "cobertura": 0.9500256541816317
+    }
+   }
+  }
+ }
+}

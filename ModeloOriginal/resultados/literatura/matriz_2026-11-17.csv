@@ -1,0 +1,28 @@
+base,cadena,tema,consulta,resultados,revisados,fecha
+openalex,C1,Mezcla o clase latente + boosting + fuga de clientes,"""customer churn"" AND (""latent class"" OR ""finite mixture"" OR ""mixture of regressions"") AND boosting",108,25,2026-11-17
+arxiv,C1,Mezcla o clase latente + boosting + fuga de clientes,"all:""customer churn"" AND (all:mixture OR all:""latent class"")",3,3,2026-11-17
+crossref,C1,Mezcla o clase latente + boosting + fuga de clientes,churn mixture boosting,176215,25,2026-11-17
+openalex,C2,Heterogeneidad no observada + boosting + fuga de clientes,"""customer churn"" AND (""unobserved heterogeneity"" OR ""latent variable"") AND ""gradient boosting""",90,25,2026-11-17
+arxiv,C2,Heterogeneidad no observada + boosting + fuga de clientes,"all:churn AND all:""latent variable"" AND all:boosting",0,0,2026-11-17
+crossref,C2,Heterogeneidad no observada + boosting + fuga de clientes,churn latent boosting,133748,25,2026-11-17
+openalex,C3,"Mezcla de regresiones ajustada con boosting y EM (familia del algoritmo, cualquier aplicación)","(""mixture of regressions"" OR ""finite mixture regression"" OR ""latent class regression"") AND (""gradient boosting"" OR ""boosted trees"") AND (""expectation-maximization"" OR ""EM algorithm"")",33,25,2026-11-17
+arxiv,C3,"Mezcla de regresiones ajustada con boosting y EM (familia del algoritmo, cualquier aplicación)","(all:""mixture of regressions"" OR all:""mixture regression"") AND all:boosting",2,2,2026-11-17
+crossref,C3,"Mezcla de regresiones ajustada con boosting y EM (familia del algoritmo, cualquier aplicación)",mixture regression boosting EM,1432842,25,2026-11-17
+openalex,C4,Boosting con ruido multimodal o de mezcla,"""gradient boosting"" AND (""mixture noise"" OR ""multimodal noise"" OR ""mixture of Gaussians noise"") AND regression",16,16,2026-11-17
+arxiv,C4,Boosting con ruido multimodal o de mezcla,"all:""gradient boosting"" AND all:""mixture density""",2,2,2026-11-17
+crossref,C4,Boosting con ruido multimodal o de mezcla,boosting mixture density regression,837542,25,2026-11-17
+openalex,C5,Predicción conforme + fuga de clientes,"(""customer churn"" OR ""customer attrition"") AND (""conformal prediction"" OR ""prediction sets"")",,0,2026-11-17
+arxiv,C5,Predicción conforme + fuga de clientes,"all:churn AND all:""conformal prediction""",1,1,2026-11-17
+crossref,C5,Predicción conforme + fuga de clientes,churn conformal prediction,788274,25,2026-11-17
+openalex,C6,Regresión distribucional o probabilística + fuga de clientes,"(""customer churn"" OR ""customer attrition"") AND (""distributional regression"" OR ""probabilistic regression"" OR NGBoost OR ""GAMLSS"")",36,25,2026-11-17
+arxiv,C6,Regresión distribucional o probabilística + fuga de clientes,"all:churn AND (all:""distributional regression"" OR all:NGBoost OR all:""probabilistic regression"")",0,0,2026-11-17
+crossref,C6,Regresión distribucional o probabilística + fuga de clientes,churn distributional regression,215424,25,2026-11-17
+openalex,C7,Clasificar una respuesta continua dicotomizada usando la respuesta continua,"(""dichotomized"" OR ""dichotomised"") AND ""continuous outcome"" AND (""exceedance probability"" OR ""distributional approach"") AND classification",20,20,2026-11-17
+arxiv,C7,Clasificar una respuesta continua dicotomizada usando la respuesta continua,"all:dichotomized AND all:""continuous outcome""",8,8,2026-11-17
+crossref,C7,Clasificar una respuesta continua dicotomizada usando la respuesta continua,dichotomized continuous outcome classification,1278844,25,2026-11-17
+openalex,C8,"Modelo aditivo (GAM, EBM) con clases latentes o mezcla","(""generalized additive model"" OR ""explainable boosting machine"") AND (""finite mixture"" OR ""latent class"") AND boosting",231,25,2026-11-17
+arxiv,C8,"Modelo aditivo (GAM, EBM) con clases latentes o mezcla","all:""additive model"" AND all:""finite mixture""",0,0,2026-11-17
+crossref,C8,"Modelo aditivo (GAM, EBM) con clases latentes o mezcla",additive model finite mixture boosting,3790340,25,2026-11-17
+openalex,C9,"En español: fuga o deserción de clientes + clase latente, mezcla o boosting","(""fuga de clientes"" OR ""deserción de clientes"" OR ""abandono de clientes"") AND (""clase latente"" OR ""mezcla finita"" OR boosting)",40,25,2026-11-17
+arxiv,C9,"En español: fuga o deserción de clientes + clase latente, mezcla o boosting","all:""fuga de clientes"" OR all:""abandono de clientes""",0,0,2026-11-17
+crossref,C9,"En español: fuga o deserción de clientes + clase latente, mezcla o boosting",fuga de clientes,10404428,25,2026-11-17

@@ -2,13 +2,18 @@
 
     .venv/Scripts/python.exe -B generar_fichas.py        escribe los dos archivos en esta carpeta
 
-Ninguna cifra se escribe a mano: todas salen de datos/ (por datos_app, motor y modelos_vivos), de artifacts/indice.json y de
-CITATION.cff. La vista «Ficha del modelo» (secciones/ficha.py) arma la misma ficha con contenido_ficha(), así que la página y
-el Markdown que se descarga en /ficha.md dicen lo mismo; si cambian los datos, se vuelve a correr este guion.
+La ficha es la del modelo original del proyecto, BDL (Boosting con Desplazamiento Latente): contenido_ficha_original().
+Mientras la corrección no lo haya dejado en la app (artefactos y tabla de líderes), se escribe la de la EBM del Entregable 3
+(contenido_ficha_ebm()), que hoy es un benchmark. Ninguna cifra se escribe a mano: todas salen de datos/ (por datos_app,
+motor y modelos_vivos), de artifacts/indice.json y de CITATION.cff; el veredicto frente a los benchmarks, de
+D.frase_veredicto (veredicto.json y condicion4.json). La vista «Ficha del modelo» (secciones/ficha.py) arma la misma ficha
+con contenido_ficha(), así que la página y el Markdown que se descarga en /ficha.md dicen lo mismo; si cambian los datos
+(por ejemplo, tras volver a correr preparar_original.py), se vuelve a correr este guion.
 
 El formato sigue a Mitchell et al. (2019), «Model Cards for Model Reporting» (FAT* '19), para la ficha, y la idea de una
-declaración de los datos de Bender y Friedman (2018) y Gebru et al. (2021, «Datasheets for Datasets»). Las afirmaciones son
-las del informe final (Informe Final/metodologia.tex, resultados.tex y conclusiones.tex).
+declaración de los datos de Bender y Friedman (2018) y Gebru et al. (2021, «Datasheets for Datasets»). Las afirmaciones
+sobre el modelo original son las del libro del proyecto final (ProyectoFinal, capítulos 5 a 9); las de la EBM y las de los
+datos, las del informe del Entregable 3 (Informe Final/metodologia.tex, resultados.tex y conclusiones.tex).
 
 Cada contenido es una lista de grupos (un h2 en la página y un «##» en el Markdown); cada grupo tiene tarjetas (h3, «###»)
 con bloques: ("parrafo", texto), ("lista", [textos]), ("pares", [(rótulo, valor)]), ("tabla", encabezados, filas, num, columnas que se ocultan en el teléfono) y
@@ -128,7 +133,381 @@ def _megas(b) -> str:
 
 
 # --- La ficha del modelo ------------------------------------------------------------------------------------------------------
+O = D.ORIGINAL
+LIBRO = "Libro del proyecto final (ProyectoFinal): capítulos 5, 6, 7 y 9"
+PROTOCOLO = "ModeloOriginal/experiments/protocolo.md (protocolo pre-registrado)"
+IMPORTANCIA_MINIMA = 0.001         # por debajo de esta parte de la importancia, una variable «casi no se usa»
+NOMBRE_HP = {"tasa": "tasa de aprendizaje", "profundidad": "profundidad de los árboles", "min_hoja": "mínimo de filas por hoja",
+             "lambda_l2": "regularización L2", "max_bins": "tramos por variable", "n_componentes": "clases latentes",
+             "usar_puntaje": "usa el puntaje continuo"}
+
+
+def hay_original() -> bool:
+    """Si la corrección ya dejó el modelo original en las dos tareas (artefacto y fila en la tabla de líderes)."""
+    return all(V.hay_original(t) and D.hay_modelo_original(t) for t in TAREAS)
+
+
 def contenido_ficha() -> list[dict]:
+    """La ficha del modelo original, BDL; mientras la corrección no lo haya dejado en la app, la de la EBM del Entregable 3."""
+    return contenido_ficha_original() if hay_original() else contenido_ficha_ebm()
+
+
+def titulo_ficha() -> str:
+    return ("Ficha del modelo: BDL, el modelo original de fuga de clientes" if hay_original()
+            else "Ficha del modelo: EBM de fuga de clientes")
+
+
+def _valor_hp(v) -> str:
+    if isinstance(v, bool):
+        return "sí" if v else "no"
+    if isinstance(v, str):
+        return "automático (BIC)" if v == "auto" else v
+    if isinstance(v, int) or float(v) == int(v):
+        return F.entero(v)
+    d = max(0, 3 - math.floor(math.log10(abs(v))))
+    return F.num(v, d).rstrip("0").rstrip(",")
+
+
+def _hiperparametros_original(tarea: str) -> str:
+    md = V.metadata(tarea, O)
+    pares = [f"{NOMBRE_HP.get(k.replace('modelo__', ''), k.replace('modelo__', ''))}: {_valor_hp(v)}" for k, v in md["hiperparametros"].items()]
+    return "; ".join(pares) + f"; búsqueda: {D.NOMBRE_OPTIMIZADOR[md['optimizador']]}, {D.NOMBRE_BALANCEO[md['balanceo']]}"
+
+
+def _aprendido(tarea: str) -> str:
+    """Lo que quedó en el modelo final de una tarea (datos/original/modelo_<tarea>.json), en una línea."""
+    m = D.modelo_original(tarea)
+    if m is None or not m.get("K"):
+        return "todavía no disponible"
+    return (f"{F.entero(m['K'])} clases latentes (elegidas por BIC), {F.entero(m['n_arboles'])} árboles ({F.entero(m['n_calentamiento'])} de "
+            f"calentamiento) y {F.entero(m['vueltas_usadas'])} vueltas del algoritmo EM")
+
+
+def _lectura_subgrupos(sub) -> str:
+    """Lo que dice la tabla de errores por subgrupo sobre el AUC: cuánto se aparta del total dentro de una sola edad y en qué
+    subgrupo difieren más los dos modelos. Todo sale de la tabla; '' si no trae el AUC."""
+    con_auc = sub[sub["auc_original"].notna() & sub["auc_benchmark"].notna()]
+    if con_auc.empty:
+        return ""
+    partes = []
+    edades, todos = con_auc[con_auc["subgrupo"].str.startswith("Edad ")], con_auc[con_auc["subgrupo"] == "Todos"]
+    if len(edades) and len(todos):
+        baja, alta = edades.loc[edades["auc_original"].idxmin()], edades.loc[edades["auc_original"].idxmax()]
+        partes.append(f"Dentro de una sola edad, donde esa variable ya no ordena a los clientes, el AUC de BDL va de "
+                      f"{F.num(baja['auc_original'], 4)} ({baja['subgrupo'].lower()}) a {F.num(alta['auc_original'], 4)} "
+                      f"({alta['subgrupo'].lower()}), frente a {F.num(todos['auc_original'].iloc[0], 4)} en el total.")
+    diferencia = con_auc["auc_original"] - con_auc["auc_benchmark"]
+    mayor = con_auc.loc[diferencia.abs().idxmax()]
+    signo = ("cambian de signo de un subgrupo a otro y " if (diferencia > 0).any() and (diferencia < 0).any() else "")
+    partes.append(f"Las diferencias entre los dos modelos {signo}no llevan prueba de hipótesis; la mayor en AUC está en «{mayor['subgrupo']}» "
+                  f"({F.entero(mayor['clientes'])} clientes), donde BDL obtiene {F.num(mayor['auc_original'], 4)} y "
+                  f"{D.NOMBRE_MODELO[mayor['benchmark_clasificacion']]}, {F.num(mayor['auc_benchmark'], 4)}.")
+    return " " + " ".join(partes)
+
+
+def contenido_ficha_original() -> list[dict]:
+    meta = M.meta()
+    cff = cita_cff()
+    clf, reg = D.lideres("clasificacion").set_index("modelo"), D.lideres("regresion").set_index("modelo")
+    vc, vr = D.veredicto_original("clasificacion"), D.veredicto_original("regresion")
+    bc = vc["mejor_benchmark"] if vc is not None and vc["mejor_benchmark"] in clf.index else RIVAL
+    br = vr["mejor_benchmark"] if vr is not None and vr["mejor_benchmark"] in reg.index else RIVAL
+    e, x, er, xr = clf.loc[O], clf.loc[bc], reg.loc[O], reg.loc[br]
+    etl = D.json("eda/etl.json")
+    tipos = etl["tipos"]
+    md = {t: V.metadata(t, O) for t in TAREAS}
+    versiones = md["regresion"]["versiones"]
+    estimadores = " y ".join(md[t]["estimador"].split(".")[-1] for t in TAREAS)
+    capacidad = F.pct(M.CAPACIDAD_INFORME, 0)
+    nivel = F.pct(float(NIVEL_CONFORME), 0)
+    op = meta["punto_operacion"]
+    cal, cal_b = V.calibracion()["modelos"][O], V.calibracion()["modelos"].get(bc)
+    conf, conf_b = V.conformal()["modelos"][O][NIVEL_CONFORME], V.conformal()["modelos"][br][NIVEL_CONFORME]
+    conj = cal["conformal"][NIVEL_CONFORME]
+    shap = V.shap_indice()["modelos"][f"clasificacion__{O}"]["importancia_media_abs"]
+    total = sum(shap.values())
+    imp = {k: v / total for k, v in shap.items()}
+    edad = M.variables().loc["age"]
+    seg = D.errores_segmentos()
+    coh = seg[seg["segmento"] == "cohorte de edad"].set_index("nivel")
+    mayor, menor = coh["prevalencia"].idxmax(), coh["prevalencia"].idxmin()
+    idx = indice()
+    artefactos = [a for a in idx["artefactos"] if a["modelo"] == O]
+    corridas = {t: D.corrida_original(t, O) for t in TAREAS}
+    entrena = {t: (_fecha(corridas[t]["registrado_en"]) if corridas[t] is not None else RAYA_TXT) for t in TAREAS}
+    ida = {t: md[t]["ida_y_vuelta"] for t in TAREAS}
+    costo = {t: D.costo_original(t, O) for t in TAREAS}
+    semillas = D.original_tabla("semillas.csv")
+    personales = ("gender", "location", "income_bracket")
+    if max(imp.get(v, 0.0) for v in personales) < IMPORTANCIA_MINIMA:
+        texto_personales = ("El género, la ubicación y el ingreso también son entradas, pero el modelo casi no los usa: ninguno llega "
+                            f"al {F.pct(IMPORTANCIA_MINIMA, 1)} de la importancia.")
+    else:
+        texto_personales = (f"Variables personales que entran al modelo: género ({F.pct(imp['gender'])} de la importancia), ubicación "
+                            f"({F.pct(imp['location'])}) e ingreso ({F.pct(imp['income_bracket'])}).")
+    aditivos = [bool((D.modelo_original(t) or {}).get("aditivo")) for t in TAREAS]
+    te = D.original_json("techo.json")
+    codigo = md["regresion"]["origen"]
+    mismo = bc == br
+    rotulo_b = D.NOMBRE_MODELO[bc] if mismo else "Mejor benchmark"
+
+    def del_b(valor, modelo):
+        """El valor del mejor benchmark de una tarea; si no es el mismo en las dos, con su nombre."""
+        return valor if mismo else f"{valor} ({D.NOMBRE_MODELO[modelo]})"
+
+    detalles = [
+        ("Nombre", "BDL de fuga de clientes: regresión del puntaje de propensión y clasificación del riesgo alto"),
+        ("Tipo", f"{D.NOMBRE_LARGO_ORIGINAL}, el modelo original del proyecto: un boosting de árboles propios con una mezcla latente de "
+                 f"desplazamientos, ajustado con un algoritmo EM generalizado ({estimadores}, en {codigo['codigo']})"),
+        ("Dependencias", f"numpy {versiones['numpy']}, scipy {versiones['scipy']} y scikit-learn {versiones['scikit-learn']} (la tubería y "
+                         "el preprocesamiento); el modelo no importa ninguna librería de modelos"),
+        ("Versión", f"{cff['version']} (artefactos del {_fecha(idx.get('original', idx)['generado'])})"),
+        ("Fecha de entrenamiento", f"clasificación, {entrena['clasificacion']}; regresión, {entrena['regresion']}"),
+        ("Autores", F.enumerar(cff["autores"])),
+        ("Licencia", f"{cff['licencia']} para el código y los modelos; los datos son CC BY 4.0 y los derivados conservan su atribución"),
+        ("Repositorio", cff["repositorio"]),
+        ("Cita", f"{F.enumerar(cff['autores'])} ({cff['fecha'][:4]}). {cff['titulo']}. {cff['repositorio']}"),
+    ]
+    especificacion = [
+        ("Entradas", f"{F.entero(len(etl['predictores']))} variables ({F.entero(len(tipos['numericas']))} numéricas, "
+                     f"{F.entero(len(tipos['booleanas']))} booleanas y {F.entero(len(tipos['categoricas']))} categóricas), que el "
+                     f"preprocesamiento convierte en {F.entero(etl['n_columnas_modelo'])} columnas. En el entrenamiento de la clasificación "
+                     "recibe, además, el puntaje continuo de las filas de entrenamiento; nunca el de validación ni el de prueba"),
+        ("Salidas", "regresión: el puntaje churn_probability previsto (la media de la mezcla), con su conjunto de predicción (una unión "
+                    "de tramos, uno por nivel del puntaje) y su intervalo conforme; clasificación: la probabilidad de que el puntaje "
+                    "supere el umbral de riesgo alto (probabilidad de excedencia de la mezcla)"),
+        ("Hiperparámetros de clasificación", _hiperparametros_original("clasificacion")),
+        ("Hiperparámetros de regresión", _hiperparametros_original("regresion")),
+        ("Lo que aprendió en clasificación", _aprendido("clasificacion")),
+        ("Lo que aprendió en regresión", _aprendido("regresion")),
+        ("Semilla", F.entero(md["regresion"]["semilla"])),
+    ]
+    filas_art = [[f"artifacts/{a['ruta']}", _megas(a["bytes"]), a["sha256"][:HUELLA],
+                  f"la tubería de scikit-learn con el modelo de {D.NOMBRE_TAREA[a['tarea']].lower()} (preprocesamiento y modelo)"]
+                 for a in artefactos]
+    filas_art.append([codigo["codigo"], RAYA_TXT, codigo["sha256_codigo"][:HUELLA],
+                      "el código del modelo, copia exacta del de la corrección: las tuberías guardadas nombran este módulo"])
+    for t in TAREAS:
+        o = md[t]["origen"]
+        filas_art.append([f"Corrección: {o['archivo']}", RAYA_TXT, o["sha256_origen"][:HUELLA], "el modelo final guardado por la corrección"])
+
+    n_pliegues = int(e["externa_pliegues"])
+    metricas = [
+        ["AUC de prueba [IC 95 %]", f"{F.num(e['auc_prueba'], 4)} {F.intervalo(e['auc_bca_inf'], e['auc_bca_sup'])}",
+         del_b(f"{F.num(x['auc_prueba'], 4)} {F.intervalo(x['auc_bca_inf'], x['auc_bca_sup'])}", bc),
+         "qué tan bien ordena a los clientes por riesgo"],
+        [f"AUC externo (media ± desviación de {F.entero(n_pliegues)} pliegues)", f"{F.num(e['externa_media'], 4)} ± {F.num(e['externa_desv'], 4)}",
+         del_b(f"{F.num(x['externa_media'], 4)} ± {F.num(x['externa_desv'], 4)}", bc), "la validación anidada: con ella se decide el veredicto"],
+        ["AUC-PR", F.num(e["auc_pr"], 3), del_b(F.num(x["auc_pr"], 3), bc), "orden de los positivos, sensible a la prevalencia"],
+        [f"Captura con el {capacidad} de capacidad", F.pct(e["recall_op"]), del_b(F.pct(x["recall_op"]), bc),
+         "parte de los clientes de riesgo alto que alcanza la campaña"],
+        [f"Precisión con el {capacidad} de capacidad", F.pct(e["precision_op"]), del_b(F.pct(x["precision_op"]), bc),
+         "parte de los contactados que son de riesgo alto"],
+        ["Error de calibración (ECE): sin recalibrar → isotónica",
+         f"{F.num(cal['ece_prueba_sin_recalibrar'], 3)} → {F.num(cal['ece_prueba_recalibrada'], 3)}",
+         del_b(f"{F.num(cal_b['ece_prueba_sin_recalibrar'], 3)} → {F.num(cal_b['ece_prueba_recalibrada'], 3)}", bc) if cal_b else RAYA_TXT,
+         "distancia entre la probabilidad dicha y la observada"],
+        ["RMSE de prueba [IC 95 %]", f"{F.num(er['rmse_prueba'], 5)} {F.intervalo(er['rmse_bca_inf'], er['rmse_bca_sup'], 5)}",
+         del_b(f"{F.num(xr['rmse_prueba'], 5)} {F.intervalo(xr['rmse_bca_inf'], xr['rmse_bca_sup'], 5)}", br), "error del puntaje previsto"],
+        [f"RMSE externo (media ± desviación de {F.entero(int(er['externa_pliegues']))} pliegues)",
+         f"{F.num(er['externa_media'], 5)} ± {F.num(er['externa_desv'], 5)}",
+         del_b(f"{F.num(xr['externa_media'], 5)} ± {F.num(xr['externa_desv'], 5)}", br), "la validación anidada"],
+        ["MAE y R² de prueba", f"{F.num(er['mae_prueba'], 4)} y {F.num(er['r2_prueba'], 3)}",
+         del_b(f"{F.num(xr['mae_prueba'], 4)} y {F.num(xr['r2_prueba'], 3)}", br), "error absoluto medio y varianza explicada"],
+        [f"Incertidumbre al {nivel}: cobertura · largo",
+         f"{F.pct(conf['conjunto']['cobertura_prueba'])} · {F.num(conf['conjunto']['largo'], 4)} (conjunto de {F.entero(conf['conjunto']['tramos'])} tramos)",
+         del_b(f"{F.pct(conf_b['cobertura_prueba'])} · {F.num(conf_b['ancho'], 4)} (intervalo conforme)", br),
+         "parte de los puntajes reales dentro del conjunto o del intervalo, y cuánto mide"],
+    ]
+    veredicto = "; ".join(f"en {D.NOMBRE_TAREA[t].lower()}, {D.frase_veredicto(t)}" for t in TAREAS)
+    limite = ""
+    if te is not None:
+        limite = (f" El límite teórico del conjunto en la prueba es un AUC de {F.num(te['prueba']['auc_maximo'], 4)} y un RMSE de "
+                  f"{F.num(te['prueba']['rmse_minimo'], 5)}: los mejores benchmarks ya estaban a milésimas de él.")
+
+    sub = D.original_tabla("errores_subgrupos.csv")
+    if sub is not None and len(sub):
+        b_r, b_c = sub["benchmark_regresion"].iloc[0], sub["benchmark_clasificacion"].iloc[0]
+        filas_sub = [[f["subgrupo"], F.entero(f["clientes"]), F.num(f["rmse_original"], 5), F.num(f["rmse_benchmark"], 5),
+                      F.num(f["auc_original"], 4) if f["auc_original"] == f["auc_original"] else RAYA_TXT,
+                      F.num(f["auc_benchmark"], 4) if f["auc_benchmark"] == f["auc_benchmark"] else RAYA_TXT] for _, f in sub.iterrows()]
+        segmento = [("tabla", ["Subgrupo de prueba", "Clientes", "RMSE de BDL", f"RMSE de {D.NOMBRE_MODELO[b_r]}", "AUC de BDL",
+                               f"AUC de {D.NOMBRE_MODELO[b_c]}"], filas_sub, [False] + [True] * 5, (3, 5)),
+                    ("nota", f"La cohorte de {mayor} años es la de más riesgo alto ({F.pct(coh.loc[mayor, 'prevalencia'])}) y la de {menor}, la "
+                             f"de menos ({F.pct(coh.loc[menor, 'prevalencia'])}).{_lectura_subgrupos(sub)}")]
+        fuentes_seg = [D.fuente_original("errores_subgrupos.csv"), D.fuente("resultados/errores_segmentos.csv")]
+    else:
+        segmento = [("nota", f"El análisis de errores por subgrupo del modelo original todavía no está entre los resultados de la "
+                             f"corrección ({D.fuente_original('errores_subgrupos.csv')}). La ficha se completa al volver a correr "
+                             "preparar_original.py y generar_fichas.py.")]
+        fuentes_seg = [D.fuente_original("errores_subgrupos.csv")]
+
+    lento = ""
+    if semillas is not None:                     # el mismo guion mide a todos los modelos, con las mismas semillas y en el mismo equipo
+        s = semillas[semillas["tarea"] == "regresion"]
+        ajuste = s.groupby("modelo")["ajuste_s"].mean()
+        if O in ajuste.index and br in ajuste.index and ajuste[O] > ajuste[br]:
+            lento = (f"Ajustarlo cuesta más que ajustar los benchmarks de boosting: en regresión, {F.num(ajuste[O], 1)} s frente a "
+                     f"{F.num(ajuste[br], 1)} s de {D.NOMBRE_MODELO[br]} (media de {F.entero(s['semilla'].nunique())} semillas); está "
+                     "escrito en numpy, sin compilar.")
+
+    # El corte de la campaña cae en un empate del puntaje de BDL: la captura, la precisión del punto de operación y el AUC-PR
+    # dependen de cómo se rompan o se cuenten los empates. Las notas salen de empates_campana.json (D.frase_empate_*).
+    em = D.empate_campana(O)
+    nota_uso, nota_metricas, limite_empates, fuente_empates = [], [], "", []
+    partes_metricas = []
+    if em is not None:
+        protocolo = em.get("captura_protocolo")
+        del_libro = (f" El libro del proyecto usa el desempate del protocolo de la corrección (por posición) y da {F.pct(protocolo)}."
+                     if isinstance(protocolo, (int, float)) and protocolo == protocolo else "")
+        nota_uso = [("nota", D.frase_empate_captura(O, precision=True) + del_libro)]
+        partes_metricas.append(f"La captura y la precisión con el {capacidad} de capacidad son las de {D.frase_empate_corta(O)}.{del_libro}")
+        limite_empates = (f"Su probabilidad es escalonada ({F.entero(em['valores_distintos'])} valores distintos en la prueba): cuando el "
+                          "corte de una campaña cae en una meseta, a quién se contacta dentro de ella lo decide el desempate, no el "
+                          "modelo.")
+    if D.frase_empate_auc_pr(O):
+        partes_metricas.append(D.frase_empate_auc_pr(O))
+    if partes_metricas:
+        nota_metricas = [("nota", "Filas que dependen de los empates del puntaje. " + " ".join(partes_metricas))]
+        fuente_empates = [D.fuente_original("empates_campana.json")]
+    return [
+        {"titulo": "Detalles del modelo", "columnas": "1-1",
+         "subtitulo": "Qué es, quién lo hizo, con qué versión y con qué licencia; los artefactos y su huella.",
+         "tarjetas": [
+             {"titulo": "El modelo", "bloques": [("pares", detalles)],
+              "fuentes": ["CITATION.cff", "artifacts/indice.json", D.fuente_original("experimentos.csv")]
+                         + [f"artifacts/{t}/{O}/metadata.json" for t in TAREAS]},
+             {"titulo": "Entradas, salidas e hiperparámetros", "bloques": [("pares", especificacion)],
+              "fuentes": [f"artifacts/{t}/{O}/metadata.json" for t in TAREAS]
+                         + [D.fuente_original(f"modelo_{t}.json") for t in TAREAS] + [D.fuente("eda/etl.json")]},
+             {"titulo": "Artefactos y su huella", "ancho": True, "bloques": [
+                 ("tabla", ["Archivo", "Tamaño", "SHA-256 (inicio)", "Qué es"], filas_art, [False, True, False, False], (3,)),
+                 ("nota", f"La ida y vuelta de los artefactos dio predicciones idénticas a las guardadas en "
+                          f"{F.entero(ida['clasificacion']['filas'])} clientes de prueba. Una prueba comprueba que el código del modelo es "
+                          "idéntico al de la corrección. La huella completa está en artifacts/indice.json.")],
+              "fuentes": ["artifacts/indice.json", D.fuente_original("estado.json")]},
+         ]},
+        {"titulo": "Para qué sirve y para qué no", "columnas": "3",
+         "subtitulo": "El uso previsto, quién debería usarlo y los usos que no se recomiendan.",
+         "tarjetas": [
+             {"titulo": "Uso previsto", "bloques": [("lista", [
+                 f"Ordenar a los clientes de COFINFAD por su riesgo para priorizar una campaña de retención con capacidad limitada: "
+                 f"contactando al {capacidad} de mayor puntaje ({F.entero(op['contactados'])} de {F.entero(meta['n_prueba'])}) alcanza "
+                 f"al {F.pct(e['recall_op'])} de los clientes de riesgo alto, con una precisión del {F.pct(e['precision_op'])}.",
+                 f"Decir, además del pronóstico, en cuál de los niveles del puntaje puede estar un cliente: su conjunto de predicción al "
+                 f"{nivel} es una unión de {F.entero(conf['conjunto']['tramos'])} tramos que cubre el "
+                 f"{F.pct(conf['conjunto']['cobertura_prueba'])} de la prueba.",
+                 ("Explicar qué variables mueven el índice del puntaje: sus modelos finales usan árboles de profundidad uno, así que el "
+                  "índice es la suma exacta de lo que aporta cada variable." if all(aditivos) else
+                  "Explicar qué variables mueven el índice del puntaje, con aportes exactos calculados por el propio modelo."),
+                 "Docencia e investigación: un modelo original con su formulación, sus demostraciones y su código, comparado con los "
+                 "benchmarks con un protocolo registrado antes de los experimentos.",
+             ])] + nota_uso,
+              "fuentes": [D.fuente_original("lideres_clasificacion.csv"), D.fuente("conformal.json"), D.fuente("metadatos.json")]
+                         + fuente_empates},
+             {"titulo": "Usuarios previstos", "bloques": [("lista", [
+                 "El profesor y los estudiantes del curso de Machine Learning.",
+                 "Analistas que quieren estudiar un modelo con una variable latente y compararlo con los ensambles de árboles.",
+                 "Equipos de retención que quieren ver el método, no aplicarlo sin antes validarlo con sus propios datos.",
+             ])], "fuentes": [LIBRO]},
+             {"titulo": "Usos no recomendados", "bloques": [("lista", [
+                 "Decidir sobre clientes reales: los datos son sintéticos y el escalón que el modelo aprovecha existe porque así se "
+                 "generó el conjunto.",
+                 "Decisiones de crédito, precio, cobranza o exclusión de un servicio.",
+                 "Leer su probabilidad como probabilidad de fuga observada: es la de que el puntaje del conjunto supere su umbral.",
+                 "Usarlo donde la etiqueta no sea el umbral de una variable continua observada en el entrenamiento: sin ella el "
+                 "modelo aprende de la etiqueta y pierde su ventaja.",
+                 f"Puntuar valores fuera del rango de entrenamiento: la edad, por ejemplo, solo toma {F.entero(edad['n_distintos'])} valores "
+                 f"({str(edad['valores']).replace('|', ', ')}).",
+                 "Tratar «riesgo alto» como fuga observada, o usar productos activos como entrada: es la variable con que se generó el "
+                 "puntaje y el modelo recuperaría la regla en vez de predecir.",
+                 "Llevarlo a otra entidad, otro país u otro periodo sin reentrenarlo y validarlo.",
+             ])], "fuentes": [D.fuente("variables.csv"), LIBRO]},
+         ]},
+        {"titulo": "Factores, métricas y datos", "columnas": "1-1",
+         "subtitulo": "Con qué se evaluó, en qué datos y en qué punto de operación. Al lado va el mejor benchmark de cada tarea en la "
+                      "validación anidada.",
+         "tarjetas": [
+             {"titulo": "Factores relevantes", "bloques": [("lista", [
+                 f"Cohorte de edad: el conjunto tiene {F.entero(len(coh))} cohortes y el riesgo alto va del {F.pct(coh.loc[menor, 'prevalencia'])} "
+                 f"({menor} años) al {F.pct(coh.loc[mayor, 'prevalencia'])} ({mayor}). La edad reúne el {F.pct(imp['age'])} de la "
+                 "importancia del modelo en clasificación.",
+                 "Productos activos: la variable excluida con la que se generó el puntaje. El modelo no la ve; la trata como una clase "
+                 "latente y recupera sus niveles.",
+                 texto_personales,
+             ])], "fuentes": [D.fuente("resultados/errores_segmentos.csv"), D.fuente("shap/indice.json")]},
+             {"titulo": "Datos de entrenamiento y de evaluación", "bloques": [("pares", [
+                 ("Conjunto", "COFINFAD (Mendeley Data, CC BY 4.0), sintético: ver DATA_STATEMENT.md"),
+                 ("Partición", f"{_particion(meta)}, antes de derivar variables y de calcular cualquier estadístico del objetivo"),
+                 ("Entrenamiento", f"{F.entero(meta['n_entrenamiento'])} clientes; riesgo alto: {F.pct(meta['prevalencia_entrenamiento'])}. "
+                                   "El modelo reparte esas filas en ajuste, validación y calibración"),
+                 ("Evaluación", f"{F.entero(meta['n_prueba'])} clientes de prueba; riesgo alto: {F.pct(meta['prevalencia_prueba'])} "
+                                f"({F.entero(meta['positivos_prueba'])} clientes). La prueba ya se había usado para evaluar los benchmarks "
+                                "del Entregable 3; no intervino en el diseño del modelo"),
+                 ("Etiqueta", f"riesgo alto = churn_probability por encima de su percentil {F.entero(meta['etiqueta']['q'] * 100)} en el "
+                              f"entrenamiento ({F.num(meta['etiqueta']['umbral'], 4)})"),
+                 ("Selección", f"validación cruzada anidada de {F.entero(md['regresion']['metricas_bucle_externo']['pliegues_externos'])} × "
+                               f"{F.entero(md['regresion']['metricas_bucle_externo']['pliegues_internos'])} pliegues, con "
+                               f"{F.entero(costo['regresion']['presupuesto']) if costo['regresion'] is not None else RAYA_TXT} configuraciones "
+                               "por búsqueda y una sola combinación, fijada en el protocolo"),
+                 ("Punto de operación", f"contactar al {capacidad} de mayor puntaje: {F.entero(op['contactados'])} clientes"),
+             ])], "fuentes": [D.fuente("metadatos.json"), D.fuente_original("costo.csv"), PROTOCOLO]},
+             {"titulo": "Métricas en la prueba y en la validación anidada", "ancho": True, "bloques": [
+                 # las columnas de valores van como texto: alineadas a la derecha y sin salto, en el teléfono las cifras cortas
+                 # (AUC-PR, captura, precisión) quedaban fuera del marco de la tabla
+                 ("tabla", ["Métrica", "BDL", rotulo_b, "Qué mide"], metricas, [False, False, False, False], (3,)),
+                 ("nota", f"Con la regla de superioridad de la guía, el veredicto del modelo original es: {veredicto}.{limite}")]
+                + nota_metricas + [("nota", D.nota_ece())],
+              "fuentes": [D.fuente("resultados/clasificacion_prueba.csv"), D.fuente("resultados/regresion_prueba.csv"),
+                          D.fuente_original("lideres_clasificacion.csv"), D.fuente_original("lideres_regresion.csv"),
+                          D.fuente("calibracion_modelos.json"), D.fuente("conformal.json"), D.fuente_original("veredicto.json"),
+                          D.fuente_original("condicion4.json"), D.fuente_original("techo.json")] + fuente_empates},
+         ]},
+        {"titulo": "Análisis por segmento", "columnas": "1-1",
+         "subtitulo": "La prueba dividida por edad, por la cola de transacciones y por segmento de cliente: el modelo original frente "
+                      "al mejor benchmark de cada tarea.",
+         "tarjetas": [{"titulo": "Dónde acierta y dónde falla", "ancho": True, "bloques": segmento, "fuentes": fuentes_seg}]},
+        {"titulo": "Ética, limitaciones y recomendaciones", "columnas": "3",
+         "subtitulo": "Lo que hay que saber antes de usarlo.",
+         "tarjetas": [
+             {"titulo": "Consideraciones éticas", "bloques": [("lista", [
+                 "Los datos son públicos y sintéticos: no hay personas reales identificables.",
+                 f"La edad, el género y la ubicación son entradas. La edad domina el modelo ({F.pct(imp['age'])} de la importancia): una "
+                 "campaña real que lo siguiera trataría distinto a las personas según su edad, y eso habría que justificarlo y revisarlo.",
+                 "No se mide fuga real: usarlo para negar o encarecer un servicio no tendría respaldo en estos datos.",
+             ])], "fuentes": [D.fuente("shap/indice.json"), LIBRO]},
+             {"titulo": "Limitaciones y riesgos", "bloques": [("lista", [x_ for x_ in [
+                 "Los datos son sintéticos: el escalón que el modelo aprovecha existe porque el generador resta una cantidad fija por "
+                 "producto activo; en datos reales un efecto así sería menos limpio.",
+                 "El margen de mejora era mínimo: los mejores benchmarks ya estaban a milésimas del límite teórico. Lo que el modelo "
+                 "añade es la estructura del puntaje y una incertidumbre mejor descrita, no precisión puntual.",
+                 "Supone un desplazamiento aditivo, independiente de los predictores y con la misma dispersión en todas las clases. "
+                 "Cuando no se cumple, el criterio BIC deja una sola clase y el modelo es un boosting de mínimos cuadrados.",
+                 "Su probabilidad salta de una meseta a otra en un intervalo estrecho del índice: un cliente mal situado en ese borde "
+                 "recibe una probabilidad casi segura y equivocada.",
+                 f"El intervalo simétrico «pronóstico ± q» no le sirve: al {nivel} cubre el {F.pct(conf['cobertura_prueba'])} de la prueba, "
+                 "porque su error cae en niveles separados. Su conjunto de predicción, con la misma cobertura nominal, cubre el "
+                 f"{F.pct(conf['conjunto']['cobertura_prueba'])}; esa garantía es marginal: vale sobre el total de clientes, no dentro de "
+                 "cada grupo.",
+                 f"Los conjuntos conformes de clases cubren de más ({F.pct(conj['cobertura_prueba'])} al {nivel}): el "
+                 f"{F.pct(conj['fraccion_ambos'], 0)} de los clientes recibe las dos clases.",
+                 limite_empates,
+                 lento,
+             ] if x_])], "fuentes": [D.fuente("conformal.json"), D.fuente("calibracion_modelos.json"),
+                                     D.fuente_original("semillas.csv"), LIBRO] + fuente_empates},
+             {"titulo": "Recomendaciones", "bloques": [("lista", [
+                 "Ordenar a los clientes con la probabilidad del modelo y expresar la incertidumbre del pronóstico con su conjunto de "
+                 "predicción, no con el intervalo simétrico.",
+                 "Validar en el tiempo con fuga observada (entrenar con un periodo y probar con el siguiente) antes de cualquier uso real.",
+                 "Revisar los resultados por cohorte de edad y reentrenar si cambia la distribución de los clientes.",
+                 "Mantener una revisión humana de cada decisión que afecte a un cliente.",
+             ])], "fuentes": [LIBRO]},
+         ]},
+    ]
+
+
+def contenido_ficha_ebm() -> list[dict]:
+    """La ficha de la EBM, como en el Entregable 3 (respaldo mientras el modelo original no esté en la app)."""
     meta = M.meta()
     cff = cita_cff()
     clf, reg = D.prueba("clasificacion").set_index("modelo"), D.prueba("regresion").set_index("modelo")
@@ -307,7 +686,8 @@ def contenido_ficha() -> list[dict]:
                  ("tabla", ["Métrica", "EBM", D.NOMBRE_MODELO[RIVAL], "Qué mide"], metricas, [False, True, True, False], (3,)),
                  ("nota", f"Frente a {empata} ninguna prueba encuentra diferencia tras la corrección de Holm (probabilidad de equivalencia "
                           f"práctica con {D.NOMBRE_MODELO[RIVAL]}: {F.prob(rope)}); supera con significación a {supera}. En el informe, "
-                          f"la conclusión es que la EBM alcanza a los modelos de árboles, no que los supere.")],
+                          f"la conclusión es que la EBM alcanza a los modelos de árboles, no que los supere."),
+                 ("nota", D.nota_ece())],
               "fuentes": [D.fuente("resultados/clasificacion_prueba.csv"), D.fuente("resultados/regresion_prueba.csv"),
                           D.fuente("calibracion_modelos.json"), D.fuente("conformal.json"), D.fuente("resultados/pruebas_clasificacion.csv")]},
          ]},
@@ -383,6 +763,14 @@ def contenido_datos() -> list[dict]:
     total_tx = int(etl["n_transacciones_limpias"]) + int(aud["duplicadas"])
     sin_tarjeta = falt.loc["credit_utilization_ratio", "fraccion"]
     texto_falt = falt[(falt["fraccion"] > 0) & ~falt["en_modelo"].astype(bool)]
+    auditoria = D.original_json("auditoria_fuga.json")          # la corrección de la recencia, si la corrección ya la dejó
+    recencia = []
+    if auditoria is not None:
+        corte = auditoria["fecha_de_corte"]
+        recencia = [f"La recencia se mide hasta una fecha de corte que sale solo de los clientes de entrenamiento "
+                    f"({_fecha(corte['correccion_solo_entrenamiento'])}); antes salía de todo el detalle de transacciones. La auditoría de "
+                    f"la corrección comprueba que cambian {F.entero(corte['celdas_de_recencia_que_cambian'])} celdas y que los predictores de "
+                    f"entrenamiento y de prueba son {'idénticos' if corte['predictores_identicos'] else 'distintos'} antes y después."]
     return [
         {"titulo": "Resumen", "columnas": "1-1", "subtitulo": "Qué conjunto es, de dónde viene y con qué licencia.",
          "tarjetas": [
@@ -450,7 +838,8 @@ def contenido_datos() -> list[dict]:
                  f"Partición {_particion(meta)}: {F.entero(meta['n_entrenamiento'])} clientes de entrenamiento y "
                  f"{F.entero(meta['n_prueba'])} de prueba. El umbral de la etiqueta y todo el análisis exploratorio usan solo el "
                  "entrenamiento.",
-             ])], "fuentes": [D.fuente("eda/etl.json"), D.fuente("metadatos.json")]},
+             ] + recencia)], "fuentes": [D.fuente("eda/etl.json"), D.fuente("metadatos.json")]
+                             + ([D.fuente_original("auditoria_fuga.json")] if recencia else [])},
          ]},
         {"titulo": "Usos adecuados e inadecuados", "columnas": "1-1", "subtitulo": "Para qué sirven estos datos y para qué no.",
          "tarjetas": [
@@ -511,7 +900,9 @@ def a_markdown(titulo: str, entrada: list[str], grupos: list[dict]) -> str:
 
 def entrada_ficha() -> list[str]:
     cff = cita_cff()
-    return [f"Ficha del modelo (*model card*, Mitchell et al., 2019) de la Explainable Boosting Machine del proyecto «{cff['titulo']}». "
+    modelo = (f"del modelo original, BDL ({D.NOMBRE_LARGO_ORIGINAL}),"
+              if hay_original() else "de la Explainable Boosting Machine")
+    return [f"Ficha del modelo (*model card*, Mitchell et al., 2019) {modelo} del proyecto «{cff['titulo']}». "
             f"Versión {cff['version']}, {_fecha(cff['fecha'])}. La genera `generar_fichas.py` desde `datos/` y `artifacts/`: ninguna cifra "
             "se escribe a mano. La misma ficha está en la vista «Ficha del modelo» del dashboard (/modelos/ficha)."]
 
@@ -523,8 +914,7 @@ def entrada_datos() -> list[str]:
 
 
 def main() -> int:
-    FICHA.write_text(a_markdown("Ficha del modelo: EBM de fuga de clientes", entrada_ficha(), contenido_ficha()), encoding="utf-8",
-                     newline="\n")
+    FICHA.write_text(a_markdown(titulo_ficha(), entrada_ficha(), contenido_ficha()), encoding="utf-8", newline="\n")
     DECLARACION.write_text(a_markdown("Declaración de los datos: COFINFAD", entrada_datos(), contenido_datos()), encoding="utf-8",
                            newline="\n")
     for ruta in (FICHA, DECLARACION):

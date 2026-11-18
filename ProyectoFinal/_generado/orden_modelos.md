@@ -1,0 +1,5 @@
+**Regresión.** Antes de la corrección (ocho modelos, semilla 42): XGBoost, EBM, Random Forest, Árbol de decisión, Lasso, Ridge, SVR lineal, k-NN. Ahora (diez modelos, 15 pliegues externos): BDL (original), XGBoost, LightGBM, EBM, Random Forest, Árbol de decisión, Lasso, Ridge, SVR lineal, k-NN. El orden relativo de los ocho modelos anteriores no cambia; entran BDL (original) en el puesto 1 y LightGBM en el puesto 3.
+
+**Clasificación.** Antes de la corrección (ocho modelos, semilla 42): XGBoost, Árbol de decisión, Random Forest, EBM, k-NN, Regresión logística, SVM lineal, Naive Bayes. Ahora (diez modelos, 15 pliegues externos): XGBoost, Árbol de decisión, Random Forest, LightGBM, BDL (original), EBM, k-NN, Regresión logística, SVM lineal, Naive Bayes. El orden relativo de los ocho modelos anteriores no cambia; entran LightGBM en el puesto 4 y BDL (original) en el puesto 5.
+
+La corrección de la recencia no modificó ningún dato (sección 2.5), así que las corridas de la semilla 42 de los ocho modelos anteriores son las mismas; lo que puede moverlos son las repeticiones nuevas de la validación anidada.

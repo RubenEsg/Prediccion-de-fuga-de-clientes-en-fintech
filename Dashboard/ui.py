@@ -12,9 +12,10 @@ escribe ningún color ni tamaño de letra. Contenido:
     ficha, grafico, leyenda, tabla, desplegable, fuentes, destino, boton, boton_redondo, segmentado, control, casilla,
     deslizador, campo_numero, selector, pie.
 
-Roles de serie (DISENO.md §2), en el orden de la leyenda: «modelo» (azul: la EBM, lo que se propone), «rival» (rosa:
-XGBoost y los otros modelos de árboles), «base» (gris: modelos lineales, k-NN, Naive Bayes y la Entrega 2), «real» (casi
-negro: lo observado) y «contexto» (gris claro).
+Roles de serie (DISENO.md §2), en el orden de la leyenda: «modelo» (azul: el modelo original, BDL; en las vistas del grupo
+de la EBM, la EBM, que es allí la serie en foco), «rival» (rosa: los benchmarks de la parte alta de la tabla: EBM, LightGBM,
+XGBoost, Random Forest y el árbol de decisión), «base» (gris: modelos lineales, k-NN, Naive Bayes y la Entrega 2), «real»
+(casi negro: lo observado) y «contexto» (gris claro).
 """
 import math
 from decimal import Decimal
@@ -404,7 +405,7 @@ _glifo = icono   # para las funciones con un parámetro llamado «icono»
 PANTALLA_ICONO = {"inicio": "inicio", "datos": "metodo", "modelo": "modelo", "cliente": "equipo", "campana": "demanda",
                   "comparacion": "balanza", "robustez": "grafico", "errores": "lupa", "limites": "info",
                   "contexto": "inicio", "eda": "metodo", "lideres": "tabla", "prediccion": "resultado", "diagnostico": "grafico",
-                  "interpretabilidad": "lupa", "propuesto": "modelo", "decide": "modelo", "ficha": "info"}
+                  "interpretabilidad": "lupa", "propuesto": "modelo", "decide": "modelo", "ficha": "info", "original": "modelo"}
 
 
 def cuadro(pantalla, icono=None, clase=""):
@@ -533,7 +534,7 @@ def cifra(etiqueta, valor, unidad=None, variacion=None, tono=None, nota=None, *,
           clase="", id=None):
     """Ficha de cifra: etiqueta → valor con unidad → variación de una línea (flecha + texto; color de estado solo si el
     sentido es inequívoco: tono «bien» o «mal») → nota. `valor` llega ya formateado (ui.num). `flecha` es el número cuyo
-    signo elige la flecha. `chip` va junto a la etiqueta («Modelo propuesto»). `tenue=True` apaga el valor (--tinta-tenue):
+    signo elige la flecha. `chip` va junto a la etiqueta («Modelo original»). `tenue=True` apaga el valor (--tinta-tenue):
     la cifra de comparación. `mini=True`, el valor a 32 px. Sin punto de color ni ruta de archivo."""
     cab = [html.Span(etiqueta, className="cifra__etiqueta")]
     if chip is not None:
@@ -613,7 +614,7 @@ _ICONO_ESTADO = {"bien": "bien", "atencion": "alerta", "critico": "alerta"}
 
 def chip(texto, tipo=None, icono=None):
     """Chip en píldora blanca: neutro (sin tipo o «neutro») o de estado («bien», «atencion», «critico»: siempre con icono
-    y palabra) o «acento» («Modelo propuesto»). Con `icono`, cualquier glifo en un chip neutro. Nunca para marcar «mejor»
+    y palabra) o «acento» («Modelo original»). Con `icono`, cualquier glifo en un chip neutro. Nunca para marcar «mejor»
     (eso lo hace ui.tabla)."""
     tipo = None if tipo == "neutro" else tipo
     if icono is None and isinstance(texto, str):

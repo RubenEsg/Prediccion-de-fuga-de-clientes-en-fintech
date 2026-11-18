@@ -11,10 +11,13 @@ artefactos (D.puntajes() y D.pronosticos(), una columna por modelo final):
     el residuo frente al pronóstico, la autocorrelación del residuo en el orden del archivo original (que agrupa a los
     clientes por cohorte de edad: no es una serie de tiempo) con Ljung-Box, y el histograma del residuo.
 
-Las cifras que el informe publica (AUC con su intervalo, AUC-PR, MCC, RMSE, MAE, R², ECE, Brier) se leen de
-datos/resultados/*_prueba.csv y de datos/calibracion_modelos.json; las curvas se calculan aquí con los puntajes y la vista
-comprueba en cada dibujo que lo calculado coincide con lo publicado (si no, lo dice en un aviso). La dirección puede pedir
-la tarea y el modelo: /modelos/diagnostico?tarea=regresion&modelo=lasso (así enlaza la Tabla de líderes).
+Las cifras que el informe publica (AUC con su intervalo, AUC-PR, MCC, RMSE, MAE, R², ECE, Brier) se leen de la tabla de
+líderes (D.lideres: datos/resultados/*_prueba.csv y, para el modelo original y LightGBM, datos/original/lideres_*.csv, con
+las mismas definiciones) y de datos/calibracion_modelos.json; las curvas se calculan aquí con los puntajes y la vista
+comprueba en cada dibujo que lo calculado coincide con lo publicado (si no, lo dice en un aviso). Tienen diagnóstico los
+diez modelos de la tabla: los que se sirven en vivo y LightGBM, del que solo hay puntajes. La vista nace con el modelo
+original (BDL). La dirección puede pedir la tarea y el modelo: /modelos/diagnostico?tarea=regresion&modelo=lasso (así
+enlaza la Tabla de líderes).
 """
 from functools import lru_cache
 from html import escape
@@ -35,10 +38,11 @@ VISTA = "diagnostico"
 PRE = "dg"
 PANTALLA = "robustez"                 # el icono de la cabecera (el de «gráfico», como la vista en app.VISTAS)
 TAREAS = ("clasificacion", "regresion")
-INICIAL = "ebm"                        # el modelo con que nace la vista: el propuesto
+INICIAL = D.ORIGINAL                   # el modelo con que nace la vista: el original
+RESPALDO = "ebm"                       # y, si la corrección todavía no lo dejó en la tarea, la EBM
 
 CAPACIDAD = M.CAPACIDAD_INFORME        # punto de operación del informe
-TRAMOS_CALIBRACION = 10                # tramos de igual ancho del ECE (preparar_artefactos.py::ece); se comprueba al dibujar
+TRAMOS_CALIBRACION = D.TRAMOS_ECE      # tramos de igual ancho del ECE (preparar_artefactos.py::ece); se comprueba al dibujar
 PUNTOS_CURVA = 201                     # puntos de las curvas ROC y de captura (para dibujar; las áreas son las exactas)
 PASO_TABLA_CURVA = 20                  # la tabla gemela de la curva ROC lleva uno de cada veinte puntos
 PASO_TABLA_PR = 0.05                   # la de precisión-recall, de cinco en cinco puntos de capacidad
@@ -64,8 +68,10 @@ HOLGURA = 1.25                         # aire sobre el mayor valor de un eje sim
 
 FUENTE_PUNTAJES = D.fuente("puntajes_prueba.parquet")
 FUENTE_PRONOSTICOS = D.fuente("pronosticos_prueba.parquet")
-FUENTE_CLF = D.fuente("resultados/clasificacion_prueba.csv")
-FUENTE_REG = D.fuente("resultados/regresion_prueba.csv")
+# Dos fuentes cada una (la tabla del Entregable 3 y las filas de la corrección): van sueltas para que el pie las cuente bien
+FUENTE_CLF = (D.fuente("resultados/clasificacion_prueba.csv"), D.fuente_original("lideres_clasificacion.csv"))
+FUENTE_REG = (D.fuente("resultados/regresion_prueba.csv"), D.fuente_original("lideres_regresion.csv"))
+FUENTE_EMPATES = D.fuente_original("empates_campana.json")      # los empates en el corte de la campaña (de la corrección)
 FUENTE_CAL = D.fuente("calibracion_modelos.json")
 FUENTE_CLIENTES = D.fuente("clientes_prueba.parquet")
 FUENTE_PRUEBAS = {t: D.fuente(f"resultados/pruebas_{t}.csv") for t in TAREAS}
@@ -93,22 +99,35 @@ def _pct_cap():
     return F.pct(CAPACIDAD, 0)
 
 
+def _su_combinacion(fila):
+    """«su mejor combinación» (los modelos del Entregable 3, que probaron varias) o «su única combinación, la del protocolo»
+    (el modelo original y LightGBM, que vienen de la corrección)."""
+    return "su mejor combinación" if fila.get("origen", "Entregable 3") == "Entregable 3" else "su única combinación, la del protocolo"
+
+
 # --- Tarea y modelo (de la dirección, de los controles) ----------------------------------------------------------------
 def _tarea(t):
     return t if t in TAREAS else "clasificacion"
 
 
+def _modelos(tarea):
+    """Los modelos con diagnóstico en la tarea, en el orden de D.ORDEN_MODELOS: los de la tabla de líderes que tienen su
+    columna de puntajes o de pronósticos de la prueba (los que se sirven en vivo y LightGBM, que solo está en las tablas)."""
+    columnas = set((D.puntajes() if tarea == "clasificacion" else D.pronosticos()).columns)
+    return [m for m in D.lideres(tarea)["modelo"] if m in columnas]
+
+
 def _modelo(tarea, m):
-    """El modelo pedido si es uno de los ocho de la tarea; si no, el propuesto."""
-    ms = V.modelos(tarea)
-    return m if m in ms else (INICIAL if INICIAL in ms else ms[0])
+    """El modelo pedido si es uno de los de la tarea; si no, el original (o la EBM, si el original todavía no está)."""
+    ms = _modelos(tarea)
+    return m if m in ms else next((x for x in (INICIAL, RESPALDO) if x in ms), ms[0])
 
 
 def _de_la_direccion(tarea, modelo):
     """(tarea, modelo, pedida) a partir de ?tarea= y ?modelo=. Un modelo que solo existe en una tarea la elige (Lasso →
-    regresión); lo desconocido cae en clasificación y en la EBM."""
+    regresión); lo desconocido cae en clasificación y en el modelo original."""
     if tarea not in TAREAS and modelo:
-        en = [t for t in TAREAS if modelo in V.modelos(t)]
+        en = [t for t in TAREAS if modelo in _modelos(t)]
         if len(en) == 1:
             tarea = en[0]
     pedida = tarea in TAREAS or bool(modelo)
@@ -117,10 +136,10 @@ def _de_la_direccion(tarea, modelo):
 
 
 def _opciones(tarea):
-    """Los ocho modelos de la tarea, con su nombre como texto. (Con un componente de rótulo, ui.clave, el desplegable de
+    """Los modelos de la tarea, con su nombre como texto. (Con un componente de rótulo, ui.clave, el desplegable de
     Dash 4.5 deja en blanco las opciones que reaparecen tras cambiar las opciones por callback: el color del modelo va en
     la muestra del rótulo «Modelo:», _rotulo_modelo.)"""
-    return [{"label": D.NOMBRE_MODELO[m], "value": m} for m in V.modelos(tarea)]
+    return [{"label": D.NOMBRE_MODELO[m], "value": m} for m in _modelos(tarea)]
 
 
 def _rotulo_modelo(modelo):
@@ -130,7 +149,7 @@ def _rotulo_modelo(modelo):
 
 
 def _selector_modelo(tarea, modelo, persistir):
-    """El selector nace con los modelos de las dos tareas (el de la tarea deja enseguida los ocho que tocan): recuerda su
+    """El selector nace con los modelos de las dos tareas (el de la tarea deja enseguida los que tocan): recuerda su
     valor en la sesión y, si ese valor no estuviera entre las opciones al recargar, el desplegable lo borraría."""
     propias = _opciones(tarea)
     valores = {o["value"] for o in propias}
@@ -229,7 +248,7 @@ def _clasificacion_datos(modelo):
     P = D.puntajes()
     y = P["y"].to_numpy(dtype=int)
     s = P[modelo].to_numpy(dtype=float)
-    fila = D.fila(D.prueba("clasificacion"), modelo=modelo)
+    fila = D.fila(D.lideres("clasificacion"), modelo=modelo)
     cal = V.calibracion()["modelos"][modelo]
     en_01 = bool(s.min() >= 0 and s.max() <= 1)
     p_cal = V.probabilidad(modelo, s)
@@ -246,8 +265,14 @@ def _clasificacion_datos(modelo):
 
 
 def _relacion(tarea, modelo):
-    """Qué dicen las pruebas del informe sobre el modelo y la EBM (D.veredicto, p ajustados por Holm)."""
+    """Qué dicen las pruebas sobre el modelo: para el original, su veredicto con la regla de la guía (D.frase_veredicto, de
+    veredicto.json y condicion4.json); para la EBM y sus siete referencias del Entregable 3, las pruebas de ese informe
+    (D.veredicto, p ajustados por Holm); LightGBM solo se comparó con el original."""
+    if modelo == D.ORIGINAL:
+        return f"Es el modelo original; con la regla de superioridad de la guía, su veredicto es: {D.frase_veredicto(tarea)}."
     pr = D.pruebas(tarea)
+    if modelo != "ebm" and modelo not in set(pr["modelo"]):
+        return "Es el segundo benchmark reciente: no se sirve en vivo y sus pruebas son las del modelo original frente a él."
     fijada = PRUEBA_FIJADA[tarea]
     if modelo == "ebm":
         v = D.veredictos(tarea)
@@ -275,8 +300,11 @@ def _respuesta(tarea, modelo):
         texto = (f"{frase}: AUC de prueba {ui.num(f['auc_prueba'], 4)} {F.intervalo(f['auc_bca_inf'], f['auc_bca_sup'], 4)}; "
                  f"contactando al {_pct_cap()} de mayor puntaje alcanza a {F.entero(op['vp'])} de los {F.entero(op['positivos'])} "
                  f"clientes de riesgo alto ({F.pct(op['captura'])}).")
+        corta = D.frase_empate_corta(modelo)                    # el corte cae en un empate: la cifra es uno de los desempates
+        if corta:
+            texto += f" Esa captura es la de {corta}."
     else:
-        f = D.fila(D.prueba("regresion"), modelo=modelo)
+        f = D.fila(D.lideres("regresion"), modelo=modelo)
         texto = (f"{frase}: RMSE de prueba {ui.num(f['rmse_prueba'], 5)} {F.intervalo(f['rmse_bca_inf'], f['rmse_bca_sup'], 5)} y "
                  f"R² {ui.num(f['r2_prueba'], 3)}: explica el {F.pct(f['r2_prueba'])} de la variación del puntaje.")
     return f"{texto} {_relacion(tarea, modelo)}".strip()
@@ -293,7 +321,7 @@ def _cifras_clasificacion(modelo):
         ui.cifra("AUC de prueba", ui.num(f["auc_prueba"], 4), variacion=f"IC 95 %: {F.intervalo(f['auc_bca_inf'], f['auc_bca_sup'], 4)}",
                  nota="Bootstrap BCa en los clientes de prueba.", mini=True),
         ui.cifra("AUC-PR (precisión media)", ui.num(f["auc_pr"], 3), variacion=f"Azar: {ui.num(d['prevalencia'], 3)}",
-                 nota="El azar da la proporción de riesgo alto.", mini=True),
+                 nota=D.frase_empate_auc_pr(modelo, corta=True) or "El azar da la proporción de riesgo alto.", mini=True),
         ui.cifra("Error de calibración (ECE)", ui.num(cal["ece_prueba_recalibrada"], 3), variacion=sin,
                  nota="Con la probabilidad recalibrada.", mini=True),
         ui.cifra("Brier de la probabilidad recalibrada", ui.num(cal["brier_prueba_recalibrada"], 3), variacion=brier0,
@@ -319,10 +347,11 @@ def _matriz(modelo):
     nota = (f"Las filas son lo que pasó (la etiqueta de la prueba) y las columnas lo que hizo la campaña, que contacta a "
             f"{F.entero(op['contactados'])} clientes; los empates de puntaje se rompen al azar con la semilla del proyecto, como "
             "en el informe. «Riesgo alto» es el cuarto superior del puntaje de propensión del conjunto de datos, no fuga observada.")
+    empate = D.frase_empate_captura(modelo, precision=True)    # el corte cae en un empate: la matriz es uno de los desempates
     return ui.tarjeta([ui.matriz(F.entero(op["vp"]), F.entero(op["fp"]), F.entero(op["fn"]), F.entero(op["vn"]), id=f"{PRE}-matriz"),
-                       ui.ficha(pares), ui.nota(nota)],
+                       ui.ficha(pares), ui.nota(nota)] + ([ui.nota(empate)] if empate else []),
                       titulo=titulo, subtitulo="Matriz de confusión en el punto de operación del informe.", detalles=tabla,
-                      fuentes=[FUENTE_PUNTAJES, FUENTE_CLF])
+                      fuentes=[FUENTE_PUNTAJES, *FUENTE_CLF] + ([FUENTE_EMPATES] if empate else []))
 
 
 def _roc(modelo):
@@ -349,10 +378,12 @@ def _roc(modelo):
             "acierto); la diagonal es el azar.")
     if not d["en_01"]:
         nota += " El puntaje del SVM lineal es un margen, no una probabilidad: la curva solo usa el orden."
+    if D.empate_campana(modelo) is not None:
+        nota += " El punto de la campaña es uno de los desempates posibles de su corte: lo explica la tarjeta de la matriz."
     filas = [[ui.num(fpr[k], 2), ui.num(tpr[k], 3)] for k in range(0, len(fpr), PASO_TABLA_CURVA)]
     tabla = _tabla(["Riesgo bajo marcado por error", "Riesgo alto alcanzado"], filas)
     leyenda = [(nombre, rol, _forma_linea(rol)), (f"Contactar al {_pct_cap()}", rol, "punto"), ("Azar", "contexto", "linea")]
-    return _grafico(fig, titulo, sub, tabla, leyenda, nota, [FUENTE_PUNTAJES, FUENTE_CLF], f"{PRE}-roc")
+    return _grafico(fig, titulo, sub, tabla, leyenda, nota, [FUENTE_PUNTAJES, *FUENTE_CLF], f"{PRE}-roc")
 
 
 def _precision_recall(modelo):
@@ -382,10 +413,16 @@ def _precision_recall(modelo):
     nota = (f"Cada punto de la curva es una capacidad de campaña: contactar a menos clientes sube la precisión y baja la captura "
             f"(con el {F.pct(cap[k], 0)}, precisión {F.pct(y[k])} y captura {F.pct(x[k])}). La línea horizontal es la "
             "precisión de contactar al azar.")
+    area, empate = D.frase_empate_auc_pr(modelo), D.frase_empate_corta(modelo)
+    if area:
+        nota += f" {area} La curva dibujada ordena a los empatados al azar, con la semilla del proyecto."
+    if empate:
+        nota += " El punto de la campaña es uno de los desempates posibles de su corte: lo explica la tarjeta de la matriz."
     filas = [[F.pct(cap[j], 0), F.pct(x[j]), F.pct(y[j])] for j in range(len(cap)) if float(round(cap[j] / PASO_TABLA_PR, 6)).is_integer()]
     tabla = _tabla(["Capacidad", "Captura", "Precisión"], filas, alta=True)
     leyenda = [(nombre, rol, _forma_linea(rol)), (f"Contactar al {_pct_cap()}", rol, "punto"), ("Azar", "contexto", "linea")]
-    return _grafico(fig, titulo, sub, tabla, leyenda, nota, [FUENTE_PUNTAJES, FUENTE_CLF], f"{PRE}-pr")
+    return _grafico(fig, titulo, sub, tabla, leyenda, nota, [FUENTE_PUNTAJES, *FUENTE_CLF] + ([FUENTE_EMPATES] if area or empate else []),
+                    f"{PRE}-pr")
 
 
 def _calibracion(modelo):
@@ -445,11 +482,12 @@ def _clasificacion(modelo):
         ("el AUC", d["auc"], f["auc_prueba"]), ("la matriz de confusión", sum(abs(op[k] - f[f"{k}_op"]) for k in ("vp", "fp", "fn", "vn")), 0),
         ("el ECE recalibrado", d["ece_cal"], cal["ece_prueba_recalibrada"]), ("el Brier", d["brier_cal"], cal["brier_prueba_recalibrada"]),
         ("el ECE sin recalibrar", d["ece_crudo"], cal["ece_prueba_sin_recalibrar"])])
-    partes = [ui.seccion("Las cifras del modelo en la prueba", [_cifras_clasificacion(modelo)] + ([revisar] if revisar else []),
-                         subtitulo=f"{D.NOMBRE_MODELO[modelo]}, con su mejor combinación ({D.NOMBRE_BALANCEO[f['balanceo']]}, "
+    partes = [ui.seccion("Las cifras del modelo en la prueba", [_cifras_clasificacion(modelo), ui.nota(D.nota_ece())]
+                         + ([revisar] if revisar else []),
+                         subtitulo=f"{D.NOMBRE_MODELO[modelo]}, con {_su_combinacion(f)} ({D.NOMBRE_BALANCEO[f['balanceo']]}, "
                                    f"{D.NOMBRE_OPTIMIZADOR[f['optimizador']]}), medido una sola vez en los {F.entero(d['n'])} clientes "
                                    "de prueba.",
-                         fuentes=[FUENTE_CLF, FUENTE_CAL])]
+                         fuentes=[*FUENTE_CLF, FUENTE_CAL])]
     if not d["en_01"]:
         partes.append(ui.aviso(f"El SVM lineal no da una probabilidad sino un margen (su distancia al hiperplano). La matriz, la curva "
                                "ROC y la de precisión-recall solo usan el orden de los clientes, así que valen igual; la calibración "
@@ -516,7 +554,7 @@ def _regresion_datos(modelo):
             "r2": float(1 - np.sum(r ** 2) / np.sum((y - y.mean()) ** 2)), "asimetria": float(stats.skew(r)),
             "por_productos": por_nivel, "desv_dentro_productos": float(dentro.std()),
             "franjas": bool(float(dentro.std()) <= FRANJA * float(np.min(np.abs(np.diff([por_nivel[int(k)] for k in niveles]))))),
-            "parte_productos": float(1 - dentro.var() / r.var()), "fila": D.fila(D.prueba("regresion"), modelo=modelo)}
+            "parte_productos": float(1 - dentro.var() / r.var()), "fila": D.fila(D.lideres("regresion"), modelo=modelo)}
 
 
 def _edad(nivel):
@@ -529,7 +567,7 @@ def _cifras_regresion(modelo):
     return ui.cifras([
         ui.cifra("RMSE de prueba", ui.num(f["rmse_prueba"], 5), variacion=f"IC 95 %: {F.intervalo(f['rmse_bca_inf'], f['rmse_bca_sup'], 5)}",
                  nota="Raíz del error cuadrático medio, en unidades del puntaje.", mini=True),
-        ui.cifra("MAE", ui.num(f["mae_prueba"], 4), nota="Error absoluto medio: lo que se equivoca un cliente típico.", mini=True),
+        ui.cifra("MAE", ui.num(f["mae_prueba"], 4), nota="Error absoluto medio: lo que se equivoca el pronóstico con un cliente típico.", mini=True),
         ui.cifra("R²", ui.num(f["r2_prueba"], 3), variacion=f"IC 95 %: {F.intervalo(f['r2_bca_inf'], f['r2_bca_sup'], 3)}",
                  nota="Parte de la variación del puntaje que explica el pronóstico.", mini=True),
         ui.cifra("MAPE", F.pct(f["mape_prueba"]), nota="Error relativo medio.", mini=True),
@@ -572,7 +610,7 @@ def _observado(modelo):
     tabla = _tabla(["Grupo", "Pronóstico medio", "Observado medio", "Diferencia"], filas, alta=True)
     leyenda = [(f"Un cliente ({F.entero(len(i))} de la prueba)", rol, "punto"), ("Observado medio por grupo", "real", "gruesa"),
                ("Pronóstico perfecto", "contexto", "linea")]
-    return _grafico(fig, titulo, sub, tabla, leyenda, nota, [FUENTE_PRONOSTICOS, FUENTE_REG], f"{PRE}-obs")
+    return _grafico(fig, titulo, sub, tabla, leyenda, nota, [FUENTE_PRONOSTICOS, *FUENTE_REG], f"{PRE}-obs")
 
 
 def _residuos(modelo):
@@ -712,10 +750,10 @@ def _regresion(modelo):
                                     ("el R²", d["r2"], f["r2_prueba"])])
     return [
         ui.seccion("Las cifras del modelo en la prueba", [_cifras_regresion(modelo)] + ([revisar] if revisar else []),
-                   subtitulo=f"{D.NOMBRE_MODELO[modelo]}, con su mejor combinación ({D.NOMBRE_OPTIMIZADOR[f['optimizador']]}), medido "
+                   subtitulo=f"{D.NOMBRE_MODELO[modelo]}, con {_su_combinacion(f)} ({D.NOMBRE_OPTIMIZADOR[f['optimizador']]}), medido "
                              f"una sola vez en los {F.entero(d['n'])} clientes de prueba. El objetivo es el puntaje de propensión del "
                              "conjunto de datos (churn_probability), no la fuga observada.",
-                   fuentes=[FUENTE_REG]),
+                   fuentes=[*FUENTE_REG]),
         ui.seccion("Cómo se equivoca", [
             ui.rejilla([_observado(modelo), _residuos(modelo)], "1-1"),
             ui.rejilla([_autocorrelacion(modelo), _histograma(modelo)], "1-1"),
@@ -732,7 +770,7 @@ def layout(tarea=None, modelo=None, **_):
                                                        persistir=not pedida))
     control_modelo = ui.control(html.Span(_rotulo_modelo(m), id=f"{PRE}-rotulo-modelo", className="tabla__clave"),
                                 _selector_modelo(t, m, not pedida))
-    otras = html.Div([ui.boton("Ver las pruebas frente a la EBM", href=app.ruta_vista("comparacion") + f"?tarea={t}", icono="balanza"),
+    otras = html.Div([ui.boton("Ver la comparación estadística", href=app.ruta_vista("comparacion") + f"?tarea={t}", icono="balanza"),
                       ui.boton("Ver qué variables usa", href=app.ruta_vista("interpretabilidad") + f"?tarea={t}&modelo={m}", icono="lupa")],
                      className="botonera", id=f"{PRE}-enlaces")
     return ui.pantalla([
@@ -745,7 +783,7 @@ def layout(tarea=None, modelo=None, **_):
 @callback(Output(f"{PRE}-modelo", "options"), Output(f"{PRE}-modelo", "value"), Input(f"{PRE}-tarea", "value"),
           State(f"{PRE}-modelo", "value"))
 def _por_tarea(tarea, modelo):
-    """Deja en el selector los ocho modelos de la tarea; si el elegido no es de ella, pasa al propuesto."""
+    """Deja en el selector los modelos de la tarea; si el elegido no es de ella, pasa al original."""
     t = _tarea(tarea)
     valido = _modelo(t, modelo)
     return _opciones(t), (no_update if valido == modelo else valido)
@@ -755,12 +793,12 @@ def _por_tarea(tarea, modelo):
           Output(f"{PRE}-rotulo-modelo", "children"), Input(f"{PRE}-tarea", "value"), Input(f"{PRE}-modelo", "value"))
 def _dibujar(tarea, modelo):
     """El diagnóstico del modelo elegido. Si el modelo no es de la tarea (acaba de cambiar la tarea), espera a que el
-    selector pase al propuesto."""
+    selector pase al original."""
     t = _tarea(tarea)
-    if modelo is not None and modelo not in V.modelos(t):
+    if modelo is not None and modelo not in _modelos(t):
         return no_update, no_update, no_update, no_update
     m = _modelo(t, modelo)
-    enlaces = [ui.boton("Ver las pruebas frente a la EBM", href=app.ruta_vista("comparacion") + f"?tarea={t}", icono="balanza"),
+    enlaces = [ui.boton("Ver la comparación estadística", href=app.ruta_vista("comparacion") + f"?tarea={t}", icono="balanza"),
                ui.boton("Ver qué variables usa", href=app.ruta_vista("interpretabilidad") + f"?tarea={t}&modelo={m}", icono="lupa")]
     try:
         cuerpo = _clasificacion(m) if t == "clasificacion" else _regresion(m)

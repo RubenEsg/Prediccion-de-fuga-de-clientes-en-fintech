@@ -45,8 +45,8 @@ color entra como `ui.traza(rol, forma)`, `ui.ROL[rol]`, `ui.VAR[rol]`, `ui.fuent
 
 | Rol (`ui.ROL[…]`) | Qué es en esta app | Token | Hex | Cómo se dibuja |
 |---|---|---|---|---|
-| `modelo` | la EBM: lo que se propone | `--serie-modelo` | `#2457f0` | sólida cuando es la serie en foco; rayada azul para lo demás de su familia |
-| `rival` | XGBoost y los otros modelos de árboles con los que la EBM empata | `--serie-rival` | `#b8235f` | barras rayadas en rosa; línea rosa |
+| `modelo` | el modelo en foco: el modelo original, BDL, en las vistas de los diez modelos y en la suya (`D.ROL_MODELO`); la EBM en las vistas de su grupo y en la mitad del Entregable 3 de la comparación (`D.ROL_VISTA_EBM`). La leyenda dice cuál es | `--serie-modelo` | `#2457f0` | sólida cuando es la serie en foco; rayada azul para lo demás de su familia |
+| `rival` | los benchmarks de la parte alta de la tabla: la EBM, LightGBM, XGBoost, Random Forest y el árbol de decisión (en las vistas de la EBM, los modelos de árboles con los que empata y, si aparece, BDL) | `--serie-rival` | `#b8235f` | barras rayadas en rosa; línea rosa |
 | `base` | modelos lineales, k-NN, Naive Bayes y la Entrega 2 | `--serie-base` | `#858585` | barras rayadas en gris; línea gris **a trazos** |
 | `real` | lo observado | `--serie-real` | `#141414` | línea de 2,5 px o puntos |
 | `contexto` | el contexto (el azar, lo que rodea) | `--serie-contexto` | `#c8c8c8` | línea fina o barras; 1,6:1 sobre la tarjeta: siempre con rótulo o tabla |
@@ -54,7 +54,7 @@ color entra como `ui.traza(rol, forma)`, `ui.ROL[rol]`, `ui.VAR[rol]`, `ui.fuent
 | `bien` · `atencion` · `critico` | estados | `--bien` · `--atencion` (`--atencion-texto`) · `--critico` | `#18753a` · `#b26f0b` (`#925b08`) · `#ba2b2e` | solo estados, siempre icono + palabra; nunca una serie |
 
 El orden fijo de la leyenda es `modelo`, `rival`, `base`, `real`, `contexto` (`tokens.SERIES`). `--franja` es el azul al
-9 % (banda de foco o de rango). `--acento` es el mismo azul de la EBM: enlaces, foco del teclado, tramo del deslizador.
+9 % (banda de foco o de rango). `--acento` es el mismo azul del modelo en foco: enlaces, foco del teclado, tramo del deslizador.
 Varios rivales o varios modelos de la base en un mismo gráfico comparten color: se distinguen por la forma, por un rótulo
 directo o en una tabla; no hay una paleta de cuatro tonos para categorías sin rol (balanceo, optimizador).
 
@@ -68,12 +68,12 @@ píldoras y anidados `--blanco #ffffff`, borde `--linea #e3e3e3`, texto `--tinta
 
 | Conjunto que se ve junto | Daltonismo (peor par, ΔE) | Visión normal (ΔE) | Contraste con la tarjeta |
 |---|---|---|---|
-| EBM + rivales | pasa, 23,7 | pasa, 32,0 | pasa |
-| EBM + base | pasa, 22,0 | pasa, 25,1 | pasa |
+| modelo en foco + rivales | pasa, 23,7 | pasa, 32,0 | pasa |
+| modelo en foco + base | pasa, 22,0 | pasa, 25,1 | pasa |
 | base + rivales | pasa, **8,9** (deuteranopía) | pasa, 21,0 | pasa |
-| EBM + rivales + base | pasa, 8,9 | pasa, 21,0 | pasa |
-| observado + EBM + contexto | pasa, 33,6 | pasa, 38,5 | aviso: el gris claro, 1,6:1 (pide rótulo o tabla) |
-| EBM + base + observado + rivales | pasa, 8,9 | pasa, 21,0 | pasa |
+| modelo en foco + rivales + base | pasa, 8,9 | pasa, 21,0 | pasa |
+| observado + modelo en foco + contexto | pasa, 33,6 | pasa, 38,5 | aviso: el gris claro, 1,6:1 (pide rótulo o tabla) |
+| modelo en foco + base + observado + rivales | pasa, 8,9 | pasa, 21,0 | pasa |
 
 Los grises «fallan» el piso de croma por diseño (son grises). El par más justo es gris–rosa: de ahí la regla **gris y rosa
 nunca con la misma forma**. Contraste de texto: 32 pares con su mínimo (4,5:1; 3:1 para texto de 24 px o más y marcas); el
@@ -223,8 +223,17 @@ versión mayor esos controles pueden perder el estilo sin dar error. Por eso `re
 ## Tres secciones, subnavegación y tablas (Tercer Entregable)
 
 La barra fija de arriba tiene tres secciones (Contexto, EDA, Modelos), como pide la guía. Modelos abre una subnavegación
-(`.subnav`): dos grupos de píldoras con rótulo («Los ocho modelos», «El modelo propuesto: la EBM»); la vista actual en
-píldora negra y, para lectores de pantalla, «(vista actual)». Por debajo de 640 px cada grupo se desplaza en horizontal.
+(`.subnav`): tres grupos de píldoras con rótulo («Los diez modelos», «El modelo original: BDL» y «La EBM, benchmark
+interpretable»); la vista actual en píldora negra y, para lectores de pantalla, «(vista actual)». Por debajo de 640 px cada
+grupo se desplaza en horizontal. Las vistas del grupo de la EBM llevan, bajo su cabecera, un aviso que dice que es un
+benchmark y no el modelo original (`paginas/modelos.py::aviso_benchmark`).
+
+La vista «Modelo original» escribe sus fórmulas con `dcc.Markdown(mathjax=True)`: en línea dentro de los párrafos y, las
+largas, en un bloque con desplazamiento propio (`.tabla-marco`), para que no ensanchen la página en el teléfono. Los
+nombres largos de pruebas y de funciones van en `html.Code`, que parte la palabra donde haga falta. Sus contenedores que
+se rellenan por callback usan la clase `rejilla` (una columna que no se desborda), no `resultados`. Un bloque cuyo archivo
+todavía no existe se muestra con `ui.aviso(…, "atencion", "Pendiente")`: qué falta, qué archivo lo traerá y quién lo
+produce.
 
 Las tablas interactivas (`dash_table.DataTable`: la tabla de líderes, el diccionario de variables, las de la EDA) van
 dentro de `html.Div(className="tabla-datos")` y toman su estilo de `assets/tablas.css` (tokens del sistema; nada escrito

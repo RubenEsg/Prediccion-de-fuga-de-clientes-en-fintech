@@ -1,0 +1,209 @@
+{
+  "regresion": {
+    "metrica": "RMSE",
+    "repeticiones": [
+      42,
+      43,
+      44
+    ],
+    "pliegues": 15,
+    "medias": {
+      "knn": 0.0633442892560495,
+      "ridge": 0.06182771447163936,
+      "lasso": 0.06181309208754696,
+      "arbol": 0.059280491192463924,
+      "random_forest": 0.05913429948866521,
+      "xgboost": 0.05897245460728521,
+      "svr": 0.06184709789976395,
+      "ebm": 0.05902730394310539,
+      "lightgbm": 0.058992599916483104,
+      "bdl": 0.05887387290508916
+    },
+    "desviaciones": {
+      "knn": 0.0005222885181276887,
+      "ridge": 0.0005259922960671323,
+      "lasso": 0.0005305771771756968,
+      "arbol": 0.00048227114724912423,
+      "random_forest": 0.0004911722747663611,
+      "xgboost": 0.0004736657074135936,
+      "svr": 0.0005177422361005908,
+      "ebm": 0.00047096944206281166,
+      "lightgbm": 0.00048348696598495027,
+      "bdl": 0.0004677447177312655
+    },
+    "mejor_benchmark": "xgboost",
+    "ventaja_sobre_el_mejor": 9.858170219605167e-05,
+    "friedman": {
+      "chi2": 130.14181818181817,
+      "p": 1.1089109115602386e-23,
+      "F_iman_davenport": 375.03443113772335,
+      "p_iman_davenport": 1.850195981351044e-86,
+      "rangos_medios": {
+        "bdl": 1.0,
+        "xgboost": 2.3333333333333335,
+        "lightgbm": 3.0,
+        "ebm": 3.8666666666666667,
+        "random_forest": 4.8,
+        "arbol": 6.0,
+        "lasso": 7.533333333333333,
+        "ridge": 7.866666666666666,
+        "svr": 8.6,
+        "knn": 10.0
+      },
+      "diferencia_critica_nemenyi": 3.4975837934984892,
+      "p_nemenyi_original_vs_mejor": 0.971627338555586
+    },
+    "frente_al_mejor": {
+      "ventaja_media": 9.858170219606139e-05,
+      "pliegues_a_favor": 15,
+      "pliegues": 15,
+      "P1": {
+        "estadistico": 0.0,
+        "p": 6.103515625e-05,
+        "a_favor": true,
+        "p_holm": 0.00054931640625
+      },
+      "P2": {
+        "estadistico": -4.619061429104474,
+        "p": 0.00039777974750792515,
+        "gl": 14,
+        "a_favor": true,
+        "p_holm": 0.0011933392425237754
+      },
+      "cliff": 0.19999999999999996,
+      "cohen": 0.20942991449868809,
+      "cohen_pareada": 2.599291061138827,
+      "P3": {
+        "estadistico": -6.875720804713321e-06,
+        "p": 0.045795420457954206,
+        "a_favor": true,
+        "p_holm": 0.09159084091590841
+      },
+      "P4": {
+        "estadistico": -5.812664278136842e-05,
+        "p": 0.037968992315933536,
+        "ic": [
+          -0.00011674243341136321,
+          -4.58128102393435e-06
+        ],
+        "a_favor": true,
+        "p_holm": 0.07593798463186707
+      }
+    },
+    "rechazos_frente_al_mejor": {
+      "P1": true,
+      "P2": true,
+      "P3": false,
+      "P4": false
+    },
+    "condicion_1_media_mejor": true,
+    "condicion_2_tres_pruebas": false,
+    "condicion_3_efecto": true,
+    "comparaciones_por_prueba": 9
+  },
+  "clasificacion": {
+    "metrica": "AUC",
+    "repeticiones": [
+      42,
+      43,
+      44
+    ],
+    "pliegues": 15,
+    "medias": {
+      "knn": 0.7841363636041871,
+      "naive_bayes": 0.6715169819025757,
+      "logistica": 0.7644293275526285,
+      "arbol": 0.8321624848979449,
+      "random_forest": 0.8320264670611218,
+      "xgboost": 0.8332813571445778,
+      "svm": 0.7642545846092087,
+      "ebm": 0.8293454248370018,
+      "lightgbm": 0.8313472667997942,
+      "bdl": 0.8312775644224059
+    },
+    "desviaciones": {
+      "knn": 0.006919594685867971,
+      "naive_bayes": 0.011741019604590758,
+      "logistica": 0.005972031904755151,
+      "arbol": 0.0032710976142367137,
+      "random_forest": 0.002982887985273057,
+      "xgboost": 0.004068931008815188,
+      "svm": 0.005945970986828872,
+      "ebm": 0.004469204320873378,
+      "lightgbm": 0.0036351897088769606,
+      "bdl": 0.003782743882173661
+    },
+    "mejor_benchmark": "xgboost",
+    "ventaja_sobre_el_mejor": -0.002003792722171993,
+    "friedman": {
+      "chi2": 111.29090909090905,
+      "p": 8.02642063776637e-20,
+      "F_iman_davenport": 65.71625766871153,
+      "p_iman_davenport": 2.5429859720639754e-43,
+      "rangos_medios": {
+        "xgboost": 2.4,
+        "arbol": 3.066666666666667,
+        "random_forest": 3.1333333333333333,
+        "lightgbm": 3.8,
+        "bdl": 3.8,
+        "ebm": 4.8,
+        "knn": 7.0,
+        "logistica": 8.266666666666667,
+        "svm": 8.733333333333333,
+        "naive_bayes": 10.0
+      },
+      "diferencia_critica_nemenyi": 3.4975837934984892,
+      "p_nemenyi_original_vs_mejor": 0.9610090906277132
+    },
+    "frente_al_mejor": {
+      "ventaja_media": -0.002003792722171771,
+      "pliegues_a_favor": 4,
+      "pliegues": 15,
+      "P1": {
+        "estadistico": 21.0,
+        "p": 0.02557373046875,
+        "a_favor": false,
+        "p_holm": 0.12786865234375
+      },
+      "P2": {
+        "estadistico": -1.119902644002272,
+        "p": 0.28160065306578985,
+        "gl": 14,
+        "a_favor": false,
+        "p_holm": 1.0
+      },
+      "cliff": -0.30666666666666664,
+      "cohen": -0.5100728220477724,
+      "cohen_pareada": -0.6302044206554768,
+      "P3": {
+        "estadistico": 1.1385254452928424,
+        "p": 0.2549011399925246,
+        "diferencia": 0.0027703200591681076,
+        "ic": [
+          -0.0019987675041070125,
+          0.007539407622443228
+        ],
+        "a_favor": true,
+        "p_holm": 0.7647034199775739
+      },
+      "P4": {
+        "estadistico": 20,
+        "p": 0.6678130817780038,
+        "solo_original": 990,
+        "solo_benchmark": 970,
+        "a_favor": true,
+        "p_holm": 1.0
+      }
+    },
+    "rechazos_frente_al_mejor": {
+      "P1": false,
+      "P2": false,
+      "P3": false,
+      "P4": false
+    },
+    "condicion_1_media_mejor": false,
+    "condicion_2_tres_pruebas": false,
+    "condicion_3_efecto": false,
+    "comparaciones_por_prueba": 9
+  }
+}

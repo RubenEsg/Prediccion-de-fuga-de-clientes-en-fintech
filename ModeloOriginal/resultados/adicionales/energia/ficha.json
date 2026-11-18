@@ -1,0 +1,14 @@
+{
+  "fuente": "https://archive.ics.uci.edu/static/public/242/energy+efficiency.zip",
+  "sha256": "499441eee27929a4b00417f58fd8c63c9cc14b8a71520cd0dd27fcb626738351",
+  "omitida": "X7 (área de vidrio)",
+  "objetivo": "Y1, carga de calefacción (kWh/m²)",
+  "nombre": "Eficiencia energética",
+  "n": 768,
+  "p": 7,
+  "n_train": 614,
+  "n_test": 154,
+  "umbral": 31.544999999999998,
+  "prevalencia_train": 0.250814332247557,
+  "prevalencia_test": 0.2727272727272727
+}

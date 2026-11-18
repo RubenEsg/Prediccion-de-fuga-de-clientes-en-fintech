@@ -1,5 +1,7 @@
-# Jupyter Book de las tres entregas. Las páginas son cuadernos ya ejecutados: el libro se construye con
-# sus salidas guardadas (execute_notebooks: off) y no necesita los datos.
+# Jupyter Book del proyecto: el informe del proyecto final (ProyectoFinal/, capítulos 0 a 10 de la guía) y las tres
+# entregas anteriores. Las páginas de las entregas son cuadernos ya ejecutados: el libro se construye con sus salidas
+# guardadas (execute_notebooks: off) y no necesita los datos. Las tablas y figuras del proyecto final las genera
+# ModeloOriginal/experiments/08_tablas_libro.py a partir de los resultados.
 title: "Predicción de fuga de clientes en una fintech colombiana"
 author: "Martínez Pulido Valerie · Basto Martínez Abrahan · Esguerra Fernández Rubén"
 copyright: "2026"
@@ -9,6 +11,9 @@ execute:
   execute_notebooks: "off"
 
 only_build_toc_files: true
+
+bibtex_bibfiles:
+  - ProyectoFinal/references.bib
 
 exclude_patterns:
   - _build
@@ -32,6 +37,10 @@ html:
 sphinx:
   config:
     language: es
+    bibtex_reference_style: author_year
+    bibtex_default_style: plain
+    numfig: false
+    math_number_all: false
     html_css_files:
       - custom.css
     html_theme_options:

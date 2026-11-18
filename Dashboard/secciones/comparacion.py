@@ -1,31 +1,43 @@
-"""Comparación · ¿Es mejor que los otros modelos?
+"""Comparación estadística · ¿Supera el modelo original a los benchmarks?
 
-Primero, los ocho modelos a la vez con la EBM incluida: en clasificación, el diagrama de diferencia crítica (rangos medios
-de los pliegues externos, Friedman, Iman-Davenport y la diferencia crítica de Nemenyi, de datos/cd.json); en regresión, la
-tabla del Model Confidence Set del informe. Después, la EBM frente a las siete referencias de cada tarea: el desempeño en
-la prueba con su intervalo, la diferencia con cada referencia sobre la banda de equivalencia práctica, la ficha de una
-referencia con todas sus pruebas y los pliegues de la validación anidada. Aparte, con la etiqueta de la mediana, la
-comparación con la entrega anterior y el techo de información.
+Dos mitades, y cada una dice cuál es:
 
-El veredicto de cada referencia es el de datos_app.veredicto (p ajustados por Holm y ALFA), el mismo de Inicio: ninguno se
-escribe a mano. Toda cifra sale de datos/ y cada tarjeta dice de qué archivo.
+  · El modelo original (BDL) frente a los nueve benchmarks, con el protocolo pre-registrado de la corrección: el veredicto
+    de superioridad con las cuatro condiciones de la guía (de veredicto.json y condicion4.json, nunca de un texto fijo); los
+    diez modelos a la vez, con el diagrama de diferencia crítica de las dos tareas (rangos medios de los pliegues externos,
+    Friedman, Iman-Davenport y la diferencia crítica de Nemenyi, de datos/cd.json); el original frente al mejor benchmark y
+    frente a cada uno, con las pruebas P1 a P4, sus p ajustados por Holm y los tamaños del efecto (pruebas_hipotesis.csv);
+    el desempeño de los diez en la prueba con su intervalo y sus pliegues de la validación anidada. En estos gráficos la
+    serie en azul es BDL. Las tarjetas del veredicto y de las pruebas son las de secciones/original.py.
+  · El análisis del Entregable 3, sin cambios: la EBM, que hoy es un benchmark, frente a sus siete referencias de clase (la
+    diferencia con cada una sobre la banda de equivalencia práctica, la ficha de una referencia con todas sus pruebas y, en
+    regresión, el Model Confidence Set del informe) y, aparte, con la etiqueta de la mediana, la comparación con la entrega
+    anterior y el techo de información. En estos gráficos la serie en azul es la EBM (ROL = D.ROL_VISTA_EBM).
+
+El veredicto de cada referencia de la EBM es el de datos_app.veredicto (p ajustados por Holm y ALFA): ninguno se escribe a
+mano. Toda cifra sale de datos/ y cada tarjeta dice de qué archivo. Si la corrección todavía no dejó sus archivos, la
+primera mitad muestra cada bloque como pendiente y los gráficos de todos los modelos caen en los ocho del Entregable 3.
 """
 from functools import lru_cache
 
 import dash
 import pandas as pd
 import plotly.graph_objects as go
-from dash import Input, Output, State, callback, html, no_update
+from dash import Input, Output, State, callback, dcc, html, no_update
 
+import app
 import datos_app as D
 import formato as F
 import motor as M
 import ui
+from secciones import original as OG
 
 
+VISTA = "comparacion"
 PRE = "co"
 PANTALLA = "comparacion"
-PREGUNTA = "¿Es mejor que los otros modelos?"
+O = D.ORIGINAL
+ROL = D.ROL_VISTA_EBM             # el rol de color en la mitad del Entregable 3: la EBM en foco (azul) frente a sus referencias
 RIVAL = "xgboost"                 # la referencia con que nace la ficha: el modelo de árboles más cercano a la EBM
 NIVEL_MCS = 0.90                  # nivel del Model Confidence Set del informe
 UMBRAL_EQUIVALENCIA = 0.95        # «el umbral habitual del 95 %» con que el informe lee la probabilidad de equivalencia
@@ -42,9 +54,13 @@ DECIMALES_UMBRAL = 4              # el umbral y la mediana del puntaje, como en 
 
 FIJADA = "fijada antes"                 # protocolo de cada prueba, en una palabra (el aviso de la sección lo dice entero)
 EXPLORATORIA = "exploratoria"
-CARDINAL = {1: "un", 2: "dos", 3: "tres", 4: "cuatro", 5: "cinco", 6: "seis", 7: "siete", 8: "ocho"}
-ORDINAL_F = {1: "primera", 2: "segunda", 3: "tercera", 4: "cuarta", 5: "quinta", 6: "sexta", 7: "séptima", 8: "octava"}
+CARDINAL = {1: "un", 2: "dos", 3: "tres", 4: "cuatro", 5: "cinco", 6: "seis", 7: "siete", 8: "ocho", 9: "nueve", 10: "diez",
+            15: "quince"}
+ORDINAL_F = {1: "primera", 2: "segunda", 3: "tercera", 4: "cuarta", 5: "quinta", 6: "sexta", 7: "séptima", 8: "octava", 9: "novena",
+             10: "décima"}
 ORDINAL_M = {1: "primer", 2: "segundo", 3: "tercer", 4: "cuarto", 5: "quinto", 6: "sexto", 7: "séptimo", 8: "octavo"}
+ORDINAL_MASC = {1: "primero", 2: "segundo", 3: "tercero", 4: "cuarto", 5: "quinto", 6: "sexto", 7: "séptimo", 8: "octavo", 9: "noveno",
+                10: "décimo"}
 TIPO_VEREDICTO = {"supera": "bien", "empata": None, "discrepan": "atencion", "pierde": "critico"}
 # Gris y rosa nunca con la misma forma: los modelos de árboles van en círculo y la base en cuadrado (en la leyenda, «barra»)
 SIMBOLO = {"modelo": "circle", "rival": "circle", "base": "square"}
@@ -69,14 +85,17 @@ TAREA = {
 }
 FUENTES_PRUEBA = [D.fuente(f"resultados/{t}_prueba.csv") for t in TAREA] + [D.fuente("resultados/resumen.json")]
 FUENTES_PRUEBAS = [D.fuente(f"resultados/pruebas_{t}.csv") for t in TAREA] + FUENTES_PRUEBA
-FUENTES_PLIEGUES = [D.fuente(TAREA[t]["pliegues"]) for t in TAREA] + FUENTES_PRUEBA[:-1]
+FUENTES_PLIEGUES = ([D.fuente_original("pliegues_<tarea>.csv")] + [D.fuente(TAREA[t]["pliegues"]) for t in TAREA]
+                    + FUENTES_PRUEBA[:-1] + [D.fuente_original("lideres_<tarea>.csv")])
 FUENTES_PAR = [D.fuente("puntajes_prueba.parquet"), D.fuente(TAREA["regresion"]["pliegues"])] + FUENTES_PRUEBAS
 FUENTES_E2 = [D.fuente("resultados/entrega2.csv"), D.fuente("entrega3/comparacion_entrega2/techo.json")]
 BUSQUEDAS_E2 = "entrega3/comparacion_entrega2/busquedas.json"      # cómo se afinaron la EBM y XGBoost de esa comparación
 CD_JSON = "cd.json"               # Friedman, Iman-Davenport y Nemenyi sobre los pliegues externos, por tarea
-FUENTES_CD = [D.fuente(CD_JSON), D.fuente(TAREA["clasificacion"]["pliegues"]), D.fuente("resultados/pruebas_clasificacion.csv")]
-FUENTES_MCS = [D.fuente("resultados/regresion_prueba.csv"), D.fuente("resultados/resumen.json"), D.fuente(CD_JSON),
+FUENTES_CD = [D.fuente(CD_JSON), D.fuente_original("pliegues_<tarea>.csv")]
+FUENTES_MCS = [D.fuente("resultados/regresion_prueba.csv"), D.fuente("resultados/resumen.json"),
                D.fuente("resultados/pruebas_regresion.csv")]
+FUENTES_DIEZ = FUENTES_PRUEBA[:2] + [D.fuente_original("lideres_<tarea>.csv"), D.fuente_original("pliegues_<tarea>.csv"),
+                                     FUENTES_PRUEBA[-1]]
 FILA_DC = "Diferencia crítica"    # la fila de arriba del diagrama: la barra de la diferencia crítica de Nemenyi
 TOLERANCIA_RANGO = 1e-9           # los rangos medios recalculados de los pliegues deben dar los de cd.json
 # Las partes de ui.grafico que escribe un callback, en este orden
@@ -105,6 +124,10 @@ def _mayuscula(texto):
     return texto[:1].upper() + texto[1:]
 
 
+def _cardinal(n):
+    return CARDINAL.get(n, F.entero(n))
+
+
 def _tras(preposicion, frase):
     """«a» o «de» delante de un nombre en frase, con su contracción: «al árbol de decisión», «del SVM lineal», «de la EBM»."""
     if frase.startswith("el "):
@@ -118,8 +141,8 @@ def _lista(modelos):
 
 
 def _rotulo_ficha(ref):
-    """El texto del botón que lleva a la ficha de la referencia elegida."""
-    return f"Ver la ficha {_tras('de', D.en_frase(ref))}"
+    """El texto del botón que lleva a la ficha de la EBM frente a la referencia elegida."""
+    return f"Ver la EBM frente {_tras('a', D.en_frase(ref))}"
 
 
 def _referencia(tarea, ref):
@@ -148,11 +171,21 @@ def _n_pliegues(tarea):
     return len(D.tabla(TAREA[tarea]["pliegues"]))
 
 
-def _externa(tarea):
-    """Puesto de la EBM en la validación anidada (1 = la mejor métrica externa) y la fila del modelo que queda primero."""
-    c = TAREA[tarea]
-    t = D.prueba(tarea).sort_values(c["externa"], ascending=not c["mayor_es_mejor"]).reset_index(drop=True)
-    return int(t.index[t["modelo"] == "ebm"][0]) + 1, t.iloc[0]
+def _foco(modelos):
+    """El modelo en foco de los gráficos con todos los modelos: el original si ya está en la tarea; si no, la EBM."""
+    return O if O in set(modelos) else "ebm"
+
+
+def _rol_diez(modelos):
+    """El rol de color de cada modelo en esos gráficos: el de D.ROL_MODELO (el original en azul y la EBM entre los rivales)
+    o, si el original todavía no está, el de las vistas de la EBM."""
+    return D.ROL_MODELO if O in set(modelos) else ROL
+
+
+def _queda(modelo, puesto):
+    """«queda cuarto» (BDL, un modelo) o «queda cuarta» (la EBM), con el puesto en letras."""
+    ordinal = (ORDINAL_F if D.en_frase(modelo).startswith("la ") else ORDINAL_MASC).get(puesto, f"en el puesto {F.entero(puesto)}")
+    return f"queda {ordinal}"
 
 
 def _mcs():
@@ -170,38 +203,59 @@ def _texto_mcs():
             f"{estado} ({F.p_valor(p_ebm)}).")
 
 
-def _respuesta(tarea):
-    """El subtítulo de la pantalla: la respuesta a la pregunta, con las cifras de la tarea elegida."""
+def _respuesta_original(tarea):
+    """La respuesta a la pregunta de la pantalla en la tarea elegida, con lo que digan veredicto.json y condicion4.json."""
+    c = TAREA[tarea]
+    que = D.NOMBRE_TAREA[tarea].lower()
+    r, e = D.veredicto_original(tarea), D.estado_veredicto(tarea)
+    if r is None:
+        return f"Todavía no se puede responder en {que}: las pruebas de hipótesis del modelo original no han llegado."
+    mejor = r["mejor_benchmark"]
+    lado = "mejor" if r["condicion_1_media_mejor"] else "peor"
+    inicio = {"superior": "Sí", "no superior": "No", "pendiente": "Todavía no se sabe"}[e["palabra"]]
+    return (f"{inicio}. En {que}, el veredicto de BDL con la regla de superioridad de la guía es: {D.frase_veredicto(tarea)}. Su "
+            f"{c['externa_nombre']} es {ui.num(r['medias'][O], c['d'])} frente a {ui.num(r['medias'][mejor], c['d'])} "
+            f"{_tras('de', D.en_frase(mejor))}, el mejor benchmark ({lado} por {ui.num(abs(r['ventaja_sobre_el_mejor']), c['d'] + 1)}).")
+
+
+def _respuesta_ebm(tarea):
+    """Lo que dice el análisis del Entregable 3 de la EBM frente a sus siete referencias, con las cifras de la tarea."""
     c = TAREA[tarea]
     t, pr, v = D.prueba(tarea), D.pruebas(tarea), D.veredictos(tarea)
     empates = [m for m in v.index if v[m] == "empata"]
     superadas = [m for m in v.index if v[m] == "supera"]
     resto = [m for m in v.index if v[m] not in ("empata", "supera")]
+    sujeto = "La EBM, benchmark del Entregable 3,"
     frases = []
     if tarea == "clasificacion":
         if empates:
-            arboles = {m for m in v.index if D.ROL_MODELO[m] == "rival"}
+            arboles = {m for m in v.index if ROL[m] == "rival"}
             quienes = "los modelos de árboles" if set(empates) == arboles else "todos los demás"
             mcnemar = all(D.fila(pr, modelo=m)["p_mcnemar_holm"] >= D.ALFA for m in empates)
             pruebas = "ninguna prueba encuentra diferencia" if mcnemar else f"ni la t corregida ni {c['fijada']} encuentran diferencia"
-            frases.append(f"No es mejor que {quienes}: frente {_tras('a', _lista(empates))} {pruebas} tras la corrección de Holm (probabilidad "
-                          f"de equivalencia práctica: {F.enumerar(_prob(D.fila(pr, modelo=m)['p_rope']) for m in empates)}).")
+            frases.append(f"{sujeto} no es mejor que {quienes}: frente {_tras('a', _lista(empates))} {pruebas} tras la corrección de Holm "
+                          f"(probabilidad de equivalencia práctica: {F.enumerar(_prob(D.fila(pr, modelo=m)['p_rope']) for m in empates)}).")
     else:
         e, puesto, primero = D.fila(t, modelo="ebm"), list(t["modelo"]).index("ebm") + 1, t.iloc[0]
+        entre = f"entre los {CARDINAL[len(t)]} modelos de esa entrega"
         if puesto == 1:
-            lugar = f"En regresión tiene el menor {c['metrica']} de prueba ({ui.num(e[c['prueba']], c['d'])})"
+            lugar = f"{sujeto} tiene el menor {c['metrica']} de prueba {entre} ({ui.num(e[c['prueba']], c['d'])})"
         else:
-            lugar = (f"No: en regresión tiene el {ORDINAL_M[puesto]} menor {c['metrica']} de prueba ({ui.num(e[c['prueba']], c['d'])}), a "
+            lugar = (f"{sujeto} tiene el {ORDINAL_M[puesto]} menor {c['metrica']} de prueba {entre} ({ui.num(e[c['prueba']], c['d'])}), a "
                      f"{ui.num(abs(e[c['prueba']] - primero[c['prueba']]), c['d'])} {_tras('de', D.en_frase(primero['modelo']))}")
         frases.append(lugar + (f"; con los p ajustados, ni la t corregida ni {c['fijada']} la separan {_tras('de', _lista(empates))}."
                                if empates else "."))
     if superadas:
-        frases.append(f"Sí supera con significación, tras la corrección de Holm, {_tras('a', _lista(superadas))}.")
+        frases.append(("Sí supera" if frases else f"{sujeto} supera") + f" con significación, tras la corrección de Holm, "
+                      f"{_tras('a', _lista(superadas))}.")
     if resto:
         frases.append(f"Frente {_tras('a', _lista(resto))} el veredicto es otro: véalo en su ficha.")
-    if tarea == "regresion":
-        frases.append(_texto_mcs())
     return " ".join(frases)
+
+
+def _respuesta(tarea):
+    """El subtítulo de la pantalla: primero el modelo original (el veredicto de los archivos) y después la EBM."""
+    return f"{_respuesta_original(tarea)} {_respuesta_ebm(tarea)}"
 
 
 # --- Piezas de los gráficos con una fila por modelo ---------------------------------------------------------------------
@@ -244,9 +298,19 @@ def _valores_al_borde(fig, nombres, textos, foco=None):
 
 
 def _leyenda_modelos(tarea, con_ebm=True, extra=None):
+    """La leyenda de los gráficos del Entregable 3: la EBM en foco, los modelos de árboles y la base."""
     items = ([(D.NOMBRE_MODELO["ebm"], "modelo", FORMA_LEYENDA["modelo"])] if con_ebm else []) + [
         ("Modelos de árboles", "rival", FORMA_LEYENDA["rival"]), (TAREA[tarea]["base"], "base", FORMA_LEYENDA["base"])]
     return ui.leyenda(items + ([extra] if extra else []))
+
+
+def _leyenda_diez(tarea, modelos, extra=None):
+    """La leyenda de los gráficos con todos los modelos: el modelo en foco (el original), los rivales y la base."""
+    foco = _foco(modelos)
+    rivales = "EBM, LightGBM y modelos de árboles" if foco == O else "Modelos de árboles"
+    items = [(D.NOMBRE_MODELO[foco], "modelo", FORMA_LEYENDA["modelo"]), (rivales, "rival", FORMA_LEYENDA["rival"]),
+             (TAREA[tarea]["base"], "base", FORMA_LEYENDA["base"])]
+    return ui.leyenda(items + list(extra or []))
 
 
 def _salidas(gid):
@@ -257,20 +321,46 @@ def _partes(g):
     return [g["figura"], g["titulo"], g["sub"], g["leyenda"], g["tabla"], g["nota"], g["etiqueta"]]
 
 
-# --- 0. Los ocho modelos a la vez: Friedman → Nemenyi (clasificación) y el Model Confidence Set (regresión) ---------------
+# --- 0. El veredicto del modelo original y todos los modelos a la vez: Friedman → Nemenyi -----------------------------------
+def _veredicto():
+    """El veredicto del modelo original en las dos tareas: las cuatro condiciones de la regla, una por una, y por qué. Son
+    las mismas piezas de la vista «Modelo original»: todo sale de veredicto.json y de condicion4.json."""
+    if all(D.veredicto_original(t) is None for t in TAREA):
+        return [OG._pendiente("El veredicto del modelo original", "veredicto.json", "lo calcula 04_pruebas_hipotesis.py"),
+                OG._tarjeta_condiciones()]
+    por_que = [" ".join(x for x in (OG._por_que(t), OG._causa(t)) if x) for t in TAREA]
+    ir = html.Div(ui.boton("Ver el modelo original", href=app.ruta_vista("original"), icono="modelo"),
+                  className="botonera")
+    return [OG._tarjeta_condiciones(), ui.aviso(por_que, None, "Por qué el veredicto es ese"), ir]
+
+
+def _frente(tarea):
+    """El modelo original frente al mejor benchmark, prueba por prueba, y frente a cada uno de los demás."""
+    if D.veredicto_original(tarea) is None or D.pruebas_original(tarea) is None:
+        return [OG._pendiente("Las pruebas de hipótesis del modelo original", "pruebas_hipotesis.csv", "las calcula 04_pruebas_hipotesis.py")]
+    piezas = [OG._detalle_mejor(tarea), OG._tabla_benchmarks(tarea)]
+    frase = OG._frase_p4_empates() if tarea == "clasificacion" else None     # P4 marca la campaña, y el corte de BDL cae en un empate
+    if frase:
+        piezas.append(ui.nota([f"{frase} El detalle está en la tarjeta «P4 y los empates de la campaña» de ",
+                               dcc.Link("la vista del modelo original", href=app.ruta_vista("original") + "?tarea=clasificacion"), "."]))
+    return piezas
+
+
 def _nemenyi(tarea):
-    """Friedman → Nemenyi sobre los pliegues externos (datos/cd.json): rangos medios de menor a mayor (en cada pliegue, 1 es
-    la mejor métrica), la diferencia crítica, los modelos a menos de ella del mejor rango medio, los que Nemenyi separa de la
-    EBM y los rangos de cada pliegue, recalculados de las métricas de cada pliegue para comprobar el archivo."""
+    """Friedman → Nemenyi sobre los pliegues externos (datos/cd.json, con los diez modelos cuando la corrección ya los dejó):
+    rangos medios de menor a mayor (en cada pliegue, 1 es la mejor métrica), la diferencia crítica, los modelos a menos de
+    ella del mejor rango medio, los que Nemenyi separa del modelo en foco y los rangos de cada pliegue, recalculados de las
+    métricas de cada pliegue para comprobar el archivo."""
     n = D.json(CD_JSON)[tarea]
     rangos = pd.Series(n["rango_medio"], dtype=float).sort_values(kind="stable")
     mejor, dc = float(rangos.min()), float(n["diferencia_critica"])
     P = pd.DataFrame(n["metricas_pliegue"])
     R = P.rank(axis=1, ascending=not TAREA[tarea]["mayor_es_mejor"], method="average")
     coincide = bool((R.mean().reindex(rangos.index) - rangos).abs().max() < TOLERANCIA_RANGO)
-    return {"datos": n, "rangos": rangos, "mejor": mejor, "dc": dc, "por_pliegue": R, "coincide": coincide,
+    foco = _foco(rangos.index)
+    return {"datos": n, "rangos": rangos, "mejor": mejor, "dc": dc, "por_pliegue": R, "coincide": coincide, "foco": foco,
             "dentro": [m for m in rangos.index if rangos[m] - mejor < dc],
-            "separa_ebm": [m for m in rangos.index if m != "ebm" and abs(rangos[m] - rangos["ebm"]) >= dc]}
+            "separa": [m for m in rangos.index if m != foco and abs(rangos[m] - rangos[foco]) >= dc]}
 
 
 def _aviso_rangos(n):
@@ -280,11 +370,13 @@ def _aviso_rangos(n):
                     "revise el archivo antes de leer el diagrama.", "critico", "El diagrama no cuadra con sus datos")
 
 
-def _diagrama_cd():
-    """Clasificación: el diagrama de diferencia crítica. Una fila por modelo con su rango medio en los pliegues externos; la
+def _diagrama_cd(tarea):
+    """El diagrama de diferencia crítica de una tarea. Una fila por modelo con su rango medio en los pliegues externos; la
     franja va del mejor rango medio a ese rango más la diferencia crítica de Nemenyi, que se dibuja arriba como una barra."""
-    n = _nemenyi("clasificacion")
-    datos, rangos, mejor, dc = n["datos"], n["rangos"], n["mejor"], n["dc"]
+    c = TAREA[tarea]
+    n = _nemenyi(tarea)
+    datos, rangos, mejor, dc, foco = n["datos"], n["rangos"], n["mejor"], n["dc"], n["foco"]
+    rol_de = _rol_diez(rangos.index)
     k, pliegues = int(datos["modelos"]), int(datos["pliegues"])
     orden = list(rangos.index)
     nombres = [D.NOMBRE_CORTO[m] for m in orden]
@@ -295,7 +387,7 @@ def _diagrama_cd():
     fig.add_trace(go.Scatter(x=[mejor, mejor + dc], y=[FILA_DC, FILA_DC], mode="lines",
                              line=dict(color=ui.ROL["referencia"], width=ui.ANCHO_REAL), **ui.hover_texto([texto_dc, texto_dc])))
     for rol in ("base", "rival", "modelo"):
-        grupo = [m for m in orden if D.ROL_MODELO[m] == rol]
+        grupo = [m for m in orden if rol_de[m] == rol]
         if not grupo:
             continue
         textos = [f"{D.NOMBRE_MODELO[m]}: rango medio <b>{ui.num(rangos[m], 1)}</b> · a {ui.num(rangos[m] - mejor, 1)} del mejor · "
@@ -303,77 +395,47 @@ def _diagrama_cd():
         fig.add_trace(go.Scatter(x=[rangos[m] for m in grupo], y=[D.NOMBRE_CORTO[m] for m in grupo], **_marca(rol),
                                  **ui.hover_texto(textos)))
     ui.franja(fig, mejor, mejor + dc)
-    ui.unidad_eje(fig, "rango medio (1 = el mayor AUC)")    # corta: tiene que caber a 400 px; el subtítulo lo dice entero
+    extremo, opuesto = (f"el mayor {c['metrica']}", "el menor") if c["mayor_es_mejor"] else (f"el menor {c['metrica']}", "el mayor")
+    ui.unidad_eje(fig, f"rango medio (1 = {extremo})")       # corta: tiene que caber a 400 px; el subtítulo lo dice entero
     _lienzo_modelos(fig, filas_y, 1, k)
     valores, textos_eje = ui.marcas(1, k, 1)
     fig.update_xaxes(tickvals=valores, ticktext=textos_eje)
-    _valores_al_borde(fig, filas_y, [ui.num(dc, 2)] + [ui.num(rangos[m], 1) for m in orden], foco=D.NOMBRE_CORTO["ebm"])
+    _valores_al_borde(fig, filas_y, [ui.num(dc, 2)] + [ui.num(rangos[m], 1) for m in orden], foco=D.NOMBRE_CORTO[foco])
 
-    separa = n["separa_ebm"]
-    titulo = (f"La diferencia crítica de Nemenyi es de {ui.num(dc, 2)} rangos: {CARDINAL[len(n['dentro'])]} de los {CARDINAL[k]} "
-              "modelos quedan a menos de ella del mejor y "
-              + ("no separa a la EBM de ningún modelo" if not separa else f"solo separa a la EBM {_tras('de', _lista(separa))}"))
-    sub = (f"Rango medio de cada modelo en los {CARDINAL[pliegues]} pliegues externos de la validación anidada: en cada pliegue, "
-           f"1 es el mayor AUC y {k} el menor. La franja azul va del mejor rango medio ({ui.num(mejor, 1)}) a ese rango más la "
+    separa, al_foco = n["separa"], _tras("a", D.en_frase(foco))
+    titulo = (f"La diferencia crítica de Nemenyi es de {ui.num(dc, 2)} rangos: {_cardinal(len(n['dentro']))} de los {_cardinal(k)} "
+              "modelos quedan a menos de ella del mejor"
+              + (f" y Nemenyi no separa {al_foco} de ningún modelo" if not separa else
+                 f"; frente {al_foco}, solo {'queda separado' if len(separa) == 1 else 'quedan separados'} {_lista(separa)}"))
+    sub = (f"Rango medio de cada modelo en los {_cardinal(pliegues)} pliegues externos de la validación anidada: en cada pliegue, "
+           f"1 es {extremo} y {k}, {opuesto}. La franja azul va del mejor rango medio ({ui.num(mejor, 1)}) a ese rango más la "
            f"diferencia crítica (α = {ui.num(datos['alfa'], 2)}); arriba, la barra de esa diferencia.")
-    nota = ("Complemento de la app: el informe compara la EBM con cada referencia por pares; este diagrama se calculó con los mismos "
-            "AUC de los pliegues. A la derecha, el rango medio de cada modelo.")
+    nota = ("Friedman y Nemenyi comparan todos los modelos a la vez, con los mismos pliegues. Con pocos pliegues Nemenyi tiene poca "
+            f"potencia ({OG._cita_en('demsar2006')}): se presenta como descripción, y la regla de superioridad se decide con las pruebas "
+            "por pares de la sección siguiente. A la derecha, el rango medio de cada modelo.")
     R = n["por_pliegue"]
+    bloques = [str(b) for b in datos.get("bloques") or range(1, len(R) + 1)]
     filas = [[D.NOMBRE_MODELO[m], ui.num(rangos[m], 1), ui.num(rangos[m] - mejor, 1), "sí" if m in n["dentro"] else "no"]
              + [ui.num(R[m].iloc[i], 1) for i in range(len(R))] for m in orden]
     tabla = [ui.tabla(["Modelo", "Rango medio", "Distancia al mejor", "A menos de la diferencia crítica"]
-                      + [f"Pliegue {i + 1}" for i in range(len(R))], filas, compacta=True, muestras=[D.ROL_MODELO[m] for m in orden],
+                      + [f"Pliegue {b}" for b in bloques], filas, compacta=True, muestras=[rol_de[m] for m in orden],
                       num=[False, True, True, False] + [True] * len(R)),
-             ui.nota(f"Rangos de cada pliegue recalculados de los AUC de {D.fuente(CD_JSON)} (los empates reparten el rango).")]
+             ui.nota(f"Rangos de cada pliegue recalculados de las métricas de {D.fuente(CD_JSON)} (los empates reparten el rango). Los "
+                     "pliegues se nombran «semilla-pliegue».")]
     etiqueta = f"{titulo}. " + "; ".join(f"{f[0]}: rango medio {f[1]}" for f in filas) + f". Diferencia crítica: {ui.num(dc, 2)}."
-    leyenda = ui.leyenda([(D.NOMBRE_MODELO["ebm"], "modelo", FORMA_LEYENDA["modelo"]),
-                          ("Modelos de árboles", "rival", FORMA_LEYENDA["rival"]),
-                          (TAREA["clasificacion"]["base"], "base", FORMA_LEYENDA["base"]),
-                          ("Diferencia crítica de Nemenyi", "referencia", "gruesa"),
-                          ("A menos de la diferencia crítica del mejor rango medio", "franja", "barra")])
+    leyenda = _leyenda_diez(tarea, orden, extra=[("Diferencia crítica de Nemenyi", "referencia", "gruesa"),
+                                                 ("A menos de la diferencia crítica del mejor rango medio", "franja", "barra")])
     return ui.grafico(fig, titulo=titulo, subtitulo=sub, etiqueta=etiqueta, tabla=tabla, leyenda=leyenda, nota=nota, alto="alto",
                       fuentes=FUENTES_CD)
 
 
-def _lectura_nemenyi(tarea, n):
-    """Lo que dice y lo que no dice Nemenyi frente a las pruebas por pares del informe (con los p ajustados por Holm)."""
-    v = D.veredictos(tarea)
-    rangos = n["rangos"]
-    superadas = [m for m in v.index if v[m] == "supera"]
-    empates = [m for m in v.index if v[m] == "empata"]
-    confirma = [m for m in superadas if m in n["separa_ebm"]]
-    no_confirma = [m for m in superadas if m not in n["separa_ebm"]]
-    contradice = [m for m in empates if m in n["separa_ebm"]]
-    fijada = TAREA[tarea]["fijada"]
-    lejos = max((m for m in rangos.index if m != "ebm"), key=lambda m: abs(rangos[m] - rangos["ebm"]))
-    frases = []
-    if not n["separa_ebm"]:
-        frases.append(f"Nemenyi no separa a la EBM de ningún modelo: su mayor distancia, con {D.en_frase(lejos)}, es de "
-                      f"{ui.num(abs(rangos[lejos] - rangos['ebm']), 1)} rangos.")
-    if empates and not contradice:
-        frases.append(f"{'Tampoco contradice' if not n['separa_ebm'] else 'No contradice'} el informe: como las pruebas por pares, no "
-                      f"separa a la EBM {_tras('de', _lista(empates))}.")
-    if confirma:
-        frases.append(f"Confirma la ventaja que las pruebas por pares encuentran frente {_tras('a', _lista(confirma))}.")
-    if no_confirma:
-        frases.append(f"Pero no tiene potencia para confirmar las ventajas que la t corregida y {fijada} sí encuentran, con la corrección de "
-                      f"Holm, frente {_tras('a', _lista(no_confirma))}: con {CARDINAL[int(n['datos']['pliegues'])]} pliegues la "
-                      f"diferencia crítica es de {ui.num(n['dc'], 2)} rangos en una escala de 1 a {int(n['datos']['modelos'])}.")
-    if contradice:
-        frases.append(f"Separa a la EBM {_tras('de', _lista(contradice))}, con {'el' if len(contradice) == 1 else 'los'} que las pruebas por "
-                      "pares no encuentran diferencia: véalo en la ficha de cada referencia.")
-    else:
-        frases.append("La conclusión del informe no cambia.")
-    return " ".join(frases)
-
-
-def _tarjeta_friedman():
-    """Clasificación: las tres cifras de la prueba (Friedman, Iman-Davenport, diferencia crítica) y su lectura honesta."""
-    n = _nemenyi("clasificacion")
-    datos = n["datos"]
+def _tarjeta_friedman(tarea):
+    """Las tres cifras de la prueba global (Friedman, Iman-Davenport, diferencia crítica) y su lectura honesta."""
+    n = _nemenyi(tarea)
+    datos, rangos, foco = n["datos"], n["rangos"], n["foco"]
     k, pliegues = int(datos["modelos"]), int(datos["pliegues"])
     gl = [int(g) for g in datos["gl"]]
-    fuera = [m for m in n["rangos"].index if m not in n["dentro"]]
+    fuera = [m for m in rangos.index if m not in n["dentro"]]
     cifras = ui.cifras([
         ui.cifra(f"Friedman, χ² con {gl[0]} grados de libertad", ui.num(datos["chi2_friedman"], 2),
                  variacion=F.p_valor(datos["p_friedman"]), mini=True),
@@ -381,23 +443,43 @@ def _tarjeta_friedman():
                  variacion=F.p_valor(datos["p_iman_davenport"]), mini=True),
         ui.cifra("Diferencia crítica de Nemenyi", ui.num(n["dc"], 2), "rangos", mini=True,
                  variacion=f"q = {ui.num(datos['q_alfa'], 3)} con α = {ui.num(datos['alfa'], 2)}",
-                 nota=f"Con {CARDINAL[k]} modelos y {CARDINAL[pliegues]} pliegues; crece con los modelos y baja con la raíz de los "
+                 nota=f"Con {_cardinal(k)} modelos y {_cardinal(pliegues)} pliegues; crece con los modelos y baja con la raíz de los "
                       "pliegues."),
     ])
-    titulo = (f"Friedman rechaza que los {CARDINAL[k]} modelos rindan igual ({F.p_valor(datos['p_friedman'])}); con {CARDINAL[pliegues]} "
-              "pliegues, Nemenyi tiene poca potencia")
-    primera = (f"Solo {_lista(fuera)} quedan a más de {ui.num(n['dc'], 2)} rangos del mejor rango medio." if fuera
-               else f"Ningún modelo queda a más de {ui.num(n['dc'], 2)} rangos del mejor rango medio.")
-    cuerpo = [cifras, ui.parrafo(primera + " " + _lectura_nemenyi("clasificacion", n))]
+    rechaza = datos["p_friedman"] < D.ALFA
+    titulo = (f"Friedman {'rechaza' if rechaza else 'no rechaza'} que los {_cardinal(k)} modelos rindan igual "
+              f"({F.p_valor(datos['p_friedman'])}); con {_cardinal(pliegues)} pliegues, Nemenyi tiene poca potencia")
+    primera = (f"Solo {_lista(fuera)} {'quedan' if len(fuera) > 1 else 'queda'} a más de {ui.num(n['dc'], 2)} rangos del mejor rango "
+               "medio." if fuera else f"Ningún modelo queda a más de {ui.num(n['dc'], 2)} rangos del mejor rango medio.")
+    al_foco = _tras("a", D.en_frase(foco))
+    if n["separa"]:
+        segunda = f"Nemenyi separa {al_foco} {_tras('de', _lista(n['separa']))}."
+    else:
+        lejos = max((m for m in rangos.index if m != foco), key=lambda m: abs(rangos[m] - rangos[foco]))
+        segunda = (f"Nemenyi no separa {al_foco} de ningún modelo: su mayor distancia, con {D.en_frase(lejos)}, es de "
+                   f"{ui.num(abs(rangos[lejos] - rangos[foco]), 1)} rangos.")
+    puesto = int((rangos < rangos[foco]).sum()) + 1
+    tercera = (f"El rango medio {_tras('de', D.en_frase(foco))} es {ui.num(rangos[foco], 1)}: {_queda(foco, puesto)} de los "
+               f"{_cardinal(k)}. Es una descripción: la regla de superioridad se decide con las pruebas por pares frente al mejor "
+               "benchmark, con los p ajustados por Holm.")
+    cuerpo = [cifras, ui.parrafo(f"{primera} {segunda} {tercera}")]
     aviso = _aviso_rangos(n)
     if aviso is not None:
         cuerpo.insert(0, aviso)
     return ui.tarjeta(cuerpo, titulo=titulo, fuentes=FUENTES_CD)
 
 
+def _diez(tarea):
+    """El bloque de todos los modelos a la vez de la tarea, con el modelo original incluido, y el subtítulo de su sección."""
+    k = int(D.json(CD_JSON)[tarea]["modelos"])
+    return ([_diagrama_cd(tarea), _tarjeta_friedman(tarea)],        # el diagrama a todo el ancho y debajo sus cifras, en una fila
+            f"Sobre los mismos pliegues externos: la prueba de Friedman y el post hoc de Nemenyi con los {_cardinal(k)} modelos"
+            + (", el modelo original entre ellos." if O in D.json(CD_JSON)[tarea]["rango_medio"] else "."))
+
+
 def _tabla_mcs():
-    """Regresión: los ocho modelos con su p del Model Confidence Set y si quedan en el conjunto al nivel del informe,
-    ordenados de mayor a menor p; comprueba que la columna en_mcs y resumen.json dicen lo mismo que los p."""
+    """Regresión: los ocho modelos del Entregable 3 con su p del Model Confidence Set y si quedan en el conjunto al nivel del
+    informe, ordenados de mayor a menor p; comprueba que la columna en_mcs y resumen.json dicen lo mismo que los p."""
     c = TAREA["regresion"]
     t = D.prueba("regresion").sort_values(["p_mcs", c["prueba"]], ascending=[False, True], kind="stable")
     resumen = D.resumen()
@@ -406,15 +488,14 @@ def _tabla_mcs():
     no_cuadra = [m for m, p, esta in zip(t["modelo"], t["p_mcs"], t["en_mcs"]) if bool(esta) != (p > umbral) and bool(esta) != (p >= umbral)]
     if set(dentro) != set(resumen.get("mcs_incluidos", dentro)):
         no_cuadra.append("resumen.json")
-    # (el intervalo del RMSE de cada modelo está en la sección siguiente: aquí cabe la tabla entera en media columna)
     filas = [[D.NOMBRE_MODELO[f["modelo"]], ui.num(f[c["prueba"]], c["d"]), _p(f["p_mcs"]),
               ui.chip("dentro", "bien") if bool(f["en_mcs"]) else ui.chip("fuera")] for _, f in t.iterrows()]
     nivel = F.pct(NIVEL_MCS, 0)
     tabla = ui.tabla(["Modelo", "RMSE de prueba", "p del MCS", f"En el conjunto al {nivel}"], filas,
-                     muestras=[D.ROL_MODELO[m] for m in t["modelo"]], num=[False, True, True, False])
-    sub = (f"Los {CARDINAL[len(t)]} regresores sobre las {F.entero(resumen['n_prueba'])} pérdidas cuadráticas de la prueba, con bootstrap "
-           f"estacionario de bloques de {CARDINAL.get(int(resumen['mcs_bloque']), F.entero(resumen['mcs_bloque']))}. Quedan en el "
-           f"conjunto los modelos con p mayor que {ui.num(umbral, 2)}; van de mayor a menor p.")
+                     muestras=[ROL[m] for m in t["modelo"]], num=[False, True, True, False])
+    sub = (f"Los {CARDINAL[len(t)]} regresores del Entregable 3 sobre las {F.entero(resumen['n_prueba'])} pérdidas cuadráticas de la "
+           f"prueba, con bootstrap estacionario de bloques de {CARDINAL.get(int(resumen['mcs_bloque']), F.entero(resumen['mcs_bloque']))}. "
+           f"Quedan en el conjunto los modelos con p mayor que {ui.num(umbral, 2)}; van de mayor a menor p.")
     cuerpo = [tabla, ui.nota(f"El conjunto se fijó antes de evaluar la prueba. Un modelo con {F.p_valor(0)} sale del conjunto con mucha "
                              "evidencia en contra.")]
     if no_cuadra:
@@ -424,59 +505,44 @@ def _tabla_mcs():
 
 
 def _tarjeta_mcs_lectura():
-    """Regresión: el p de la EBM, cuántos quedan en el conjunto y, aparte, Friedman → Nemenyi sobre los pliegues."""
+    """Regresión: el p de la EBM en el Model Confidence Set del Entregable 3 y cómo se lee junto a lo demás."""
     dentro, p_ebm, ultima = _mcs()
-    n = _nemenyi("regresion")
-    datos = n["datos"]
-    rangos = n["rangos"]
-    nivel = F.pct(NIVEL_MCS, 0)
-    primero = rangos.index[0]
+    t = D.prueba("regresion")
     cifras = ui.cifras([
-        ui.cifra(f"p de la EBM en el MCS al {nivel}", _p(p_ebm), mini=True,
+        ui.cifra(f"p de la EBM en el MCS al {F.pct(NIVEL_MCS, 0)}", _p(p_ebm), mini=True,
                  variacion=("La EBM queda dentro." if "ebm" in dentro else "La EBM es la última en salir." if ultima else "La EBM queda fuera.")),
-        ui.cifra("Diferencia crítica de Nemenyi en los pliegues", ui.num(n["dc"], 2), "rangos", mini=True,
-                 variacion=f"Friedman: χ² = {ui.num(datos['chi2_friedman'], 2)}; {F.p_valor(datos['p_friedman'])}"),
+        ui.cifra("Modelos en el conjunto", F.entero(len(dentro)), f"de {F.entero(len(t))}", mini=True,
+                 variacion=_mayuscula(_lista(dentro)) + "."),
     ])
-    titulo = (f"En los pliegues, Nemenyi deja a {CARDINAL[len(n['dentro'])]} modelos a menos de la diferencia crítica del mejor"
-              + (", la EBM entre ellos" if "ebm" in n["dentro"] else ""))
-    mcs = "El MCS se calcula sobre la prueba y es más exigente que las pruebas por pares."
-    nemenyi = (f"En los pliegues, Friedman rechaza que los {CARDINAL[int(datos['modelos'])]} modelos rindan igual, pero con "
-               f"{CARDINAL[int(datos['pliegues'])]} pliegues la diferencia crítica es de {ui.num(n['dc'], 2)} rangos: quedan a menos de ella "
-               f"del mejor rango medio (el {_tras('de', D.en_frase(primero))}, {ui.num(rangos[primero], 1)}) {_lista(n['dentro'])}.")
-    cuerpo = [cifras, ui.parrafo(f"{mcs} {nemenyi} {_lectura_nemenyi('regresion', n)}")]
-    aviso = _aviso_rangos(n)
-    if aviso is not None:
-        cuerpo.insert(0, aviso)
-    return ui.tarjeta(cuerpo, titulo=titulo, fuentes=FUENTES_MCS)
+    lectura = (f"El conjunto reúne a los modelos que no se distinguen del mejor en la prueba. Se calculó en el Entregable 3 con sus "
+               f"{CARDINAL[len(t)]} modelos y es más exigente que las pruebas por pares. No se recalculó con el modelo original ni con "
+               "LightGBM: para ellos, la comparación formal es la del protocolo de la corrección, en las secciones de arriba.")
+    return ui.tarjeta([cifras, ui.parrafo(lectura)],
+                      titulo="El Model Confidence Set es del Entregable 3: no incluye al modelo original ni a LightGBM", fuentes=FUENTES_MCS)
 
 
-def _todos(tarea):
-    """El bloque de los ocho modelos a la vez de la tarea, con la EBM incluida, y el subtítulo de su sección."""
-    if tarea == "clasificacion":
-        # el diagrama a todo el ancho (una fila por modelo) y debajo sus cifras, en una fila
-        return ([_diagrama_cd(), _tarjeta_friedman()],
-                "Sobre los mismos pliegues externos: la prueba de Friedman y el post hoc de Nemenyi, con la EBM incluida. Es un "
-                "complemento: las conclusiones del informe salen de las pruebas por pares de las secciones siguientes.")
-    return ([ui.rejilla([_tabla_mcs(), _tarjeta_mcs_lectura()], "1-1")],
-            "Sobre la prueba: el Model Confidence Set del informe, con la EBM incluida; aparte, Friedman y Nemenyi sobre los "
-            "pliegues externos.")
+def _bloque_mcs(tarea):
+    """El Model Confidence Set del Entregable 3, que solo existe en regresión."""
+    return [ui.rejilla([_tabla_mcs(), _tarjeta_mcs_lectura()], "1-1")] if tarea == "regresion" else []
 
 
 # --- 1. El desempeño de cada modelo en la prueba --------------------------------------------------------------------------
 def _desempeno(tarea):
-    """La métrica de prueba de cada modelo con su intervalo BCa; la franja es el intervalo de la EBM."""
+    """La métrica de prueba de cada modelo con su intervalo BCa, de mejor a peor; la franja es el intervalo del modelo en
+    foco (el original, si ya está en la tarea)."""
     c = TAREA[tarea]
-    t = D.prueba(tarea)
-    e = D.fila(t, modelo="ebm")
+    t = D.lideres(tarea).sort_values(c["prueba"], ascending=not c["mayor_es_mejor"], kind="stable").reset_index(drop=True)
     orden = list(t["modelo"])
+    foco, rol_de = _foco(orden), _rol_diez(orden)
+    e = D.fila(t, modelo=foco)
     nombres = [D.NOMBRE_CORTO[m] for m in orden]
     fig = go.Figure()
     for rol in ("base", "rival", "modelo"):
-        s = t[t["modelo"].map(D.ROL_MODELO) == rol]
+        s = t[t["modelo"].map(rol_de) == rol]
         if s.empty:
             continue
         textos = [f"{D.NOMBRE_MODELO[f['modelo']]}: <b>{ui.num(f[c['prueba']], c['d'])}</b> {F.intervalo(f[c['inf']], f[c['sup']], c['d'])}"
-                  f" · {c['externa_nombre']}: {ui.num(f[c['externa']], c['d'])}" for _, f in s.iterrows()]
+                  f" · {c['externa_nombre']}: {ui.num(f['externa_media'], c['d'])}" for _, f in s.iterrows()]
         fig.add_trace(go.Scatter(x=s[c["prueba"]], y=[D.NOMBRE_CORTO[m] for m in s["modelo"]], **_marca(rol),
                                  error_x=_bigotes(s[c["prueba"]], s[c["inf"]], s[c["sup"]]), **ui.hover_texto(textos)))
     ui.franja(fig, e[c["inf"]], e[c["sup"]])
@@ -484,75 +550,71 @@ def _desempeno(tarea):
     ui.formato_eje(fig, "x", c["d_eje"])
     lo, hi = t[c["inf"]].min(), t[c["sup"]].max()
     _lienzo_modelos(fig, nombres, lo, hi)
-    _valores_al_borde(fig, nombres, [ui.num(x, c["d"]) for x in t[c["prueba"]]], foco=D.NOMBRE_CORTO["ebm"])
+    _valores_al_borde(fig, nombres, [ui.num(x, c["d"]) for x in t[c["prueba"]]], foco=D.NOMBRE_CORTO[foco])
 
+    del_foco = _tras("de", D.en_frase(foco))
     solapan = [f["modelo"] for _, f in t.iterrows() if f[c["inf"]] <= e[c["sup"]] and f[c["sup"]] >= e[c["inf"]]]
-    otro = D.fila(t, modelo=next(m for m in orden if m != "ebm"))
-    cuantos = (f"Los intervalos de los {CARDINAL[len(solapan)]} primeros modelos se solapan" if solapan == orden[:len(solapan)]
-               else f"Los intervalos de {len(solapan) - 1} referencias se solapan con el de la EBM")
-    titulo = (f"{cuantos}: la EBM, {ui.num(e[c['prueba']], c['d'])}; {D.en_frase(otro['modelo'])}, "
+    otro = D.fila(t, modelo=next(m for m in orden if m != foco))
+    cuantos = (f"Los intervalos de los {_cardinal(len(solapan))} primeros modelos se solapan" if solapan == orden[:len(solapan)]
+               else f"Los intervalos de {len(solapan) - 1} modelos se solapan con el {del_foco}")
+    titulo = (f"{cuantos}: {D.en_frase(foco)}, {ui.num(e[c['prueba']], c['d'])}; {D.en_frase(otro['modelo'])}, "
               f"{ui.num(otro[c['prueba']], c['d'])}")
     sub = (f"{c['metrica']} en los {F.entero(D.resumen()['n_prueba'])} clientes de prueba, con su intervalo bootstrap BCa del 95 % "
-           f"({F.entero(D.resumen()['n_boot'])} réplicas). La franja azul es el intervalo de la EBM; a la derecha, el valor de cada modelo.")
+           f"({F.entero(D.resumen()['n_boot'])} réplicas). La franja azul es el intervalo {del_foco}; a la derecha, el valor de cada "
+           "modelo.")
     nota = (f"El eje no parte de cero: va de {ui.num(lo, c['d_eje'])} a {ui.num(hi, c['d_eje'])} para que se distingan los intervalos. "
-            "Que dos intervalos se solapen no es una prueba: la comparación formal está en la sección siguiente.")
+            "Que dos intervalos se solapen no es una prueba: la comparación formal está en las pruebas de hipótesis de arriba.")
+    externa = [f"{ui.num(f['externa_media'], c['d'])} ± {ui.num(f['externa_desv'], c['d'])}" for _, f in t.iterrows()]
     if tarea == "clasificacion":
-        encabezados = ["Modelo", "Mejor combinación", "AUC externo", "AUC de prueba [IC 95 %]", "AUC-PR"]
-        filas = [[D.NOMBRE_MODELO[f["modelo"]], f"{D.NOMBRE_BALANCEO[f['balanceo']]}, {D.NOMBRE_OPTIMIZADOR[f['optimizador']]}",
-                  f"{ui.num(f[c['externa']], c['d'])} ± {ui.num(f[c['externa_desv']], c['d'])}",
+        encabezados = ["Modelo", "Combinación", "AUC externo", "AUC de prueba [IC 95 %]", "AUC-PR"]
+        filas = [[D.NOMBRE_MODELO[f["modelo"]], f"{D.NOMBRE_BALANCEO[f['balanceo']]}, {D.NOMBRE_OPTIMIZADOR[f['optimizador']]}", x,
                   f"{ui.num(f[c['prueba']], c['d'])} {F.intervalo(f[c['inf']], f[c['sup']], c['d'])}", ui.num(f["auc_pr"], 3)]
-                 for _, f in t.iterrows()]
+                 for (_, f), x in zip(t.iterrows(), externa)]
     else:
-        encabezados = ["Modelo", "Optimizador", "RMSE externo", "RMSE de prueba [IC 95 %]", "MAE", "R² [IC 95 %]", "p del MCS"]
-        filas = [[D.NOMBRE_MODELO[f["modelo"]], D.NOMBRE_OPTIMIZADOR[f["optimizador"]],
-                  f"{ui.num(f[c['externa']], c['d'])} ± {ui.num(f[c['externa_desv']], c['d'])}",
+        encabezados = ["Modelo", "Optimizador", "RMSE externo", "RMSE de prueba [IC 95 %]", "MAE", "R² [IC 95 %]"]
+        filas = [[D.NOMBRE_MODELO[f["modelo"]], D.NOMBRE_OPTIMIZADOR[f["optimizador"]], x,
                   f"{ui.num(f[c['prueba']], c['d'])} {F.intervalo(f[c['inf']], f[c['sup']], c['d'])}", ui.num(f["mae_prueba"], 4),
-                  f"{ui.num(f['r2_prueba'], 3)} {F.intervalo(f['r2_bca_inf'], f['r2_bca_sup'], 3)}", _p(f["p_mcs"])]
-                 for _, f in t.iterrows()]
-    tabla = [ui.tabla(encabezados, filas, compacta=True, muestras=[D.ROL_MODELO[m] for m in orden],
+                  f"{ui.num(f['r2_prueba'], 3)} {F.intervalo(f['r2_bca_inf'], f['r2_bca_sup'], 3)}"]
+                 for (_, f), x in zip(t.iterrows(), externa)]
+    tabla = [ui.tabla(encabezados, filas, compacta=True, muestras=[rol_de[m] for m in orden],
                       num=[False, False] + [True] * (len(encabezados) - 2)),
-             ui.nota("La métrica externa es la media ± la desviación de los pliegues externos de la validación anidada.")]
+             ui.nota("La métrica externa es la media ± la desviación de los pliegues externos de la validación anidada, los mismos para "
+                     "todos los modelos.")]
+    if tarea == "clasificacion":                 # el AUC-PR de un puntaje escalonado depende de cómo se cuenten los empates
+        tabla += [ui.nota(x) for x in (D.frase_empate_auc_pr(m) for m in orden) if x]
     etiqueta = f"{titulo}. " + "; ".join(f"{f[0]}: {f[3]}" for f in filas) + "."
     return {"figura": fig, "titulo": titulo, "sub": sub, "tabla": tabla, "nota": nota, "etiqueta": etiqueta,
-            "leyenda": _leyenda_modelos(tarea, extra=("Intervalo de la EBM", "franja", "barra"))}
+            "leyenda": _leyenda_diez(tarea, orden, extra=[(f"Intervalo {del_foco}", "franja", "barra")])}
 
 
 def _acota(tarea):
-    """Título y fichas de la tarjeta que acota el resultado de la prueba: la validación anidada y, según la tarea, la
-    diferencia con el modelo más cercano o el Model Confidence Set."""
+    """Título y fichas de la tarjeta que acota el resultado de la prueba: el puesto del modelo en foco en la validación
+    anidada y, para el modelo original, su ventaja sobre el mejor benchmark (veredicto.json)."""
     c = TAREA[tarea]
-    t = D.prueba(tarea)
-    e = D.fila(t, modelo="ebm")
-    puesto, primero = _externa(tarea)
-    lugar = f"{ORDINAL_F[puesto].capitalize()} de {len(t)} modelos"
+    t = D.lideres(tarea).sort_values("externa_media", ascending=not c["mayor_es_mejor"], kind="stable").reset_index(drop=True)
+    foco = _foco(t["modelo"])
+    e, primero = D.fila(t, modelo=foco), t.iloc[0]
+    puesto = int(t.index[t["modelo"] == foco][0]) + 1
+    lugar = f"Puesto {F.entero(puesto)} de {F.entero(len(t))} modelos"
     if puesto > 1:
-        lugar += (f", a {ui.num(abs(primero[c['externa']] - e[c['externa']]), c['d'])} {_tras('de', D.en_frase(primero['modelo']))} "
-                  f"({ui.num(primero[c['externa']], c['d'])})")
-    externa = ui.cifra(f"{c['externa_nombre']} de la EBM", ui.num(e[c["externa"]], c["d"]), f"± {ui.num(e[c['externa_desv']], c['d'])}",
-                       variacion=lugar + ".", mini=True,
-                       nota=f"Media y desviación de los {CARDINAL[_n_pliegues(tarea)]} pliegues externos. Con esta cifra se eligió la "
-                            "combinación de cada modelo, sin mirar la prueba.")
-    titulo = f"En la validación anidada la EBM queda {ORDINAL_F[puesto]}"
-    if tarea == "clasificacion":
-        orden = list(t["modelo"])
-        otro = next(m for m in orden if m != "ebm")
-        f = D.fila(D.pruebas(tarea), modelo=otro)
-        incluye = f["delta_bca_inf"] <= 0 <= f["delta_bca_sup"]
-        lectura = "El intervalo incluye el cero" if incluye else "El intervalo no incluye el cero"
-        if orden[0] == "ebm" and incluye:
-            lectura += f": tener el mayor {c['metrica']} de prueba es un valor puntual, no una ventaja establecida"
-        segunda = ui.cifra(f"Diferencia de {c['metrica']} de prueba con {D.en_frase(otro)}", ui.con_signo(f[c["delta"]], c["d"]),
-                           variacion=f"Intervalo del 95 %: {F.intervalo(f['delta_bca_inf'], f['delta_bca_sup'], c['d'], signo=True)}.",
-                           nota=lectura + ".", mini=True)
+        lugar += (f", a {ui.num(abs(primero['externa_media'] - e['externa_media']), c['d'])} {_tras('de', D.en_frase(primero['modelo']))} "
+                  f"({ui.num(primero['externa_media'], c['d'])})")
+    externa = ui.cifra(f"{c['externa_nombre']} {_tras('de', D.en_frase(foco))}", ui.num(e["externa_media"], c["d"]),
+                       f"± {ui.num(e['externa_desv'], c['d'])}", variacion=lugar + ".", mini=True,
+                       nota=f"Media y desviación de los {_cardinal(int(e['externa_pliegues']))} pliegues externos, los mismos para todos "
+                            "los modelos, sin mirar la prueba.")
+    titulo = f"En la validación anidada {D.en_frase(foco)} {_queda(foco, puesto)}"
+    r = D.veredicto_original(tarea) if foco == O else None
+    if r is not None:
+        dm = r["frente_al_mejor"]
+        segunda = ui.cifra(f"Ventaja de {c['externa_nombre']} sobre {D.en_frase(r['mejor_benchmark'])}, el mejor benchmark",
+                           ui.con_signo(r["ventaja_sobre_el_mejor"], c["d"] + 1),
+                           variacion=f"A favor de BDL en {F.entero(dm['pliegues_a_favor'])} de {F.entero(r['pliegues'])} pliegues.",
+                           nota=f"Positiva: a favor de BDL. Veredicto con la regla de la guía: {D.frase_veredicto(tarea)}.", mini=True)
+        titulo += f"; con la regla de la guía, {D.frase_veredicto(tarea, detalle=False)}"
     else:
-        dentro, p_ebm, ultima = _mcs()
-        # el Model Confidence Set se calcula sobre la prueba, no sobre los pliegues: el título lo separa de la validación
-        titulo += f"; en la prueba, {'dentro' if 'ebm' in dentro else 'fuera'} del Model Confidence Set al {F.pct(NIVEL_MCS, 0)}"
-        estado = "La EBM queda dentro." if "ebm" in dentro else ("La EBM es la última en salir." if ultima else "La EBM queda fuera.")
-        segunda = ui.cifra(f"p de la EBM en el Model Confidence Set al {F.pct(NIVEL_MCS, 0)}", _p(p_ebm),
-                           variacion=f"Quedan dentro los modelos con p mayor que {ui.num(1 - NIVEL_MCS, 2)}: {_lista(dentro)}.",
-                           nota=f"{estado} Se calcula sobre la prueba, se fijó antes de evaluarla y es más exigente que las pruebas por pares.",
-                           mini=True)
+        segunda = ui.cifra(f"{c['metrica']} de prueba {_tras('de', D.en_frase(foco))}", ui.num(e[c["prueba"]], c["d"]),
+                           variacion=f"Intervalo del 95 %: {F.intervalo(e[c['inf']], e[c['sup']], c['d'])}.", mini=True)
     return titulo, [externa, segunda]
 
 
@@ -566,7 +628,7 @@ def _diferencias(tarea):
     nombres = [D.NOMBRE_CORTO[m] for m in orden]
     fig = go.Figure()
     for rol in ("base", "rival"):
-        s = t[t["modelo"].map(D.ROL_MODELO) == rol]
+        s = t[t["modelo"].map(ROL) == rol]
         if s.empty:
             continue
         textos = [f"{D.NOMBRE_MODELO[f['modelo']]}: <b>{ui.con_signo(f[c['delta']], c['d'])}</b> "
@@ -622,7 +684,7 @@ def _diferencias(tarea):
         aclaracion = (f"Los p son bilaterales y están ajustados por Holm sobre las {CARDINAL[len(t)]} comparaciones de cada prueba. En "
                       "McNemar, b son los clientes que solo la referencia clasifica bien y c, los que solo clasifica bien la EBM. La "
                       "equivalencia práctica es una probabilidad posterior, no un valor p.")
-    tabla = [ui.tabla(encabezados, filas, compacta=True, muestras=[D.ROL_MODELO[m] for m in orden],
+    tabla = [ui.tabla(encabezados, filas, compacta=True, muestras=[ROL[m] for m in orden],
                       num=[False, False, True, True, True, True, True]), ui.nota(aclaracion)]
     etiqueta = f"{titulo}. " + "; ".join(f"{f[0]}: {f[2]}, {f[1]}" for f in filas) + "."
     return {"figura": fig, "titulo": titulo, "sub": sub, "tabla": tabla, "nota": nota, "etiqueta": etiqueta,
@@ -787,7 +849,7 @@ def _roc(ref):
     c = TAREA["clasificacion"]
     t = D.prueba("clasificacion")
     v = D.veredicto(D.fila(D.pruebas("clasificacion"), modelo=ref), "clasificacion")
-    nombre, rol, frase = D.NOMBRE_MODELO[ref], D.ROL_MODELO[ref], D.en_frase(ref)
+    nombre, rol, frase = D.NOMBRE_MODELO[ref], ROL[ref], D.en_frase(ref)
     auc_ebm, auc_ref = ui.num(D.fila(t, modelo="ebm")[c["prueba"]], c["d"]), ui.num(D.fila(t, modelo=ref)[c["prueba"]], c["d"])
     fpr, tpr_ebm = _curva("ebm")
     tpr_ref = _curva(ref)[1]
@@ -833,7 +895,7 @@ def _pliegues_par(ref):
     c = TAREA["regresion"]
     P = D.tabla(c["pliegues"])
     t = D.prueba("regresion")
-    nombre, rol, frase = D.NOMBRE_MODELO[ref], D.ROL_MODELO[ref], D.en_frase(ref)
+    nombre, rol, frase = D.NOMBRE_MODELO[ref], ROL[ref], D.en_frase(ref)
     ebm, otro = list(P["ebm"]), list(P[ref])
     n = len(P)
     rotulos = [f"Pliegue {k + 1}" for k in range(n)]
@@ -904,47 +966,62 @@ def _avisos(tarea):
 
 
 # --- 4. Los pliegues de la validación anidada ---------------------------------------------------------------------------
+def _matriz_pliegues(tarea):
+    """La métrica de cada pliegue externo (filas) de cada modelo (columnas) y el rótulo de cada pliegue: la de la corrección
+    (con todos los modelos y todas las repeticiones, «semilla-pliegue») o, si todavía no está, la del Entregable 3."""
+    P = D.pliegues(tarea)
+    if P is not None and set(D.lideres(tarea)["modelo"]) <= set(P.columns):
+        return P, [str(i) for i in P.index], D.fuente_original(f"pliegues_{tarea}.csv")
+    P = D.tabla(TAREA[tarea]["pliegues"])
+    return P, [str(k + 1) for k in range(len(P))], D.fuente(TAREA[tarea]["pliegues"])
+
+
 def _pliegues(tarea):
-    """Una fila por modelo con la métrica de cada pliegue externo; la franja es el recorrido de la EBM."""
+    """Una fila por modelo con la métrica de cada pliegue externo; la franja es el recorrido del modelo en foco."""
     c = TAREA[tarea]
-    P = D.tabla(c["pliegues"])
-    t = D.prueba(tarea).set_index("modelo")
-    orden = list(t.index)
+    P, rotulos, _fuente = _matriz_pliegues(tarea)
+    t = D.lideres(tarea)
+    t = t[t["modelo"].isin(P.columns)].sort_values(c["prueba"], ascending=not c["mayor_es_mejor"], kind="stable")
+    orden = list(t["modelo"])
+    foco, rol_de = _foco(orden), _rol_diez(orden)
     n = len(P)
+    media, desv = P[orden].mean(), P[orden].std(ddof=1)
     nombres = [D.NOMBRE_CORTO[m] for m in orden]
     fig = go.Figure()
     for rol in ("base", "rival", "modelo"):
-        grupo = [m for m in orden if D.ROL_MODELO[m] == rol]
+        grupo = [m for m in orden if rol_de[m] == rol]
         if not grupo:
             continue
-        textos = [f"{D.NOMBRE_MODELO[m]} · pliegue {k + 1}: <b>{ui.num(P[m].iloc[k], c['d'])}</b>" for m in grupo for k in range(n)]
+        textos = [f"{D.NOMBRE_MODELO[m]} · pliegue {rotulos[k]}: <b>{ui.num(P[m].iloc[k], c['d'])}</b>" for m in grupo for k in range(n)]
         fig.add_trace(go.Scatter(x=[P[m].iloc[k] for m in grupo for k in range(n)],
                                  y=[D.NOMBRE_CORTO[m] for m in grupo for _k in range(n)], **_marca(rol), **ui.hover_texto(textos)))
-    ui.franja(fig, P["ebm"].min(), P["ebm"].max())
+    ui.franja(fig, P[foco].min(), P[foco].max())
     ui.unidad_eje(fig, f"{c['externa_nombre']} de cada pliegue")
     ui.formato_eje(fig, "x", c["d_eje"])
     lo, hi = float(P[orden].min().min()), float(P[orden].max().max())
     _lienzo_modelos(fig, nombres, lo, hi)
-    _valores_al_borde(fig, nombres, [ui.num(t.loc[m, c["externa"]], c["d"]) for m in orden], foco=D.NOMBRE_CORTO["ebm"])
+    _valores_al_borde(fig, nombres, [ui.num(media[m], c["d"]) for m in orden], foco=D.NOMBRE_CORTO[foco])
 
-    puesto, primero = _externa(tarea)
-    solapan = [m for m in orden if P[m].min() <= P["ebm"].max() and P[m].max() >= P["ebm"].min()]
-    titulo = f"En los pliegues la EBM queda {ORDINAL_F[puesto]}"
+    por_media = media.sort_values(ascending=not c["mayor_es_mejor"], kind="stable")
+    puesto, primero = list(por_media.index).index(foco) + 1, por_media.index[0]
+    solapan = [m for m in orden if P[m].min() <= P[foco].max() and P[m].max() >= P[foco].min()]
+    titulo = f"En los pliegues {D.en_frase(foco)} {_queda(foco, puesto)}"
     if puesto > 1:
-        titulo += f", a {ui.num(abs(primero[c['externa']] - t.loc['ebm', c['externa']]), c['d'])} {_tras('de', D.en_frase(primero['modelo']))}"
-    titulo += (f"; los recorridos de los {CARDINAL[len(solapan)]} primeros modelos se solapan" if solapan == orden[:len(solapan)]
-               else f"; su recorrido se solapa con el de {len(solapan) - 1} referencias")
-    sub = (f"{c['metrica']} de cada uno de los {CARDINAL[n]} pliegues externos de la validación anidada (un punto por pliegue), con la "
-           "mejor combinación de cada modelo. La franja azul es el recorrido de la EBM; a la derecha, la media de cada modelo.")
-    nota = ("El eje no parte de cero. Los modelos van en el orden de la prueba, no en el de los pliegues: la métrica externa eligió "
-            "la combinación de cada modelo sin mirar la prueba.")
-    filas = [[D.NOMBRE_MODELO[m]] + [ui.num(P[m].iloc[k], c["d"]) for k in range(n)]
-             + [ui.num(t.loc[m, c["externa"]], c["d"]), ui.num(t.loc[m, c["externa_desv"]], c["d"])] for m in orden]
-    tabla = ui.tabla(["Modelo"] + [f"Pliegue {k + 1}" for k in range(n)] + ["Media", "Desviación"], filas, compacta=True,
-                     muestras=[D.ROL_MODELO[m] for m in orden])
+        titulo += f", a {ui.num(abs(media[primero] - media[foco]), c['d'])} {_tras('de', D.en_frase(primero))}"
+    titulo += (f"; los recorridos de los {_cardinal(len(solapan))} primeros modelos se solapan" if solapan == orden[:len(solapan)]
+               else f"; su recorrido se solapa con el de {len(solapan) - 1} modelos")
+    sub = (f"{c['metrica']} de cada uno de los {_cardinal(n)} pliegues externos de la validación anidada (un punto por pliegue), con la "
+           f"combinación de cada modelo. La franja azul es el recorrido {_tras('de', D.en_frase(foco))}; a la derecha, la media de cada "
+           "modelo.")
+    nota = ("El eje no parte de cero. Los modelos van en el orden de la prueba, no en el de los pliegues: la métrica externa se midió "
+            "sin mirar la prueba. Son los pliegues que usan las pruebas P1 y P2 del modelo original.")
+    filas = [[D.NOMBRE_MODELO[m]] + [ui.num(P[m].iloc[k], c["d"]) for k in range(n)] + [ui.num(media[m], c["d"]), ui.num(desv[m], c["d"])]
+             for m in orden]
+    tabla = ui.tabla(["Modelo"] + [f"Pliegue {r}" for r in rotulos] + ["Media", "Desviación"], filas, compacta=True,
+                     muestras=[rol_de[m] for m in orden])
     etiqueta = f"{titulo}. " + "; ".join(f"{f[0]}: media {f[-2]}" for f in filas) + "."
     return {"figura": fig, "titulo": titulo, "sub": sub, "tabla": tabla, "nota": nota, "etiqueta": etiqueta,
-            "leyenda": _leyenda_modelos(tarea, extra=("Recorrido de la EBM", "franja", "barra"))}
+            "leyenda": _leyenda_diez(tarea, orden, extra=[(f"Recorrido {_tras('de', D.en_frase(foco))}", "franja", "barra")])}
 
 
 # --- 5. Frente a la entrega anterior (etiqueta de la mediana) -------------------------------------------------------------
@@ -996,7 +1073,7 @@ def _entrega_anterior():
             filas.append(fila)
         encabezados = (["Modelo", f"{c['metrica']} [IC 95 %]"] + (["R²"] if tarea == "regresion" else [])
                        + ["Mejora frente a la E2 [IC 95 %]", f"{c['fijada']}: {c['simbolo']}", "p ajustado"])
-        tabla = ui.tabla(encabezados, filas, compacta=True, muestras=[D.ROL_MODELO[m] for m in modelos])
+        tabla = ui.tabla(encabezados, filas, compacta=True, muestras=[ROL[m] for m in modelos])
         tarjetas.append(ui.tarjeta([ficha, barra, ui.nota(medida)], titulo=titulo, subtitulo=que, detalles=tabla, fuentes=FUENTES_E2))
 
     meta = M.meta()["etiqueta"]
@@ -1011,46 +1088,70 @@ def _entrega_anterior():
         [f"Aquí «riesgo alto» es la mitad superior del puntaje (por encima de la mediana, "
          f"{ui.num(meta['mediana_entrenamiento'], DECIMALES_UMBRAL)}), la etiqueta de la Entrega 2. En el resto de la pantalla es el "
          f"cuarto superior (percentil {ui.num(meta['q'] * 100)}, {ui.num(meta['umbral'], DECIMALES_UMBRAL)}).",
-         f"El AUC de {ui.num(mediana['metrica'], c['d'])} de esta sección y el de {ui.num(ebm[c['prueba']], c['d'])} de arriba miden "
+         f"El AUC de {ui.num(mediana['metrica'], c['d'])} de esta sección y el de {ui.num(ebm[c['prueba']], c['d'])} de la EBM en la prueba "
+         "con la etiqueta del cuarto superior miden "
          "problemas distintos: no se restan ni se comparan. El techo de información solo se calculó para esta etiqueta.",
          f"{_mayuscula(D.en_frase('ebm'))} y {D.en_frase(RIVAL)} de esta comparación se afinaron aparte ({optimizador}, validación cruzada "
          f"de {int(busquedas['k_cv'])} pliegues); por eso difieren en la última cifra de los modelos finales: el {r['metrica']} de la EBM "
-         f"es {ui.num(aqui, r['d'])} aquí y {ui.num(arriba, r['d'])} arriba."],
+         f"es {ui.num(aqui, r['d'])} aquí y {ui.num(arriba, r['d'])} en su modelo final."],
         "atencion", "Otra etiqueta: estas cifras no se comparan con las de arriba")
     return [ui.rejilla(tarjetas, "1-1"), aviso]
 
 
 # --- La pantalla ----------------------------------------------------------------------------------------------------------
+def _aviso_entregable3():
+    """Lo que separa las dos mitades de la pantalla: de aquí hacia abajo, el análisis del Entregable 3 y la EBM en azul."""
+    return ui.aviso([
+        "De aquí hacia abajo está el análisis del Entregable 3, sin cambios: la EBM, que fue el modelo nuevo de esa entrega y hoy es "
+        "un benchmark reciente (viene de una librería), frente a las siete referencias de clase, con las pruebas de entonces (t "
+        "corregida, DeLong o Diebold-Mariano, McNemar, la prueba bayesiana y el Model Confidence Set).",
+        "En estos gráficos la serie en azul es la EBM. El modelo original y LightGBM no entran en estas pruebas: las suyas son las "
+        "del protocolo de la corrección, en las secciones de arriba."], None, "Lo que sigue es el análisis del Entregable 3")
+
+
 def layout(tarea=None, **_):
-    """`/comparacion?tarea=regresion` abre con esa tarea (un valor desconocido cae en clasificación). Cuando la dirección
-    pide una tarea, el control no repone el valor recordado en la sesión: manda la dirección."""
+    """`/modelos/comparacion?tarea=regresion` abre con esa tarea (un valor desconocido cae en clasificación). Cuando la
+    dirección pide una tarea, el control no repone el valor recordado en la sesión: manda la dirección."""
     pedida = tarea in TAREA
     inicial = tarea if pedida else "clasificacion"
     control_tarea = ui.control("Tarea:", ui.segmentado(f"{PRE}-tarea", [{"label": D.NOMBRE_TAREA[t], "value": t} for t in TAREA],
                                                        inicial, persistir=not pedida))
     referencia = ui.control("Referencia:", _selector_referencia(inicial))
-    pliegues = CARDINAL[_n_pliegues(inicial)]
-    # La ficha queda casi tres pantallas más abajo: un enlace interno la deja a la vista (el callback de la referencia pone
-    # en el botón el nombre de la que esté elegida)
+    # La ficha de la EBM queda varias pantallas más abajo: un enlace interno la deja a la vista (el callback de la referencia
+    # pone en el botón el nombre de la que esté elegida)
     a_la_ficha = html.Div(ui.boton(html.Span(_rotulo_ficha(_referencia(inicial, RIVAL)), id=f"{PRE}-ir-ficha"), href=f"#{PRE}-fichas",
                                    icono="flecha-abajo"), className="botonera")
-    todos, todos_sub = _todos(inicial)
+    diez, diez_sub = _diez(inicial)
+    k = _cardinal(int(D.json(CD_JSON)[inicial]["modelos"]))
     return ui.pantalla([
-        ui.encabezado(PREGUNTA, html.Span(_respuesta(inicial), id=f"{PRE}-respuesta"), [control_tarea], [a_la_ficha],
+        ui.encabezado(app.pregunta(VISTA), html.Span(_respuesta(inicial), id=f"{PRE}-respuesta"), [control_tarea], [a_la_ficha],
                       pantalla=PANTALLA),
-        ui.seccion(f"Los {CARDINAL[len(D.prueba(inicial))]} modelos a la vez", [html.Div(todos, id=f"{PRE}-todos", className="resultados")],
-                   subtitulo=html.Span(todos_sub, id=f"{PRE}-s0-sub")),
+        ui.seccion("El veredicto del modelo original, condición por condición", _veredicto(),
+                   subtitulo="La regla de superioridad de la guía (§6.4), en las dos tareas, con lo que dicen los archivos de la "
+                             "corrección. No cambia con el control de tarea.",
+                   fuentes=[D.fuente_original("veredicto.json"), D.fuente_original("condicion4.json")]),
+        ui.seccion(f"Los {k} modelos a la vez: Friedman y Nemenyi", [html.Div(diez, id=f"{PRE}-todos", className="rejilla")],
+                   subtitulo=html.Span(diez_sub, id=f"{PRE}-s0-sub")),
+        ui.seccion("El modelo original frente a cada benchmark", [html.Div(_frente(inicial), id=f"{PRE}-frente", className="rejilla")],
+                   subtitulo="Las cuatro pruebas del protocolo pre-registrado (P1 a P4), con p crudos, p ajustados por Holm y tamaños "
+                             "del efecto: primero frente al mejor benchmark, que es el que decide la regla, y después frente a todos.",
+                   fuentes=[D.fuente_original("veredicto.json"), D.fuente_original("pruebas_hipotesis.csv")]),
         ui.seccion("El desempeño de cada modelo en la prueba", [
             ui.rejilla([
-                ui.grafico(f"{PRE}-des", fuentes=FUENTES_PRUEBA, alto="alto"),
+                ui.grafico(f"{PRE}-des", fuentes=FUENTES_DIEZ, alto="alto"),
                 ui.tarjeta([html.Div(id=f"{PRE}-acota", className="resultados")], titulo=html.Span(id=f"{PRE}-acota-titulo"),
-                           fuentes=FUENTES_PRUEBAS + FUENTES_PLIEGUES[:2]),
+                           fuentes=FUENTES_DIEZ + [D.fuente_original("veredicto.json")]),
             ], "2-1"),
         ], subtitulo=html.Span(id=f"{PRE}-s1-sub")),
-        ui.seccion("La EBM frente a cada referencia", [
+        ui.seccion("Los pliegues de la validación anidada", [
+            ui.grafico(f"{PRE}-pli", fuentes=FUENTES_PLIEGUES),
+        ], subtitulo="Lo que obtuvo cada modelo dentro del entrenamiento, antes de tocar la prueba, con los mismos pliegues para todos."),
+        ui.seccion("El análisis del Entregable 3: la EBM frente a cada referencia", [
+            _aviso_entregable3(),
             ui.grafico(f"{PRE}-dif", fuentes=FUENTES_PRUEBAS),
+            html.Div(_bloque_mcs(inicial), id=f"{PRE}-mcs", className="rejilla"),
         ], subtitulo=html.Span(id=f"{PRE}-s2-sub")),
-        ui.seccion("Las pruebas, referencia por referencia", [
+        ui.seccion("La EBM frente a una referencia, prueba por prueba", [
             ui.rejilla([
                 ui.tarjeta([html.Div(id=f"{PRE}-ficha", className="resultados")], titulo=html.Span(id=f"{PRE}-ficha-titulo"),
                            fuentes=FUENTES_PRUEBAS),
@@ -1064,10 +1165,7 @@ def layout(tarea=None, **_):
         ], subtitulo=f"Elija una referencia. El veredicto se calcula con los p ajustados por Holm y α = {ui.num(D.ALFA, 2)}; la "
                      "probabilidad de equivalencia práctica se informa aparte, porque no es un valor p.",
             controles=[referencia], id=f"{PRE}-fichas"),
-        ui.seccion(f"Los {pliegues} pliegues de la validación anidada", [
-            ui.grafico(f"{PRE}-pli", fuentes=FUENTES_PLIEGUES),
-        ], subtitulo="Lo que obtuvo cada modelo dentro del entrenamiento, antes de tocar la prueba, con los mismos pliegues para todos."),
-        ui.seccion("Frente a la entrega anterior, con la etiqueta de la mediana", _entrega_anterior(),
+        ui.seccion("La EBM frente a la entrega anterior, con la etiqueta de la mediana", _entrega_anterior(),
                    subtitulo="Sección aparte: usa la partición y la etiqueta de la Entrega 2 y no cambia con el control de tarea.",
                    fuentes=FUENTES_E2 + [D.fuente(BUSQUEDAS_E2), D.fuente("metadatos.json")] + FUENTES_PRUEBA[:2]),
     ])
@@ -1086,8 +1184,8 @@ def _por_tarea(tarea, ref):
     etiqueta = M.meta()["etiqueta"]
     alcance = (f" Riesgo alto es el cuarto superior del puntaje (percentil {ui.num(etiqueta['q'] * 100)})." if tarea == "clasificacion"
                else " El objetivo es el puntaje de propensión del conjunto de datos.")
-    s1 = (f"{c['que']}: la mejor combinación de cada modelo según la validación anidada, medida una sola vez en los "
-          f"{F.entero(D.resumen()['n_prueba'])} clientes de prueba.{alcance}")
+    s1 = (f"{c['que']}: el ajuste final de cada modelo, con la combinación que eligió o fijó la validación anidada, medido una sola "
+          f"vez en los {F.entero(D.resumen()['n_prueba'])} clientes de prueba.{alcance}")
     titulo_acota, acota = _acota(tarea)
     valida = _referencia(tarea, ref)
     return (_respuesta(tarea), s1, *_partes(_desempeno(tarea)), titulo_acota, acota, _resumen_veredictos(tarea),
@@ -1095,10 +1193,13 @@ def _por_tarea(tarea, ref):
             *_partes(_pliegues(tarea)))
 
 
-@callback(Output(f"{PRE}-todos", "children"), Output(f"{PRE}-s0-sub", "children"), Input(f"{PRE}-tarea", "value"))
+@callback(Output(f"{PRE}-todos", "children"), Output(f"{PRE}-s0-sub", "children"), Output(f"{PRE}-frente", "children"),
+          Output(f"{PRE}-mcs", "children"), Input(f"{PRE}-tarea", "value"))
 def _por_tarea_todos(tarea):
-    """Los ocho modelos a la vez: el diagrama de diferencia crítica en clasificación y la tabla del MCS en regresión."""
-    return _todos(tarea if tarea in TAREA else "clasificacion")
+    """Lo que no es un ui.grafico con partes: todos los modelos a la vez (el diagrama de diferencia crítica y Friedman), el
+    modelo original frente a cada benchmark y, en regresión, el Model Confidence Set del Entregable 3."""
+    tarea = tarea if tarea in TAREA else "clasificacion"
+    return (*_diez(tarea), _frente(tarea), _bloque_mcs(tarea))
 
 
 @callback(Output(f"{PRE}-ficha-titulo", "children"), Output(f"{PRE}-ficha", "children"), *_salidas(f"{PRE}-par"),

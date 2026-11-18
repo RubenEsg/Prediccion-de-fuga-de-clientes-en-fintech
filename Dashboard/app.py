@@ -1,7 +1,8 @@
 """Fuga de clientes · Laboratorio del modelo (Dash).
 
-Una Explainable Boosting Machine (EBM) que predice el riesgo de fuga de los clientes de una fintech, funcionando en vivo:
-puntúa y explica cada cliente en el momento, con el modelo y los datos de prueba que están en datos/.
+El modelo original del proyecto, BDL (Boosting con Desplazamiento Latente, programado desde cero en src/original_model.py),
+y sus nueve benchmarks para predecir el riesgo de fuga de los clientes de una fintech, funcionando en vivo: cada modelo
+final puntúa y explica a un cliente en el momento, con los artefactos de artifacts/ y los datos de prueba de datos/.
 
 Uso:
     python -m venv .venv
@@ -9,14 +10,16 @@ Uso:
     pip install -r requirements.txt
     python app.py                      ->  http://127.0.0.1:8060      (otro puerto: variable PORT)
 
-Si falta la carpeta datos/, se genera con `python preparar_datos.py` (necesita la carpeta del Entregable 3).
+Si falta la carpeta datos/, se genera con `python preparar_datos.py` y `python preparar_artefactos.py` (necesitan la carpeta
+del Entregable 3); lo del modelo original lo añade `python preparar_original.py` (necesita la carpeta ModeloOriginal).
 El sistema de diseño (colores por rol, escala, componentes) está en DISENO.md; lo comprueba verificar_estilo.py.
 
 Tres secciones, como pide la guía del Tercer Entregable: Contexto (/), EDA (/eda) y Modelos (/modelos/<vista>), cada una
-una página de paginas/ (use_pages). Modelos tiene doce vistas en dos grupos (los ocho modelos y el modelo propuesto); cada
-vista es un módulo de secciones/ con su layout() y sus callbacks. Las direcciones de la versión de nueve pantallas
-(/cliente, /comparacion…) redirigen a su vista. De lo que hay en el disco solo se sirven tres PDF del proyecto, si están
-junto a esta carpeta (/documento/<clave>), y la ficha del modelo (/ficha.md).
+una página de paginas/ (use_pages). Modelos tiene trece vistas en tres grupos: los diez modelos, el modelo original (la
+subsección que pide la guía, §7.3.3, y su ficha) y la EBM, que fue el «modelo nuevo» del Entregable 3 y ahora es un
+benchmark interpretable. Cada vista es un módulo de secciones/ con su layout() y sus callbacks. Las direcciones de la
+versión de nueve pantallas (/cliente, /comparacion…) redirigen a su vista. De lo que hay en el disco solo se sirven tres
+PDF del proyecto, si están junto a esta carpeta (/documento/<clave>), y la ficha del modelo (/ficha.md).
 """
 import importlib
 import json
@@ -65,8 +68,8 @@ _motor_parquet("auto")
 
 MARCA = "Fuga de clientes"
 TITULO = "Fuga de clientes · Laboratorio del modelo"
-DESCRIPCION = ("Una Explainable Boosting Machine que predice el riesgo de fuga de clientes de una fintech, "
-               "funcionando en vivo.")
+DESCRIPCION = ("Un modelo original programado desde cero, Boosting con Desplazamiento Latente (BDL), frente a nueve benchmarks "
+               "para predecir el riesgo de fuga de clientes de una fintech, funcionando en vivo.")
 
 # Las tres secciones de la barra: (ruta, id, nombre, pregunta). El nombre va en la barra y en el título del navegador; la
 # pregunta, en el title del enlace.
@@ -77,21 +80,23 @@ SECCIONES = [
 ]
 NAV = SECCIONES
 
-# Las vistas de Modelos, en dos grupos: (id, nombre, pregunta, grupo, módulo de secciones/, icono)
-GRUPOS = [("todos", "Los ocho modelos"), ("ebm", "El modelo propuesto: la EBM")]
+# Las vistas de Modelos, en tres grupos: (id, nombre, pregunta, grupo, módulo de secciones/, icono). El orden es el del
+# recorrido de la sustentación: los diez modelos, el modelo original y, al final, la EBM como benchmark interpretable.
+GRUPOS = [("todos", "Los diez modelos"), ("original", "El modelo original: BDL"), ("ebm", "La EBM, benchmark interpretable")]
 VISTAS = [
     ("lideres", "Tabla de líderes", "¿Cuál es la mejor combinación de cada modelo?", "todos", "lideres", "balanza"),
     ("prediccion", "Predicción en vivo", "¿Qué predice cada modelo para un cliente?", "todos", "prediccion", "equipo"),
     ("diagnostico", "Diagnóstico", "¿Cómo acierta y cómo se equivoca cada modelo?", "todos", "diagnostico", "grafico"),
     ("interpretabilidad", "Interpretabilidad", "¿Qué variables usa cada modelo?", "todos", "interpretabilidad", "lupa"),
-    ("comparacion", "Comparación estadística", "¿Es mejor que los otros modelos?", "todos", "comparacion", "balanza"),
-    ("propuesto", "Algoritmo y veredicto", "¿Qué es la EBM, por qué y supera a los demás?", "ebm", "propuesto", "modelo"),
-    ("decide", "Cómo decide", "¿Qué modelo es y cómo decide?", "ebm", "modelo", "modelo"),
-    ("cliente", "Un cliente", "¿Por qué el modelo marca a este cliente?", "ebm", "cliente", "equipo"),
+    ("comparacion", "Comparación estadística", "¿Supera el modelo original a los benchmarks?", "todos", "comparacion", "balanza"),
+    ("original", "Modelo original", "¿Qué es BDL, cómo aprende y supera o no a los benchmarks?", "original", "original", "modelo"),
+    ("ficha", "Ficha del modelo", "¿Para qué sirve el modelo original y para qué no?", "original", "ficha", "info"),
+    ("propuesto", "Algoritmo de la EBM", "¿Qué es la EBM y cómo queda frente a los modelos de clase?", "ebm", "propuesto", "modelo"),
+    ("decide", "Cómo decide", "¿Cómo decide la EBM?", "ebm", "modelo", "modelo"),
+    ("cliente", "Un cliente", "¿Por qué la EBM marca a este cliente?", "ebm", "cliente", "equipo"),
     ("campana", "Campaña", "¿A quién contactar si no alcanza para todos?", "ebm", "campana", "demanda"),
-    ("robustez", "Robustez", "¿Depende de cómo se entrenó?", "ebm", "robustez", "grafico"),
-    ("errores", "Errores", "¿Dónde se equivoca y por qué?", "ebm", "errores", "lupa"),
-    ("ficha", "Ficha del modelo", "¿Para qué sirve el modelo y para qué no?", "ebm", "ficha", "info"),
+    ("robustez", "Robustez", "¿Depende la EBM de cómo se entrenó?", "ebm", "robustez", "grafico"),
+    ("errores", "Errores", "¿Dónde se equivoca la EBM y por qué?", "ebm", "errores", "lupa"),
 ]
 VISTA_INICIAL = "lideres"
 
@@ -107,14 +112,15 @@ def pregunta(vista: str) -> str:
 
 # Cada destino del dash como (ruta, icono de pantalla, nombre, pregunta), para ui.destino
 DESTINOS = ([("/", "inicio", "Contexto", SECCIONES[0][3]), ("/eda", "datos", "EDA", SECCIONES[1][3])]
-            + [(ruta_vista(v), {"decide": "modelo", "propuesto": "modelo"}.get(v, v), n, p) for v, n, p, *_ in VISTAS])
+            + [(ruta_vista(v), {"decide": "modelo", "propuesto": "modelo", "original": "modelo"}.get(v, v), n, p)
+               for v, n, p, *_ in VISTAS])
 # El recorrido de la sustentación: el pie «Siguiente» de cada vista lleva a la que sigue
 RECORRIDO = [d[0] for d in DESTINOS]
-# Las direcciones de la versión de nueve pantallas
+# Las direcciones de la versión de nueve pantallas y un atajo a la subsección del modelo original
 REDIRECCIONES = {"/inicio": "/", "/datos": "/eda", "/limites": "/", "/modelos": ruta_vista(VISTA_INICIAL),
                  "/modelo": ruta_vista("decide"), "/cliente": ruta_vista("cliente"), "/campana": ruta_vista("campana"),
                  "/comparacion": ruta_vista("comparacion"), "/robustez": ruta_vista("robustez"),
-                 "/errores": ruta_vista("errores")}
+                 "/errores": ruta_vista("errores"), "/original": ruta_vista("original")}
 
 # Los únicos archivos del disco que se sirven: tres PDF del proyecto, si existen. Cada clave se busca, relativa a la
 # carpeta de la app, en la carpeta de trabajo del equipo y en el repositorio publicado (la app en Dashboard/ y los PDF en
@@ -195,7 +201,8 @@ def barra_superior():
         html.Nav(html.Ul(enlaces, className="barra__lista"), className="barra__nav", **{"aria-label": "Secciones"}),
         html.Div(html.Span([ui.icono("bien", "glifo--s"), html.Span(ESTADO, className="barra__estado-texto")],
                            className="barra__estado",
-                           title="La EBM puntúa y explica cada cliente en el momento · Machine Learning · Universidad del Norte",
+                           title="El modelo original (BDL) y sus benchmarks puntúan y explican cada cliente en el momento · "
+                                 "Machine Learning · Universidad del Norte",
                            **{"aria-label": ESTADO}),
                  className="barra__derecha"),
     ], className="barra__dentro"), className="barra")
@@ -209,7 +216,8 @@ def aviso_datos():
         return None
     return html.Div(ui.aviso([html.Span("Faltan archivos en datos/: " + ", ".join(faltan) + ". "),
                               html.Span("Genérelos con "), html.Code("python preparar_datos.py"),
-                              html.Span(" (necesita la carpeta del Entregable 3).")],
+                              html.Span(" (necesita la carpeta del Entregable 3) y, lo del modelo original, con "),
+                              html.Code("python preparar_original.py"), html.Span(".")],
                              "critico", "La app no encuentra sus datos"), className="aviso-global")
 
 
@@ -285,7 +293,7 @@ for _vieja, _nueva in REDIRECCIONES.items():
 
 @server.route("/ficha.md")
 def servir_ficha():
-    """La ficha del modelo (MODEL_CARD.md) tal cual, para descargarla desde la vista Ficha del modelo."""
+    """La ficha del modelo original (MODEL_CARD.md) tal cual, para descargarla desde la vista Ficha del modelo."""
     ruta = AQUI / "MODEL_CARD.md"
     if not ruta.is_file():
         flask.abort(404)
@@ -302,7 +310,8 @@ def servir_documento(clave):
 
 
 def precalentar():
-    """Llena las cachés antes de la primera visita: carga las 14 tuberías de artifacts/ (y predice una vez con cada una) y
+    """Llena las cachés antes de la primera visita: carga las tuberías de artifacts/ (las 14 del Entregable 3 y las del
+    modelo original) y predice una vez con cada una, y
     arma una vez cada sección y vista. Con FUGA_PRECALENTAR=1 (lo pone render.yaml) corre al importar la app, en el hilo
     principal: gunicorn no atiende visitas hasta que termina (unos 25 s en Render). No corre en un hilo aparte a propósito:
     así ninguna librería se importa ni ningún modelo se carga en dos hilos a la vez; en el servidor gratuito, sin esto, la

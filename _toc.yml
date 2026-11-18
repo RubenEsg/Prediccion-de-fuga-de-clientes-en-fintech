@@ -1,7 +1,21 @@
-# Libro de las tres entregas: la portada es index.md y cada entrega es una parte.
+# Libro del proyecto: la portada es index.md; la primera parte es el informe del proyecto final y cada entrega anterior es una parte.
 format: jb-book
 root: index
 parts:
+  - caption: Proyecto final · Dashboard, modelo original y evaluación rigurosa
+    chapters:
+      - file: ProyectoFinal/00_introduccion
+      - file: ProyectoFinal/01_correcciones
+      - file: ProyectoFinal/02_datos
+      - file: ProyectoFinal/03_benchmarks
+      - file: ProyectoFinal/04_literatura
+      - file: ProyectoFinal/05_modelo_original
+      - file: ProyectoFinal/06_validacion
+      - file: ProyectoFinal/07_evaluacion_ampliada
+      - file: ProyectoFinal/08_dashboard
+      - file: ProyectoFinal/09_conclusiones
+      - file: ProyectoFinal/10_reproducibilidad
+      - file: ProyectoFinal/codigo_modelo_original
   - caption: Entrega 1 · EDA
     chapters:
       - file: Entrega1/eda_bancario

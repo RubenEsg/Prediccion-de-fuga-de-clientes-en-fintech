@@ -1,0 +1,67 @@
+escenario,nivel,tarea,modelo,media,desv
+sin contaminar,0.0,regresion,bdl,0.05888192050404274,0.00041163998284284606
+sin contaminar,0.0,regresion,xgboost,0.05896449859220486,0.0003969818752277667
+sin contaminar,0.0,regresion,lightgbm,0.05899101854189,0.00040092767335491374
+sin contaminar,0.0,clasificacion,bdl,0.8339495316840291,0.0030349238113928983
+sin contaminar,0.0,clasificacion,xgboost,0.8355881243300928,0.0038837291780489257
+sin contaminar,0.0,clasificacion,lightgbm,0.8324571244929555,0.001756568336717548
+ruido gaussiano en el objetivo,0.005,regresion,bdl,0.05888656839689142,0.00040644362801663483
+ruido gaussiano en el objetivo,0.005,regresion,xgboost,0.05896299843952245,0.00039893850290607187
+ruido gaussiano en el objetivo,0.005,regresion,lightgbm,0.05898480048396337,0.00039754751782361563
+ruido gaussiano en el objetivo,0.005,clasificacion,bdl,0.830226437442278,0.0035447995637195406
+ruido gaussiano en el objetivo,0.005,clasificacion,xgboost,0.8307651590794137,0.0032922086435208664
+ruido gaussiano en el objetivo,0.005,clasificacion,lightgbm,0.8305263319861698,0.002867996314654345
+ruido gaussiano en el objetivo,0.01,regresion,bdl,0.05889670843015168,0.0004029605439914054
+ruido gaussiano en el objetivo,0.01,regresion,xgboost,0.058963190102210614,0.00040209617220945666
+ruido gaussiano en el objetivo,0.01,regresion,lightgbm,0.0589894601887387,0.00039268904239126546
+ruido gaussiano en el objetivo,0.01,clasificacion,bdl,0.8301452487144612,0.0035010191627364512
+ruido gaussiano en el objetivo,0.01,clasificacion,xgboost,0.8284181752511609,0.0035152519608187727
+ruido gaussiano en el objetivo,0.01,clasificacion,lightgbm,0.8297399406813358,0.002568487540170232
+ruido gaussiano en el objetivo,0.02,regresion,bdl,0.05897995637946905,0.0004115404763855636
+ruido gaussiano en el objetivo,0.02,regresion,xgboost,0.05897063045366656,0.00039655960675325777
+ruido gaussiano en el objetivo,0.02,regresion,lightgbm,0.05898733931699235,0.00038698353640663
+ruido gaussiano en el objetivo,0.02,clasificacion,bdl,0.8304086114530959,0.0036957693130592415
+ruido gaussiano en el objetivo,0.02,clasificacion,xgboost,0.8260254974754584,0.0037043170865851366
+ruido gaussiano en el objetivo,0.02,clasificacion,lightgbm,0.8286996153782449,0.003322572789747582
+ruido gaussiano en el objetivo,0.05,regresion,bdl,0.05910076948253871,0.0003889332886207167
+ruido gaussiano en el objetivo,0.05,regresion,xgboost,0.05900546071767802,0.0003945863257001798
+ruido gaussiano en el objetivo,0.05,regresion,lightgbm,0.05903843008022108,0.00038580972394888286
+ruido gaussiano en el objetivo,0.05,clasificacion,bdl,0.8297272410574275,0.003872034060749542
+ruido gaussiano en el objetivo,0.05,clasificacion,xgboost,0.8224979404337507,0.0033657900597251324
+ruido gaussiano en el objetivo,0.05,clasificacion,lightgbm,0.8262158328027563,0.0029526487181263297
+atípicos en el objetivo,0.01,regresion,bdl,0.05888361890563992,0.00040247973923826996
+atípicos en el objetivo,0.01,regresion,xgboost,0.058967667293615224,0.00039318385478044463
+atípicos en el objetivo,0.01,regresion,lightgbm,0.058993166756547845,0.0003875776540079559
+atípicos en el objetivo,0.01,clasificacion,bdl,0.8322617681683433,0.0034373825368595574
+atípicos en el objetivo,0.01,clasificacion,xgboost,0.835388539343138,0.003301571880270208
+atípicos en el objetivo,0.01,clasificacion,lightgbm,0.8329731918938581,0.0021961823950079518
+atípicos en el objetivo,0.05,regresion,bdl,0.058927661274363594,0.00039210494595386634
+atípicos en el objetivo,0.05,regresion,xgboost,0.05906268256542478,0.0003895263739579405
+atípicos en el objetivo,0.05,regresion,lightgbm,0.05908013613908406,0.00039326969277259555
+atípicos en el objetivo,0.05,clasificacion,bdl,0.830497955881438,0.003383110692168865
+atípicos en el objetivo,0.05,clasificacion,xgboost,0.8348196471076484,0.0031345907215803792
+atípicos en el objetivo,0.05,clasificacion,lightgbm,0.8323093424442302,0.0016875698994465525
+atípicos en el objetivo,0.1,regresion,bdl,0.05899384515901207,0.00039998128564761417
+atípicos en el objetivo,0.1,regresion,xgboost,0.05923133591692196,0.00037576696387711314
+atípicos en el objetivo,0.1,regresion,lightgbm,0.05925004802712082,0.00038181609902311386
+atípicos en el objetivo,0.1,clasificacion,bdl,0.8311188107912753,0.0036303780762352166
+atípicos en el objetivo,0.1,clasificacion,xgboost,0.833087189512514,0.003397200543273321
+atípicos en el objetivo,0.1,clasificacion,lightgbm,0.8317030385150801,0.002005651079160376
+ruido en los predictores numéricos,0.1,regresion,bdl,0.0589661689549225,0.00037557444588224784
+ruido en los predictores numéricos,0.1,regresion,xgboost,0.05907285880548735,0.0003721777862753409
+ruido en los predictores numéricos,0.1,regresion,lightgbm,0.05907469567850528,0.0003653336547042972
+ruido en los predictores numéricos,0.1,clasificacion,bdl,0.8257237337381195,0.003981506359265481
+ruido en los predictores numéricos,0.1,clasificacion,xgboost,0.8309988519457558,0.003671374021213862
+ruido en los predictores numéricos,0.1,clasificacion,lightgbm,0.8285785164716749,0.0036870778518097113
+ruido en los predictores numéricos,0.25,regresion,bdl,0.05932906309568002,0.00038478371806567607
+ruido en los predictores numéricos,0.25,regresion,xgboost,0.05939882994166634,0.0003883792074359366
+ruido en los predictores numéricos,0.25,regresion,lightgbm,0.059419639616664674,0.00038219374582920977
+ruido en los predictores numéricos,0.25,clasificacion,bdl,0.8196672292645107,0.0038376167177575945
+ruido en los predictores numéricos,0.25,clasificacion,xgboost,0.8179720068090057,0.003911474962151644
+ruido en los predictores numéricos,0.25,clasificacion,lightgbm,0.8208354649235096,0.003598941466742745
+ruido en los predictores numéricos,0.5,regresion,bdl,0.061572505069861436,0.0004587647681303335
+ruido en los predictores numéricos,0.5,regresion,xgboost,0.061447623298254615,0.0005146318885942627
+ruido en los predictores numéricos,0.5,regresion,lightgbm,0.06146723702456073,0.0005314759068402303
+ruido en los predictores numéricos,0.5,clasificacion,bdl,0.7767605433365334,0.004011188718888953
+ruido en los predictores numéricos,0.5,clasificacion,xgboost,0.7802315277956762,0.004617787067990175
+ruido en los predictores numéricos,0.5,clasificacion,lightgbm,0.7821287528254308,0.004283174730443338

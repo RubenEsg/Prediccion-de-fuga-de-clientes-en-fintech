@@ -1,6 +1,6 @@
-"""Robustez · ¿Depende de cómo se entrenó?
+"""Robustez · ¿Depende la EBM de cómo se entrenó?
 
-Siete secciones: las cinco hipótesis de la ablación con el veredicto del informe, cuánto cambia cada variante, los cuatro
+La robustez de la EBM, el benchmark interpretable (la del modelo original está en secciones/original.py). Siete secciones: las cinco hipótesis de la ablación con el veredicto del informe, cuánto cambia cada variante, los cuatro
 optimizadores, la sensibilidad a los hiperparámetros, la calibración, el costo y la curva de aprendizaje. Toda cifra sale
 de datos/ o del motor. Los veredictos de las hipótesis no se calculan: son los del informe final y se citan (VEREDICTO).
 El nombre de la pestaña, el título del navegador y el orden salen de NAV, en app.py.
@@ -24,7 +24,7 @@ import ui
 
 PRE = "ro"
 PANTALLA = "robustez"
-PREGUNTA = "¿Depende de cómo se entrenó?"
+PREGUNTA = "¿Depende la EBM de cómo se entrenó?"        # la de app.VISTAS
 RIVAL = "xgboost"                 # el modelo de árboles con el que el informe compara el costo de la EBM
 UMBRAL_MEDIO = 0.5                # umbral de decisión con que la ablación mide la captura (recall)
 BOLSAS_BAJA = 2                   # bolsas externas (B) de la búsqueda de baja fidelidad y de las curvas de sensibilidad
@@ -674,7 +674,7 @@ def _costo(medida, tarea):
     ancho = ui.ancho_barra(len(orden), ALTO_LIENZO)
     fig = go.Figure()
     for rol, forma in (("modelo", "barra"), ("rival", "barra"), ("base", "rayada")):      # gris rayado y rosa sólido
-        ms = [m for m in orden if D.ROL_MODELO[m] == rol]
+        ms = [m for m in orden if D.ROL_VISTA_EBM[m] == rol]
         if not ms:
             continue
         valores = [t.loc[m, medida] for m in ms]
@@ -710,7 +710,7 @@ def _costo(medida, tarea):
                      [[D.NOMBRE_MODELO[m], _medida(t.loc[m, "ajuste_s"], "ajuste_s"), _medida(t.loc[m, "inferencia_s"], "inferencia_s"),
                        ui.num(t.loc[m, "corrida_min"], 1), _medida(t.loc[m, "tamano_mb"], "tamano_mb"), F.entero(t.loc[m, "parametros"]),
                        ui.num(t.loc[m, "memoria_mb"], 1)] for m in orden],
-                     compacta=True, muestras=[D.ROL_MODELO[m] for m in orden])
+                     compacta=True, muestras=[D.ROL_VISTA_EBM[m] for m in orden])
     etiqueta = f"{titulo}. " + "; ".join(f"{D.NOMBRE_MODELO[m]}: {_medida(t.loc[m, medida], medida)} {unidad}" for m in orden) + "."
     return fig, titulo, sub, tabla, etiqueta
 
@@ -772,7 +772,7 @@ def _aprendizaje(n):
     orden = [m for m in D.ORDEN_MODELOS["clasificacion"] if m in t.index]
     fig = go.Figure()
     for m in orden[::-1]:                                              # la EBM, al final: queda encima
-        fig.add_trace(go.Scatter(x=cats, y=t.loc[m], name=D.NOMBRE_MODELO[m], **ui.traza(D.ROL_MODELO[m], marcadores=(m == "ebm")),
+        fig.add_trace(go.Scatter(x=cats, y=t.loc[m], name=D.NOMBRE_MODELO[m], **ui.traza(D.ROL_VISTA_EBM[m], marcadores=(m == "ebm")),
                                  **ui.hover(D.NOMBRE_MODELO[m], t.loc[m], d=4)))
     ui.banda_foco(fig, F.entero(n), cats)
     paso = 0.05
@@ -793,7 +793,7 @@ def _aprendizaje(n):
     else:
         titulo = f"Con {F.entero(n)} clientes la EBM llega a {ui.num(ebm[n], 4)} de AUC"
     tabla = ui.tabla(["Modelo"] + [f"{c} clientes" for c in cats], [[D.NOMBRE_MODELO[m]] + [ui.num(v, 4) for v in t.loc[m]] for m in orden],
-                     compacta=True, muestras=[D.ROL_MODELO[m] for m in orden])
+                     compacta=True, muestras=[D.ROL_VISTA_EBM[m] for m in orden])
     etiqueta = f"{titulo}. Con {F.entero(n)} clientes: " + "; ".join(f"{D.NOMBRE_MODELO[m]}, {ui.num(t.loc[m, n], 4)}" for m in orden) + "."
     return fig, titulo, tabla, etiqueta
 
@@ -881,7 +881,7 @@ def layout(**_):
         ], controles=[hiper],
             fuentes=[D.fuente("resultados/concordancia_validacion_prueba.csv"), D.fuente("resultados/sensibilidad_hiperparametros.csv"),
                      D.fuente("resultados/ablacion.csv")]),
-        ui.seccion(_titulo_calibracion(), [ui.rejilla([_grafico_calibracion(), _fichas_calibracion()], "2-1")],
+        ui.seccion(_titulo_calibracion(), [ui.rejilla([_grafico_calibracion(), _fichas_calibracion()], "2-1"), ui.nota(D.nota_ece())],
                    fuentes=FUENTES_CALIBRACION),
         ui.seccion(_titulo_costo(), [
             ui.rejilla([ui.grafico(f"{PRE}-costo", fuentes=FUENTES_COSTO, alto="alto",

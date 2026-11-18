@@ -1,0 +1,146 @@
+#%% md
+# 9. Conclusiones y limitaciones
+
+#%% code
+# Preparación: acceso a los resultados versionados y a las funciones que generan las tablas y textos del informe.
+import sys
+sys.path.insert(0, '../ModeloOriginal')
+from src import informe as inf
+
+#%% md
+## 9.1. Hallazgos
+
+#%% code
+# Cada hallazgo cita las cifras de los archivos de resultados (veredicto.json, metricas_prueba.csv, techo.json,
+# incertidumbre_prueba.csv, ablacion.csv, semillas.csv, condicion4.json y auditoria_fuga.json).
+inf.texto('hallazgos')
+
+#%% md
+## 9.2. Veredicto sobre R1, R2 y R3
+
+La {ref}`Tabla 9.1 <tab-r123>` resume el estado de las tres condiciones de la guía y la
+{ref}`Tabla 9.2 <tab-veredicto-final>` detalla la tercera.
+
+(tab-r123)=
+**Tabla 9.1.** Veredicto sobre las condiciones R1, R2 y R3, con la evidencia de cada una.
+
+| Condición | Veredicto | Evidencia |
+|---|---|---|
+| **R1. Novedad en la aplicación** | Se cumple, con el alcance declarado en la sección 4.5 | Búsqueda en tres bases con trece cadenas, hecha dos veces, búsqueda por citación en los dos sentidos y revisión de repositorios: no se encontró ningún estudio que aplique a la fuga de clientes un boosting con una mezcla latente de desplazamientos ajustado por EM, ni otro algoritmo de esa familia. La regla de aprendizaje pertenece a una familia ya publicada (EM con paso de boosting); lo propio de BDL es el modelo al que se aplica, su regla de salida y su implementación ({ref}`Tabla 4.3 <tab-cercanos>`). El mecanismo está formulado de manera general (Algoritmo 1), tiene cinco propiedades demostradas y responde a una limitación identificada con un experimento ({ref}`Figura 5.1 <fig-escalones>`) |
+| **R2. Implementación algorítmica propia** | Se cumple | `ModeloOriginal/src/original_model.py`: discretización, histogramas, árboles, EM de la mezcla, salida de excedencia y salida conforme, programados con `numpy` y `scipy`. El módulo no importa ningún modelo (lo comprueba una prueba unitaria). Las pruebas unitarias del modelo ({ref}`Tabla 5.4 <tab-pruebas-unitarias>`) y las del marco de experimentos, de las pruebas de hipótesis y del informe se ejecutan en integración continua |
+| **R3. Superioridad estadísticamente verificada** | Ver la {ref}`Tabla 9.2 <tab-veredicto-final>` | Capítulos 6 y 7 |
+
+(tab-veredicto-final)=
+**Tabla 9.2.** Veredicto sobre R3 por tarea, con las cuatro condiciones de la guía (la misma de la sección 6.8).
+
+#%% code
+# Tabla 9.2. Lee veredicto.json y condicion4.json: el veredicto se calcula a partir de las cuatro condiciones.
+inf.tabla('tabla_veredicto')
+
+#%% code
+# Discusión del veredicto y análisis de la causa (el mismo texto de la sección 6.8).
+inf.texto('veredicto_texto')
+
+#%% md
+## 9.3. Limitaciones
+
+1. **Los datos son sintéticos.** COFINFAD no describe clientes reales. El escalón que BDL aprovecha existe porque el
+   generador del conjunto resta una cantidad fija por producto activo; en datos reales un efecto así sería menos
+   limpio. La evaluación en cuatro conjuntos públicos (capítulo 7), dos de mediciones reales y dos simulados, mide el
+   comportamiento del modelo fuera de COFINFAD, pero no convierte estos resultados en evidencia sobre una fintech real.
+2. **El margen de mejora era mínimo.** Los mejores benchmarks ya estaban a milésimas del límite teórico del conjunto
+   (sección 6.4). Ningún modelo puede ofrecer una mejora grande en la métrica principal; lo que BDL añade es
+   estructura (los niveles del puntaje) e incertidumbre mejor descrita, no precisión puntual.
+3. **Con todas las filas, la mezcla apenas mueve la métrica.** La ablación (sección 5.9) muestra que retirar la clase
+   latente cuesta del orden de una diezmilésima de RMSE cuando el modelo dispone de toda la muestra. Su aporte medible es de eficiencia
+   muestral: con la décima parte de las filas es lo que separa al modelo de los benchmarks (sección 7.5). Ese análisis
+   se hizo después de ver los resultados y es exploratorio.
+4. **Supuestos del modelo.** Desplazamiento aditivo, independiente de los predictores y con la misma dispersión en
+   todas las clases. Si la clase latente dependiera de los predictores haría falta una compuerta; si el efecto no fuera
+   aditivo, una regresión por clase. Cuando los supuestos no se cumplen, el criterio BIC deja $K = 1$ y el modelo es un
+   boosting de mínimos cuadrados.
+5. **El puntaje continuo tiene que existir.** El modo de excedencia del clasificador necesita que la etiqueta sea un
+   umbral de una variable continua observada en entrenamiento. Sin ella, el modelo aprende de la etiqueta y pierde su
+   ventaja.
+6. **La clasificación es frágil.** El resultado del clasificador depende de que la mezcla identifique bien los niveles:
+   empeora con árboles de profundidad mayor que 1, con menos clases de las que hay o con un calentamiento corto, y con
+   ninguna de las configuraciones probadas supera al mejor de los benchmarks de boosting evaluado con la misma receta
+   ({ref}`Tabla 7.5 <tab-sensibilidad>`). Tolera peor que los benchmarks los valores atípicos en el puntaje y el ruido
+   en los predictores (sección 7.4). En la validación anidada, la búsqueda llegó a elegir la variante sin puntaje en
+   algunos pliegues (sección 6.8).
+7. **Probabilidades con bordes abruptos y con mesetas.** La dispersión robusta hace que la probabilidad salte de una
+   meseta a otra en un intervalo muy estrecho del índice. Un cliente mal situado en ese borde recibe una probabilidad
+   casi segura y equivocada, y la pérdida logarítmica lo castiga (sección 7.9). Y dentro de una meseta el modelo no
+   distingue a los clientes: cuando el corte de una campaña cae en una de ellas, a quién se contacta lo decide el
+   desempate, y las métricas que dependen del orden entre empatados (la captura, la precisión media) cambian con la
+   convención ({ref}`Tabla 6.11 <tab-empates>`). Le ocurre también al predictor óptimo: en este conjunto esos clientes
+   son indistinguibles sin la variable excluida.
+8. **La cobertura de los conjuntos de predicción es marginal.** Se garantiza sobre el total de clientes, no dentro de
+   cada grupo: el nivel menos probable del escalón es el que queda fuera (sección 7.9).
+9. **La cola de `tx_count`.** En menos del 2 % de los clientes el índice depende además del número de transacciones;
+   ahí el modelo confunde parte de ese efecto con un cambio de nivel (sección 7.9).
+10. **Costo.** Ajustar BDL cuesta varias veces más que ajustar XGBoost o LightGBM, porque está escrito en `numpy` sin
+    compilar (sección 7.3).
+11. **El conjunto de prueba ya se había usado** para evaluar los benchmarks en el Entregable 3. No intervino en el
+    diseño del modelo original, y las repeticiones 2 y 3 de la validación anidada y los conjuntos adicionales son
+    evidencia nueva para todos los modelos.
+12. **Los pliegues del diseño forman parte de la comparación.** Las cinco iteraciones de diseño se evaluaron en los
+    cinco pliegues externos de la semilla 42, que son cinco de los quince de la comparación confirmatoria (sección 6.1).
+    En ellos el resultado puede favorecer al original; las repeticiones 2 y 3 y la partición de prueba no intervinieron
+    en el diseño.
+13. **El registro previo solo está certificado desde su publicación.** La etiqueta del protocolo se creó antes de la
+    primera corrida, pero se publicó horas después, cuando ya existían los resultados de la primera repetición y de la
+    prueba (sección 6.2). Para esa parte, la anterioridad del protocolo descansa en la fecha local de la etiqueta.
+14. **La evidencia fuera de COFINFAD es limitada.** Los conjuntos adicionales son cuatro, pequeños o medianos, y lo
+    que se obtiene en ellos (sección 7.1) no respalda una ventaja general: el mecanismo solo puede aportar cuando el
+    objetivo tiene de verdad un desplazamiento discreto y bien separado, y cuando no lo encuentra el modelo se reduce a
+    un boosting de mínimos cuadrados.
+15. **Los benchmarks recientes no son los más nuevos.** LightGBM es de 2017 y la EBM, en su implementación actual, de
+    2019. No se compararon redes neuronales para datos tabulares ni modelos preentrenados, y la búsqueda de los
+    benchmarks no parte de sus hiperparámetros recomendados, aunque se midieron aparte (sección 3.6).
+
+## 9.4. Riesgos y usos no recomendados
+
+- **No es una probabilidad de fuga observada.** «Riesgo alto» es el cuarto superior de un puntaje de propensión; el
+  modelo reproduce ese puntaje, no el comportamiento real de los clientes.
+- **No usar para decidir sobre personas sin validación externa.** Antes de usarlo en una fintech habría que reentrenar
+  y validar en el tiempo con fuga observada, y revisar el trato a los distintos grupos (la edad es la variable de más
+  peso).
+- **No extrapolar.** Fuera del rango de los datos de entrenamiento el modelo asigna el primer o el último bin de cada
+  variable.
+
+## 9.5. Trabajo futuro
+
+- Hacer que los pesos de las clases dependan de los predictores (una compuerta por boosting) y permitir una dispersión
+  distinta por clase.
+- Elegir la dispersión de la probabilidad de excedencia con una regla de puntuación propia (la pérdida logarítmica en
+  validación), para suavizar los bordes de las mesetas sin perder el orden.
+- Conjuntos de predicción con cobertura condicionada al nivel del escalón.
+- Incorporar el costo de cada acción de retención para fijar el umbral y la capacidad de la campaña.
+- Compilar el bucle de histogramas para reducir el tiempo de ajuste.
+- Validar con datos reales y con fuga observada, en una partición temporal.
+
+(sec-declaracion)=
+## 9.6. Declaración de autoría y uso de herramientas
+
+Los autores de este trabajo son Valerie Martínez Pulido, Abrahan Basto Martínez y Rubén Esguerra Fernández, estudiantes
+del pregrado en Ciencia de Datos de la Universidad del Norte.
+
+**Uso de herramientas de inteligencia artificial.** En este entregable se usó un asistente de programación basado en
+inteligencia artificial generativa (Claude Code, de Anthropic) como apoyo en:
+
+- el análisis de la retroalimentación del docente y de la guía del curso;
+- el diseño del modelo original y los experimentos piloto que lo motivaron;
+- la programación del modelo, del marco de experimentos, de las pruebas unitarias y del dashboard;
+- la ejecución de los experimentos y la generación de tablas y figuras;
+- la búsqueda bibliográfica reproducible y la redacción y revisión de este libro.
+
+El código del modelo original no se copió de ningún repositorio ni librería: se escribió para este proyecto. El equipo
+revisó el trabajo, lo ejecutó, verificó sus resultados y responde por cada línea entregada; durante la sustentación
+puede explicar y modificar cualquier parte del algoritmo, como exige la guía.
+
+*Firmas del equipo:*
+
+- Valerie Martínez Pulido: ____________________
+- Abrahan Basto Martínez: ____________________
+- Rubén Esguerra Fernández: ____________________

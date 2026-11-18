@@ -1,0 +1,14 @@
+{
+  "fuente": "https://archive.ics.uci.edu/static/public/1/abalone.zip",
+  "sha256": "755a6a67c5b266961a3f149ea13be2cfb6e6c727e48cee3c83bc0b4526210ee4",
+  "omitida": null,
+  "objetivo": "anillos (entero)",
+  "nombre": "Abulón",
+  "n": 4177,
+  "p": 8,
+  "n_train": 3341,
+  "n_test": 836,
+  "umbral": 11.0,
+  "prevalencia_train": 0.23256510026938043,
+  "prevalencia_test": 0.21889952153110048
+}

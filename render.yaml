@@ -14,7 +14,8 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.13.3
-      # Cuántas tuberías guarda en memoria (las 14 caben en unos 400 MB); si Render reinicia por memoria, bájelo a 3
+      # Cuántas tuberías guarda en memoria (las 16 caben en unos 400 MB: las dos del modelo original pesan menos de 1 MB);
+      # si Render reinicia por memoria, bájelo a 3
       - key: FUGA_CACHE_MODELOS
         value: "16"
       # Al arrancar, antes de atender visitas, carga los modelos y arma cada vista una vez (la primera visita no espera)

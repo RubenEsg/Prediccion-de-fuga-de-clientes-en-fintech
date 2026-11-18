@@ -325,15 +325,18 @@ def comprobar_python(inf, con_paginas=True):
 
 # --- Paleta: validate_palette.js del método dataviz ------------------------------------------------------------------
 # (gráfico, tokens que se ven juntos, todos los pares, lo que se espera: «todo» = código 0; si no, estado de cada control)
+# «El modelo en foco» es el del rol «modelo»: el modelo original (BDL) en las vistas de los diez modelos y la EBM en las suyas
 CONJUNTOS = [
-    ("La EBM sola (azul)", ["--serie-modelo"], False, "todo"),
-    ("EBM (azul) frente a los rivales (rosa)", ["--serie-modelo", "--serie-rival"], True, "todo"),
-    ("EBM (azul) frente a la base (gris)", ["--serie-modelo", "--serie-base"], True, {"cvd": "PASS", "normal": "PASS", "contraste": "PASS"}),
-    ("Base (gris) frente a los rivales (rosa)", ["--serie-base", "--serie-rival"], True, {"cvd": "PASS", "normal": "PASS", "contraste": "PASS"}),
-    ("EBM, rivales y base juntos (azul, rosa y gris)", ["--serie-modelo", "--serie-rival", "--serie-base"], True,
+    ("El modelo en foco solo (azul)", ["--serie-modelo"], False, "todo"),
+    ("Modelo en foco (azul) frente a los rivales (rosa)", ["--serie-modelo", "--serie-rival"], True, "todo"),
+    ("Modelo en foco (azul) frente a la base (gris)", ["--serie-modelo", "--serie-base"], True,
      {"cvd": "PASS", "normal": "PASS", "contraste": "PASS"}),
-    ("Lo observado, la EBM y el contexto", ["--serie-real", "--serie-modelo", "--serie-contexto"], True, {"cvd": "PASS", "normal": "PASS"}),
-    ("EBM, base, lo observado y rivales", ["--serie-modelo", "--serie-base", "--serie-real", "--serie-rival"], True,
+    ("Base (gris) frente a los rivales (rosa)", ["--serie-base", "--serie-rival"], True, {"cvd": "PASS", "normal": "PASS", "contraste": "PASS"}),
+    ("Modelo en foco, rivales y base juntos (azul, rosa y gris)", ["--serie-modelo", "--serie-rival", "--serie-base"], True,
+     {"cvd": "PASS", "normal": "PASS", "contraste": "PASS"}),
+    ("Lo observado, el modelo en foco y el contexto", ["--serie-real", "--serie-modelo", "--serie-contexto"], True,
+     {"cvd": "PASS", "normal": "PASS"}),
+    ("Modelo en foco, base, lo observado y rivales", ["--serie-modelo", "--serie-base", "--serie-real", "--serie-rival"], True,
      {"cvd": "PASS", "normal": "PASS", "contraste": "PASS"}),
 ]
 CONTROLES = {"banda": "Lightness band", "croma": "Chroma floor", "cvd": "CVD separation", "normal": "Normal-vision floor", "contraste": "Contrast vs surface"}
@@ -373,8 +376,8 @@ def comprobar_paleta(inf):
 # (pantalla, ruta, máximo de tamaños de letra). La escala de la referencia tiene más pasos (título enorme, cifra,
 # protagonista): hasta 8 por pantalla.
 PANTALLAS = [("contexto", "/", 8), ("eda", "/eda", 8)] + [(v, f"/modelos/{v}", 8) for v in (
-    "lideres", "prediccion", "diagnostico", "interpretabilidad", "comparacion", "propuesto", "decide", "cliente", "campana",
-    "robustez", "errores", "ficha")]
+    "lideres", "prediccion", "diagnostico", "interpretabilidad", "comparacion", "original", "ficha", "propuesto", "decide", "cliente",
+    "campana", "robustez", "errores")]
 # El archivo de cada sección o vista (la vista «decide» es secciones/modelo.py)
 ARCHIVO = {"decide": "modelo"}
 # Puertos de otras aplicaciones de este equipo: la parte en vivo no los toca
@@ -512,7 +515,7 @@ def vivo(inf, puerto, capturas=None):
 def main():
     ap = argparse.ArgumentParser(description="Prueba del sistema de diseño de la app de fuga de clientes (DISENO.md §7).")
     ap.add_argument("--vivo", type=int, metavar="PUERTO",
-                    help="revisa también las nueve pantallas en el navegador (nunca en los puertos 8000, 8020 ni 8050)")
+                    help="revisa también las secciones y las vistas en el navegador (nunca en los puertos 8000, 8020 ni 8050)")
     ap.add_argument("--solo-vivo", action="store_true", help="solo la parte en el navegador")
     ap.add_argument("--pantallas", nargs="+", metavar="PANTALLA",
                     help="revisa solo estas pantallas, en el código y en el navegador (con FUGA_PAGINAS la app solo carga esas)")

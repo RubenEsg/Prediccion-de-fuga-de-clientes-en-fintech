@@ -130,11 +130,16 @@ def _futuro():
     pasos = [
         "Validar en el tiempo con fuga observada: entrenar con un periodo y probar con el siguiente.",
         "Incorporar el costo de cada acción de retención para fijar la capacidad y el umbral de la campaña.",
-        "Acelerar el ajuste de la EBM con una parada temprana más exigente o solo con los predictores que tienen señal.",
-        "Dar más potencia a las pruebas pareadas con validación cruzada repetida.",
+        "En el modelo original, hacer que los pesos de las clases latentes dependan de los predictores (una compuerta aprendida por "
+        "boosting) y permitir una dispersión distinta por clase.",
+        "Suavizar los bordes de las mesetas de su probabilidad eligiendo la dispersión con una regla de puntuación propia, sin perder "
+        "el orden de los clientes.",
+        "Dar a sus conjuntos de predicción una cobertura condicionada al nivel del escalón, no solo sobre el total de clientes.",
+        "Compilar el bucle de histogramas del modelo original para reducir su tiempo de ajuste.",
         "Tratar las transacciones como series, con modelos de secuencias.",
     ]
-    return ui.tarjeta([ui.parrafo(p) for p in pasos], titulo="Lo que el informe propone como trabajo futuro")
+    return ui.tarjeta([ui.parrafo(p) for p in pasos],
+                      titulo="Trabajo futuro: lo que proponen el libro del proyecto final y el informe del Entregable 3")
 
 
 def _destinos():

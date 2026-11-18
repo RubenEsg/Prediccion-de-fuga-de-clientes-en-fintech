@@ -817,7 +817,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 /* Pie común: la pantalla que sigue en el recorrido */
 .siguiente { margin-top: var(--e-7); }
 
-/* --- Subnavegación de Modelos: dos grupos de píldoras bajo la barra -------------------------------------------------- */
+/* --- Subnavegación de Modelos: los grupos de píldoras bajo la barra -------------------------------------------------- */
 .subnav { display: flex; flex-wrap: wrap; gap: var(--e-3) var(--e-6); margin: 0 0 var(--e-6); padding-bottom: var(--e-4);
   border-bottom: 1px solid var(--linea); }
 .subnav__bloque { display: flex; flex-direction: column; gap: var(--e-2); min-width: 0; }

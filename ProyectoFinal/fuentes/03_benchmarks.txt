@@ -1,0 +1,133 @@
+#%% md
+# 3. Modelos benchmark
+
+El modelo original se compara con nueve benchmarks por tarea: los siete modelos de clase y dos métodos recientes del
+estado del arte. Todos pasan por el mismo preprocesamiento, las mismas variables, las mismas particiones y la misma
+métrica de selección.
+
+#%% code
+# Preparación. Las celdas de este libro no entrenan nada: leen los resultados versionados en ModeloOriginal/resultados
+# y vuelven a generar cada tabla y cada figura con las funciones de ModeloOriginal/src/informe.py.
+import sys
+sys.path.insert(0, '../ModeloOriginal')
+from src import informe as inf
+
+#%% md
+## 3.1. Los nueve benchmarks
+
+La {ref}`Tabla 3.1 <tab-familias>` los agrupa por familia.
+
+(tab-familias)=
+**Tabla 3.1.** Los nueve benchmarks de cada tarea, por familia de modelos.
+
+| Familia | Clasificación | Regresión |
+|---|---|---|
+| Vecinos | k-NN | k-NN |
+| Probabilístico | Naive Bayes gaussiano | — |
+| Lineales | Regresión logística (L1 o L2), SVM lineal | Ridge, Lasso, SVR lineal |
+| Árboles | Árbol de decisión, Random Forest {cite}`breiman2001` | Árbol de decisión, Random Forest |
+| Boosting | XGBoost {cite}`chen2016` | XGBoost |
+| **Recientes** | EBM {cite}`lou2013,nori2019` y LightGBM {cite}`ke2017` | EBM y LightGBM |
+
+La **EBM** era el «modelo nuevo» del Entregable 3. Proviene de la librería `interpret`, así que no cumple la condición
+R2 y aquí es un benchmark reciente, que es lo que le corresponde. **LightGBM** se añade como segundo método reciente.
+«Reciente» se entiende aquí como posterior a los modelos de clase y vigente como referencia para datos tabulares:
+LightGBM se publicó en 2017 y la EBM, en la implementación de InterpretML, en 2019. No son métodos de los últimos dos o
+tres años (redes neuronales para datos tabulares, modelos preentrenados), que no se evaluaron; es una limitación que se
+declara en el capítulo 9.
+
+La {ref}`Tabla 3.2 <tab-espacios>` da el espacio de búsqueda de cada modelo, incluido el original. Su justificación
+está en [`ModeloOriginal/src/modelos.py`](https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech/blob/main/ModeloOriginal/src/modelos.py)
+(y, para los modelos del Entregable 3, en el capítulo [Metodología](../Entrega3/notebook/02_metodologia)).
+
+(tab-espacios)=
+**Tabla 3.2.** Hiperparámetros que se ajustan en cada modelo y rango de búsqueda.
+
+#%% code
+# Tabla 3.2. Recorre el catálogo de modelos (src/modelos.py) y escribe el espacio de búsqueda de cada uno; el mismo
+# espacio lo usan los cuatro optimizadores.
+inf.tabla('tabla_espacios')
+
+#%% md
+## 3.2. Presupuesto de ajuste
+
+Cada búsqueda evalúa tantas configuraciones como puntos tiene la rejilla de Grid Search del modelo, con un mínimo de
+30. Los cuatro optimizadores del Entregable 3 (Grid, Random, bayesiano con TPE {cite}`akiba2019` y genético) consumen lo
+mismo dentro de cada modelo. El modelo original recibe **30 evaluaciones, el mínimo: ningún benchmark recibió menos.**
+El presupuesto no es idéntico entre modelos: va de 30 a 48 evaluaciones por búsqueda, según el tamaño de la rejilla de
+cada uno. No se fijó un tiempo máximo de cómputo; el original, programado en `numpy` y no en código compilado, es el
+que más tiempo consumió en las dos tareas. El presupuesto, las evaluaciones y el tiempo reales de cada modelo están en la
+{ref}`Tabla 3.3 <tab-benchmarks>`.
+
+**Punto de partida de los métodos recientes.** La guía pide que partan de los hiperparámetros recomendados por la
+literatura. Los cuatro optimizadores muestrean el espacio de búsqueda y no empiezan en una configuración fija; lo que el
+diseño garantiza es que el espacio de cada método reciente contiene casi todos los valores por defecto de su librería,
+que son los que recomiendan sus autores. La sección 3.6 mide ese punto de partida y lo compara con el resultado del
+ajuste.
+
+## 3.3. Dos fidelidades, y por qué no es Successive Halving
+
+En Random Forest y en la EBM la búsqueda evalúa cada configuración con un presupuesto bajo (100 árboles; 2 bolsas
+externas) y solo la ganadora se reajusta con el presupuesto alto (300 árboles; 8 bolsas): un factor de 3 y de 4.
+
+Eso **no** es Successive Halving. Successive Halving parte de $n$ configuraciones con un presupuesto pequeño, conserva
+la fracción $1/r$ mejor, multiplica el presupuesto por $r$ y repite hasta que queda una; $r$ es el **factor de
+reducción**, habitualmente 3, y Hyperband repite el procedimiento con varias parejas de $n$ y presupuesto inicial. En el
+esquema del proyecto no hay rondas intermedias ni configuraciones que compitan con el presupuesto alto: es una búsqueda
+con dos fidelidades. La comparación lado a lado, con las mismas configuraciones, está en el
+[dashboard](https://fuga-de-clientes-dash.onrender.com) (Contexto › «Dos fidelidades, no Successive Halving»).
+
+## 3.4. Selección de la mejor combinación y serialización
+
+Para cada modelo se elige la combinación (balanceo × optimizador) de mejor métrica media del bucle externo, sin mirar
+la prueba. Esa es la combinación que entra en el dashboard y la que se repite en las repeticiones 2 y 3. El modelo final
+se reajusta con todo el entrenamiento y se serializa en `Dashboard/artifacts/` con su `metadata.json` (versiones,
+semilla, hiperparámetros, esquema de entrada y métricas) y la prueba de ida y vuelta: el modelo cargado predice
+exactamente lo mismo que el modelo en memoria.
+
+## 3.5. Resultados de los benchmarks
+
+(tab-benchmarks)=
+**Tabla 3.3.** Resultados de los nueve benchmarks de cada tarea y, en negrita, del modelo original: combinación elegida
+y motivo de la elección, presupuesto por búsqueda, evaluaciones y tiempo de la repetición de la semilla 42, y media ±
+desviación de la métrica principal en los pliegues externos de las repeticiones completas. Debajo, la mejor combinación
+global y los finalistas de la comparación estadística.
+
+#%% code
+# Tabla 3.3. Lee la tabla maestra (resultados/experimentos.parquet), la del Entregable 3 (para el margen entre las
+# combinaciones de cada modelo) y la métrica de cada pliegue externo (resultados/pliegues_<tarea>.csv); ordena los
+# modelos de mejor a peor y calcula los finalistas de Nemenyi y el Model Confidence Set de regresión.
+inf.tabla('tabla_benchmarks')
+
+#%% md
+Los cuatro mejores benchmarks quedan a muy poca distancia entre sí en las dos tareas. El capítulo 6 muestra por qué:
+están cerca del límite que permite el conjunto.
+
+La {ref}`Tabla 3.4 <tab-hiperparametros>` da los hiperparámetros con los que se reajustó cada modelo final. Para los
+ocho modelos del Entregable 3 y para el original son los de los 18 artefactos del dashboard; LightGBM se añadió en este
+entregable como benchmark y no se publica como artefacto.
+
+(tab-hiperparametros)=
+**Tabla 3.4.** Hiperparámetros finales de los diez modelos de cada tarea (búsqueda sobre toda la partición de
+entrenamiento, semilla 42).
+
+#%% code
+# Tabla 3.4. De la tabla maestra: la columna hiperparametros de la corrida de la semilla 42 de cada modelo.
+inf.tabla('tabla_hiperparametros')
+
+#%% md
+## 3.6. Los métodos recientes con sus hiperparámetros recomendados
+
+La {ref}`Tabla 3.5 <tab-recomendados>` ajusta la EBM y LightGBM con los valores por defecto de su librería, sin
+búsqueda, y los evalúa en los mismos cinco pliegues externos de la semilla 42 y en la misma partición de prueba que la
+versión ajustada. Es una medida añadida después de ver los resultados (sección 6.2): no cambia qué combinación
+representa a cada benchmark en las pruebas de hipótesis.
+
+(tab-recomendados)=
+**Tabla 3.5.** EBM y LightGBM con los hiperparámetros recomendados por su librería, frente a los que encontró la
+búsqueda.
+
+#%% code
+# Tabla 3.5. Lee resultados/recomendados.csv (experiments/03d_recomendados.py) y lo compara con los pliegues externos de
+# la semilla 42 (resultados/pliegues_<tarea>.csv) y con resultados/metricas_prueba.csv.
+inf.tabla('tabla_recomendados')

@@ -1,6 +1,6 @@
-"""Errores · ¿Dónde se equivoca y por qué?
+"""Errores · ¿Dónde se equivoca la EBM y por qué?
 
-Cuatro partes: los errores por segmento (cohorte de edad o número de productos activos) de la EBM y de XGBoost, el
+Los errores de la EBM, el benchmark interpretable. Cuatro partes: los errores por segmento (cohorte de edad o número de productos activos) de la EBM y de XGBoost, el
 histograma del error de la regresión que se separa en un pico por número de productos, cuatro clientes de ejemplo con
 enlace a su explicación y, por cohorte, a quién contacta cada campaña y las cuatro cuentas de la matriz de confusión.
 
@@ -25,7 +25,7 @@ import ui
 
 PRE = "er"
 PANTALLA = "errores"
-PREGUNTA = "¿Dónde se equivoca y por qué?"
+PREGUNTA = "¿Dónde se equivoca la EBM y por qué?"       # la de app.VISTAS
 
 RIVAL = "xgboost"                      # el modelo de árboles con el que el informe compara los errores de la EBM
 MODELOS = ("ebm", RIVAL)
@@ -230,7 +230,7 @@ def _figura_segmento(t, segmento, medida):
         v = [None if pd.isna(f[f"{col}_{m}"]) else float(f[f"{col}_{m}"]) for f in filas]
         fig.add_trace(go.Bar(y=cats, x=v, orientation="h", offset=corrimiento, name=D.NOMBRE_MODELO[m],
                              text=["" if x is None else _valor(medida, x) for x in v],
-                             **ui.traza(D.ROL_MODELO[m], forma, ancho=ancho),
+                             **ui.traza(D.ROL_VISTA_EBM[m], forma, ancho=ancho),
                              **ui.hover_texto([_al_pasar(segmento, medida, m, f) for f in filas])))
     rango, vals, textos = _eje(medida)
     fig.update_layout(barmode="overlay", hovermode="closest", margin_r=ui.MARGEN_ETIQUETAS)
@@ -344,8 +344,8 @@ def _captura():
     t = D.prueba("clasificacion")
     e, x = D.fila(t, modelo="ebm"), D.fila(t, modelo=RIVAL)
     c = _cruce()
-    barras = html.Div([ui.barra_rayas(D.NOMBRE_MODELO["ebm"], F.pct(e["recall_op"]), e["recall_op"], D.ROL_MODELO["ebm"]),
-                       ui.barra_rayas(XGB, F.pct(x["recall_op"]), x["recall_op"], D.ROL_MODELO[RIVAL])], className="rayas-lista")
+    barras = html.Div([ui.barra_rayas(D.NOMBRE_MODELO["ebm"], F.pct(e["recall_op"]), e["recall_op"], D.ROL_VISTA_EBM["ebm"]),
+                       ui.barra_rayas(XGB, F.pct(x["recall_op"]), x["recall_op"], D.ROL_VISTA_EBM[RIVAL])], className="rayas-lista")
     cruce = ui.ficha([("Los alcanzan los dos modelos", F.entero(c["ambos"])), (f"Solo la {EBM}", F.entero(c["solo_ebm"])),
                       (f"Solo {XGB}", F.entero(c["solo_rival"])), ("Se les escapan a los dos", F.entero(c["ninguno"]))])
     return ui.tarjeta([
@@ -531,7 +531,7 @@ def _cohortes():
         for m in MODELOS:
             parte = f[f"contactos_{m}"] / c[f"contactos_{m}"].sum()
             barras.append(ui.barra_rayas(f"Contactos de {D.en_frase(m)}",
-                                         f"{F.entero(f[f'contactos_{m}'])} ({F.pct(parte)})", parte, D.ROL_MODELO[m]))
+                                         f"{F.entero(f[f'contactos_{m}'])} ({F.pct(parte)})", parte, D.ROL_VISTA_EBM[m]))
         cuentas = [("Aciertos", f["VP"]), ("Falsas alarmas", f["FP"]), ("Se escapan", f["FN"]), ("Bien descartados", f["VN"])]
         tarjetas.append(ui.tarjeta([
             html.Div(barras, className="rayas-lista"),
@@ -593,7 +593,7 @@ def _pantalla():
         ui.seccion(textos["segmentos"], [
             ui.rejilla([
                 ui.grafico(f"{PRE}-seg", fuentes=[F_SEGMENTOS, F_CLIENTES],
-                           leyenda=[(D.NOMBRE_MODELO["ebm"], D.ROL_MODELO["ebm"], "barra"), (XGB, D.ROL_MODELO[RIVAL], "rayada")]),
+                           leyenda=[(D.NOMBRE_MODELO["ebm"], D.ROL_VISTA_EBM["ebm"], "barra"), (XGB, D.ROL_VISTA_EBM[RIVAL], "rayada")]),
                 _captura(),
             ], "2-1"),
         ], subtitulo=textos["segmentos_sub"], controles=[segmento, medida]),

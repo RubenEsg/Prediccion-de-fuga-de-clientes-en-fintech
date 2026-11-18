@@ -1,0 +1,184 @@
+#%% md
+# 2. Datos: ETL, EDA y auditoría de fuga
+
+Este capítulo resume el ETL y el EDA con las tablas que importan para el modelo original, declara los datos y documenta
+la auditoría de fuga de información. El análisis completo está en los capítulos de las entregas anteriores
+([Data](../Entrega3/notebook/01_datos), [EDA de la Entrega 1](../Entrega1/eda_bancario)) y, de forma interactiva, en la
+sección **EDA** del [dashboard](https://fuga-de-clientes-dash.onrender.com/eda). Todo lo que sigue se calcula solo con
+la partición de entrenamiento.
+
+#%% code
+# Preparación: acceso a los resultados versionados y a las funciones que generan las tablas y figuras del informe.
+import sys
+sys.path.insert(0, '../ModeloOriginal')
+from src import informe as inf
+
+#%% md
+## 2.1. El conjunto y su declaración
+
+COFINFAD {cite}`munoz2025` describe a los clientes de una fintech colombiana y el detalle de sus transacciones de 2023.
+La {ref}`Tabla 2.1 <tab-declaracion>` es la declaración de los datos: de dónde vienen, con qué licencia se
+distribuyen, cómo están compuestos y qué sesgos se conocen. El punto que más condiciona la lectura de este libro es el
+de la naturaleza: los datos son **sintéticos**, de modo que cada conclusión describe las reglas con que se generaron y
+no a clientes reales.
+
+(tab-declaracion)=
+**Tabla 2.1.** Declaración de los datos: procedencia, licencia, composición, sesgos conocidos y usos.
+
+#%% code
+# Tabla 2.1. Cifras calculadas con los resúmenes del entrenamiento (Dashboard/datos/eda); la procedencia y la licencia son las
+# de la publicación del conjunto en Mendeley Data.
+inf.tabla('tabla_declaracion')
+
+#%% md
+La declaración completa, con los usos no recomendados y la fuente de cada cifra, está en
+[`Dashboard/DATA_STATEMENT.md`](https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech/blob/main/Dashboard/DATA_STATEMENT.md).
+
+## 2.2. ETL
+
+El flujo está en `ModeloOriginal/src/datos.py` y la {ref}`Tabla 2.2 <tab-etl>` resume qué deja cada paso. La partición
+va antes que todo lo demás: la evidencia para eliminar columnas, el umbral de la etiqueta y la fecha de corte de la
+recencia salen solo de los clientes de entrenamiento (38.978; los de prueba son 9.745).
+
+(tab-etl)=
+**Tabla 2.2.** Pasos del ETL y resultado de cada uno.
+
+#%% code
+# Tabla 2.2. Lee Dashboard/datos/eda/etl.json, que resume la carga, la auditoría de las transacciones y las columnas.
+inf.tabla('tabla_etl')
+
+#%% md
+Las 17 columnas eliminadas son el identificador, la variable que genera el objetivo (`active_products`), un segundo
+objetivo (el valor del cliente y su segmento), cuatro duplicados de otras columnas, una variable colineal con la
+satisfacción (`nps_score`), la ocupación y cinco fechas, que no tienen señal, y dos columnas de texto libre con muchos
+faltantes. La etiqueta «riesgo
+alto» es el cuarto superior del puntaje, con el umbral (0,3927) estimado solo en entrenamiento. El preprocesamiento
+(estandarizar las numéricas y codificar las categóricas) vive dentro de la tubería (*pipeline*) de cada modelo, de modo
+que se ajusta solo con las filas de entrenamiento de cada pliegue.
+
+Solo tres columnas tienen valores faltantes ({ref}`Tabla 2.3 <tab-faltantes>`). Dos son texto libre y se eliminan. La
+tercera, el uso del cupo de la tarjeta, falta exactamente en los clientes sin tarjeta de crédito: es un «no aplica» y se
+imputa con 0.
+
+(tab-faltantes)=
+**Tabla 2.3.** Columnas con valores faltantes en entrenamiento.
+
+#%% code
+# Tabla 2.3. Lee Dashboard/datos/eda/faltantes.csv (conteo de faltantes por columna en la partición de entrenamiento).
+inf.tabla('tabla_faltantes')
+
+#%% md
+## 2.3. EDA: qué se asocia con el puntaje
+
+La {ref}`Tabla 2.4 <tab-asociacion>` ordena las variables por su asociación con el puntaje. Hay una que domina,
+`active_products`, y es justo la que no se puede usar. Entre los predictores, la señal está en pocas variables
+(frecuencia de uso de la aplicación, edad y satisfacción) y las demás casi no aportan.
+
+(tab-asociacion)=
+**Tabla 2.4.** Asociación de las variables con el puntaje de fuga, en entrenamiento.
+
+#%% code
+# Tabla 2.4. Lee Dashboard/datos/eda/asociacion.csv: ρ de Spearman y r de Pearson para las numéricas, η² para las categóricas.
+inf.tabla('tabla_asociacion')
+
+#%% md
+La edad solo toma seis valores, agrupados en tres cohortes de tamaño casi igual ({ref}`Tabla 2.5 <tab-cohortes>`). El
+riesgo alto cambia mucho de una cohorte a otra y no crece con la edad, lo que un modelo lineal no puede representar con
+un solo coeficiente y sí un modelo de árboles.
+
+(tab-cohortes)=
+**Tabla 2.5.** Puntaje medio y proporción de riesgo alto por cohorte de edad, en entrenamiento.
+
+#%% code
+# Tabla 2.5. Lee Dashboard/datos/eda/cohortes.csv (filas de la partición de entrenamiento).
+inf.tabla('tabla_cohortes')
+
+#%% md
+## 2.4. El hallazgo del EDA que motiva el modelo original
+
+La {ref}`Figura 2.1 <fig-escalera>` muestra el hecho del que parte todo el proyecto.
+
+#%% figura fig-escalera 85%
+**Figura 2.1.** Puntaje de fuga por número de productos activos, en entrenamiento (cajas: cuartiles; línea naranja:
+media). Cada producto adicional baja el puntaje 0,05, y la dispersión dentro de cada nivel es la misma.
+**Interpretación:** el puntaje es un índice más un escalón; como la variable se excluye, el escalón queda como un
+«ruido» de cinco niveles.
+---
+# Figura 2.1. Con la partición de entrenamiento (src/datos.py): diagrama de cajas del puntaje por número de productos.
+# active_products se usa aquí solo para explicar el EDA; ningún modelo la recibe.
+inf.figura('escalera_productos')
+
+#%% md
+`active_products` tiene una correlación de Pearson de −0,88 con el puntaje y se excluye por fuga de información
+{cite}`kaufman2012`: el puntaje se construyó con ella. Sin esa variable, los modelos explican cerca del 22 % de la
+varianza. El resto no es ruido en el sentido habitual: es el escalón de la variable excluida, que no se puede predecir
+con las demás (al intentarlo, el AUC es 0,50).
+
+La {ref}`Figura 2.2 <fig-objetivo>` muestra dónde cae el umbral de la etiqueta.
+
+#%% figura fig-objetivo 85%
+**Figura 2.2.** Distribución del puntaje de fuga en entrenamiento y umbral de riesgo alto (línea naranja).
+**Interpretación:** el umbral cae en la zona más poblada, de modo que pequeños errores en el índice cambian de lado a
+muchos clientes; por eso la clasificación exige un índice muy preciso cerca del umbral.
+---
+# Figura 2.2. Histograma del puntaje de entrenamiento y umbral de la etiqueta (percentil 75, estimado en entrenamiento).
+inf.figura('objetivo')
+
+#%% md
+## 2.5. Auditoría de fuga de información
+
+Se hizo antes de ejecutar los experimentos definitivos
+([`ModeloOriginal/experiments/01_auditoria_fuga.py`](https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech/blob/main/ModeloOriginal/experiments/01_auditoria_fuga.py)),
+con la lista de la guía (§3). La fuga de información es una de las causas más frecuentes de resultados que no se
+reproducen en aprendizaje automático {cite}`kapoor2023`; por eso la auditoría recorre todos los tipos de la lista y no
+solo el que señaló el docente.
+
+**La fuga señalada por el docente.** En el Entregable 3 la recencia se medía contra la última fecha de todo el detalle,
+que incluye las transacciones de los clientes de prueba. Ahora la fecha de corte sale solo de entrenamiento. La
+{ref}`Tabla 2.6 <tab-fuga>` compara los dos procedimientos.
+
+(tab-fuga)=
+**Tabla 2.6.** Auditoría de la recencia: el flujo del Entregable 3 frente al flujo corregido.
+
+#%% code
+# Tabla 2.6. Lee resultados/auditoria_fuga.json, que escribe experiments/01_auditoria_fuga.py al comparar los dos flujos.
+inf.tabla('tabla_fuga')
+
+#%% md
+La corrección no cambia ningún dato, y hay una razón de fondo por la que tampoco podría cambiar un resultado. La
+recencia es $\text{corte} - u$, con $u$ la fecha de la última transacción del cliente. Todos los modelos la estandarizan
+dentro de la tubería con la media y la desviación de las filas de entrenamiento:
+
+$$
+z = \frac{(\text{corte} - u) - (\text{corte} - \bar u)}{s_u} = -\frac{u - \bar u}{s_u},
+$$ (eq-recencia)
+
+que no contiene la fecha de corte. La fuga era real como procedimiento (un parámetro calculado con filas de prueba) y
+por eso se corrige; su efecto numérico era nulo.
+
+**El resto de la lista.** La {ref}`Tabla 2.7 <tab-lista-fuga>` recorre los demás tipos de fuga que enumera la guía.
+
+(tab-lista-fuga)=
+**Tabla 2.7.** Comprobaciones de fuga de información y su resultado.
+
+| Tipo de fuga | Qué se comprobó | Resultado |
+|---|---|---|
+| Preprocesamiento ajustado sobre todo el conjunto | El escalado y la codificación están dentro de cada tubería | Se ajustan solo con las filas de entrenamiento de cada pliegue externo e interno |
+| Variables que codifican la respuesta | Correlación de cada candidata con el objetivo, solo en entrenamiento | `active_products` (r = −0,88) y el valor del cliente, excluidas |
+| Duplicados entre particiones | Clientes repetidos y cruce de identificadores | Ningún cliente está en las dos particiones |
+| Umbral de la etiqueta | Con qué filas se estima | Solo con entrenamiento; dentro de la validación es una constante |
+| Mezcla temporal | Estructura temporal del conjunto | Corte transversal de 2023 con partición aleatoria por cliente; el único parámetro temporal común era la fecha de corte, ya corregida |
+| Puntaje continuo en el modelo original | Qué filas lo aportan | Entra como parámetro de ajuste y scikit-learn lo recorta a las filas de entrenamiento de cada pliegue (`test_validacion_anidada_recorta_el_puntaje_por_pliegue`) |
+| Repartos internos del modelo original | Dónde se hacen | Dentro de las filas de entrenamiento que recibe: ajuste, validación y calibración |
+
+**Sobre `active_products`.** Ningún modelo la recibe, ni el original ni los benchmarks. Lo que el modelo original
+aprende es que el residuo del puntaje tiene niveles, y eso se ve en el propio puntaje de entrenamiento
+({ref}`Figura 5.1 <fig-escalones>`). La variable solo se usa fuera de los modelos, para explicar y para diagnosticar:
+
+- en el EDA, para mostrar por qué aparecen los niveles ({ref}`Figura 2.1 <fig-escalera>`);
+- en la sección 5.1, para medir el error del índice de cada modelo una vez descontado el escalón;
+- en el capítulo 6, para calcular qué habría obtenido el mejor predictor posible ({ref}`Tabla 6.4 <tab-techo>` y
+  {ref}`Tabla 6.10 <tab-optimo>`) y para describir los empates de la campaña ({ref}`Tabla 6.11 <tab-empates>`);
+- en el análisis de errores del capítulo 7, para ver en qué niveles se equivoca cada modelo.
+
+Ninguno de esos usos interviene en el ajuste, en la búsqueda de hiperparámetros ni en la selección de modelos.
