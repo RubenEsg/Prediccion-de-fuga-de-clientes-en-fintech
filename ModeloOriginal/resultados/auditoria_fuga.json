@@ -1,0 +1,70 @@
+{
+  "fecha": "2026-11-17 20:03",
+  "particion": {
+    "n_train": 38978,
+    "n_test": 9745,
+    "igual_que_entregable_3": true,
+    "clientes_en_ambas": 0
+  },
+  "fecha_de_corte": {
+    "entregable_3_todo_el_detalle": "2023-12-29",
+    "correccion_solo_entrenamiento": "2023-12-29",
+    "solo_prueba": "2023-12-29",
+    "coinciden": true,
+    "clientes_con_ultima_transaccion_posterior_al_corte": 0,
+    "celdas_de_recencia_que_cambian": 0,
+    "huella_X_train_antes": "7afab737a66ee44a",
+    "huella_X_train_ahora": "7afab737a66ee44a",
+    "huella_X_test_antes": "78d2cf333bf8df15",
+    "huella_X_test_ahora": "78d2cf333bf8df15",
+    "predictores_identicos": true
+  },
+  "invarianza_de_la_recencia_estandarizada": {
+    "corte desplazado -30 días": 4.440892098500626e-16,
+    "corte desplazado -1 días": 0.0,
+    "corte desplazado +0 días": 0.0,
+    "corte desplazado +7 días": 0.0,
+    "corte desplazado +365 días": 1.7763568394002505e-15
+  },
+  "pliegues": {
+    "pliegues_revisados": 120,
+    "pliegues_con_otra_fecha_de_corte": 0,
+    "clientes_de_entrenamiento_con_transaccion_en_la_fecha_de_corte": 3880
+  },
+  "lista_de_fuga": {
+    "preprocesamiento": "StandardScaler y OneHotEncoder viven dentro de cada pipeline (src/preprocesamiento.py): se ajustan solo con las filas de entrenamiento de cada pliegue externo e interno.",
+    "variables_que_codifican_la_respuesta": {
+      "excluidas": [
+        "customer_id",
+        "active_products",
+        "customer_lifetime_value",
+        "clv_segment",
+        "average_transaction_value",
+        "total_transaction_volume",
+        "avg_daily_transactions",
+        "monthly_transaction_count",
+        "first_transaction_date",
+        "last_transaction_date",
+        "nps_score",
+        "occupation",
+        "complaint_topics",
+        "feature_requests",
+        "last_survey_date",
+        "first_tx",
+        "last_tx"
+      ],
+      "r_active_products_con_el_objetivo_en_entrenamiento": -0.8763
+    },
+    "duplicados_entre_particiones": {
+      "clientes_repetidos": 0,
+      "filas_de_predictores_identicas_en_entrenamiento_y_prueba": 0
+    },
+    "umbral_de_la_etiqueta": {
+      "valor": 0.3927235928772468,
+      "estimado_con": "entrenamiento",
+      "n": 38978
+    },
+    "mezcla_temporal": "El conjunto es un corte transversal de 2023: una fila por cliente y partición aleatoria por cliente. El detalle va del 2023-01-04 al 2023-12-29; el único parámetro temporal común es la fecha de corte de la recencia, corregida aquí.",
+    "modelo_original": "El puntaje continuo entra como parámetro de ajuste (modelo__puntaje): scikit-learn lo recorta a las filas de entrenamiento de cada pliegue; las filas de validación y de prueba nunca lo aportan (tests/test_marco.py). Sus repartos internos (ajuste, validación, calibración) se hacen dentro de las filas de entrenamiento que recibe."
+  }
+}

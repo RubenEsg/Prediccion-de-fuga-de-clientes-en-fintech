@@ -15,3 +15,6 @@ Entrega3/articulo/articulo.pdf
 InformeFinal/**/*.log
 InformeFinal/**/*.blg
 Dashboard/capturas/
+ModeloOriginal/resultados/modelos/
+ModeloOriginal/resultados/fuera_de_pliegue/
+ModeloOriginal/datos_adicionales/

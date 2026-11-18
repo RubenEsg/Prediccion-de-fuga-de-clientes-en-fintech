@@ -1,0 +1,27 @@
+# Integración continua del modelo original (ModeloOriginal/): instala las dependencias exactas y corre pytest en cada
+# push o pull request que cambie esa carpeta, y a mano desde la pestaña Actions. Las pruebas usan datos sintéticos:
+# no necesitan los CSV de COFINFAD.
+name: modelo-original
+on:
+  push:
+    paths: ["ModeloOriginal/**", ".github/workflows/modelo_original.yml"]
+  pull_request:
+    paths: ["ModeloOriginal/**", ".github/workflows/modelo_original.yml"]
+  workflow_dispatch:
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ModeloOriginal
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13.3"
+          cache: pip
+          cache-dependency-path: ModeloOriginal/requirements-dev.txt
+      - name: Dependencias
+        run: python -m pip install -r requirements-dev.txt
+      - name: Pruebas
+        run: python -m pytest -q
