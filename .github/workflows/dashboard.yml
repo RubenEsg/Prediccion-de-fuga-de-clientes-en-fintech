@@ -9,7 +9,8 @@ on:
   workflow_dispatch:
 jobs:
   pytest:
-    runs-on: ubuntu-latest
+    # Ubuntu 24.04 fijo: desde el 19 de octubre de 2026 ubuntu-latest es Ubuntu 26.04, para el que no hay Python 3.13.3.
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: Dashboard
