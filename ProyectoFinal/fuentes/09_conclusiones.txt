@@ -126,21 +126,22 @@ inf.texto('veredicto_texto')
 Los autores de este trabajo son Valerie Martínez Pulido, Abrahan Basto Martínez y Rubén Esguerra Fernández, estudiantes
 del pregrado en Ciencia de Datos de la Universidad del Norte.
 
-**Uso de herramientas de inteligencia artificial.** En este entregable se usó un asistente de programación basado en
-inteligencia artificial generativa (Claude Code, de Anthropic) como apoyo en:
+**Uso de herramientas de inteligencia artificial.** El equipo usó un asistente de programación basado en inteligencia
+artificial generativa (Claude Code, de Anthropic) como herramienta de apoyo y de consulta. El asistente no trabajó por
+su cuenta: el equipo fijó los objetivos, tomó las decisiones finales y revisó los resultados. Se usó como apoyo para:
 
-- el análisis de la retroalimentación del docente y de la guía del curso;
-- el diseño del modelo original y los experimentos piloto que lo motivaron;
-- la programación del modelo, del marco de experimentos, de las pruebas unitarias y del dashboard;
-- la ejecución de los experimentos y la generación de tablas y figuras;
-- la búsqueda bibliográfica reproducible y la redacción y revisión de este libro.
+- consultar la guía del curso y la retroalimentación del docente;
+- proponer y discutir el diseño del modelo original y los experimentos piloto que lo motivaron;
+- escribir y depurar el código del modelo, de los experimentos, de las pruebas unitarias y del dashboard;
+- ejecutar los experimentos y generar tablas y figuras;
+- buscar bibliografía y redactar y revisar el texto de este libro.
 
 El código del modelo original no se copió de ningún repositorio ni librería: se escribió para este proyecto. El equipo
-revisó el trabajo, lo ejecutó, verificó sus resultados y responde por cada línea entregada; durante la sustentación
-puede explicar y modificar cualquier parte del algoritmo, como exige la guía.
+responde por cada línea entregada y, durante la sustentación, puede explicar y modificar cualquier parte del algoritmo,
+como exige la guía.
 
-*Firmas del equipo:*
+*Equipo:*
 
-- Valerie Martínez Pulido: ____________________
-- Abrahan Basto Martínez: ____________________
-- Rubén Esguerra Fernández: ____________________
+- Valerie Martínez Pulido
+- Abrahan Basto Martínez
+- Rubén Esguerra Fernández
