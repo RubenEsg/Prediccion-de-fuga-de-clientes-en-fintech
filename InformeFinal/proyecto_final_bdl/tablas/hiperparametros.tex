@@ -1,0 +1,23 @@
+\begin{table}[tbp]
+  \centering\scriptsize\setlength{\tabcolsep}{3pt}
+  \caption{Espacios de búsqueda e hiperparámetros finales de cada modelo de regresión: optimizador elegido con su presupuesto (evaluaciones por búsqueda) y valores que fijó la búsqueda sobre todo el entrenamiento (repetición de la semilla 42).}
+  \label{tab:hiperparametros}
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.13\linewidth} >{\raggedright\arraybackslash}p{0.09\linewidth} >{\raggedright\arraybackslash}p{0.38\linewidth} >{\raggedright\arraybackslash}p{0.32\linewidth}}
+    \toprule
+    Modelo & Búsqueda & Espacio de búsqueda & Hiperparámetros finales \\
+    \midrule
+    BDL (propuesto) & TPE (30) & $\nu \in [0{,}05;\,1]$ (log); $d \in [1, 6]$; mín. por hoja $\in [5, 200]$ (log); $\lambda \in [0{,}01;\,10]$ (log); bins $M \in [32, 1024]$ (log); $K \in \{$BIC$, 1\}$ & $\nu$ = $0{,}5816$; $d$ = 1; mín. hoja = 88; $\lambda$ = $0{,}0151$; $M$ = 885; $K$ = BIC \\
+    XGBoost & TPE (32) & árboles $\in [100, 1000]$ (log); profundidad $\in [2, 10]$; tasa $\in [10^{-3};\,0{,}3]$ (log); submuestreo de filas y de columnas $\in [0{,}5;\,1]$; $\lambda \in [0{,}01;\,10]$ (log); peso mín. por hoja $\in [1, 50]$ (log) & árboles = 512; prof. = 2; tasa = $0{,}0236$; filas = $0{,}80$; columnas = $0{,}73$; $\lambda$ = $0{,}216$; peso mín. = 31 \\
+    LightGBM & TPE (32) & árboles $\in [100, 1000]$ (log); hojas $\in [4, 127]$ (log); tasa $\in [10^{-3};\,0{,}3]$ (log); submuestreo de filas y de columnas $\in [0{,}5;\,1]$; $\lambda \in [0{,}01;\,10]$ (log); mín. por hoja $\in [5, 200]$ (log) & árboles = 260; hojas = 4; tasa = $0{,}0508$; filas = $0{,}76$; columnas = $0{,}54$; $\lambda$ = $1{,}686$; mín. hoja = 104 \\
+    EBM & rejilla (36) & tasa $\in [0{,}008;\,0{,}1]$ (log); hojas $\in \{2, 3, 4\}$; mín. por hoja $\in [2, 200]$ (log); interacciones $\in [0, 20]$; bins $\in [64, 1024]$ (log) & interacciones = 0; tasa = $8{,}0 \times 10^{-3}$; hojas = 3; mín. hoja = 20; bolsas = 8 \\
+    Random Forest & rejilla (36) & profundidad $\in [4, 40]$; variables por corte $\in \{\sqrt{p}, \log_2 p, 0{,}3, 0{,}5\}$; mín. por hoja $\in [1, 100]$ (log); 100 árboles en la búsqueda y 300 en el final & prof. = 8; variables = $0{,}50$; mín. hoja = 50; árboles = 300 \\
+    Árbol de decisión & genética (48) & profundidad $\in [3, 30]$; mín. por hoja $\in [1, 300]$ (log); poda $\alpha_{\mathrm{ccp}} \in [10^{-8}, 10^{-4}]$ (log) & prof. = 13; mín. hoja = 101; $\alpha_{\mathrm{ccp}}$ = $1{,}8 \times 10^{-6}$ \\
+    Ridge & genética (30) & $\alpha \in [10^{-3}, 10^{5}]$ (log) & $\alpha$ = $613{,}9$ \\
+    Lasso & genética (30) & $\alpha \in [10^{-6}, 10^{-1}]$ (log) & $\alpha$ = $1{,}1 \times 10^{-4}$ \\
+    Regresión bayesiana & -- & sin búsqueda: las precisiones del ruido y de los pesos se estiman por máxima evidencia en cada ajuste & $\hat\alpha = 262{,}2$; $\hat\lambda = 76.586$ (precisiones estimadas) \\
+    SVR lineal & TPE (30) & $C \in [10^{-3}, 10^{2}]$ (log); $\varepsilon \in [10^{-4};\,0{,}05]$ (log) & $C$ = $46{,}43$; $\varepsilon$ = $3{,}8 \times 10^{-4}$ \\
+    k-NN & rejilla (32) & $k \in [5, 600]$ (entero, log); pesos uniformes o por distancia; métrica $L_q$, $q \in \{1, 2\}$ & $k$ = 80; $q$ = 1; pesos = distancia \\
+    \bottomrule
+  \end{tabular}
+  \par\smallskip\begin{minipage}{0.97\linewidth}\scriptsize (log): búsqueda en escala logarítmica. El presupuesto es el número de puntos de la rejilla del modelo y se aplica igual con los cuatro optimizadores (rejilla, aleatoria, TPE y genética); el optimizador de cada benchmark es el mejor de los cuatro en el Entregable 3, y el de BDL y LightGBM quedó fijado en el protocolo. En BDL, $\nu$ es la tasa de aprendizaje, $d$ la profundidad de los árboles, $\lambda$ la penalización L2 de las hojas, $M$ el número máximo de intervalos por variable y $K$ el número de clases latentes (BIC: elegido por el criterio BIC; con $K=1$ no hay mezcla).\end{minipage}
+\end{table}

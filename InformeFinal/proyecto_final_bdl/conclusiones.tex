@@ -1,0 +1,24 @@
+% Conclusiones del informe del proyecto final (modelo original BDL).
+\section{Conclusiones}\label{sec:conclusiones}
+
+El análisis exploratorio mostró que el puntaje de COFINFAD es un índice de pocas variables más un escalón constante que
+depende de una variable que hay que excluir. BDL convierte ese hallazgo en un modelo: una suma de árboles más una
+mezcla latente de desplazamientos, ajustada con una regla de aprendizaje propia, un EM generalizado cuyo paso M es un
+paso de \emph{boosting} contra el objetivo sin escalón, programada desde cero y con la garantía de que la verosimilitud
+no decrece.
+
+En COFINFAD, BDL es el modelo más preciso: el menor error en las cuatro métricas, tanto en validación cruzada como en
+prueba, y a $0{,}00001$ de RMSE del predictor óptimo. Su ventaja sobre los mejores \emph{boostings} es estadísticamente
+detectable en validación cruzada, pero pequeña en la práctica, y no alcanza las tres pruebas que exige el protocolo
+para declararlo superior. Tampoco se generaliza: en los cuatro conjuntos adicionales no hay un escalón nítido y BDL no
+supera al mejor benchmark de ninguno. En clasificación queda al nivel de los mejores, sin diferencias significativas.
+
+Su valor está en otra parte. Recupera la distribución de la variable excluida sin verla, con cinco clases cuyos pesos
+coinciden con las proporciones reales; necesita diez veces menos datos para alcanzar el error de XGBoost, y varía
+menos entre semillas que XGBoost, LightGBM, la EBM y Random Forest. La ablación confirma que la mezcla aporta en validación cruzada
+y que su aporte crece cuando hay pocos datos.
+
+Las principales limitaciones son que los datos son sintéticos, que cinco conjuntos dan poca potencia a las
+comparaciones entre conjuntos y que algunas pruebas se añadieron después del protocolo. Como trabajo futuro quedan
+hacer que los pesos de las clases dependan de los predictores, permitir una dispersión distinta por clase y validar el
+modelo con datos reales y con fuga observada.

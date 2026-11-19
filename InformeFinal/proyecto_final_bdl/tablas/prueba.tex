@@ -1,0 +1,23 @@
+\begin{table}[tbp]
+  \centering\scriptsize\setlength{\tabcolsep}{6pt}
+  \caption{Desempeño en los 9.745 clientes de prueba, con el intervalo bootstrap BCa del 95~\% del RMSE (2000 réplicas).}
+  \label{tab:prueba}
+  \begin{tabular}{lccccc}
+    \toprule
+    Modelo & RMSE & IC 95~\% del RMSE & MAE & MAPE (\%) & $R^2$ \\
+    \midrule
+    BDL (propuesto) & {\boldmath\textbf{$0{,}05912$}} & [$0{,}05831$; $0{,}05992$] & {\boldmath\textbf{$0{,}04697$}} & {\boldmath\textbf{$15{,}96$}} & {\boldmath\textbf{$0{,}2197$}} \\
+    XGBoost & \underline{$0{,}05917$} & [$0{,}05836$; $0{,}05996$] & \underline{$0{,}04706$} & \underline{$15{,}98$} & \underline{$0{,}2182$} \\
+    LightGBM & $0{,}05918$ & [$0{,}05838$; $0{,}05997$] & $0{,}04707$ & \underline{$15{,}98$} & $0{,}2181$ \\
+    EBM$^\ddagger$ & $0{,}05925$ & [$0{,}05845$; $0{,}06006$] & $0{,}04720$ & $16{,}03$ & $0{,}2161$ \\
+    Random Forest$^\ddagger$ & $0{,}05931$ & [$0{,}05851$; $0{,}06011$] & $0{,}04728$ & $16{,}05$ & $0{,}2146$ \\
+    Árbol de decisión$^\ddagger$ & $0{,}05944$ & [$0{,}05863$; $0{,}06025$] & $0{,}04750$ & $16{,}11$ & $0{,}2112$ \\
+    Lasso$^\ddagger$ & $0{,}06166$ & [$0{,}06086$; $0{,}06251$] & $0{,}05072$ & $17{,}10$ & $0{,}1511$ \\
+    Ridge$^\ddagger$ & $0{,}06167$ & [$0{,}06087$; $0{,}06253$] & $0{,}05069$ & $17{,}10$ & $0{,}1509$ \\
+    Regresión bayesiana$^\ddagger$ & $0{,}06167$ & [$0{,}06088$; $0{,}06253$] & $0{,}05069$ & $17{,}10$ & $0{,}1508$ \\
+    SVR lineal$^\ddagger$ & $0{,}06170$ & [$0{,}06091$; $0{,}06256$] & $0{,}05073$ & $17{,}10$ & $0{,}1499$ \\
+    k-NN$^\ddagger$ & $0{,}06321$ & [$0{,}06234$; $0{,}06405$] & $0{,}05115$ & $17{,}28$ & $0{,}1080$ \\
+    \bottomrule
+  \end{tabular}
+  \par\smallskip\begin{minipage}{0.97\linewidth}\scriptsize En negrita, el mejor de cada columna; subrayado, el segundo. $^\ddagger$: Diebold-Mariano-HLN sobre el error cuadrático de cada cliente rechaza la igualdad con BDL ($p$ de Holm $<0{,}05$). El MAPE solo se calcula en prueba, porque el protocolo no guardó los pronósticos de cada pliegue.\end{minipage}
+\end{table}

@@ -1,0 +1,23 @@
+\begin{table}[tbp]
+  \centering\scriptsize\setlength{\tabcolsep}{1.8pt}
+  \caption{Ablación de la mezcla latente en regresión: RMSE en los cinco pliegues externos de la semilla 42 y en prueba. Aporte: RMSE de la variante menos RMSE de BDL completo, $\times 10^{3}$ (positivo: la mezcla ayuda).}
+  \label{tab:ablacion}
+  \begin{tabular}{lccccccc}
+    \toprule
+    Variante & RMSE (pliegues) & Aporte [IC 95~\%] & $p$ ($t$ corr.) & P(ROPE) & RMSE prueba & Aporte prueba & $p$ (DM) \\
+    \midrule
+    BDL completo & $0{,}05887$ $\pm$ $0{,}00041$ & -- & -- & -- & $0{,}05912$ & -- & -- \\
+    Sin mezcla ($K=1$) & $0{,}05898$ $\pm$ $0{,}00041$ & $+0{,}107$ [$0{,}008$; $0{,}205$] & $0{,}040$ & $0{,}9998$ & $0{,}05910$ & $-0{,}016$ & $0{,}623$ \\
+    \midrule
+    $K=1$ fijo & $0{,}05902$ $\pm$ $0{,}00040$ & $+0{,}142$ & -- & -- & -- & -- & -- \\
+    $K=2$ fijo & $0{,}05897$ $\pm$ $0{,}00041$ & $+0{,}085$ & -- & -- & -- & -- & -- \\
+    $K=3$ fijo & $0{,}05894$ $\pm$ $0{,}00039$ & $+0{,}053$ & -- & -- & -- & -- & -- \\
+    $K=4$ fijo & $0{,}05889$ $\pm$ $0{,}00041$ & $+0{,}013$ & -- & -- & -- & -- & -- \\
+    $K=5$ fijo & $0{,}05888$ $\pm$ $0{,}00041$ & $0{,}000$ & -- & -- & -- & -- & -- \\
+    $K=6$ fijo & $0{,}05888$ $\pm$ $0{,}00041$ & $0{,}000$ & -- & -- & -- & -- & -- \\
+    $K=8$ fijo & $0{,}05888$ $\pm$ $0{,}00041$ & $0{,}000$ & -- & -- & -- & -- & -- \\
+    $K$ por BIC (final) & $0{,}05888$ $\pm$ $0{,}00041$ & -- & -- & -- & -- & -- & -- \\
+    \bottomrule
+  \end{tabular}
+  \par\smallskip\begin{minipage}{0.97\linewidth}\scriptsize Las dos primeras filas son la ablación registrada, con las mismas pruebas de la comparación principal (hiperparámetros elegidos por la búsqueda en cada pliegue). Las demás vienen del análisis de sensibilidad: la configuración final con $K$ fijo o elegido por BIC, en los mismos pliegues y sin nueva búsqueda; son exploratorias y su aporte se mide frente a la última fila (positivo: la variante es peor).\end{minipage}
+\end{table}

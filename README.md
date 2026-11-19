@@ -15,7 +15,9 @@ dashboard predictivo (`Dashboard/`) pone a predecir en vivo a los modelos finale
 El **proyecto final** añade un modelo original programado desde cero, **BDL (Boosting con Desplazamiento Latente)**
 (`ModeloOriginal/`), su comparación con nueve benchmarks bajo un protocolo registrado antes de los experimentos, y el
 informe técnico en forma de Jupyter Book (`ProyectoFinal/`, capítulos 0 a 10 de la guía). La EBM, que viene de una
-librería, pasa a ser un benchmark.
+librería, pasa a ser un benchmark. El informe con los datos, la metodología y los resultados del proyecto final,
+escrito con las guías del curso, está en
+[`InformeFinal/proyecto_final_bdl/`](InformeFinal/proyecto_final_bdl/Informe_Proyecto_Final_BDL.pdf).
 
 ## Sitio
 
@@ -110,11 +112,13 @@ repartida por carpetas: `app.py`, `pages/` (aquí `paginas/`), `assets/`, `artif
 
 ### Informe final
 
-Es anterior al proyecto final: reúne las tres entregas y presenta la EBM como el modelo nuevo. El informe del proyecto
-final, con el modelo original, es el Jupyter Book de `ProyectoFinal/`.
+Las tres últimas filas son anteriores al proyecto final: reúnen las tres entregas y presentan la EBM como el modelo
+nuevo. El informe del proyecto final, con el modelo original BDL, es la primera fila; el Jupyter Book de
+`ProyectoFinal/` lo desarrolla en detalle.
 
 | Archivo o carpeta | Contenido |
 |---|---|
+| [`InformeFinal/proyecto_final_bdl/Informe_Proyecto_Final_BDL.pdf`](InformeFinal/proyecto_final_bdl/Informe_Proyecto_Final_BDL.pdf) | **El informe del proyecto final** (21 páginas): datos y análisis exploratorio, pipeline, benchmarks, el modelo BDL con sus fórmulas y su algoritmo, tabla de hiperparámetros, la sección de resultados según la guía del curso y conclusiones; `generar.py` reproduce cada prueba, tabla y figura desde `ModeloOriginal/resultados/` |
 | [`InformeFinal/informe/main.pdf`](InformeFinal/informe/main.pdf) | **El informe final** (31 páginas): resumen, introducción, metodología, resultados, conclusiones y referencias; `main.tex`, `armar.py` y `compilar.py` lo arman a partir de las dos secciones y lo compilan |
 | [`InformeFinal/metodologia/main.pdf`](InformeFinal/metodologia/main.pdf) | La sección de metodología según la guía del curso (ocho subsecciones, 20 referencias); fuente LaTeX, `figuras.py` y sus tres figuras |
 | [`InformeFinal/resultados/main.pdf`](InformeFinal/resultados/main.pdf) | La sección de resultados según la guía del curso (ocho subsecciones); `generar.py` reproduce cada prueba estadística, tabla y figura desde `Entrega3/resultados/`, con toda cifra en `datos/*.csv` y las nueve figuras en `figures/` |

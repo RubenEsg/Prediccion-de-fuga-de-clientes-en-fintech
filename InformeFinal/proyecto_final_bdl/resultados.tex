@@ -1,0 +1,265 @@
+% Sección de resultados del proyecto final (modelo original BDL). Toda cifra sale de datos/ (generar.py).
+\section{Resultados}\label{sec:resultados}
+
+Esta sección compara el modelo original del proyecto, BDL (\emph{Boosting} con Desplazamiento Latente), con los modelos
+del curso y con dos del estado del arte. Cada cifra sale de \texttt{generar.py}, que reproduce todas las tablas,
+pruebas y figuras desde los resultados versionados del proyecto.
+
+\subsection{Resumen del montaje experimental}\label{sec:res-montaje}
+
+Los datos son los $48.723$ clientes sintéticos de COFINFAD \citep{munoz2025}, divididos al azar en
+$38.978$ de entrenamiento y $9.745$ de prueba antes de mirar el objetivo; cuatro conjuntos públicos sirven de
+contraste. La tarea principal es la regresión del puntaje continuo \cp; la métrica primaria es el RMSE y las
+secundarias, MAE, MAPE y $R^2$. Todos los modelos usan el mismo preprocesamiento, las mismas particiones y $30$
+evaluaciones de hiperparámetros en una validación anidada: tres repeticiones (semillas $42$, $43$ y $44$) de cinco
+pliegues externos ($15$ particiones). El protocolo se registró en Git antes de los experimentos definitivos. Las referencias son $k$-NN, Ridge, Lasso, regresión bayesiana \citep{mackay1992}, árbol de decisión,
+Random Forest, XGBoost \citep{chen2016xgboost}, SVR, EBM \citep{nori2019interpretml} y LightGBM \citep{ke2017}. La
+regresión bayesiana se añadió después del protocolo, con los mismos pliegues; el SVR es lineal, porque el de kernel
+RBF no escala a $38.978$ filas.
+
+\subsection{Desempeño predictivo global}
+
+Las Tablas~\ref{tab:desempeno} y~\ref{tab:prueba} resumen el desempeño en validación cruzada y en prueba. BDL obtiene
+el mejor valor en todas las métricas de las dos: RMSE de $0{,}05887 \pm 0{,}00047$ en los pliegues, frente a
+$0{,}05897 \pm 0{,}00047$ de XGBoost, el mejor benchmark, y $0{,}05912$ en prueba, frente a $0{,}05917$. Tiene menor
+RMSE que cada una de las diez referencias en las $15$ particiones.
+
+\input{tablas/desempeno}
+
+\input{tablas/prueba}
+
+La mejora absoluta sobre XGBoost es de $0{,}000099$ en los pliegues ($0{,}17$~\%) y de $0{,}000058$ en prueba
+($0{,}10$~\%). Frente a los modelos lineales es de unos $0{,}0030$ ($4{,}8$~\%) y frente a $k$-NN, de $0{,}0045$
+($7{,}1$~\%). La Figura~\ref{fig:folds} muestra dos grupos separados: los seis modelos de árboles, entre $0{,}0589$ y
+$0{,}0593$, y los lineales y $k$-NN, por encima de $0{,}0618$. Dentro del primer grupo, las cajas se solapan casi por
+completo y los intervalos BCa del RMSE en prueba \citep{efron1987} también.
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig_folds}
+  \caption{RMSE de cada modelo en las 15 particiones externas (tres repeticiones de cinco pliegues). Cada punto es una
+  partición; BDL, en ámbar, tiene la mediana más baja. Los modelos de árboles forman un grupo y los lineales y $k$-NN,
+  otro, unos $0{,}003$ más arriba.}
+  \label{fig:folds}
+\end{figure}
+
+La ventaja no puede ser mucho mayor. El predictor óptimo, que conoce la fórmula del puntaje salvo la variable
+excluida \ap, obtiene $0{,}05911$ en prueba y $0{,}05887$ en los pliegues: BDL queda a $0{,}00001$ en prueba y a
+$0{,}000007$ en los pliegues de ese techo, y XGBoost, a $0{,}00007$ en prueba. El $R^2$ ronda $0{,}22$ porque la parte
+del puntaje que depende de \ap{} no se puede predecir con los predictores disponibles.
+
+La Figura~\ref{fig:regression} muestra esa estructura. El puntaje observado frente al pronosticado forma cinco bandas
+paralelas, una por nivel de \ap. Los residuos de BDL se concentran en cinco picos estrechos separados por $0{,}05$:
+el modelo separa casi por completo la señal observable del escalón latente. Los de XGBoost forman los mismos picos,
+pero más anchos.
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig_regression}
+  \caption{Izquierda: puntaje observado frente al pronóstico de BDL en los 9.745 clientes de prueba (escala logarítmica
+  de conteos); la línea discontinua es la identidad. Las cinco bandas corresponden a los cinco niveles de la variable
+  excluida \texttt{active\_products}. Derecha: densidad de los residuos de BDL y de XGBoost.}
+  \label{fig:regression}
+\end{figure}
+
+\subsection{Resultados de las pruebas de significancia}
+
+Se aplicó la combinación mínima que la guía exige para regresión tabular: la $t$ corregida de \citet{nadeau2003} sobre
+las $15$ particiones, Diebold-Mariano \citep{diebold1995} con la corrección de \citet{harvey1997} sobre el error
+cuadrático de cada cliente de prueba y la $t$ correlacionada bayesiana con región de equivalencia práctica (ROPE)
+\citep{corani2015,benavoli2017}. Cada prueba se ajustó con Holm \citep{holm1979} sobre las diez referencias, con
+$\alpha=0{,}05$. La ROPE es de $\pm0{,}0005$ en RMSE (cerca del $0{,}85$~\%), la misma de la versión anterior de esta
+sección, fijada antes de calcular. Acompañan a cada $p$ la diferencia con su intervalo del $95$~\%, la $d$ de Cohen
+\citep{cohen1988} y la $A_{12}$ de \citet{vargha2000}. La Tabla~\ref{tab:pruebas} y la Figura~\ref{fig:intervals}
+reúnen los resultados.
+
+\input{tablas/pruebas}
+
+La $t$ corregida rechaza la igualdad frente a las diez referencias. Frente a XGBoost, la diferencia media es de
+$0{,}099 \times 10^{-3}$, con intervalo $[0{,}053;\ 0{,}144] \times 10^{-3}$, $t=4{,}62$ y $p_{\mathrm{Holm}}=0{,}001$.
+Diebold-Mariano rechaza frente a ocho: no lo hace frente a XGBoost ($p_{\mathrm{Holm}}=0{,}092$) ni frente a LightGBM
+($0{,}092$). En prueba, la ventaja sobre XGBoost es de $0{,}058 \times 10^{-3}$ y su intervalo BCa,
+$[0{,}005;\ 0{,}117] \times 10^{-3}$, apenas excluye el cero. En resumen, \textbf{BDL supera significativamente a ocho
+de las diez referencias con las dos pruebas frecuentistas} ($p_{\mathrm{Holm}}<0{,}05$) y, frente a XGBoost y
+LightGBM, solo con la $t$ corregida.
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig_intervals}
+  \caption{Diferencia de RMSE de cada referencia menos BDL ($\times 10^{-3}$; positiva: BDL se equivoca menos), con
+  su intervalo del 95~\%: en las 15 particiones (varianza corregida de Nadeau-Bengio, azul) y en los 9.745 clientes de
+  prueba (bootstrap BCa, ámbar). La franja gris es la región de equivalencia práctica ($\pm 0{,}5 \times 10^{-3}$).
+  A la izquierda, los modelos de árboles; a la derecha, los lineales y $k$-NN, en otra escala.}
+  \label{fig:intervals}
+\end{figure}
+
+La prueba bayesiana distingue la significancia estadística de la relevancia práctica. BDL es mejor con probabilidad
+posterior $1{,}000$ que los cuatro lineales y $k$-NN. Frente a XGBoost, LightGBM, EBM y Random Forest, la probabilidad
+de que la diferencia caiga en la ROPE es de al menos $0{,}9999$: \textbf{BDL es prácticamente equivalente a esos
+cuatro}. Frente al árbol, la posterior se reparte entre equivalencia ($0{,}903$) y superioridad ($0{,}097$). Las
+diferencias frente a los modelos de árboles, de $0{,}10$ a $0{,}41 \times 10^{-3}$, equivalen a entre el $20$~\% y el
+$81$~\% de la ROPE.
+
+Los tamaños de efecto coinciden con esa lectura: $d=0{,}21$ y $A_{12}=0{,}60$ frente a XGBoost; $d=0{,}86$ y
+$A_{12}=0{,}76$ frente al árbol; $d$ cercana a $6$ y $A_{12}=1$ frente a los lineales.
+
+Las pruebas discrepan frente a XGBoost y LightGBM por la potencia, no por un error. La $t$ corregida usa $15$
+métricas por pliegue y BDL gana en todas. Diebold-Mariano usa un solo conjunto de prueba, en el que la varianza del
+error de cada cliente, dominada por el escalón latente, es enorme frente a una diferencia de RMSE de $0{,}000058$.
+Wilcoxon de rangos con signo \citep{wilcoxon1945}, como verificación, rechaza frente a las diez
+($p_{\mathrm{Holm}}=0{,}0006$), aunque comparte la dependencia entre pliegues. El \emph{Model Confidence Set}
+\citep{hansen2011mcs} al $90$~\% sobre las pérdidas de prueba solo retiene a BDL; XGBoost y LightGBM salen con
+$p=0{,}098$, justo en el borde.
+
+El veredicto confirmatorio sigue siendo el del protocolo registrado, cuyas cuatro pruebas incluían dos en prueba:
+frente a XGBoost rechazan Wilcoxon y la $t$ corregida, pero no la permutación pareada ($p_{\mathrm{Holm}}=0{,}092$) ni
+el bootstrap BCa ($0{,}076$). Dos de cuatro no alcanzan las tres que exige la condición de superioridad, así que BDL
+no se declara superior.
+
+\input{tablas/conjuntos}
+
+La Tabla~\ref{tab:conjuntos} y la Figura~\ref{fig:cd} amplían la comparación a cinco conjuntos. Friedman con la
+corrección de Iman-Davenport \citep{demsar2006,iman1980} detecta diferencias entre los $11$ modelos ($\chi^2=22{,}58$,
+$p=0{,}012$), pero la diferencia crítica de Nemenyi, $6{,}75$ rangos, no separa a ningún par de modelos. Los cinco
+primeros son EBM ($2{,}8$), XGBoost ($3{,}4$), BDL ($3{,}8$), LightGBM ($4{,}0$) y Random Forest ($4{,}8$). BDL no es
+mejor que el mejor benchmark en ninguno de los cuatro conjuntos adicionales, y es significativamente peor en Vivienda
+de California ($-4{,}95$~\%, $p=0{,}002$). Con cinco conjuntos la potencia de Friedman es baja; la guía recomienda
+diez o más.
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig_cd}
+  \caption{Diagrama de diferencia crítica con los cinco conjuntos de datos (COFINFAD y los cuatro adicionales) como
+  bloques: rango medio de cada modelo por RMSE (1 = el mejor). Los modelos cuyos rangos difieren menos que la barra
+  roja (Nemenyi, $\alpha=0{,}05$) no se distinguen; BDL, en ámbar, no se distingue de ninguno.}
+  \label{fig:cd}
+\end{figure}
+
+\subsection{Resultados del estudio de ablación}
+
+El componente propio de BDL es la mezcla latente de desplazamientos. La hipótesis registrada era que retirarla
+($K=1$, un \emph{boosting} de mínimos cuadrados con los mismos árboles) aumenta el RMSE. La Tabla~\ref{tab:ablacion} y
+la Figura~\ref{fig:ablation} aplican las mismas pruebas de la comparación principal.
+
+\input{tablas/ablacion}
+
+En los cinco pliegues de la semilla $42$, retirar la mezcla aumenta el RMSE en $0{,}107 \times 10^{-3}$, con
+intervalo $[0{,}008;\ 0{,}205] \times 10^{-3}$, en los cinco pliegues y con $p=0{,}040$ en la $t$ corregida: la
+hipótesis se confirma en validación cruzada. En prueba no se confirma: la variante sin mezcla queda
+$0{,}016 \times 10^{-3}$ por delante ($p=0{,}62$ en Diebold-Mariano). La prueba bayesiana pone el aporte dentro de la
+ROPE con probabilidad $0{,}9998$: con todos los datos, la mezcla mejora poco en la práctica.
+
+Dos análisis exploratorios explican de dónde sale el aporte. Al fijar $K$, el RMSE baja con cada clase hasta cinco:
+$+0{,}142$, $+0{,}085$, $+0{,}053$ y $+0{,}013 \times 10^{-3}$ para $K$ de $1$ a $4$, y $0$ desde $K=5$. El criterio
+BIC elige $K=5$, el número real de niveles de \ap. Además, la ganancia de la mezcla crece cuando hay pocos datos:
+$0{,}748 \times 10^{-3}$ ($1{,}3$~\%) con $3.118$ filas, $0{,}337$ con $7.796$, $0{,}187$ con $15.591$ y $0{,}142$
+con $31.182$. Al restar del objetivo el escalón esperado, el \emph{boosting} aprende el índice con menos ruido, y eso
+pesa más cuando hay pocas filas.
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig_ablation}
+  \caption{Izquierda: aporte de la mezcla latente, RMSE sin mezcla ($K=1$) menos RMSE de BDL ($\times 10^{-3}$), con su
+  intervalo del 95~\% en los cinco pliegues de la semilla 42 ($t$ corregida) y en prueba (bootstrap BCa). Derecha: RMSE
+  por pliegue de BDL con y sin mezcla según el número de filas de entrenamiento (media $\pm$ error estándar en cinco
+  pliegues).}
+  \label{fig:ablation}
+\end{figure}
+
+\subsection{Sensibilidad y robustez}
+
+La variación entre semillas es despreciable frente a las diferencias entre modelos (Tabla~\ref{tab:semillas}). Al
+reajustar el modelo final con diez semillas, la desviación del RMSE en prueba es de $1{,}7 \times 10^{-6}$ en BDL,
+frente a $5{,}0 \times 10^{-6}$ en XGBoost y $12{,}3 \times 10^{-6}$ en LightGBM. El orden de los modelos no depende de
+la semilla.
+
+\input{tablas/semillas}
+
+La Figura~\ref{fig:sensitivity} resume las otras dos pruebas. A la derecha, al cambiar un hiperparámetro a la vez en
+los mismos pliegues, $30$ de $34$ configuraciones quedan por delante de XGBoost con sus hiperparámetros finales
+($0{,}05896$). Solo la tasa de aprendizaje de $0{,}05$ pierde más de una desviación entre pliegues ($0{,}05959$). A la
+izquierda, la curva de aprendizaje: BDL con $3.118$ filas ($0{,}05896$) iguala a XGBoost con $31.182$.
+
+Ante datos contaminados, BDL es el mejor de los tres \emph{boostings} en $8$ de $11$ escenarios. Pierde con ruido
+gaussiano fuerte en el objetivo (desviación de $0{,}02$ o más) y con ruido fuerte en los predictores numéricos: la
+mezcla supone escalones nítidos, y el ruido los desdibuja.
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig_sensitivity}
+  \caption{Izquierda: curva de aprendizaje, RMSE por pliegue (media $\pm$ error estándar en cinco pliegues de la
+  semilla 42) según las filas de entrenamiento, para BDL, XGBoost y LightGBM. Derecha: sensibilidad a cada
+  hiperparámetro de BDL, cambiando uno a la vez respecto de la configuración final (rombo ámbar); la línea discontinua
+  es XGBoost con sus hiperparámetros finales en los mismos pliegues.}
+  \label{fig:sensitivity}
+\end{figure}
+
+\subsection{Costo computacional}
+
+La Tabla~\ref{tab:costo} reúne el costo de cada modelo final. BDL tarda $5{,}8$~s en ajustarse con los $38.978$
+clientes: $3{,}4$ veces lo de XGBoost ($1{,}7$~s), aunque menos que Random Forest ($11{,}2$~s) y la EBM ($25{,}5$~s).
+Predice los $9.745$ clientes de prueba en $0{,}068$~s, unos $7$~$\mu$s por cliente, casi lo mismo que XGBoost. Su
+memoria pico ($153$~MB) es la de XGBoost, y guarda $16.420$ parámetros en $149$~KB. En cuanto a si vale la pena: con todos los
+datos, la ganancia de $0{,}17$~\% no justifica por sí sola triplicar el tiempo de ajuste. Sí lo justifica cuando los
+datos son escasos (Figuras~\ref{fig:ablation} y~\ref{fig:sensitivity}) o cuando importa la estructura del error.
+
+\input{tablas/costo}
+
+\subsection{Interpretabilidad y análisis de errores}
+
+La importancia por permutación en los clientes de prueba \citep{breiman2001} muestra que BDL y XGBoost usan las mismas
+tres variables (Figura~\ref{fig:importance}). Barajar \texttt{age} aumenta el RMSE de BDL en $8{,}46 \times 10^{-3}$;
+\texttt{app\_\allowbreak logins\_\allowbreak frequency}, en $5{,}56 \times 10^{-3}$, y
+\texttt{satisfaction\_\allowbreak score}, en
+$2{,}51 \times 10^{-3}$. Ninguna otra variable pasa de $0{,}04 \times 10^{-3}$. Es lo esperable en un conjunto
+generado con reglas: el puntaje depende de esas tres variables y de \ap. BDL las aprovecha algo más que XGBoost
+($7{,}95$, $5{,}30$ y $1{,}89 \times 10^{-3}$), porque aprende su índice sin el ruido del escalón.
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig_importance}
+  \caption{Importancia por permutación en los 9.745 clientes de prueba: aumento del RMSE al barajar cada variable
+  original (media y desviación de cinco repeticiones), para BDL y XGBoost, con sus modelos finales de la semilla 43.
+  Se muestran las ocho variables de mayor importancia.}
+  \label{fig:importance}
+\end{figure}
+
+La mezcla de BDL es interpretable por sí misma. El modelo final tiene cinco clases con pesos $0{,}402$, $0{,}301$,
+$0{,}149$, $0{,}098$ y $0{,}050$, separadas por $0{,}050$. Las proporciones reales de \ap{} en entrenamiento son
+$0{,}402$, $0{,}301$, $0{,}149$, $0{,}099$ y $0{,}050$, con un escalón de $0{,}05$. \textbf{BDL recuperó la
+distribución de la variable excluida sin verla.}
+
+\input{tablas/errores}
+
+El análisis de errores (Tabla~\ref{tab:errores}) señala dónde falla. Por subgrupo, BDL se equivoca menos que XGBoost
+en $10$ de $12$, con la mayor ventaja en la cola de clientes con más de $500$ transacciones ($+0{,}376 \times 10^{-3}$).
+Por quintil del objetivo, los dos modelos fallan más en los extremos: en el primero sobrestiman el puntaje en
+$0{,}091$ y en el último lo subestiman en $0{,}050$. Es la regresión hacia la media que impone el escalón no
+observable. BDL es mejor en los dos extremos ($+0{,}22$ y $+1{,}55 \times 10^{-3}$), justo en el de mayor riesgo, y
+algo peor en los tres quintiles centrales (entre $-0{,}40$ y $-1{,}07 \times 10^{-3}$).
+
+\subsection{Discusión, limitaciones y amenazas a la validez}
+
+BDL funciona en COFINFAD porque el puntaje tiene la forma que el modelo supone: una función suave de tres variables
+más un escalón aditivo que depende de una variable excluida. El \emph{boosting} aprende esa función sobre el objetivo
+sin escalón, y por eso BDL queda a $0{,}00001$ del predictor óptimo en prueba. Es lo que se observa en los árboles con
+efectos aleatorios \citep{hajjem2014,sigrist2022}: restar del objetivo un efecto de grupo antes de ajustar los árboles
+los vuelve más eficientes; BDL lo hace sin observar el grupo. La ventaja es pequeña porque el techo está cerca: XGBoost
+ya estaba a $0{,}00007$. En los conjuntos adicionales no hay un desplazamiento aditivo nítido (la búsqueda de
+hiperparámetros eligió $K=1$ en los cuatro), y BDL se reduce a un \emph{boosting} programado desde cero, menos refinado
+que XGBoost o LightGBM.
+
+En clasificación, la tarea secundaria, BDL obtiene un AUC de $0{,}8313 \pm 0{,}0038$ en los pliegues (quinto de diez),
+frente a $0{,}8333 \pm 0{,}0041$ de XGBoost, y ninguna prueba rechaza la igualdad. La superioridad no se cumple en
+ninguna de las dos tareas.
+
+Limitaciones. Los datos son sintéticos: las conclusiones no se trasladan a clientes reales. Cinco conjuntos
+dan poca potencia a Friedman, y Diebold-Mariano descansa en un solo conjunto de prueba. La ROPE es una decisión del
+equipo: con una más estrecha, la equivalencia práctica con los \emph{boostings} podría no sostenerse. La regresión
+bayesiana, Diebold-Mariano y la prueba bayesiana se añadieron después del protocolo; son exploratorias y no cambian el
+veredicto. Falta el SVR con kernel RBF. La auditoría no detectó fugas de
+información.
+
+La evidencia sugiere que BDL es el modelo más preciso en COFINFAD, con una ventaja estadísticamente detectable en
+validación cruzada pero prácticamente equivalente a la de los mejores \emph{boostings}, y que esa ventaja no se
+generaliza a otros conjuntos.

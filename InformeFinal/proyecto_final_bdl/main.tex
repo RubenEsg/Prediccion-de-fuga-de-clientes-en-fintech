@@ -1,0 +1,65 @@
+% Informe del proyecto final de Machine Learning (fuga de clientes, COFINFAD): datos, metodología y resultados del
+% modelo original BDL. Compilar: python compilar.py   (usa Tectonic; ver README.md de esta carpeta)
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[spanish,es-tabla,es-noshorthands]{babel}
+\usepackage[a4paper,textwidth=6.3in,textheight=9.4in,headheight=14pt]{geometry}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[authoryear,round]{natbib}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage[section]{placeins}
+\usepackage{xurl}
+\usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=blue!55!black,urlcolor=blue!55!black]{hyperref}
+
+\graphicspath{{figures/}}
+\captionsetup{font=small,labelfont=bf,width=0.95\linewidth}
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.6}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.7}
+\widowpenalty=10000 \clubpenalty=10000
+\setlength{\parskip}{3pt plus 1pt}
+\setlength{\bibsep}{3pt plus 1pt}
+\floatname{algorithm}{Algoritmo}
+\renewcommand{\algorithmicrequire}{\textbf{Entrada:}}
+\renewcommand{\algorithmicensure}{\textbf{Salida:}}
+\algrenewcommand\algorithmicfor{\textbf{para}}
+\algrenewcommand\algorithmicdo{\textbf{hacer}}
+\algrenewcommand\algorithmicend{\textbf{fin}}
+\algrenewcommand\algorithmicif{\textbf{si}}
+\algrenewcommand\algorithmicthen{\textbf{entonces}}
+
+% Notación
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\cp}{\texttt{churn\_\allowbreak probability}}
+\newcommand{\ap}{\texttt{active\_\allowbreak products}}
+\newcommand{\rmse}{\mathrm{RMSE}}
+
+\title{\textbf{Predicción de la fuga de clientes de una \emph{fintech} con un boosting con desplazamiento latente (BDL):
+datos, metodología y resultados}}
+\author{Valerie Martínez Pulido, Abrahan Basto Martínez y Rubén Esguerra Fernández\\[4pt]
+\small Proyecto final de Machine Learning\\ \small Pregrado en Ciencia de Datos, Universidad del Norte}
+\date{Noviembre de 2026}
+
+\begin{document}
+\maketitle
+
+\input{introduccion}
+\input{metodologia}
+\input{resultados}
+\input{conclusiones}
+
+\bibliographystyle{elsarticle-harv}
+\bibliography{referencias}
+
+\end{document}

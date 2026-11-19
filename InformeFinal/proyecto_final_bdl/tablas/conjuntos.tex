@@ -1,0 +1,16 @@
+\begin{table}[tbp]
+  \centering\scriptsize\setlength{\tabcolsep}{3pt}
+  \caption{BDL en los cuatro conjuntos adicionales: RMSE medio en los cinco pliegues externos (semilla 42) del mejor benchmark de cada conjunto y de BDL, ventaja relativa (positiva si BDL es mejor), $p$ de la $t$ corregida y puesto entre los modelos.}
+  \label{tab:conjuntos}
+  \begin{tabular}{llccccc}
+    \toprule
+    Conjunto & Mejor benchmark & RMSE benchmark & RMSE BDL & Ventaja & $p$ ($t$ corr.) & Puesto \\
+    \midrule
+    Seguros médicos & EBM & $11.332$ & $11.435$ & $-0{,}90$~\% & $0{,}414$ & 8 de 11 \\
+    Eficiencia energética & EBM & $2{,}2634$ & $2{,}3128$ & $-2{,}18$~\% & $0{,}474$ & 2 de 11 \\
+    Abulón & Random Forest & $2{,}1293$ & $2{,}1683$ & $-1{,}83$~\% & $0{,}286$ & 5 de 11 \\
+    Vivienda de California & LightGBM & $0{,}4426$ & $0{,}4645$ & $-4{,}95$~\% & $0{,}002$ & 3 de 11 \\
+    \bottomrule
+  \end{tabular}
+  \par\smallskip\begin{minipage}{0.97\linewidth}\scriptsize Friedman con los 5 conjuntos como bloques y 11 modelos: $\chi^2=22{,}58$, $p=0{,}012$; Iman-Davenport $p=0{,}003$. Rango medio de BDL: $3{,}8$; diferencia crítica de Nemenyi: $6{,}75$ (Figura~\ref{fig:cd}).\end{minipage}
+\end{table}

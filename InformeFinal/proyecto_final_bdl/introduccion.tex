@@ -1,0 +1,28 @@
+% Introducción del informe del proyecto final (modelo original BDL).
+\section{Introducción}\label{sec:introduccion}
+
+Retener a un cliente cuesta menos que conseguir uno nuevo, y por eso una \emph{fintech} necesita ordenar a sus clientes
+por riesgo de abandono antes de lanzar una campaña de retención de capacidad limitada. Este trabajo aborda ese problema
+con COFINFAD \citep{munoz2025}, un conjunto público y sintético de $48.723$ clientes de una \emph{fintech} colombiana con
+el detalle de sus transacciones de 2023, cuyo objetivo es un puntaje continuo de propensión al abandono, \cp.
+
+En la versión anterior del proyecto, el modelo propuesto era una \emph{Explainable Boosting Machine} usada desde una
+librería. Esta versión la reemplaza por un modelo propio, BDL (\emph{Boosting} con Desplazamiento Latente), que parte de
+un hallazgo del análisis exploratorio: el puntaje es un índice suave de los predictores más un escalón constante que
+depende de una variable que hay que excluir por fuga de información. BDL modela ese escalón como una clase latente y
+aprende el índice con una regla de aprendizaje propia, un EM generalizado cuyo paso M es un paso de \emph{boosting}.
+
+Las contribuciones son tres:
+\begin{itemize}
+  \item un modelo y su regla de aprendizaje, formulados, derivados y programados desde cero con \texttt{numpy} y
+        \texttt{scipy}, con garantías teóricas verificadas por pruebas unitarias (sección~\ref{sec:modelo});
+  \item una comparación con todos los modelos del curso y dos del estado del arte, bajo un protocolo registrado antes
+        de los experimentos, con las mismas particiones, el mismo preprocesamiento y el mismo presupuesto de ajuste
+        (secciones~\ref{sec:referencias} y~\ref{sec:protocolo});
+  \item una evaluación estadística con tres pruebas de hipótesis por referencia, tamaños de efecto, cinco conjuntos de
+        datos, ablación, sensibilidad, costo e interpretabilidad (sección~\ref{sec:resultados}).
+\end{itemize}
+
+La sección~\ref{sec:metodologia} describe los datos y su análisis exploratorio, el pipeline, los modelos de referencia,
+el modelo propuesto y el protocolo de evaluación; la sección~\ref{sec:resultados} presenta los resultados, y la
+sección~\ref{sec:conclusiones}, las conclusiones.

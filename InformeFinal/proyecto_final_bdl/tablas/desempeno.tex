@@ -1,0 +1,23 @@
+\begin{table}[tbp]
+  \centering\scriptsize\setlength{\tabcolsep}{4pt}
+  \caption{Desempeño en validación cruzada: media $\pm$ desviación en las 15 particiones externas (tres repeticiones de cinco pliegues), en orden de RMSE.}
+  \label{tab:desempeno}
+  \begin{tabular}{lcccc}
+    \toprule
+    Modelo & RMSE & MAE & $R^2$ & BDL gana en \\
+    \midrule
+    BDL (propuesto) & {\boldmath\textbf{$0{,}05887$ $\pm$ $0{,}00047$}} & {\boldmath\textbf{$0{,}04684$ $\pm$ $0{,}00034$}} & {\boldmath\textbf{$0{,}2303$ $\pm$ $0{,}0078$}} & -- \\
+    XGBoost$^\dagger$ & \underline{$0{,}05897$ $\pm$ $0{,}00047$} & \underline{$0{,}04689$ $\pm$ $0{,}00032$} & \underline{$0{,}2277$ $\pm$ $0{,}0075$} & 15/15 \\
+    LightGBM$^\dagger$ & $0{,}05899$ $\pm$ $0{,}00048$ & $0{,}04693$ $\pm$ $0{,}00034$ & $0{,}2271$ $\pm$ $0{,}0077$ & 15/15 \\
+    EBM$^\dagger$ & $0{,}05903$ $\pm$ $0{,}00047$ & $0{,}04704$ $\pm$ $0{,}00033$ & $0{,}2262$ $\pm$ $0{,}0073$ & 15/15 \\
+    Random Forest$^\dagger$ & $0{,}05913$ $\pm$ $0{,}00049$ & $0{,}04714$ $\pm$ $0{,}00035$ & $0{,}2234$ $\pm$ $0{,}0078$ & 15/15 \\
+    Árbol de decisión$^\dagger$ & $0{,}05928$ $\pm$ $0{,}00048$ & $0{,}04741$ $\pm$ $0{,}00036$ & $0{,}2196$ $\pm$ $0{,}0081$ & 15/15 \\
+    Lasso$^\dagger$ & $0{,}06181$ $\pm$ $0{,}00053$ & $0{,}05080$ $\pm$ $0{,}00035$ & $0{,}1515$ $\pm$ $0{,}0084$ & 15/15 \\
+    Ridge$^\dagger$ & $0{,}06183$ $\pm$ $0{,}00053$ & $0{,}05076$ $\pm$ $0{,}00035$ & $0{,}1511$ $\pm$ $0{,}0085$ & 15/15 \\
+    Regresión bayesiana$^\dagger$ & $0{,}06183$ $\pm$ $0{,}00053$ & $0{,}05075$ $\pm$ $0{,}00035$ & $0{,}1510$ $\pm$ $0{,}0086$ & 15/15 \\
+    SVR lineal$^\dagger$ & $0{,}06185$ $\pm$ $0{,}00052$ & $0{,}05086$ $\pm$ $0{,}00033$ & $0{,}1505$ $\pm$ $0{,}0088$ & 15/15 \\
+    k-NN$^\dagger$ & $0{,}06334$ $\pm$ $0{,}00052$ & $0{,}05129$ $\pm$ $0{,}00034$ & $0{,}1090$ $\pm$ $0{,}0044$ & 15/15 \\
+    \bottomrule
+  \end{tabular}
+  \par\smallskip\begin{minipage}{0.97\linewidth}\scriptsize En negrita, el mejor de cada columna; subrayado, el segundo. $^\dagger$: la $t$ corregida de Nadeau-Bengio rechaza la igualdad con BDL ($p$ de Holm $<0{,}05$ sobre diez comparaciones). La última columna cuenta las particiones en que BDL tiene menor RMSE. La regresión bayesiana se añadió después del protocolo, con los mismos pliegues: Ridge, reajustado en ellos con sus hiperparámetros guardados, reproduce su RMSE de cada pliegue con una diferencia de $10^{-17}$; sus hiperparámetros se estiman por máxima evidencia.\end{minipage}
+\end{table}

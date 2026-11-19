@@ -1,0 +1,16 @@
+\begin{table}[tbp]
+  \centering\scriptsize\setlength{\tabcolsep}{3pt}
+  \caption{Variación entre semillas del modelo final: RMSE en prueba al reajustar con diez semillas.}
+  \label{tab:semillas}
+  \begin{tabular}{lccc}
+    \toprule
+    Modelo & RMSE medio & Desviación ($\times 10^{-6}$) & Semillas \\
+    \midrule
+    BDL (propuesto) & $0{,}059116$ & $1{,}7$ & 10 \\
+    XGBoost & $0{,}059171$ & $5{,}0$ & 10 \\
+    LightGBM & $0{,}059183$ & $12{,}3$ & 10 \\
+    EBM & $0{,}059259$ & $6{,}8$ & 10 \\
+    Random Forest & $0{,}059306$ & $10{,}4$ & 10 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

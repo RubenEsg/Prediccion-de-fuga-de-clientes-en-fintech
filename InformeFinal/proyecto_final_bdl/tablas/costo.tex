@@ -1,0 +1,23 @@
+\begin{table}[tbp]
+  \centering\scriptsize\setlength{\tabcolsep}{4pt}
+  \caption{Costo computacional del modelo final de cada referencia: ajuste con todo el entrenamiento (38.978 clientes) e inferencia sobre los 9.745 de prueba (medias de diez semillas), memoria pico del ajuste, tamaño serializado y número de parámetros.}
+  \label{tab:costo}
+  \begin{tabular}{lccccc}
+    \toprule
+    Modelo & Ajuste (s) & Inferencia (s) & Memoria (MB) & Tamaño (KB) & Parámetros \\
+    \midrule
+    k-NN & $0{,}26$ & $4{,}889$ & $64$ & $6.295$ & 3.079.262 \\
+    Regresión bayesiana & $0{,}35$ & $0{,}044$ & -- & $50$ & 79 \\
+    Ridge & $0{,}41$ & $0{,}047$ & $67$ & $4$ & 79 \\
+    Lasso & $0{,}42$ & $0{,}048$ & $65$ & $4$ & 79 \\
+    LightGBM & $0{,}60$ & $0{,}062$ & $66$ & $46$ & 5.436 \\
+    SVR lineal & $0{,}65$ & $0{,}048$ & $72$ & $4$ & 79 \\
+    Árbol de decisión & $0{,}81$ & $0{,}047$ & $55$ & $6$ & 69 \\
+    XGBoost & $1{,}69$ & $0{,}063$ & $154$ & $58$ & 3.899 \\
+    BDL (propuesto) & $5{,}80$ & $0{,}068$ & $153$ & $149$ & 16.420 \\
+    Random Forest & $11{,}25$ & $0{,}130$ & $66$ & $2.347$ & 86.158 \\
+    EBM & $25{,}54$ & $0{,}055$ & $81$ & $1.032$ & 15.486 \\
+    \bottomrule
+  \end{tabular}
+  \par\smallskip\begin{minipage}{0.97\linewidth}\scriptsize Equipo: AMD Ryzen 5 3500X (6 núcleos), 16 GB de RAM, Windows 11, sin GPU; Python 3.13.3. Parámetros: coeficientes en los modelos lineales; nodos en los árboles y conjuntos de árboles; celdas de las funciones de forma en la EBM; en BDL, las celdas de sus 78 funciones de forma (los 2.020 tocones se acumulan en ellas), los cortes y la mezcla; en k-NN, la matriz de entrenamiento que guarda. La memoria de la regresión bayesiana no se midió con el mismo procedimiento.\end{minipage}
+\end{table}
