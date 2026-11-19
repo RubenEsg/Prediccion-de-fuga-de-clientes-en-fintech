@@ -41,7 +41,7 @@ Cada entregable de la guía (§10) y dónde está en este repositorio:
 | 6 | Tabla maestra de experimentos | `ModeloOriginal/resultados/experimentos.parquet` (modelo original, LightGBM y la mejor combinación de cada benchmark, tres repeticiones), `ModeloOriginal/resultados/adicionales/<conjunto>/experimentos.parquet` (conjuntos adicionales) y `Entrega3/resultados/experimentos.parquet` (las 140 combinaciones de la guía y las de la EBM) |
 | 7 | Artefactos de los modelos con `metadata.json` | `Dashboard/artifacts/` |
 | 8 | Ficha del modelo y declaración de los datos | [`Dashboard/MODEL_CARD.md`](Dashboard/MODEL_CARD.md) y [`Dashboard/DATA_STATEMENT.md`](Dashboard/DATA_STATEMENT.md) |
-| 9 | Archivo del repositorio con identificador persistente | Pendiente: el propietario del repositorio genera el DOI en Zenodo a partir de una *release* (capítulo 10 del libro) |
+| 9 | Archivo del repositorio con identificador persistente | Zenodo, DOI [10.5281/zenodo.24356311](https://doi.org/10.5281/zenodo.24356311): la *release* `v2.0.0`, la versión entregada (capítulo 10 del libro y [`CITATION.cff`](CITATION.cff)) |
 | 10 | Declaración de autoría y uso de herramientas | Capítulo 9 del libro, sección 9.6 |
 
 El repositorio reúne las tres entregas y el proyecto final, así que la estructura que propone la guía (§7.2) está

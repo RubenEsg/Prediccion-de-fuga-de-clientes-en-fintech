@@ -11,6 +11,14 @@ authors:
     given-names: "Rubén"
 version: "2.0.0"
 date-released: "2026-11-18"
+doi: "10.5281/zenodo.24356311"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.24356311"
+    description: "Versión v2.0.0, la entregada, archivada en Zenodo"
+  - type: doi
+    value: "10.5281/zenodo.24356310"
+    description: "Todas las versiones del repositorio en Zenodo"
 license: MIT
 repository-code: "https://github.com/RubenEsg/Prediccion-de-fuga-de-clientes-en-fintech"
 url: "https://rubenesg.github.io/Prediccion-de-fuga-de-clientes-en-fintech/"
